@@ -1,0 +1,14 @@
+last Modified: 06/01/2018
+
+I have introduced the vuex to the project.
+
+
+Stable version
+The vuex is not utilized yet.
+
+What to do next:
+
+1) Introduce Vuex to artist dashboard.
+2) User Login through Firebase auth
+3) Read uploaded images and render in artist dshboard (dummy data)
+

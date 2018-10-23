@@ -1,0 +1,50 @@
+readme
+Vues
+how to use getter 
+this.$store.getters.property
+
+how to use mutations
+Mutations must be synchronous and shouldn’t return a value. They can be used directly by running 
+this.$store.commit(‘mutationName’, payload)
+
+Asynchronous Actions
+They are expected (but not required) to return a promise indicating completion status. 
+Actions are used in components directly with 
+this.$store.dispatch(‘actionName’, payload).then(response => {})
+To modify state within an action, use 
+context.commit(‘mutationName’, payload)
+
+Example:
+export const store = new Vuex.Store({
+  state: {
+    safelyStoredNumber: 0
+  },
+  ...
+  actions: {
+    async setNumberToRemoteValue(context) {
+      // Commits the 'setStoredNumber' mutation with the value of whatever myRemoteService.getRemoteValue() resolves through a promise.
+      context.commit('setStoredNumber', await myRemoteService.getRemoteValue());
+      return Promise.resolve();
+    },
+  }
+});
+
+how to call an action from a component:
+
+ this.$store.dispatch('image_being_uploaded', {file:this.file, image_url: this.image_url})
+
+
+ how to use getter 
+this.$store.getters.property
+
+how to use mutators from a component
+Mutations must be synchronous and shouldn’t return a value. They can be used directly by running 
+this.$store.commit(‘mutationName’, payload)
+
+how to route from a button 
+router to="/business_signup2" 
+
+how to route from a method
+this.$router.push('/') 
+
+how to guard a page
