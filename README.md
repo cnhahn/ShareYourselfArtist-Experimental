@@ -20,11 +20,7 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-sendgrid login info:
-username: ddavisscott@gmail.com
-pw: Xododx999!
-sendgrid api key: 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
-sendgrid email templete id: 98d40d35-a3a9-4bea-a540-7085561d8de2
+
 
 working on your branch:
 

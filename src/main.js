@@ -1,7 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import Vuex from 'vuex';
+import Vuex from 'vuex'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 import App from './App'
@@ -15,8 +15,6 @@ import PayPal from 'vue-paypal-checkout'
 import CustomSpinner from './components/shared/custom_spinner'
 import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
-
-
 
 import {
 
@@ -48,14 +46,14 @@ import {
   VTabs,
   VExpansionPanel,
   transitions,
-  VStepper,	
+  VStepper,
   VSwitch,
   VDataTable,
   VCheckbox,
   VSelect,
   VMenu,
   VDialog,
-  VRadioGroup,
+  VRadioGroup
 
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
@@ -135,13 +133,14 @@ new Vue({
   store,
   components: { App },
   template: '<App/>',
-  created(){
+  created () {
     firebase.initializeApp({
-    apiKey: 'AIzaSyDB9Jj5Fvm6Q6ee9-CPMSz0MU_1M1jeUS0',
-    authDomain: 'sya-app.firebaseapp.com',
-    databaseURL: 'https://sya-app.firebaseio.com',
-    projectId: 'sya-app',
-    storageBucket: 'sya-app.appspot.com',
+      apiKey: "AIzaSyCRuyHwa9pXxru5ISMcE5TRqbU4tzIuzwg",
+      authDomain: "sya-dev.firebaseapp.com",
+      databaseURL: "https://sya-dev.firebaseio.com",
+      projectId: "sya-dev",
+      storageBucket: "sya-dev.appspot.com",
+      messagingSenderId: "164082581990"
     })
 
     //the following is a FB SDK to check if the user is signed in already
@@ -152,29 +151,28 @@ new Vue({
     })
   },
 
-  //once initialized, grab replied submissions
-  beforeMount: function() {
-    this.$store.dispatch('get_users') 
+  // once initialized, grab replied submissions
+  beforeMount: function () {
+    this.$store.dispatch('get_users')
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        //this.$store.dispatch('fetch_replied_submissions')
-        //this.$store.dispatch('fetchUserDocument');
+        // this.$store.dispatch('fetch_replied_submissions')
+        // this.$store.dispatch('fetchUserDocument');
       }
     })
   },
 
-    //upon update or refresh, continue with persistent log-in & fetch documents prior to creation
+  // upon update or refresh, continue with persistent log-in & fetch documents prior to creation
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-          //this.$store.dispatch('fetchUserDocument'); //added
-          this.$store.dispatch('autoSignIn', user);
-          this.$store.dispatch('fetchArts')
-          this.$store.dispatch('fetchSubmissions')
-          this.$store.dispatch('fetchUserDocument') 
-          console.log('on mounted: ',user)
-          this.$store.dispatch('get_user_credit',user.uid)
-          
+          // this.$store.dispatch('fetchUserDocument'); //added
+        this.$store.dispatch('autoSignIn', user);
+        this.$store.dispatch('fetchArts')
+        this.$store.dispatch('fetchSubmissions')
+        this.$store.dispatch('fetchUserDocument') 
+        console.log('on mounted: ', user)
+        this.$store.dispatch('get_user_credit', user.uid)
 
       }
     })

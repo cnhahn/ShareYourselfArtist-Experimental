@@ -9,7 +9,6 @@ import 'firebase/firestore'
 import config from '../config'
 import router from '../router'
 
-
 firebase.initializeApp(config)
 Vue.use(Vuex)
 
