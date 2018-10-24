@@ -28,7 +28,7 @@ import businessProfile from '@/components/business/business_profile'
 
 import artistDashboardEmpty from '@/components/artists/artist_dashboard_empty'
 import payment_confirmation from '@/components/artists/payment_confirmation'
-import bio from "@/components/artists/bio"
+import bio from '@/components/artists/bio'
 import art from "@/components/artists/art"
 import artist_dashboard from "@/components/artists/artist_dashboard"
 import artist_signup from "@/components/artists/artist_signup"
@@ -42,7 +42,7 @@ import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
 import auth_guard from "./auth_guard";
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   routes: [
@@ -94,7 +94,7 @@ export default new Router({
     {
       path: '/business_signup3',
       name: 'business_signup3',
-      component: business_signup3,
+      component: business_signup3
   
     },
     {
