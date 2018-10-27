@@ -138,7 +138,6 @@
       },
     },
     mounted: function(){
-      
         this.select_business = []      
         for (let i = 0; i < this.user_info.length; i++) { 
           if (this.user_info[i].selected === true){
@@ -148,7 +147,10 @@
   
     },
     created:function(){
-         this.user_info =  this.$store.state.businesses
+       function filter_test(business) {
+          return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
+        }
+         this.user_info =  this.$store.state.businesses.filter(filter_test)
          for (let i = 0; i < this.user_info.length; i++) { 
           if (this.user_info[i].selected === true){
             this.user_info[i].selected = false
