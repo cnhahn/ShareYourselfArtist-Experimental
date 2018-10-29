@@ -96,6 +96,9 @@
                 <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="setEdit">
                   Edit
                 </v-btn>
+                <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="exit">
+                  Back
+                </v-btn>
                 <v-flex row v-else>
                   <v-btn depressed block outline flat :color="fetchUserColor"
                          :loading="dataNotSent"
@@ -159,6 +162,9 @@
       }
     },
     methods: {
+      exit () {
+        this.$router.push('/business_dashboard')
+      },
       emptyUserInfo () {
         this.businessInfo = {};
       },
