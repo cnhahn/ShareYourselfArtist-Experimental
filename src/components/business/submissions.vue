@@ -29,6 +29,7 @@
                </div>
               <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined "><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
+              <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
@@ -117,6 +118,12 @@
       }
     },
     methods:{
+
+      download: function(art_link) {
+        
+        console.log(art_link)
+
+      },
     
       /* Retrieves all review requests from the server */
       fetch_submissions: function() {
