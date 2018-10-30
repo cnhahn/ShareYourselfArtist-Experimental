@@ -1693,6 +1693,7 @@ signUserInGoogle({
         let about = payload.about
         let worth_knowing = payload.worth_knowing
         let additional_notes = payload.additional_notes
+        let instagram = payload.instagram
 
         updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
         if (follower_count !== 0) {
@@ -1702,7 +1703,8 @@ signUserInGoogle({
         updateData = setValidData({updateData: updateData, data: about, property: 'about'})
         updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
         updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
-
+        updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
+        
         if (name !== undefined && name !== '') {
           updateData.business_name = name
         }
