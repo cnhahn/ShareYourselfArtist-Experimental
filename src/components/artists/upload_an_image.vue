@@ -53,6 +53,33 @@
             </v-flex>
           </v-layout>
 
+<!-- Associated tags for uploads -->
+
+<v-layout row>
+  <v-flex xs12 sm6 offset-sm3>
+    <v-card id="selectbox">
+        <v-container
+          fluid
+        >
+          <v-layout
+            align-center
+            wrap
+          >
+              <v-select
+                :items="items"
+                attach
+                chips
+                label="Categories"
+                multiple
+              ></v-select>
+          </v-layout>
+        </v-container>
+      </v-card>
+  </v-flex>
+</v-layout>
+
+
+
           <v-layout row>
             <v-flex xs12 sm6 offset-sm8>
               <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
@@ -65,6 +92,9 @@
   </v-container>
 </template>
 
+
+
+
 <script>
   export default {
     data() {
@@ -74,7 +104,13 @@
         artTitle: '',
         artUrl: '',
         description: '',
-
+        chip1: true,
+        chip2: true,
+        chip3: true,
+        chip4: true,
+        checkedNames: [],
+        items: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10'],
+        value: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10']
       }
     },
     computed: {
@@ -107,6 +143,20 @@
 
   }
 </script>
+
+<style type="text/css">
+  #selectbox{
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+
+
+
+
+
+
+
 
 
 
