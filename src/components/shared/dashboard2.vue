@@ -1,5 +1,5 @@
 <template>
-<v-container  v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'">
+<v-container  v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1'">
 
 
   
@@ -105,70 +105,69 @@
 </template>
 
 <script>
-  export default {
-      methods:{
-          august(){
-              this.month = 'august'
-          },
-          september(){
-              this.month = 'september'
-          },
-          october(){
-              this.month = 'october'
-          },
-          november(){
-              this.month = 'november'
-          },
-          december(){
-              this.month = 'december'
-          }
-      },
-      computed: {
-      august_list() {
-        //MODIFY THIS ONE
-        return this.$store.getters.august
-      },
-      september_list() {
-        let sepember_all_submissions = this.$store.getters.september
-        let september_paid_submissions = sepember_all_submissions.filter(function(submission) {
-        return submission.submitted_with_free_cerdit != true
-        })
-        return september_paid_submissions
-      },
-      october_list() {
-        //MODIFY THIS ONE
-        return this.$store.getters.september
-      },
-      november_list() {
-        //MODIFY THIS ONE
-        return this.$store.getters.september
-      },
-      december_list() {
-        //MODIFY THIS ONE
-        return this.$store.getters.september
-      }
-
-      },
-      
-
-    data () {
-      return {
-          month:'august',
-        headers: [
-          {
-            text: 'Dessert (100g serving)',
-            align: 'left',
-            sortable: false,
-            value: 'name'
-          },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' }
-        ]
-      }
-      
+export default {
+  methods: {
+    august() {
+      this.month = "august";
+    },
+    september() {
+      this.month = "september";
+    },
+    october() {
+      this.month = "october";
+    },
+    november() {
+      this.month = "november";
+    },
+    december() {
+      this.month = "december";
     }
+  },
+  computed: {
+    august_list() {
+      //MODIFY THIS ONE
+      return this.$store.getters.august;
+    },
+    september_list() {
+      let sepember_all_submissions = this.$store.getters.september;
+      let september_paid_submissions = sepember_all_submissions.filter(function(
+        submission
+      ) {
+        return submission.submitted_with_free_cerdit != true;
+      });
+      return september_paid_submissions;
+    },
+    october_list() {
+      //MODIFY THIS ONE
+      return this.$store.getters.october;
+    },
+    november_list() {
+      //MODIFY THIS ONE
+      return this.$store.getters.september;
+    },
+    december_list() {
+      //MODIFY THIS ONE
+      return this.$store.getters.september;
+    }
+  },
+
+  data() {
+    return {
+      month: "august",
+      headers: [
+        {
+          text: "Dessert (100g serving)",
+          align: "left",
+          sortable: false,
+          value: "name"
+        },
+        { text: "Calories", value: "calories" },
+        { text: "Fat (g)", value: "fat" },
+        { text: "Carbs (g)", value: "carbs" },
+        { text: "Protein (g)", value: "protein" },
+        { text: "Iron (%)", value: "iron" }
+      ]
+    };
   }
+};
 </script>
