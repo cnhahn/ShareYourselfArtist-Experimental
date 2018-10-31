@@ -31,6 +31,9 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
+
+            <v-list-tile-title style="margin-left: 10px">{{this.artist_instagram}}</v-list-tile-title>
+
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -259,6 +262,13 @@ artist_initial () {
   },
   artist_name () {
     return String(this.$store.state.signed_in_user.name)
+  },
+artist_instagram () {
+    let instagram_string = ""
+    if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
+      instagram_string = String(this.$store.state.signed_in_user.instagram)
+    }
+    return instagram_string
   },
   sideNavItems() {
     if (this.$store.getters.user_role =='artist'){
