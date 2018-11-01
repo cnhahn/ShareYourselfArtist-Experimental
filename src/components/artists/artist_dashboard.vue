@@ -15,12 +15,14 @@
               <h3 class="headline mb-0">{{art.art_title}}</h3>
               <div>
                 <v-chip 
-                  v-for="tag in art.categories" 
+                  v-for="(tag, index) in art.categories" 
                   :key='tag.id' 
+                  v-model = 'art.categories[index]'
                   class="display_chips"
                   close
+                  @click = "chipClicked(art.upload_date)"
                 > 
-                  {{tag}} </v-chip>
+                  {{art.categories[index]}} </v-chip>
               </div>
             </div>
           </v-card-title>
@@ -70,7 +72,8 @@
     },
     data() {
       return {
-        artList: []
+        artList: [],
+        chip1:true,
       }
     },
     computed: {
@@ -82,7 +85,8 @@
       },
     },
     methods: {
-      clicked_art(art_unique_timestamp) {
+      chipClicked(artId){alert('artId: ', artId)},
+        clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
         const arts= this.$store.state.arts
