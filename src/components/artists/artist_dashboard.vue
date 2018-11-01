@@ -13,6 +13,15 @@
           <v-card-title primary-title>
             <div>
               <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <div>
+                <v-chip 
+                  v-for="tag in art.categories" 
+                  :key='tag.id' 
+                  class="display_chips"
+                  close
+                > 
+                  {{tag}} </v-chip>
+              </div>
             </div>
           </v-card-title>
           <v-card-actions>
@@ -33,6 +42,7 @@
     /*
     Real-time data(art) fetching from the firestore database.
      */
+     
     mounted: function () {
       const db = this.$store.getters.db
       const userId = this.$store.getters.user.id
@@ -119,4 +129,10 @@
     padding-top: 39vh;
     margin-left: 47vw;
   }
+  .display_chips{
+    float: left;
+    margin-right: 5px;
+    background-color: lightgray;
+  }
+
 </style>

@@ -1006,6 +1006,7 @@ signUserInGoogle({
                 let art = {
                   art_title: payload.art_title,
                   artist_name: payload.artist_name,
+                  categories: payload.categories,
                   url: getters.url,
                   description: payload.description,
                   upload_date: payload.upload_date,

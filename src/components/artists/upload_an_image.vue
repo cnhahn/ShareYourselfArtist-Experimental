@@ -55,28 +55,32 @@
 
 <!-- Associated tags for uploads -->
 
-<v-layout row>
-  <v-flex xs12 sm6 offset-sm3>
-    <v-card id="selectbox">
-        <v-container
-          fluid
-        >
-          <v-layout
-            align-center
-            wrap
-          >
-              <v-select
-                :items="items"
-                attach
-                chips
-                label="Categories"
-                multiple
-              ></v-select>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-card id="selectbox">
+                  <v-container
+                    fluid
+                  >
+                    <v-layout
+                      align-center
+                      wrap
+                    >
+                        <v-select
+                          :items="items"
+                          attach
+                          chips
+                          name='categories'
+                          id='categories'
+                          label='categories'
+                          v-model='categories'
+                          required
+                          multiple
+                        ></v-select>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+            </v-flex>
           </v-layout>
-        </v-container>
-      </v-card>
-  </v-flex>
-</v-layout>
 
 
 
@@ -104,11 +108,7 @@
         artTitle: '',
         artUrl: '',
         description: '',
-        chip1: true,
-        chip2: true,
-        chip3: true,
-        chip4: true,
-        checkedNames: [],
+        categories: '',
         items: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10'],
         value: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10']
       }
@@ -116,7 +116,7 @@
     computed: {
       // Styled by Jin. No modification on code.
       formIsValid () {
-        return this.artistName !== '' && this.artTitle !== '' && this.description !== ''
+        return this.artistName !== '' && this.artTitle !== '' && this.description !== '' && this.categories !== ''
       },
 
     },
@@ -133,6 +133,7 @@
           artist_name: this.artistName,
           description: this.description,
           art_title: this.artTitle,
+          categories: this.categories,
           folder: this.folder,
           upload_date: Date.now()
         }).then(response => {
