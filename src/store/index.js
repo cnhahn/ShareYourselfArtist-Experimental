@@ -393,6 +393,7 @@ export const store = new Vuex.Store({
       router.push('dashboard2');
     },
     goto_monthly_report ({commit, getters}){ 
+      console.log("goto monthly report called")
       router.push('monthly_report');
     },
     get_replied ({
