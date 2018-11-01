@@ -21,9 +21,12 @@
       hide-headers
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.business_name }}</td>
-        <td class="text-xs-right">{{ props.item.email }}</td>
-        <td class="text-xs-right">{{ props.item.upload_date }}</td>
+        <tr @click="goto_dashboard2(props.item.email)">
+            <td>{{ props.item.business_name }}</td>
+            <td class="text-xs-right">{{ props.item.email }}</td>
+            <td class="text-xs-right">{{ props.item.upload_date }}</td>
+        </tr>
+
        
       </template>
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -31,6 +34,10 @@
       </v-alert>
     </v-data-table>
   </v-card>
+  <v-btn 
+        @click="goto_monthly_report()" 
+        dark 
+        color="orange">Monthly Report</v-btn>
 
   <v-text-field
       v-model="business_email"
