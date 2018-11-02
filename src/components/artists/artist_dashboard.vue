@@ -15,12 +15,15 @@
               <h3 class="headline mb-0">{{art.art_title}}</h3>
               <div>
                 <v-chip 
-                  v-for="tag in art.categories" 
+                  v-for="(tag, index) in art.categories" 
                   :key='tag.id' 
+                  v-model = 'art.categories[index]' 
                   class="display_chips"
                   close
+                  @input="removeChip(art.upload_date, art.categories)"
+                  
                 > 
-                  {{tag}} </v-chip>
+                  {{art.categories[index]}} </v-chip>
               </div>
             </div>
           </v-card-title>
@@ -70,7 +73,8 @@
     },
     data() {
       return {
-        artList: []
+        artList: [],
+        chip1:true,
       }
     },
     computed: {
@@ -82,7 +86,7 @@
       },
     },
     methods: {
-      clicked_art(art_unique_timestamp) {
+        clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
         const arts= this.$store.state.arts
@@ -102,6 +106,12 @@
           }
         }
       },
+
+      removeChip(upload_date, categories) {
+        console.log(upload_date + " " + categories)
+          this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
+      },
+
       submit_art(art){
         this.$store.commit('set_user_email')
         this.$store.commit('set_art_being_submitted',art)
@@ -134,5 +144,4 @@
     margin-right: 5px;
     background-color: lightgray;
   }
-
 </style>

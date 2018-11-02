@@ -1059,6 +1059,32 @@ signUserInGoogle({
           console.error('Error updating dsubmission: ', error)
         })
     },
+
+
+    update_art_category_tags ({ getters }, payload) {
+      const db = firebase.firestore()
+      const uploadDate = payload.upload_date
+      const categories = payload.categories 
+      const collectionRef = db.collection('art').where("upload_date", "==", uploadDate)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc){
+          var docRef = db.collection('art').doc(doc.id)
+
+          return docRef.update(
+            {"categories": categories}
+            )
+        })
+      })
+      .then(function() {
+        console.log("successfully updated categories")
+      })
+      .catch(function(error) {
+        console.error("Error updating categories: ", error)
+      })
+    },
+
+
    submit_request ({ getters }) {
      let businesses_being_submitted =  getters.businesses_being_submitted
      for (let i = 0; i < businesses_being_submitted.length; i++) { 
