@@ -17,11 +17,18 @@
                 <v-chip 
                   v-for="(tag, index) in art.categories" 
                   :key='tag.id' 
+<<<<<<< HEAD
                   v-model = 'art.categories[index]' 
                   class="display_chips"
                   close
                   @input="removeChip(art.upload_date, art.categories)"
                   
+=======
+                  v-model = 'art.categories[index]'
+                  class="display_chips"
+                  close
+                  @click = "chipClicked(art.upload_date)"
+>>>>>>> d563cbed1b0950af7c8f1c80829e7267d3417d63
                 > 
                   {{art.categories[index]}} </v-chip>
               </div>
@@ -86,6 +93,10 @@
       },
     },
     methods: {
+<<<<<<< HEAD
+=======
+      chipClicked(artId){alert('artId: ', artId)},
+>>>>>>> d563cbed1b0950af7c8f1c80829e7267d3417d63
         clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
