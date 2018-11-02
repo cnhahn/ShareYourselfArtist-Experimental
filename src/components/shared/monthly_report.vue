@@ -5,9 +5,11 @@
       <template slot="items" slot-scope="props">
           <tr>
             <td>{{ props.item.business_name }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ filtered_total(props.item.business_name) }}</td>
+            <td>{{ filtered_paid(props.item.business_name) }}</td>
+            <td>{{ filtered_free(props.item.business_name) }}</td>
+            <td>{{ filtered_responses(props.item.business_name) }}</td>
+            <td>{{ filtered_awaiting(props.item.business_name) }}</td>
           </tr>
       </template>
     </v-data-table>
@@ -56,6 +58,21 @@
         console.log(this.$store.getters.businesses)
         return this.$store.getters.businesses
       },
+      filtered_total(email) {
+
+      },
+      filtered_paid(email) {
+
+      },
+      filtered_free(email) {
+
+      },
+      filtered_responses(email) {
+
+      },
+      filtered_awaiting(email) {
+
+      }
     },
     methods: {
         choose_date(){
