@@ -1,28 +1,4 @@
 <template>
-<<<<<<< HEAD
-<v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2'">
-  <v-card >
-    <v-card-title>
-     Blogs
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        label="Search"
-        single-line
-        hide-details
-        
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table
-      :headers="headers"
-      :items="businesses"
-      :search="search"
-      hide-headers
-    >
-      <template slot="items" slot-scope="props">
-        <tr @click="goto_dashboard2(props.item.email)">
-=======
   <v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2'">
     <v-card>
       <v-card-title>
@@ -33,7 +9,6 @@
       <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
         <template slot="items" slot-scope="props">
           <tr @click="goto_dashboard2(props.item.email)">
->>>>>>> ac6cb28c272accff0a7bd1e464bc7c78d0ee3667
             <td>{{ props.item.business_name }}</td>
             <td class="text-xs-right">{{ props.item.email }}</td>
             <td class="text-xs-right">{{ props.item.upload_date }}</td>
