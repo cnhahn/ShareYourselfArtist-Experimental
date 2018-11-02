@@ -17,40 +17,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-export default {
-  data() {
-    // for the table
-    return {
-      picker: new Date().toISOString().substr(0, 7),
-      landscape: false,
-      headers: [
-        {
-          text: "Business",
-          align: "left",
-          sortable: false,
-          value: "title"
-        },
-        {
-          text: "Total Submissions",
-          value: "total"
-        },
-        {
-          text: "Paid Submissions",
-          value: "paid"
-        },
-        {
-          text: "Free Submissions",
-          value: "free"
-        },
-        {
-          text: "Responses Given",
-          value: "responses"
-        },
-        {
-          text: "Awaiting Response",
-          value: "await"
-=======
   export default {
     data() {
       // for the table
@@ -112,9 +78,7 @@ export default {
         choose_date(){
             console.log(this.picker);
             this.$store.dispatch('set_chosen_month', this.picker)
->>>>>>> ac6cb28c272accff0a7bd1e464bc7c78d0ee3667
         }
-      ]
     };
   },
   computed: {
