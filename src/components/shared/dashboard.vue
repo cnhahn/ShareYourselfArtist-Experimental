@@ -1,6 +1,56 @@
 <template>
-<<<<<<< HEAD
 <v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2'">
+  
+  <v-layout row>
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{businesses.length}}</h3>
+            <div>Businesses</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{artists_email_list.length}}</h3>
+            <div>Artists</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+
+
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{submissions_for_month.length}}</h3>
+            <div>Submissions</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{replied_for_month}}</h3>
+            <div>Replied</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+
+
+
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{free_submissions_for_month}}</h3>
+            <div>Free</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{paid_submissions_for_month}}</h3>
+            <div>Paid</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+  </v-layout>
+  
   <v-card >
     <v-card-title>
      Blogs
@@ -22,18 +72,6 @@
     >
       <template slot="items" slot-scope="props">
         <tr @click="goto_dashboard2(props.item.email)">
-=======
-  <v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2'">
-    <v-card>
-      <v-card-title>
-        Blogs
-        <v-spacer></v-spacer>
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-      </v-card-title>
-      <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
-        <template slot="items" slot-scope="props">
-          <tr @click="goto_dashboard2(props.item.email)">
->>>>>>> ac6cb28c272accff0a7bd1e464bc7c78d0ee3667
             <td>{{ props.item.business_name }}</td>
             <td class="text-xs-right">{{ props.item.email }}</td>
             <td class="text-xs-right">{{ props.item.upload_date }}</td>
@@ -107,6 +145,10 @@
 
 <script>
 export default {
+  beforeCreate() {
+    this.$store.dispatch("get_submissions_for_month");
+    this.$store.dispatch("get_email_list_of_artists");
+  },
   methods: {
     generate_artists_email_list() {
       console.log("generating email list");
@@ -152,6 +194,34 @@ export default {
     artists_email_list() {
       //MODIFY THIS ONE
       return this.$store.getters.artists_email_list;
+    },
+    free_submissions_for_month() {
+      let submissionsForMonth = this.$store.getters.submissions_for_month;
+      let free_submissions = submissionsForMonth.filter(function(
+        submissionsArray
+      ) {
+        return submissionsArray.submitted_with_free_cerdit == true;
+      });
+      return free_submissions.length;
+    },
+    replied_for_month() {
+      let submissionsForMonth = this.$store.getters.submissions_for_month;
+      let replied_submissions = submissionsForMonth.filter(function(month) {
+        return month.replied == true;
+      });
+      return replied_submissions.length;
+    },
+    paid_submissions_for_month() {
+      let submissionsForMonth = this.$store.getters.submissions_for_month;
+      let paid_submissions = submissionsForMonth.filter(function(
+        submissionsArray
+      ) {
+        return submissionsArray.submitted_with_free_cerdit == false;
+      });
+      return paid_submissions.length;
+    },
+    submissions_for_month() {
+      return this.$store.getters.submissions_for_month;
     }
   },
 
