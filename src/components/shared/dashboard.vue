@@ -159,10 +159,10 @@ export default {
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();
-      this.$store.dispatch("goto_dash2");
+      this.$router.push("dashboard2");
     },
     goto_monthly_report() {
-      this.$store.dispatch("goto_monthly_report");
+      this.$router.push("monthly_report");
     },
 
     fetch_report() {
