@@ -45,37 +45,15 @@
     /*
     Real-time data(art) fetching from the firestore database.
      */
-     
-    mounted: function () {
-      const db = this.$store.getters.db
-      const userId = this.$store.getters.user.id
-      const newArtList = this.artList
-      const that = this
-      db.collection('art')
-        .where('artist_id', '==', userId)
-        .onSnapshot(function (querySnapshot) {
-          newArtList.length = 0;
-          querySnapshot.forEach(function (doc) {
-            var newArt = {
-              id: doc.id,
-              art_title: doc.data().art_title,
-              url: doc.data().url
-            }
-            newArtList.push(newArt)
-          })
-          // if there's no art, route to artist_dashboard_empty
-          if (querySnapshot.empty) {
-            that.$router.push({
-              name: 'artist_dashboard_empty'
-            })
-          }
-        })
-    },
+
     data() {
       return {
         artList: [],
         chip1:true,
       }
+    },
+    beforeCreate() {
+      //
     },
     computed: {
       arts() {
@@ -101,6 +79,10 @@
            localStorage.setItem('artist_name',arts[i].artist_name)
            localStorage.setItem('description',arts[i].description)
            localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('categories', arts[i].categories)
+           localStorage.setItem('upload_date', arts[i].upload_date)
+           //TODO: make this persistent on refresh
+           this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))
            break
           }

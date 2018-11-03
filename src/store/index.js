@@ -136,6 +136,8 @@ export const store = new Vuex.Store({
     report_month: 1,
     free_credits:0,
     artists_email_list:[],
+    categories: [],
+    updatedCategories: [],
     selectBlog:{
       userId:'',
       name:'',
@@ -158,6 +160,12 @@ export const store = new Vuex.Store({
     },
     set_blog_for_report(state, payload){
       state.blog_for_report = payload
+    },
+    set_categories(state, payload){
+      state.categories = payload
+    },
+    set_updatedCategories(state, payload){
+      state.updatedCategories = payload
     },
     set_businesses_being_submitted(state, payload){
       state.businesses_being_submitted = payload
@@ -1063,14 +1071,13 @@ signUserInGoogle({
 
     update_art_category_tags ({ getters }, payload) {
       const db = firebase.firestore()
-      const uploadDate = payload.upload_date
-      const categories = payload.categories 
+      const uploadDate = parseInt(payload.upload_date, 10)
+      const categories = payload.categories
       const collectionRef = db.collection('art').where("upload_date", "==", uploadDate)
       .get()
       .then(function(querySnapshot) {
         querySnapshot.forEach(function(doc){
           var docRef = db.collection('art').doc(doc.id)
-
           return docRef.update(
             {"categories": categories}
             )
@@ -1083,7 +1090,6 @@ signUserInGoogle({
         console.error("Error updating categories: ", error)
       })
     },
-
 
    submit_request ({ getters }) {
      let businesses_being_submitted =  getters.businesses_being_submitted
@@ -1801,6 +1807,12 @@ signUserInGoogle({
     },
     color (state) {
       return state.color
+    },
+    categories (state) {
+      return state.categories
+    },
+    updatedCategories (state) {
+      return state.updatedCategories
     },
     image_being_uploaded (state) {
       return state.image_being_uploaded
