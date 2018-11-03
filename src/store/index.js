@@ -241,6 +241,11 @@ export const store = new Vuex.Store({
     setArts (state, payload) {
       state.arts.push(payload)
     },
+    setArtCategory (state, payload) {
+      console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
+      console.log('payload.categories', payload.categories)
+      state.arts[payload.indexOfUpdatedArt].categories = payload.categories
+    },
     clearBusinesses (state) {
       state.businesses = []
     },
@@ -1084,6 +1089,7 @@ signUserInGoogle({
         })
       })
       .then(function() {
+          
         console.log("successfully updated categories")
       })
       .catch(function(error) {
@@ -1829,7 +1835,7 @@ signUserInGoogle({
         return artA.upload_date < artB.upload_date
       })
     },
-    // a getter that rturns a function that takes in an artId and...
+    // a getter that returns a function that takes in an artId and...
     uploadedArt (state) {
       return artId => {
         return state.uploadedArts.find(art => {
@@ -1837,7 +1843,7 @@ signUserInGoogle({
         })
       }
     },
-    // a getter function that tahes in an array that contains all of the arts and returns the first five of them as futured arts
+    // a getter function that takes in an array that contains all of the arts and returns the first five of them as futured arts
     featuredArts (state, getters) {
       return getters.uploadedArts.slice(0, 5)
     },

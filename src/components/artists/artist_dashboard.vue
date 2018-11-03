@@ -52,12 +52,10 @@
         chip1:true,
       }
     },
-    beforeCreate() {
-      //
-    },
+  
     computed: {
       arts() {
-        return this.$store.getters.uploadedArts;
+        return this.$store.getters.allArts;
       },
       loading() {
         return this.$store.getters.loading;
