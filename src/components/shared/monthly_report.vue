@@ -3,15 +3,15 @@
     v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1'"
   >
     <v-date-picker v-model="picker" :landscape="landscape" type="month"></v-date-picker>
-    <v-data-table :headers="headers" :items="businesses" class="elevation-1">
+    <v-data-table :headers="headers" :items="businesses_with_submissions" :pagination.sync="pagination" hide-actions class="elevation-1">
       <template slot="items" slot-scope="props">
         <tr>
-          <td>{{ props.item.business_name }}</td>
-          <td>{{ filtered_total(props.item.userId) }}</td>
-          <td>{{ filtered_paid(props.item.userId) }}</td>
-          <td>{{ filtered_free(props.item.userId) }}</td>
-          <td>{{ filtered_responses(props.item.userId) }}</td>
-          <td>{{ filtered_awaiting(props.item.userId) }}</td>
+          <td>{{ props.item.name }}</td>
+          <td class="text-xs-center">{{ props.item.total }}</td>
+          <td class="text-xs-center">{{ props.item.paid }}</td>
+          <td class="text-xs-center">{{ props.item.free }}</td>
+          <td class="text-xs-center">{{ props.item.responses }}</td>
+          <td class="text-xs-center">{{ props.item.awaiting }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -22,44 +22,57 @@
 export default {
   data() {
     // for the table
+    
     return {
       picker: new Date().toISOString().substr(0, 7),
       landscape: false,
+      pagination: {'sortBy': 'column1', 'descending': true, 'rowsPerPage': -1},
       headers: [
         {
           text: "Business",
           align: "left",
-          sortable: false,
-          value: "title"
+          value: "name",
+          sortable: true
         },
         {
           text: "Total Submissions",
-          value: "total"
+          value: "total",
+          align: "center",
+          sortable: true
         },
         {
           text: "Paid Submissions",
-          value: "paid"
+          value: "paid",
+          align: "center",
+          sortable: true
         },
         {
           text: "Free Submissions",
-          value: "free"
+          value: "free",
+          align: "center",
+          sortable: true
         },
         {
           text: "Responses Given",
-          value: "responses"
+          value: "responses",
+          align: "center",
+          sortable: true
         },
         {
           text: "Awaiting Response",
-          value: "await"
+          value: "awaiting",
+          align: "center",
+          sortable: true
         }
       ]
     };
   },
-  beforeCreate() {
-    this.$store.dispatch("get_submissions_for_month");
+  created(){
+
+      
   },
-  beforeMount() {
-    // console.log("picker: " + this.picker);
+  beforeMount(){
+    this.$store.dispatch("get_submissions_for_month");
     this.$store.dispatch("get_monthly_report_submissions", this.picker);
   },
   methods: {
@@ -83,9 +96,9 @@ export default {
         return submission.businessId.userId == id;
       });
       filtered_submissions = filtered_submissions.filter(function(submission) {
-        return !submission.submitted_with_free_cerdit
+        return !submission.submitted_with_free_cerdit;
       });
-      return filtered_submissions.length
+      return filtered_submissions.length;
     },
     filtered_free(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
@@ -93,9 +106,9 @@ export default {
         return submission.businessId.userId == id;
       });
       filtered_submissions = filtered_submissions.filter(function(submission) {
-        return submission.submitted_with_free_cerdit
+        return submission.submitted_with_free_cerdit;
       });
-      return filtered_submissions.length
+      return filtered_submissions.length;
     },
     filtered_responses(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
@@ -104,9 +117,9 @@ export default {
       });
       // console.log(filtered_submissions)
       filtered_submissions = filtered_submissions.filter(function(submission) {
-        return submission.replied
+        return submission.replied;
       });
-      return filtered_submissions.length
+      return filtered_submissions.length;
     },
     filtered_awaiting(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
@@ -115,25 +128,37 @@ export default {
       });
       // console.log(filtered_submissions)
       filtered_submissions = filtered_submissions.filter(function(submission) {
-        return !submission.replied
+        return !submission.replied;
       });
-      return filtered_submissions.length
-    }
-  },
-  updated: {
-
+      return filtered_submissions.length;
+    },
+    
   },
   computed: {
-    businesses() {
-      //MODIFY THIS ONE
-      // console.log("business: ")
-      // console.log(this.$store.getters.businesses);
-      return this.$store.getters.businesses;
+    businesses_with_submissions: function() {
+      let businesses = this.$store.getters.businesses
+      // console.log(businesses)
+      let businesses_with_submissions = []
+      let self = this
+      // console.log(this)
+      businesses.forEach(function(business){
+        // console.log(business)
+        businesses_with_submissions.push({
+          name: business.business_name,
+          total: self.filtered_total(business.userId),
+          paid: self.filtered_paid(business.userId),
+          free: self.filtered_free(business.userId),
+          responses: self.filtered_responses(business.userId),
+          awaiting: self.filtered_awaiting(business.userId)
+        })
+      })
+
+      // console.log(businesses_with_submissions)
+      return businesses_with_submissions
     }
   },
   watch: {
     picker() {
-      // console.log("picker called");
       this.$store.dispatch("get_monthly_report_submissions", this.picker);
     }
   }
