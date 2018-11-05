@@ -7,6 +7,7 @@
       <v-flex lg4 md6 sm12 xs12 ml-2 mr-2>
         <h2>{{this.art_title}}</h2>
         <p>{{this.description}}</p>
+        <!-- v-select for new categories to be added -->
         <v-card id="selectbox">
                   <v-container
                     fluid
@@ -30,9 +31,6 @@
                   </v-container>
                 </v-card>
 
-                
-
-
         <div class="buttons">
           <v-btn depressed dark large color="black" @click="back">Back</v-btn>
           <v-btn depressed large color="primary" style="width:120px" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
@@ -53,7 +51,7 @@
           categories: this.$store.getters.categories.filter(function(category){
           return category != false
         }),
-
+// TODO: update tags with actual values for production
           items: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10'],
           value: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10'],
     }
@@ -67,6 +65,7 @@
         window.history.back();
       },
 
+// function to update tags to firestore
       updateTags(upload_date, categories){this.$store.commit('set_categories', categories)
         //this.$store.commit('mutationName', payload)
         this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
