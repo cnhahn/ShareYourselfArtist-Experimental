@@ -40,7 +40,7 @@
                     class="mx-0"
                     @click.native="onPickFile"
                   >
-                    Add/Change Profile Image
+                    Upload New Logo
                   </v-btn>
                   <input type="file"
                         style="display:none"
