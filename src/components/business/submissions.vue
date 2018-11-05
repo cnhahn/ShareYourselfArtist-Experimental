@@ -14,6 +14,11 @@
               <div>
                 <v-flex>
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
+                  <v-layout row >
+                    <div class="text-xs-center" v-for="(c, index) in 3">
+                      <v-chip>{{ submission.art.categories[index] }}</v-chip>
+                    </div>
+                  </v-layout>
                   <v-spacer></v-spacer>
                   <div v-if="submission.instagram"><h3 class="mb-0">{{submission.instagram}}</h3></div>
                 </v-flex>
@@ -29,6 +34,7 @@
                </div>
               <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined "><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
+              <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
@@ -60,6 +66,13 @@
           </v-flex>
           <v-flex lg6 sm12 px-2 mt-5 >
             <v-layout row> <p class= "display-1">Art Title: {{art_title}}</p> </v-layout>
+            <v-layout row>
+              <p class= "body-2">
+                <div class="text-xs-center" v-for="(c, index) in categories">
+                  <v-chip>{{ categories[index] }}</v-chip>
+                </div>
+              </p>
+            </v-layout>
             <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{artist_name}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{instagram}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2"> Submitted on:  <span class= "body-1">{{submitted_on}}</span></p> </v-layout>
@@ -82,17 +95,17 @@
 
   </v-container>
           </v-flex>
-        </v-layout> 
-      </v-card> 
+        </v-layout>
+      </v-card>
     </v-dialog>
   </v-layout>
-  </v-container>  
+  </v-container>
 </template>
 
 <script>
 
   export default {
-    data() {
+    data () {
       return {
         show: false,
         radios: 'declined',
@@ -105,31 +118,39 @@
         description: '',
         submission_response: '',
         artist_id: '',
-        instagram:'',
+        instagram: '',
         docId: '',
-        master_submissions:[],
-        submissions:[],
-        read_submissions:[],
-        unread_submissions:[],
-        sub_list:[],
-        nameKey:'',
+        categories: [],
+        master_submissions: [],
+        submissions: [],
+        read_submissions: [],
+        unread_submissions: [],
+        sub_list: [],
+        nameKey: '',
         rules: [v => v.length > 50 || 'Min 50 characters']
       }
     },
+
     methods:{
-    
+
+      download: function(art_link) {
+        
+        console.log(art_link)
+
+      },
+      
       /* Retrieves all review requests from the server */
-      fetch_submissions: function() {
+      fetch_submissions: function () {
         this.$store.dispatch('fetch_all_Submissions').then(response => {
           this.submissions = this.$store.getters.submissions_for_this_business
           this.master_submissions = this.$store.getters.submissions_for_this_business
         }, error => {
-          console.error("Got nothing from server. Prompt user to check internet connection and try again")
+          console.error('Got nothing from server. Prompt user to check internet connection and try again')
         })
       },
 
       /* Retrieves review requests that have not been responded to yet */
-      submissions_unreplied_submissions: function() {
+      submissions_unreplied_submissions: function () {
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == undefined
         })
@@ -165,11 +186,12 @@
         let myArray = this.$store.state.submissions_for_this_business
         for (var i = 0; i < myArray.length; i++) {
           if (myArray[i].art.upload_date === nameKey) {
-            this.art_being_replied = myArray[i];
+            this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
             this.instagram = myArray[i].instagram
             this.artist_name = myArray[i].art.artist_name
             this.description = myArray[i].art.description
+            this.categories = myArray[i].art.categories
             let sub_date = parseInt(myArray[i].submitted_on, 10)
             console.log(sub_date)
             let date_converted = function(sub_date){
@@ -184,6 +206,7 @@
             this.$store.commit('set_art_being_replied', {
               art_title: myArray[i].art.art_title,
               artist_name: myArray[i].art.artist_name,
+              categories: myArray[i].art.categories,
               description: myArray[i].art.description,
               submitted_on: myArray[i].submitted_on,
               artist_id: myArray[i].art.artist_id,
@@ -208,7 +231,7 @@
       },
       /* Verifies that the business entered data into the field */
       formIsValid () {
-        return this.submission_response.length > 50 
+        return this.submission_response.length > 50
       },
 
       /* Selects the artwork that the business has selected */
@@ -221,8 +244,8 @@
           }
         }
       }
-    }, 
-    mounted: 
+    },
+    mounted:
 
       /* This component just got created, fetch some data here using an action */
       function() {

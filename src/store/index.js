@@ -1525,6 +1525,7 @@ signUserInGoogle({
                           commit('setUserColor', { color: doc.data().color })
                         }
                         commit('setUserRole', doc.data().role)
+                        commit('setUserRole', doc.data().role)
                         commit('setUrl',doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
@@ -1623,6 +1624,7 @@ signUserInGoogle({
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
       newChatDatabaseRef.set(sendData)
     },
+      
       uploadProfileImage ({commit, getters}) {
         let ref = firebase.storage().ref()
         let uploadTask = ref
@@ -1665,12 +1667,32 @@ signUserInGoogle({
                 break
             }
           },
-          function () {
+          function () { //WAN
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured' + downloadURL)
+              console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
+              
+              // Now that download URL is obtained, downloadURL is sent to Firebase
+              // to connect the user's ID to the updated profile picture
+              let updateData = {}
+              let db = getters.db
+              let userId = getters.user.id
+              let user = db
+              .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
+                let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+                  if (doc.exists) {
+                    commit('signed_in_user', doc.data())
+                    commit('setLoading', false)
+                  } else {
+                    // doc.data() will be undefined in this case
+                  }
+                }).catch(function (error) {
+                  console.log("Error getting document:", error);
+                  console.log("this is line 1693");
+                });
+              })
             })
           })
       },
@@ -1732,6 +1754,7 @@ signUserInGoogle({
         let about = payload.about
         let worth_knowing = payload.worth_knowing
         let additional_notes = payload.additional_notes
+        let instagram = payload.instagram
 
         updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
         if (follower_count !== 0) {
@@ -1741,7 +1764,8 @@ signUserInGoogle({
         updateData = setValidData({updateData: updateData, data: about, property: 'about'})
         updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
         updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
-
+        updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
+        
         if (name !== undefined && name !== '') {
           updateData.business_name = name
         }
@@ -1884,6 +1908,7 @@ signUserInGoogle({
     signed_in_user (state) {
       return state.signed_in_user
     },
+  
     signed_in_user_id (state) {
       return state.signed_in_user_id
     },

@@ -91,7 +91,10 @@
         return this.$store.getters.user_role
       },
       user_info() {
-        return this.$store.state.businesses
+        function filter_test(business) {
+          return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
+        }
+        return this.$store.state.businesses.filter(filter_test)
       },
       userIsAuthanticated () {
         if(this.$store.getters.user !== null && this.$store.getters.user !== undefined){
