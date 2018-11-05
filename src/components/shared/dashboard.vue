@@ -1,50 +1,52 @@
-
 <template>
-<v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'">
+<v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1' ">
+  
+  
   <v-card >
-    <v-card-title>
-     Blogs
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        label="Search"
-        single-line
-        hide-details
-        
-      ></v-text-field>
+    <v-card-title> Blogs
+
+        <v-spacer></v-spacer>
+         
+        <!-- Input to search for a blog  -->
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="hello"
+          single-line
+          hide-details
+          
+        ></v-text-field>
     </v-card-title>
+
+    <!-- Headers -->
     <v-data-table
       :headers="headers"
       :items="businesses"
       :search="search"
       hide-headers
     >
+
+      <!-- Display business data table and make it clickable. -->
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.business_name }}</td>
-        <td class="text-xs-right">{{ props.item.email }}</td>
+        <td> {{ props.item.business_name }}</td>
+        <div>
+        <td class="text-xs-right">  
+            <a @click="fetch_report_link(props.item.email)">
+              <router-link to ="/dashboard2">{{props.item.email}} </router-link>
+            </a>
+        </td>
+        </div>
         <td class="text-xs-right">{{ props.item.upload_date }}</td>
-       
       </template>
+
+      
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
       </v-alert>
+
     </v-data-table>
   </v-card>
-
-  <v-text-field
-      v-model="business_email"
-      :counter="10"
-      label="email"
-      required
-    ></v-text-field>
-    <v-btn 
-    color ="primary" 
-    @click="fetch_report"
-    :disabled = "!formIsValid"
-    router to="/dashboard2"
-    >Submit</v-btn>
-
+  
     <v-layout row>
     <v-flex>
       <v-card>
@@ -73,10 +75,11 @@
       </v-card>
     </v-flex>
   </v-layout>
+
+
   <v-card-title>
      Artists Email List
       <v-spacer></v-spacer>
-      
     </v-card-title>
     <v-data-table
       :headers="headers"
@@ -90,17 +93,16 @@
         <td class="text-xs-right">{{ props.item.artist_email }}</td>
        
       </template>
+
+
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
       </v-alert>
     </v-data-table>
   </v-card>
 
-  </v-container>
-  <h1 v-else>You are not authorized to view this page</h1>
-  
- 
-
+ </v-container>
+  <h1 v-else>You are not authorized to view this page</h1> 
 </template>
 
 <script>
@@ -112,13 +114,9 @@
           console.log(this.$store.getters.artists_email_list)
         },
            
-        fetch_report() {
-        this.$store.dispatch('report_aug', {business_email: this.business_email})
-        this.$store.dispatch('report_sep', {business_email: this.business_email})
-        this.$store.dispatch('report_oct', {business_email: this.business_email})
-        this.$store.dispatch('report_nov', {business_email: this.business_email})
-        this.$store.dispatch('report_dec', {business_email: this.business_email})       
-      },
+      fetch_report_link(link){
+        this.$store.commit("set_query_business_email", {business_email: link}) 
+      }
 
       },
       computed: {

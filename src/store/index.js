@@ -117,11 +117,7 @@ export const store = new Vuex.Store({
     art_being_submitted: {
       refunded: 0
     },
-    replied_requests_for_report_aug:[],
-    replied_requests_for_report_sep:[],
-    replied_requests_for_report_oct:[],
-    replied_requests_for_report_nov:[],
-    replied_requests_for_report_dec:[],
+    replied_requests_for_report_datePicker:[],
     submissions_for_this_business: [],
     submission_response: {},
     art_being_replied: {},
@@ -141,8 +137,33 @@ export const store = new Vuex.Store({
       name:'',
       role:'',
     },
+    //working on setting two dates into the date picker
+    datePicker: 
+      {
+        startDate: '',
+        endDate: '',
+      },
+
+      //store email of artist that was just clicked (worked on by Yas)
+
+    query_business_email: '',
   },
   mutations: { 
+   set_query_business_email(state,payload){
+     state.query_business_email = payload.business_email;
+   },
+    set_datePicker(state,payload){
+      const start_date = payload.startDate + '-00-00-00';
+      const start_d = start_date.split('-');
+      const start_epoch = (new Date(start_d[0], start_d[1] - 1, start_d[2], start_d[3], start_d[4], start_d[5])).valueOf();
+
+      const end_date = payload.endDate + '-00-00-00';
+      const end_d = end_date.split('-');
+      const end_epoch = (new Date(end_d[0], end_d[1] - 1, end_d[2], end_d[3], end_d[4], end_d[5])).valueOf();
+
+      state.datePicker.startDate = start_epoch,
+      state.datePicker.endDate = end_epoch
+    },
     set_free_credits(state, payload){
       console.log('inside set free credits')
       console.log(payload)
@@ -182,7 +203,7 @@ export const store = new Vuex.Store({
     set_credits(state,payload){
       state.credits = payload
     },
-        reset_replied_submissions(state) {
+    reset_replied_submissions(state) {
         state.replied_submissions.length = 0
     },
     set_replied_submissions (state, payload) {
@@ -239,35 +260,11 @@ export const store = new Vuex.Store({
     setBusinesses (state, payload) {
       state.businesses.push(payload)
     },
-    set_replied_requests_for_report_aug (state, payload) {
-      state.replied_requests_for_report_aug.push(payload)
+    set_replied_requests_for_report_datePicker(state, payload){
+      state.replied_requests_for_report_datePicker.push(payload)
     },
-    set_replied_requests_for_report_sep (state, payload) {
-      state.replied_requests_for_report_sep.push(payload)
-    },
-    set_replied_requests_for_report_oct (state, payload) {
-      state.replied_requests_for_report_oct.push(payload)
-    },
-    set_replied_requests_for_report_nov (state, payload) {
-      state.replied_requests_for_report_nov.push(payload)
-    },
-    set_replied_requests_for_report_dec (state, payload) {
-      state.replied_requests_for_report_dec.push(payload)
-    },
-    clear_replied_for_report_aug (state) {
-      state.replied_requests_for_report_aug = []
-    },
-    clear_replied_for_report_sep (state) {
-      state.replied_requests_for_report_sep = []
-    },
-    clear_replied_for_report_oct (state) {
-      state.replied_requests_for_report_oct = []
-    },
-    clear_replied_for_report_nov (state) {
-      state.replied_requests_for_report_nov = []
-    },
-    clear_replied_for_report_dec (state) {
-      state.replied_requests_for_report_dec = []
+    clear_replied_for_report_datePicker (state) {
+      state.replied_requests_for_report_datePicker = []
     },
     setClickedBusiness (state, payload) {
       state.clicked_business = payload
@@ -359,7 +356,7 @@ export const store = new Vuex.Store({
       (state.selectBlog.role = payload.role)
     }
   },
-  actions: {
+  actions: {      
     // for report
     get_replied ({commit, getters}) {
       let db = firebase.firestore()
@@ -386,112 +383,47 @@ export const store = new Vuex.Store({
             console.log('Error getting report: ', error)
           })
     }, 
-      // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
-    report_aug ({commit, getters}, payload) {
-      commit('clear_replied_for_report_aug')
-      let db = firebase.firestore()
-      let temp_report = db.collection('review_requests')
-      let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1533081600000).where("replied_date", "<", 1535760000000)
-      query.get().then(function (results) {
-      if(results.empty) {
-          console.log("No documents found!");   
-      } else {
-      // go through all results
-    results.forEach(function (doc) {
-      commit('set_replied_requests_for_report_aug', doc.data())
-    });
-// set_replied_requests_for_report
-    // or if you only want the first result you can also do something like this:
-    console.log("Document data:", results.docs[0].data());
-  }
-}).catch(function(error) {
-    console.log("Error getting documents:", error);
-});
-  }, 
-  report_sep({commit, getters}, payload) {
-    commit('clear_replied_for_report_sep')
-    let db = firebase.firestore()
-    let temp_report  = db.collection('review_requests')
-    let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1537488000000).where("replied_date", "<", 1538870400000)
-  query.get().then(function(results) {
-  if(results.empty) {
-      console.log("No documents found!");   
-  } else {
-  // go through all results
-results.forEach(function (doc) {
-  commit('set_replied_requests_for_report_sep', doc.data())
-});
-// set_replied_requests_for_report
-// or if you only want the first result you can also do something like this:
-console.log("Document data:", results.docs[0].data());
-}
-}).catch(function(error) {
-console.log("Error getting documents:", error);
-});
-},
-report_oct({commit, getters}, payload) {
-  commit('clear_replied_for_report_oct')
-  let db = firebase.firestore()
-  let temp_report  = db.collection('review_requests')
-  let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1535760000000).where("replied_date", "<", 1538352000000)
-query.get().then(function(results) {
-if(results.empty) {
-    console.log("No documents found!");   
-} else {
-// go through all results
-results.forEach(function (doc) {
-commit('set_replied_requests_for_report_oct', doc.data())
-});
-// set_replied_requests_for_report
-// or if you only want the first result you can also do something like this:
-console.log("Document data:", results.docs[0].data());
-}
-}).catch(function (error) {
-  console.log('Error getting documents:', error)
-})
-},
-    report_nov ({commit, getters}, payload) {
-      commit('clear_replied_for_report_nov')
-      let db = firebase.firestore()
-      let temp_report = db.collection('review_requests')
-      let query = temp_report.where('businessId.business_email', '==', payload.business_email).where('replied_date', '>', 1538870400000).where('replied_date', '<', 1540166400000)
-      query.get().then(function (results) {
-        if (results.empty) {
-          console.log('No documents found!')
-        } else {
-// go through all results
-          results.forEach(function (doc) {
-            commit('set_replied_requests_for_report_nov', doc.data())
-          })
-// set_replied_requests_for_report
-// or if you only want the first result you can also do something like this:
-          console.log('Document data:', results.docs[0].data())
-        }
-      }).catch(function (error) {
-        console.log('Error getting documents:', error)
-      })
-    },
-report_dec({commit, getters}, payload) {
-  commit('clear_replied_for_report_dec')
-  let db = firebase.firestore()
-  let temp_report  = db.collection('review_requests')
-  let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1535760000000).where("replied_date", "<", 1538352000000)
-query.get().then(function(results) {
-if(results.empty) {
-    console.log("No documents found!");   
-} else {
-// go through all results
-results.forEach(function (doc) {
-commit('set_replied_requests_for_report_dec', doc.data())
-});
-// set_replied_requests_for_report
-// or if you only want the first result you can also do something like this:
-console.log("Document data:", results.docs[0].data())
-}
-}).catch(function(error) {
-console.log("Error getting documents:", error);
-});
-},
+
+   //for datePicker
+
+
+   //test cases: 
+   //have to implement test cases for start and end date equaling each other.
+   //refereshing the page eliminates the artist email so we have to fix that
+
+
+   //Things to Accomplish before next meeting: 
+   //The whole point of this is to make sure we know how to pay businesses . TO do so we have to know:
+      //put number of total artist submissions visibly somewhere
+      //put number of paid submissions somewhere that are replied 
+      //SO here's the whole sytem. ARtists can submit htrough free or paid credits. 
+            //If it's free, we will not have to pay the business for their response. IF it's not free, we will have to pay for their responses.
+   //number of paid submissions 
+   //put headers to describe the contents
+   //put back button
+   //make the entire (dashboard) row clickable instead of just the email
+   //
+
+    report_datePicker({commit, state})
+   {
+       commit('clear_replied_for_report_datePicker')
+       let db = firebase.firestore()
+       let temp_report  = db.collection('review_requests')
+       let start_Date = state.datePicker.startDate
+       let end_Date = state.datePicker.endDate
+       let business_query_email = state.query_business_email
+       let query = temp_report.where("businessId.business_email", "==", business_query_email).where("replied_date", ">=", start_Date).where("replied_date", "<=", end_Date)
+       query.get().then(function(results) {
+         if(results.empty) {
+             console.log("No documents found!");
+         } else {
+           // go through all results
+           results.forEach(function (doc) {
+             commit('set_replied_requests_for_report_datePicker', doc.data())
+           });
+         }
+       })
+   },
 signUserInGoogle({
   commit,getters
   }) {
@@ -676,11 +608,6 @@ signUserInGoogle({
             })
   },
   
-
-
-
-
-
     update_user_credit({ getters },payload) {
             const db = firebase.firestore()
             const collectionRef = db
@@ -1867,6 +1794,12 @@ signUserInGoogle({
     },
     december(state){
       return state.replied_requests_for_report_dec
+    },
+    datePicker(state){
+      return state.replied_requests_for_report_datePicker
+    },
+    get_query_email(state){
+      return state.query_business_email
     },
     free_credits(state){
       return state.free_credits
