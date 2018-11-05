@@ -10,26 +10,31 @@
                   class="avatarStyle"
                   v-bind:color="businessInfo.color"
                 >
-                  <img v-if="businessInfo.url" :src='this.$store.getters.signed_in_user.url' alt="avatar">
+                  <img v-if="fetchUserProfilePicture" :src='fetchUserProfilePicture' alt="avatar">
                   <div v-else>
                     <span style="font-size: 20em; color: white;">{{initial()}}</span>
                   </div>
-                  <!-- TODO: Code for editing profile image. -->
-                  <!--<div v-else-if="!onEdit">-->
-                  <!--<span style="font-size: 20em; color: white;">{{initial()}}</span>-->
-                  <!--</div>-->
-                  <!--<div v-else-if="editInfo.selectedPhotoUrl === ''">-->
-                  <!--<span style="font-size: 5em; color: white;">EDIT</span>-->
-                  <!--</div>-->
-                  <!--<img v-else :src='editInfo.selectedPhotoUrl' alt="avatar">-->
-                </v-avatar>
-                <p
-                  class="subheading text"
-                  v-if="!onEdit"
-                  style="margin-top: 2vh; margin-left:3vw; font-weight: lighter;
-                  margin-right: 3vw; align-content: center">
-                  Share Yourself Artists
-                </p>
+                  </v-avatar>
+                <v-btn
+                    style="margin-top: 2vh; margin-left: 1vw;"
+                    block
+                    flat
+                    depressed
+                    :color="businessInfo.color"
+                    :loading="imageNotLoaded"
+                    :disabled="imageNotLoaded"
+                    class="mx-0"
+                    @click.native="onPickFile"
+                  >
+                    Add/Change Profile Image
+                  </v-btn>
+                  <input type="file"
+                        style="display:none"
+                        ref="fileInput"
+                        accept="image/*"
+                        @change=onFilePicked
+                  >     
+
                 <!--TODO: Code for Uploading image. Should modify.-->
 
                 <!--<div v-else>-->
@@ -148,6 +153,9 @@
       this.setUserInfo()
     },
     computed: {
+      fetchUserProfilePicture () {
+        return this.$store.getters.signed_in_user.url
+      },
       fetchUserName () {
         return this.$store.getters.signed_in_user.business_name
       },
@@ -204,6 +212,7 @@
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
             .then(() => {
               this.imageNotLoaded = false
+              this.$store.dispatch('uploadProfileImage')
             })
         })
         fileReader.readAsDataURL(files[0])

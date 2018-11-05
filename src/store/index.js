@@ -25,8 +25,8 @@ export const store = new Vuex.Store({
     ],
     business_side_nav_items: [
       { title: 'Dashboard', icon: 'dashboard', link: '/business_dashboard' },
-      //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
-      //{ title: 'My Account', icon: 'account_box', link: '/account' },
+     // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
+     // { title: 'My Account', icon: 'account_box', link: '/account' },
       { title: 'Report', icon: 'assessment', link: '/report' },
       { title: 'Chat', icon: 'chat', link: '/chat' }
     ],
@@ -1626,12 +1626,31 @@ signUserInGoogle({
                 break
             }
           },
-          function () {
+          function () { //WAN
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured' + downloadURL)
+              console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
+              
+              // Now that download URL is obtained, downloadURL is sent to Firebase
+              // to connect the user's ID to the updated profile picture
+              let updateData = {}
+              let db = getters.db
+              let userId = getters.user.id
+              let user = db
+              .collection('users').doc(userId).update({url: downloadURL}).then((data) => {
+                let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+                  if (doc.exists) {
+                    commit('signed_in_user', doc.data())
+                    commit('setLoading', false)
+                  } else {
+                    // doc.data() will be undefined in this case
+                  }
+                }).catch(function (error) {
+                  console.log("Error getting document:", error);
+                });
+              })
             })
           })
       },
