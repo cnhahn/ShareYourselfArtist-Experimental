@@ -5,38 +5,40 @@
           <v-layout row wrap>
             <v-flex lg6 md6 sm12 xs12>
               <v-avatar
-                  size="180px"
-                  class="avatarStyle"
-                  v-bind:color="businessInfo.color"
-                >
-                  <img v-if="fetchUserProfilePicture" :src='fetchUserProfilePicture' alt="avatar">
-                  <div v-else>
-                    <span style="font-size: 20em; color: white;">{{initial()}}</span>
-                  </div>
-                  </v-avatar>
-                <v-btn
-                    style="margin-top: 2vh; margin-left: 1vw;"
-                    block
-                    flat
-                    depressed
-                    color="primary"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
-                    class="mx-0"
-                    @click.native="onPickFile"
-                  >
-                    Change Logo
-                  </v-btn>
-                  <input type="file"
-                        style="display:none"
-                        ref="fileInput"
-                        accept="image/*"
-                        @change=onFilePicked
-                  >     
+                size="180px"
+                class="avatarStyle"
+                v-bind:color="businessInfo.color"
+              >
+              <!-- If profile picture download url exists in db, display it instead of default avatar -->
+              <img v-if="fetchUserProfilePicture" :src='fetchUserProfilePicture' alt="avatar">
+              <div v-else>
+                <span style="font-size: 20em; color: white;">{{initial()}}</span>
+              </div>
+              </v-avatar>
+              <!-- Button that when clicked prompts for image file for logo -->
+              <v-btn
+                style="margin-top: 2vh; margin-left: 1vw;"
+                block
+                flat
+                depressed
+                color="primary"
+                  :loading="imageNotLoaded"
+                  :disabled="imageNotLoaded"
+                  class="mx-0"
+                  @click.native="onPickFile"
+              >
+              Change Logo
+              </v-btn>
+              <input type="file"
+                style="display:none"
+                ref="fileInput"
+                accept="image/*"
+                @change=onFilePicked
+              >     
             </v-flex>
             <v-flex lg6 md6 sm12 xs12>
               <div class="infoContainer">
-                  
+                <!-- displays profile fields and if onEdit allows them to be edited -->
                 <div v-if="!onEdit" style="text-align:left">
                   <p class="text" style="margin-top: 3vh; text-align:left">Email: {{fetchUserEmail}}</p> 
                   <p class="text" style="margin-top: 3vh;">Publication: {{this.$store.getters.signed_in_user.publication}}</p>
@@ -161,31 +163,29 @@
       },
       onPickFile () {
         this.$refs.fileInput.click()
-        //this.imageNotLoaded = true
       },
       onFilePicked (event) {  
-        console.log('event.target',event.target) 
         const files = event.target.files
-        
-          let file = files[0]   
-          this.file = file
-          let filename = files[0].name
-          if (filename.lastIndexOf('.') <= 0) {
+        let file = files[0]   
+        this.file = file
+        let filename = files[0].name
+        // Check if valid image file given
+        if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
           this.imageNotLoaded = false
         }
+        // fileReader.result returns the url of the file locally stored
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           this.editInfo.selectedPhotoUrl = fileReader.result
+          // update state 
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
             .then(() => {
-              this.$store.dispatch('uploadProfileImage')  
+              this.$store.dispatch('uploadProfileImage') // stores file in firebase store and download url in db
             })
         })
         this.imageNotLoaded = false
-        fileReader.readAsDataURL(files[0])
-        
-        
+        fileReader.readAsDataURL(files[0])       
       },
       resetEdit () {
         this.onEdit = false
