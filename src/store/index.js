@@ -2,15 +2,15 @@
 // store/index.js is afile that contains the global state of the application
 // as well as provides some getter functions
 
-import Vue from 'vue'
-import Vuex from 'vuex'
-import * as firebase from 'firebase'
-import 'firebase/firestore'
-import config from '../config'
-import router from '../router'
+import Vue from "vue";
+import Vuex from "vuex";
+import * as firebase from "firebase";
+import "firebase/firestore";
+import config from "../config";
+import router from "../router";
 
-firebase.initializeApp(config)
-Vue.use(Vuex)
+firebase.initializeApp(config);
+Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
@@ -18,100 +18,111 @@ export const store = new Vuex.Store({
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
-    sideNavItems: [
-      { title: 'Dashboard', icon: 'dashboard', link: '/artist_dashboard' },
+    sideNavItems: [{
+        title: "Dashboard",
+        icon: "dashboard",
+        link: "/artist_dashboard"
+      },
       //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
-      { title: 'My Account', icon: 'account_box', link: '/account' },
+      {
+        title: "My Account",
+        icon: "account_box",
+        link: "/account"
+      }
     ],
-    business_side_nav_items: [
-      { title: 'Dashboard', icon: 'dashboard', link: '/business_dashboard' },
+    business_side_nav_items: [{
+        title: "Dashboard",
+        icon: "dashboard",
+        link: "/business_dashboard"
+      },
       //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
       //{ title: 'My Account', icon: 'account_box', link: '/account' },
-      { title: 'Report', icon: 'assessment', link: '/report' },
-      { title: 'Chat', icon: 'chat', link: '/chat' }
-    ],
-    navItems: [
-      { title: 'Home', icon: 'home', link: '/', method: '' },
       {
-        title: 'Blogs/Magazines',
-        icon: 'chrome_reader_mode',
-        link: '/blogs',
-
+        title: "Report",
+        icon: "assessment",
+        link: "/report"
       },
       {
-        title: 'Support',
-        icon: 'help',
-        link: '/support',
-    
-      },
-      {
-        title: 'About Us',
-        icon: 'nature_people',
-        link: '/about_us',
-
-      },
-      {
-        title: 'Sign In',
-        icon: 'nature_people',
-        link: '/sign_in',
-     
+        title: "Chat",
+        icon: "chat",
+        link: "/chat"
       }
     ],
-    navItems_User: [
-    ],
-    navItems_signedIn: [
-      {
-        title: 'Submit Your Work',
-        icon: 'chrome_reader_mode',
-        link: '/blogs',
-
+    navItems: [{
+        title: "Home",
+        icon: "home",
+        link: "/",
+        method: ""
       },
       {
-        title: 'Support',
-        icon: 'help',
-        link: '/support',
-
+        title: "Blogs/Magazines",
+        icon: "chrome_reader_mode",
+        link: "/blogs"
       },
       {
-        title: 'About Us',
-        icon: 'nature_people',
-        link: '/about_us',
-
+        title: "Support",
+        icon: "help",
+        link: "/support"
+      },
+      {
+        title: "About Us",
+        icon: "nature_people",
+        link: "/about_us"
+      },
+      {
+        title: "Sign In",
+        icon: "nature_people",
+        link: "/sign_in"
       }
     ],
-    navItems_Business: [
-      {
-        title: 'Blogs/Magazines',
-        icon: 'chrome_reader_mode',
-        link: '/blogs',
-        method: 'dummyMethod'
+    navItems_User: [],
+    navItems_signedIn: [{
+        title: "Submit Your Work",
+        icon: "chrome_reader_mode",
+        link: "/blogs"
       },
+      {
+        title: "Support",
+        icon: "help",
+        link: "/support"
+      },
+      {
+        title: "About Us",
+        icon: "nature_people",
+        link: "/about_us"
+      }
     ],
+    navItems_Business: [{
+      title: "Blogs/Magazines",
+      icon: "chrome_reader_mode",
+      link: "/blogs",
+      method: "dummyMethod"
+    }],
     sendChatData: {
-      user: '',
-      message: '',
-      daystamp: '',
-      timestamp: '',
-      url:'',
+      user: "",
+      message: "",
+      daystamp: "",
+      timestamp: "",
+      url: ""
     },
     uploadedArts: [],
     user: null,
-    color: 'primary',
+    color: "primary",
     loading: false,
     error: null,
     image_being_uploaded: {},
     url: null,
-    logo_url: '',
-    user_role: '',
-    image_folder: '',
+    logo_url: "",
+    user_role: "",
+    image_folder: "",
     businesses: [],
     business_signing_up: {},
     artist_signing_up: {},
     clicked_business: {},
-    clicked_art:'',
+    clicked_art: "",
     art_being_submitted_is_selected: false,
     business_being_submitted_is_selected: false,
-    businesses_being_submitted:[],
+    businesses_being_submitted: [],
     test: 4,
     signed_in_user: {},
     art_being_submitted: {
@@ -119,15 +130,16 @@ export const store = new Vuex.Store({
     },
     replied_requests_for_report_datePicker:[],
     submissions_for_this_business: [],
+    submissions_for_month: [],
     submission_response: {},
     art_being_replied: {},
-    credits:0,
+    credits: 0,
     replied_submissions: [],
-    avatar: '',
-    signed_in_user_id: '',
-    signed_in_user:{},
-    blog_for_report:'',
-    subscription_plan:{},
+    avatar: "",
+    signed_in_user_id: "",
+    signed_in_user: {},
+    blog_for_report: "",
+    subscription_plan: {},
     replied_for_report: [],
     report_month: 1,
     free_credits:0,
@@ -143,7 +155,7 @@ export const store = new Vuex.Store({
         startDate: '',
         endDate: '',
       },
-
+      monthly_report_submissions: [],
       //store email of artist that was just clicked (worked on by Yas)
 
     query_business_email: '',
@@ -172,93 +184,94 @@ export const store = new Vuex.Store({
       }else{
         console.log('An error occured reading the free credits. This user may have never given any free credits.')
       }
-      
     },
-    set_artists_email_list(state,payload){
-      state.artists_email_list.push(payload)
+    set_artists_email_list(state, payload) {
+      state.artists_email_list.push(payload);
     },
-    set_blog_for_report(state, payload){
-      state.blog_for_report = payload
+    set_blog_for_report(state, payload) {
+      state.blog_for_report = payload;
     },
-    set_businesses_being_submitted(state, payload){
-      state.businesses_being_submitted = payload
+    set_businesses_being_submitted(state, payload) {
+      state.businesses_being_submitted = payload;
     },
     set_art_being_submitted_is_selected(state, payload) {
-        state.art_being_submitted_is_selected = payload
+      state.art_being_submitted_is_selected = payload;
     },
     set_business_being_submitted_is_selected(state, payload) {
-        state.business_being_submitted_is_selected = payload
+      state.business_being_submitted_is_selected = payload;
     },
-    set_art_being_replied (state, payload) {
+    set_art_being_replied(state, payload) {
       (state.art_being_replied.art_title = payload.art_title),
-        (state.art_being_replied.artist_name = payload.artist_name),
-        (state.art_being_replied.submitted_on = payload.submitted_on),
-        (state.art_being_replied.description = payload.description),
-        (state.art_being_replied.artist_id = payload.artist_id),
-        (state.art_being_replied.docId = payload.docId)
+      (state.art_being_replied.artist_name =
+        payload.artist_name),
+      (state.art_being_replied.submitted_on =
+        payload.submitted_on),
+      (state.art_being_replied.description =
+        payload.description),
+      (state.art_being_replied.artist_id = payload.artist_id),
+      (state.art_being_replied.docId = payload.docId);
     },
-    increase_credits (state, payload) {
-        state.credits = state.credits+payload
+    increase_credits(state, payload) {
+      state.credits = state.credits + payload;
     },
-    set_credits(state,payload){
-      state.credits = payload
+    set_credits(state, payload) {
+      state.credits = payload;
     },
     reset_replied_submissions(state) {
         state.replied_submissions.length = 0
     },
-    set_replied_submissions (state, payload) {
-      state.replied_submissions.push(payload)
+    set_replied_submissions(state, payload) {
+      state.replied_submissions.push(payload);
     },
-    clear_replied_submissions_array (state) {
-      state.replied_submissions = []
+    clear_replied_submissions_array(state) {
+      state.replied_submissions = [];
     },
-    set_response (state, payload) {
-      state.submission_response.response = payload.response
-      state.submission_response.radios = payload.radios
-
+    set_response(state, payload) {
+      state.submission_response.response = payload.response;
+      state.submission_response.radios = payload.radios;
     },
-    set_submission_response (state, payload) {
-      state.submission_response = payload
+    set_submission_response(state, payload) {
+      state.submission_response = payload;
     },
-    clear_submissions_for_this_business_array (state) {
-      state.submissions_for_this_business = []
+    clear_submissions_for_this_business_array(state) {
+      state.submissions_for_this_business = [];
     },
-    set_submissions_for_this_business (state, payload) {
-      state.submissions_for_this_business.push(payload)
+    set_submissions_for_this_business(state, payload) {
+      state.submissions_for_this_business.push(payload);
     },
-    set_art_being_submitted (state, payload) {
-      state.art_being_submitted.art = payload
+    set_art_being_submitted(state, payload) {
+      state.art_being_submitted.art = payload;
     },
-    set_business_being_submitted (state, payload) {
-      state.art_being_submitted.businessId = payload.businessId
-      state.art_being_submitted.submitted_on = payload.date
+    set_business_being_submitted(state, payload) {
+      state.art_being_submitted.businessId = payload.businessId;
+      state.art_being_submitted.submitted_on = payload.date;
     },
-    set_clicked_art (state, payload) {
-      state.clicked_art = payload
+    set_clicked_art(state, payload) {
+      state.clicked_art = payload;
     },
-    business_signing_up (state, payload) {
-      state.business_signing_up = payload
+    business_signing_up(state, payload) {
+      state.business_signing_up = payload;
     },
-    artist_signing_up (state, payload) {
-      state.artist_signing_up = payload
+    artist_signing_up(state, payload) {
+      state.artist_signing_up = payload;
     },
-    test (state, payload) {
-      state.test = payload
+    test(state, payload) {
+      state.test = payload;
     },
-    set_image_folder (state, payload) {
-      state.image_folder = payload
+    set_image_folder(state, payload) {
+      state.image_folder = payload;
     },
-    clear_arts_array (state) {
-      state.arts = []
+    clear_arts_array(state) {
+      state.arts = [];
     },
-    setArts (state, payload) {
-      state.arts.push(payload)
+    setArts(state, payload) {
+      state.arts.push(payload);
     },
-    clearBusinesses (state) {
-      state.businesses = []
+    clearBusinesses(state) {
+      state.businesses = [];
     },
-    setBusinesses (state, payload) {
-      state.businesses.push(payload)
+    setBusinesses(state, payload) {
+      state.businesses.push(payload);
     },
     set_replied_requests_for_report_datePicker(state, payload){
       state.replied_requests_for_report_datePicker.push(payload)
@@ -266,125 +279,110 @@ export const store = new Vuex.Store({
     clear_replied_for_report_datePicker (state) {
       state.replied_requests_for_report_datePicker = []
     },
-    setClickedBusiness (state, payload) {
-      state.clicked_business = payload
+    setClickedBusiness(state, payload) {
+      state.clicked_business = payload;
     },
-    setUserRole (state, payload) {
-      state.user_role = payload
+    setUserRole(state, payload) {
+      state.user_role = payload;
     },
-    uploadedArt (state, payload) {
-      state.uploadedArts.push(payload)
+    uploadedArt(state, payload) {
+      state.uploadedArts.push(payload);
     },
-    setUser (state, payload) {
-      state.user = payload
+    setUser(state, payload) {
+      state.user = payload;
     },
-    setUrl (state, payload) {
-      state.url = payload
+    setUrl(state, payload) {
+      state.url = payload;
     },
-    set_logo_url (state, payload) {
-      state.logo_url = payload
+    set_logo_url(state, payload) {
+      state.logo_url = payload;
     },
-    setLoading (state, payload) {
-      state.loading = payload
+    setLoading(state, payload) {
+      state.loading = payload;
     },
-    setError (state, payload) {
-      state.error = payload
+    setError(state, payload) {
+      state.error = payload;
     },
-    set_user_email (state) {
-      state.signed_in_user_email = firebase.auth().currentUser.email
+    set_user_email(state) {
+      state.signed_in_user_email = firebase.auth().currentUser.email;
     },
-    clearError (state) {
-      state.error = null
+    clearError(state) {
+      state.error = null;
     },
-    set_send_chat_data (state, payload) {
-      state.sendChatData.message = payload.message
-      state.sendChatData.user = payload.user
-      state.sendChatData.daystamp = payload.daystamp
-      state.sendChatData.timestamp = payload.timestamp
-      state.sendChatData.url = payload.url
+    set_send_chat_data(state, payload) {
+      state.sendChatData.message = payload.message;
+      state.sendChatData.user = payload.user;
+      state.sendChatData.daystamp = payload.daystamp;
+      state.sendChatData.timestamp = payload.timestamp;
+      state.sendChatData.url = payload.url;
     },
-    setUserRandColor (state) {
-      var rand = Math.floor(Math.random() * 10)
-      var randColors = [
-        'randColor1',
-        'randColor2',
-        'randColor3',
-        'randColor4',
-        'randColor5',
-        'randColor6',
-        'randColor7',
-        'randColor8',
-        'randColor9',
-        'randColor10'
-      ]
 
-      state.color = randColors[rand]
-      console.log('color: ' + state.color)
+    setUserRandColor(state) {
+      var rand = Math.floor(Math.random() * 10);
+      var randColors = [
+        "randColor1",
+        "randColor2",
+        "randColor3",
+        "randColor4",
+        "randColor5",
+        "randColor6",
+        "randColor7",
+        "randColor8",
+        "randColor9",
+        "randColor10"
+      ];
+
+      state.color = randColors[rand];
+      console.log("color: " + state.color);
     },
-    setUserColor (state, payload) {
-      state.color = payload.color
+    setUserColor(state, payload) {
+      state.color = payload.color;
     },
-    image_being_uploaded (state, payload){
-      state.image_being_uploaded = payload
+    image_being_uploaded(state, payload) {
+      state.image_being_uploaded = payload;
     },
-    set_user_email (state) {
-      state.art_being_submitted.artist_email = firebase.auth().currentUser.email
+    set_user_email(state) {
+      state.art_being_submitted.artist_email = firebase.auth().currentUser.email;
     },
-    clearError (state) {
-      state.error = null
+    clearError(state) {
+      state.error = null;
     },
-    signed_in_user_id (state, payload) {
-      state.signed_in_user_id = payload
+    signed_in_user_id(state, payload) {
+      state.signed_in_user_id = payload;
     },
-    signed_in_user (state, payload) {
-      state.signed_in_user = payload
+    signed_in_user(state, payload) {
+      state.signed_in_user = payload;
     },
-    sign_out_signed_in_user (state) {
-      state.signed_in_user = null
-      state.url = null
-      state.color = 'primary'
+    sign_out_signed_in_user(state) {
+      state.signed_in_user = null;
+      state.url = null;
+      state.color = "primary";
     },
-    set_replied_for_report (state, payload) {
-      state.replied_for_report.push(payload)
+    set_replied_for_report(state, payload) {
+      state.replied_for_report.push(payload);
     },
-    set_report_month (state, payload) {
-      state.report_month = payload
+    set_report_month(state, payload) {
+      state.report_month = payload;
     },
-    set_select_blog (state, payload) {
+    set_select_blog(state, payload) {
       (state.selectBlog.name = payload.name),
       (state.selectBlog.userId = payload.userId),
-      (state.selectBlog.role = payload.role)
+      (state.selectBlog.role = payload.role);
+    },
+    set_submissions_for_month(state, payload) {
+      //aortizoj
+      state.submissions_for_month.push(payload);
+    },
+    clear_submissions_for_month_array(state) {
+      //aortizoj
+      state.submissions_for_month = [];
+    },
+    set_monthly_report_submissions(state, payload) {
+      state.monthly_report_submissions = payload;
     }
   },
-  actions: {      
-    // for report
-    get_replied ({commit, getters}) {
-      let db = firebase.firestore()
-      var temp_report = db.collection('review_requests')
-                          // .orderBy('submitted_on')
-                          .where('replied', '==', true)
-                          .where('businessId.userId', '==', getters.user.id)
-                          console.log("temp report", temp_report)
-      let report = temp_report
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              var month = getters.report_month
-              const today = Date.now()
-              const timeDiff = today - (1000*60*60*24*30*month)
-              if (doc.data().submitted_on >= timeDiff) {
-                if (doc.data().submitted_on <= today) {
-                  commit('set_replied_for_report', doc.data())
-                }
-              }
-            })
-          })
-          .catch(function (error) {
-            console.log('Error getting report: ', error)
-          })
-    }, 
-
-   //for datePicker
+  actions: {
+       //for datePicker
 
 
    //test cases: 
@@ -404,7 +402,7 @@ export const store = new Vuex.Store({
    //make the entire (dashboard) row clickable instead of just the email
    //
 
-    report_datePicker({commit, state})
+   report_datePicker({commit, state})
    {
        commit('clear_replied_for_report_datePicker')
        let db = firebase.firestore()
@@ -424,286 +422,521 @@ export const store = new Vuex.Store({
          }
        })
    },
-signUserInGoogle({
-  commit,getters
-  }) {
-  commit('setLoading', true)
-  commit('clearError')
-  firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())
-  .then(
-  user => {
-  localStorage.setItem('userId', 1000)
-  commit('setLoading', false)
-  const newUser = {
-  upload_date: Date.now(),
-  userId: firebase.auth().currentUser.uid,
-  name: user.additionalUserInfo.profile.name,
-  email: user.additionalUserInfo.profile.email,
-  photoUrl: user.additionalUserInfo.profile.picture,
-  role: 'artist',
-  credits: 0
-  }
-  console.log('newUserid: ' + newUser.userId + 'name' + newUser.name + 'email ' + user.additionalUserInfo.profile.email)
-  console.log('current picture')
-  commit('setUser', newUser)
-  console.log('getters.user.id' + getters.user.id)
-  const db = firebase.firestore()
-  var artistRef = db.collection('users').doc(newUser.userId);
-  var getDoc = artistRef.get()
-      .then(doc => {
-          if (!doc.exists) {
-            if(typeof newUser.photoUrl === 'string') {
-              commit('setUrl', newUser.photoUrl)
-            }else{
-              commit('setUrl', newUser.photoUrl.data.url)
+
+    get_replied({
+      commit,
+      getters
+    }) {
+      let db = firebase.firestore();
+      var temp_report = db
+        .collection("review_requests")
+        // .orderBy('submitted_on')
+        .where("replied", "==", true)
+        .where("businessId.userId", "==", getters.user.id);
+      console.log("temp report", temp_report);
+      let report = temp_report
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            var month = getters.report_month;
+            const today = Date.now();
+            const timeDiff =
+              today - 1000 * 60 * 60 * 24 * 30 * month;
+            if (doc.data().submitted_on >= timeDiff) {
+              if (doc.data().submitted_on <= today) {
+                commit("set_replied_for_report", doc.data());
+              }
             }
-            commit('signed_in_user', newUser)
-            commit('setUserRole', 'artist')
-            console.log('user doesnt exist')
-            db.collection('users').doc(newUser.userId)
-              .set(newUser)
-              .then(function(){
+          });
+        })
+        .catch(function (error) {
+          console.log("Error getting report: ", error);
+        });
+    },
+    get_monthly_report_submissions({
+      commit,
+      getters
+    }, year_month) {
+      console.log("year month: " + typeof year_month)
+      let first_of_month_array = year_month.split("-")
+      first_of_month_array.push("00", "00", "00", "00")
+      let last_of_month_array = first_of_month_array
+      let first_of_month = new Date(...first_of_month_array)
+      let last_of_month = new Date(...last_of_month_array)
+      last_of_month.setMonth(first_of_month.getMonth())
+      first_of_month.setMonth(first_of_month.getMonth() - 1)
+      console.log("first of month: " + first_of_month)
+      console.log("last of month: " + last_of_month)
+      first_of_month = first_of_month.valueOf()
+      last_of_month = last_of_month.valueOf()
+      console.log("first of month: " + first_of_month)
+      console.log("last of month: " + last_of_month)
+      let db = firebase.firestore();
+      let temp_report = db.collection("review_requests");
+      let query = temp_report
+        .where("submitted_on", ">", first_of_month)
+        .where("submitted_on", "<", last_of_month);
+      query
+        .get()
+        .then(function (results) {
+          // go through all results
+          let submissions = []
+          results.forEach(function (doc) {
+            submissions.push(doc.data())
+          });
+          commit("set_monthly_report_submissions", submissions);
+          // set_replied_requests_for_report
+          // or if you only want the first result you can also do something like this:
+          console.log("Document data:", submissions);
+        
+        })
+        .catch(function (error) {
+          console.log("Error getting documents:", error);
+        });
+
+    },
+    // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
+    get_submissions_for_month({
+      commit,
+      getters
+    }) {
+      //aortizoj
+      commit("clear_submissions_for_month_array");
+      let today = Date.now();
+      let date = new Date(today);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      let firstDayOfMonth =
+        year +
+        "-" +
+        month +
+        "-" +
+        "01" +
+        "-" +
+        "00" +
+        "-" +
+        "00" +
+        "-" +
+        "00";
+      let split_firstDayOfMonth = firstDayOfMonth.split("-");
+      let epoch_firstDayOfMonth = new Date(
+        split_firstDayOfMonth[0],
+        split_firstDayOfMonth[1] - 1,
+        split_firstDayOfMonth[2],
+        split_firstDayOfMonth[3],
+        split_firstDayOfMonth[4],
+        split_firstDayOfMonth[5]
+      ).valueOf();
+      let lastDayOfMonth =
+        year +
+        "-" +
+        (month + 1) +
+        "-" +
+        "01" +
+        "-" +
+        "00" +
+        "-" +
+        "00" +
+        "-" +
+        "00";
+      let split_lastDayOfMonth = lastDayOfMonth.split("-", "");
+      let epoch_lastDayOfMonth = new Date(
+        split_lastDayOfMonth[0],
+        split_lastDayOfMonth[1] - 1,
+        split_lastDayOfMonth[2],
+        split_lastDayOfMonth[3],
+        split_lastDayOfMonth[4],
+        split_lastDayOfMonth[5]
+      ).valueOf();
+      let db = firebase.firestore();
+      let temp_report = db.collection("review_requests");
+      let query = temp_report
+        .where("submitted_on", ">", epoch_firstDayOfMonth)
+        .where("submitted_on", "<", epoch_lastDayOfMonth);
+      query
+        .get()
+        .then(function (results) {
+          if (results.empty) {
+            console.log("No documents found!");
+          } else {
+            // go through all results
+            results.forEach(function (doc) {
+              commit("set_submissions_for_month", doc.data());
+            });
+            // set_replied_requests_for_report
+            // or if you only want the first result you can also do something like this:
+            console.log("Document data:", results.docs[0].data());
+          }
+        })
+        .catch(function (error) {
+          console.log("Error getting documents:", error);
+        });
+    },
+    signUserInGoogle({
+      commit,
+      getters
+    }) {
+      commit("setLoading", true);
+      commit("clearError");
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(user => {
+          localStorage.setItem("userId", 1000);
+          commit("setLoading", false);
+          const newUser = {
+            upload_date: Date.now(),
+            userId: firebase.auth().currentUser.uid,
+            name: user.additionalUserInfo.profile.name,
+            email: user.additionalUserInfo.profile.email,
+            photoUrl: user.additionalUserInfo.profile.picture,
+            role: "artist",
+            credits: 0
+          };
+          console.log(
+            "newUserid: " +
+            newUser.userId +
+            "name" +
+            newUser.name +
+            "email " +
+            user.additionalUserInfo.profile.email
+          );
+          console.log("current picture");
+          commit("setUser", newUser);
+          console.log("getters.user.id" + getters.user.id);
+          const db = firebase.firestore();
+          var artistRef = db
+            .collection("users")
+            .doc(newUser.userId);
+          var getDoc = artistRef
+            .get()
+            .then(doc => {
+              if (!doc.exists) {
+                if (typeof newUser.photoUrl === "string") {
+                  commit("setUrl", newUser.photoUrl);
+                } else {
+                  commit("setUrl", newUser.photoUrl.data.url);
+                }
+                commit("signed_in_user", newUser);
+                commit("setUserRole", "artist");
+                console.log("user doesnt exist");
+                db.collection("users")
+                  .doc(newUser.userId)
+                  .set(newUser)
+                  .then(function () {
+                    router.push({
+                      name: "artist_dashboard"
+                    });
+                    console.log("Artist successfully written!");
+                  });
+              } else {
+                console.log("user exists");
+                let check = db
+                  .collection("users")
+                  .where("userId", "==", newUser.userId)
+                  .get()
+                  .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                      console.log("found a document");
+                      if (
+                        typeof doc.data().photoUrl === "string"
+                      ) {
+                        console.log(
+                          "doc.data().photoUrl" +
+                          doc.data().photoUrl
+                        );
+                        commit("setUrl", doc.data().photoUrl);
+                      } else {
+                        console.log("no photo url");
+                      }
+                      commit("setUserRole", doc.data().role);
+                      commit("signed_in_user", doc.data());
+
+                      console.log("user: " + doc.data());
+                      router.push({
+                        name: "artist_dashboard"
+                      });
+                    });
+                  })
+                  .catch(function (error) {
+                    console.log(
+                      "Error getting documents: ",
+                      error
+                    );
+                  });
+              }
+            })
+            .catch(err => {
+              console.log("Error getting document", err);
+            });
+        });
+    },
+    signUserInFacebook({
+      commit
+    }) {
+      commit("setLoading", true);
+      commit("clearError");
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.FacebookAuthProvider())
+        .then(user => {
+          commit("setLoading", false);
+          localStorage.setItem("userId", 1000);
+          const newUser = {
+            upload_date: Date.now(),
+            userId: firebase.auth().currentUser.uid,
+            name: user.additionalUserInfo.profile.name,
+            email: user.additionalUserInfo.profile.email,
+            photoUrl: user.additionalUserInfo.profile.picture,
+            role: "artist",
+            credits: 0
+          };
+          console.log(
+            "newUserid: " +
+            newUser.userId +
+            "name" +
+            newUser.name +
+            "email " +
+            user.additionalUserInfo.profile.email
+          );
+          commit("setUser", newUser);
+          //console.log('getters.user.id' + getters.user.id)
+          const db = firebase.firestore();
+
+          var artistRef = db
+            .collection("users")
+            .doc(newUser.userId);
+          var getDoc = artistRef
+            .get()
+            .then(doc => {
+              if (!doc.exists) {
+                console.log("user doesnt exist");
+                if (typeof newUser.photoUrl === "string") {
+                  commit("setUrl", newUser.photoUrl);
+                } else {
+                  commit("setUrl", newUser.photoUrl.data.url);
+                }
+                commit("signed_in_user", newUser);
+                commit("setUserRole", "artist");
                 router.push({
-                  name: 'artist_dashboard'
-                })
-              console.log('Artist successfully written!')
-            })
-
-      } else {
-        console.log('user exists')
-        let check = db
-        .collection('users')
-        .where('userId', '==', newUser.userId)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            console.log('found a document')
-            if(typeof doc.data().photoUrl === 'string') {
-              console.log('doc.data().photoUrl' + doc.data().photoUrl)
-              commit('setUrl', doc.data().photoUrl)
-            } else {
-              console.log('no photo url')
-            }
-            commit('setUserRole', doc.data().role)
-            commit('signed_in_user', doc.data())
-           
-            console.log('user: ' + doc.data())
-            router.push({
-              name: 'artist_dashboard'
-            })
-          })
-        })
-        .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
-      }
-      })
-      .catch(err => {
-          console.log('Error getting document', err);
-      });
-  })
-  },
-  signUserInFacebook({
-  commit
-  }) {
-  commit('setLoading', true)
-  commit('clearError')
-  firebase.auth().signInWithPopup(new firebase.auth.FacebookAuthProvider())
-  .then(
-  user => {
-  commit('setLoading', false)
-  localStorage.setItem('userId', 1000)
-  const newUser = {
-  upload_date: Date.now(),
-  userId: firebase.auth().currentUser.uid,
-  name: user.additionalUserInfo.profile.name,
-  email: user.additionalUserInfo.profile.email,
-  photoUrl: user.additionalUserInfo.profile.picture,
-  role: 'artist',
-  credits: 0
-  }
-  console.log('newUserid: ' + newUser.userId + 'name' + newUser.name + 'email ' + user.additionalUserInfo.profile.email)
-  commit('setUser', newUser)
-  //console.log('getters.user.id' + getters.user.id)
-  const db = firebase.firestore()
-
-  var artistRef = db.collection('users').doc(newUser.userId);
-  var getDoc = artistRef.get()
-      .then(doc => {
-          if (!doc.exists) {
-            console.log('user doesnt exist')
-            if(typeof newUser.photoUrl === 'string') {
-              commit('setUrl', newUser.photoUrl)
-            } else {
-              commit('setUrl', newUser.photoUrl.data.url)
-            }
-            commit('signed_in_user', newUser)
-            commit('setUserRole', 'artist')
-            router.push({
-              name: 'artist_dashboard'
-            })
-            db.collection('users').doc(newUser.userId)
-              .set(newUser)
-              .then(function(){
-              console.log('Artist successfully written!')
-            })
-
-      } else {
-        console.log('user exists')
-        let check = db
-        .collection('users')
-        .where('userId', '==', newUser.userId)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            console.log('found a document')
-            console.log('photoUrl ' + doc.data().photoUrl.data.url)
-            if(typeof doc.data().photoUrl === 'string') {
-              commit('setUrl', doc.data().photoUrl)
-            } else {
-              commit('setUrl', doc.data().photoUrl.data.url)
-            }
-            commit('setUserRole', doc.data().role)
-            commit('signed_in_user', doc.data())
-            router.push({
-              name: 'artist_dashboard'
-            })
-            console.table(doc.data())
-            console.log('user: ' + doc.data())
-          })
-        })
-        .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
-      }
-      })
-      .catch(err => {
-          console.log('Error getting document', err);
-      });
-  }
-  )
-  },
-  update_review_read_byUser_status({commit},payload){
-    console.log('payload: ', payload)
-    const db = firebase.firestore()
-    const collectionRef = db
-              .collection('review_requests')
-              .where('art.upload_date', '==', payload)
-              .get().
-              then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                  var docRef = db.collection("review_requests").doc(doc.id);
-
-                  return docRef.update({
-                    read_byartist:true
-                  })
-                  .then(function() {
-                      console.log("read_by user field successfully updated!");
-                  })
-                  .catch(function(error) {
-                      // The document probably doesn't exist.
-                      console.error("Error updating read by user field: ", error);
-                  })
+                  name: "artist_dashboard"
                 });
+                db.collection("users")
+                  .doc(newUser.userId)
+                  .set(newUser)
+                  .then(function () {
+                    console.log("Artist successfully written!");
+                  });
+              } else {
+                console.log("user exists");
+                let check = db
+                  .collection("users")
+                  .where("userId", "==", newUser.userId)
+                  .get()
+                  .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                      console.log("found a document");
+                      console.log(
+                        "photoUrl " + doc.data().photoUrl.data.url
+                      );
+                      if (
+                        typeof doc.data().photoUrl === "string"
+                      ) {
+                        commit("setUrl", doc.data().photoUrl);
+                      } else {
+                        commit(
+                          "setUrl",
+                          doc.data().photoUrl.data.url
+                        );
+                      }
+                      commit("setUserRole", doc.data().role);
+                      commit("signed_in_user", doc.data());
+                      router.push({
+                        name: "artist_dashboard"
+                      });
+                      console.table(doc.data());
+                      console.log("user: " + doc.data());
+                    });
+                  })
+                  .catch(function (error) {
+                    console.log(
+                      "Error getting documents: ",
+                      error
+                    );
+                  });
+              }
             })
-  },
-  
-    update_user_credit({ getters },payload) {
-            const db = firebase.firestore()
-            const collectionRef = db
-              .collection('users')
-              .doc(firebase.auth().currentUser.uid)
-              console.log('updating user: ',firebase.auth().currentUser.uid)
-              let credit_after_purchase = payload
-            return collectionRef
-              .update({
-                credits: payload,
-              })
-              console.log('credit amount: ',credit_after_purchase)
-              .then(function () {
-                console.log('Users credits successfully updated!')
-              })
-              .catch(function (error) {
-                // The document probably doesn't exist.
-                console.error('Error updating updating user credit: ', error)
-              })
-          },
-          update_user_free_credit({ getters },payload) {
-            const db = firebase.firestore()
-            const collectionRef = db
-              .collection('users')
-              .doc(firebase.auth().currentUser.uid)
-              console.log('updating user: ',firebase.auth().currentUser.uid)
-              let free_credit_after_purchase = payload
-            return collectionRef
-              .update({
-                free_credits: payload,
-              })
-              console.log('credit amount: ',credit_after_purchase)
-              .then(function () {
-                console.log('Users credits successfully updated!')
-              })
-              .catch(function (error) {
-                // The document probably doesn't exist.
-                console.error('Error updating updating user credit: ', error)
-              })
-          },
-          update_user_subscription({ getters },payload) {
-            const db = firebase.firestore()
-            const collectionRef = db
-              .collection('users')
-              .doc(firebase.auth().currentUser.uid)
-              console.log('updating user: ',firebase.auth().currentUser.uid)
-            return collectionRef
-              .update({
-                subscription: payload,
-              })
-              .then(function () {
-                console.log('Users subscription successfully updated!')
-              })
-              .catch(function (error) {
-                // The document probably doesn't exist.
-                console.error('Error updating updating user subscription: ', error)
-              })
-          },
-   get_user_credit({commit}, payload){
-    const db = firebase.firestore()
-    const collectionRef = db
-      .collection('users')
-      .doc(payload)
-      .get()
-      .then(function (doc) {
-        if (doc.exists) {
-          console.log("Credits:", doc.data().credits)
-          commit('set_credits', doc.data().credits )
-          commit('set_free_credits', doc.data().free_credits )
-      } else {
-          console.log("No such document!");
-      }
-    }).catch(function(error) {
-        console.log("Error getting document:", error)
-      })
+            .catch(err => {
+              console.log("Error getting document", err);
+            });
+        });
+    },
+    update_review_read_byUser_status({
+      commit
+    }, payload) {
+      console.log("payload: ", payload);
+      const db = firebase.firestore();
+      const collectionRef = db
+        .collection("review_requests")
+        .where("art.upload_date", "==", payload)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            var docRef = db
+              .collection("review_requests")
+              .doc(doc.id);
 
+            return docRef
+              .update({
+                read_byartist: true
+              })
+              .then(function () {
+                console.log(
+                  "read_by user field successfully updated!"
+                );
+              })
+              .catch(function (error) {
+                // The document probably doesn't exist.
+                console.error(
+                  "Error updating read by user field: ",
+                  error
+                );
+              });
+          });
+        });
+    },
 
-   },
-   get_user_email ({ commit }, payload) {
-      let auth = firebase.auth()
+    update_user_credit({
+      getters
+    }, payload) {
+      const db = firebase.firestore();
+      const collectionRef = db
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      console.log(
+        "updating user: ",
+        firebase.auth().currentUser.uid
+      );
+      let credit_after_purchase = payload;
+      return collectionRef.update({
+        credits: payload
+      });
+      console
+        .log("credit amount: ", credit_after_purchase)
+        .then(function () {
+          console.log("Users credits successfully updated!");
+        })
+        .catch(function (error) {
+          // The document probably doesn't exist.
+          console.error(
+            "Error updating updating user credit: ",
+            error
+          );
+        });
+    },
+    update_user_free_credit({
+      getters
+    }, payload) {
+      const db = firebase.firestore();
+      const collectionRef = db
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      console.log(
+        "updating user: ",
+        firebase.auth().currentUser.uid
+      );
+      let free_credit_after_purchase = payload;
+      return collectionRef.update({
+        free_credits: payload
+      });
+      console
+        .log("credit amount: ", credit_after_purchase)
+        .then(function () {
+          console.log("Users credits successfully updated!");
+        })
+        .catch(function (error) {
+          // The document probably doesn't exist.
+          console.error(
+            "Error updating updating user credit: ",
+            error
+          );
+        });
+    },
+    update_user_subscription({
+      getters
+    }, payload) {
+      const db = firebase.firestore();
+      const collectionRef = db
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      console.log(
+        "updating user: ",
+        firebase.auth().currentUser.uid
+      );
+      return collectionRef
+        .update({
+          subscription: payload
+        })
+        .then(function () {
+          console.log("Users subscription successfully updated!");
+        })
+        .catch(function (error) {
+          // The document probably doesn't exist.
+          console.error(
+            "Error updating updating user subscription: ",
+            error
+          );
+        });
+    },
+    get_user_credit({
+      commit
+    }, payload) {
+      const db = firebase.firestore();
+      const collectionRef = db
+        .collection("users")
+        .doc(payload)
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            console.log("Credits:", doc.data().credits);
+            commit("set_credits", doc.data().credits);
+            commit("set_free_credits", doc.data().free_credits);
+          } else {
+            console.log("No such document!");
+          }
+        })
+        .catch(function (error) {
+          console.log("Error getting document:", error);
+        });
+    },
+    get_user_email({
+      commit
+    }, payload) {
+      let auth = firebase.auth();
       admin
         .auth()
         .getUserByEmail(email)
         .then(function (userRecord) {
           // See the UserRecord reference doc for the contents of userRecord.
-          console.log('Successfully fetched user data:', userRecord.toJSON())
+          console.log(
+            "Successfully fetched user data:",
+            userRecord.toJSON()
+          );
         })
         .catch(function (error) {
-          console.log('Error fetching user data:', error)
-        })
+          console.log("Error fetching user data:", error);
+        });
     },
 
-    reset_password ({ commit }, payload) {
-      console.log(payload)
-      let auth = firebase.auth()
-      let emailAddress = payload
+    reset_password({
+      commit
+    }, payload) {
+      console.log(payload);
+      let auth = firebase.auth();
+      let emailAddress = payload;
       auth
         .sendPasswordResetEmail(payload)
         .then(function () {
@@ -711,225 +944,255 @@ signUserInGoogle({
         })
         .catch(function (error) {
           // An error happened.
-        })
+        });
     },
-    get_users ({ commit }) {
-      commit('clearBusinesses')
-      let db = firebase.firestore()
+    get_users({
+      commit
+    }) {
+      commit("clearBusinesses");
+      let db = firebase.firestore();
       let businesses = db
-        .collection('users')
-        .where('role', '==', 'business')
+        .collection("users")
+        .where("role", "==", "business")
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('setBusinesses', doc.data())
-          })
+            commit("setBusinesses", doc.data());
+          });
         })
         .catch(function (error) {
-          console.log('Error getting businesses: ', error)
-        })
+          console.log("Error getting businesses: ", error);
+        });
     },
-    get_email_list_of_artists({ commit }) {
-      console.log('inside  get_email_list_of_artists')
-      let db = firebase.firestore()
+    get_email_list_of_artists({
+      commit
+    }) {
+      console.log("inside  get_email_list_of_artists");
+      let db = firebase.firestore();
       let artists = db
-        .collection('users')
-        .where('role', '==', 'artist')
+        .collection("users")
+        .where("role", "==", "artist")
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('set_artists_email_list', {artist_name: doc.data().name, artist_email: doc.data().email })
-          })
+            commit("set_artists_email_list", {
+              artist_name: doc.data().name,
+              artist_email: doc.data().email
+            });
+          });
         })
         .catch(function (error) {
-          console.log('Error getting businesses: ', error)
-        })
+          console.log("Error getting businesses: ", error);
+        });
     },
 
-
-   fetch_replied_submissions ({ commit, getters }) {
-      commit('clear_submissions_for_this_business_array')
-      let db = firebase.firestore()
+    fetch_replied_submissions({
+      commit,
+      getters
+    }) {
+      commit("clear_submissions_for_this_business_array");
+      let db = firebase.firestore();
       let role = db
-        .collection('review_requests')
-        .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
+        .collection("review_requests")
+        .where("replied", "==", true)
+        .where("art.artist_id", "==", getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('set_replied_submissions', doc.data())
-          })
+            commit("set_replied_submissions", doc.data());
+          });
         })
         .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
+          console.log("Error getting documents: ", error);
+        });
     },
 
-   fetch_clicked_business ({ commit, getters }) {
-      let db = firebase.firestore()
+    fetch_clicked_business({
+      commit,
+      getters
+    }) {
+      let db = firebase.firestore();
       let role = db
-        .collection('users')
-        .where('userId', '==', getters.user.id)
+        .collection("users")
+        .where("userId", "==", getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('setUserRole', doc.data().role)
-          })
+            commit("setUserRole", doc.data().role);
+          });
         })
         .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
+          console.log("Error getting documents: ", error);
+        });
     },
-   async fetchUserDocument ({ commit, getters }) {
-      console.log('getters.user.id' + getters.user.id)
-      let db = firebase.firestore()
+    async fetchUserDocument({
+      commit,
+      getters
+    }) {
+      console.log("getters.user.id" + getters.user.id);
+      let db = firebase.firestore();
       let user = await db
-        .collection('users')
-        .where('userId', '==', getters.user.id)
+        .collection("users")
+        .where("userId", "==", getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('setUserRole', doc.data().role)
-            commit('signed_in_user', doc.data())
-            commit('set_credits',doc.data().credits )
-            commit('set_free_credits', doc.data().free_credits)
-          })
+            commit("setUserRole", doc.data().role);
+            commit("signed_in_user", doc.data());
+            commit("set_credits", doc.data().credits);
+            commit("set_free_credits", doc.data().free_credits);
+          });
         })
         .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
-      console.log('getters.user_role:' + getters.user_role)
-      console.log('getters.user_rid:' + getters.user.id)
-      console.log('getters.user_credit:' + getters.credits)
+          console.log("Error getting documents: ", error);
+        });
+      console.log("getters.user_role:" + getters.user_role);
+      console.log("getters.user_rid:" + getters.user.id);
+      console.log("getters.user_credit:" + getters.credits);
     },
 
-   fetchArts ({ commit, getters }) {
-      commit('setLoading', true)
-      commit('clear_arts_array')
-      let db = firebase.firestore()
+    fetchArts({
+      commit,
+      getters
+    }) {
+      commit("setLoading", true);
+      commit("clear_arts_array");
+      let db = firebase.firestore();
       let arts = db
-        .collection('art')
-        .where('artist_id', '==', getters.user.id)
+        .collection("art")
+        .where("artist_id", "==", getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            commit('setArts', doc.data())
-          })
-          commit('setLoading', false)
+            commit("setArts", doc.data());
+          });
+          commit("setLoading", false);
         })
         .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
+          console.log("Error getting documents: ", error);
+        });
     },
 
     // this function gets the submissions for a business and
-   async fetchSubmissions ({ commit, getters }) {
-      commit('clear_submissions_for_this_business_array')
-      const db = firebase.firestore()
+    async fetchSubmissions({
+      commit,
+      getters
+    }) {
+      commit("clear_submissions_for_this_business_array");
+      const db = firebase.firestore();
       const collectionRef = await db
-        .collection('review_requests')
-        .where('businessId.userId', '==', getters.user.id)
-        .where('replied', '==', false)
+        .collection("review_requests")
+        .where("businessId.userId", "==", getters.user.id)
+        .where("replied", "==", false)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            let docData = doc.data()
-            console.log('doc.data: ' + docData)
-            console.log('doc.id: ' + doc.id)
-            docData.docId = doc.id
+            let docData = doc.data();
+            console.log("doc.data: " + docData);
+            console.log("doc.id: " + doc.id);
+            docData.docId = doc.id;
 
-            console.log('doc.data: ' + docData.docId)
-            commit('set_submissions_for_this_business', docData)
-            console.log(doc.id, ' => ', doc.data())
-          })
+            console.log("doc.data: " + docData.docId);
+            commit("set_submissions_for_this_business", docData);
+            console.log(doc.id, " => ", doc.data());
+          });
         })
         .catch(function (error) {
-          console.log('Error getting submissions: ', error)
-        })
+          console.log("Error getting submissions: ", error);
+        });
     },
-    async fetch_all_Submissions ({ commit, getters }) {
-      commit('clear_submissions_for_this_business_array')
-      const db = firebase.firestore()
+    async fetch_all_Submissions({
+      commit,
+      getters
+    }) {
+      commit("clear_submissions_for_this_business_array");
+      const db = firebase.firestore();
       const collectionRef = await db
-        .collection('review_requests')
-        .where('businessId.userId', '==', getters.user.id)
+        .collection("review_requests")
+        .where("businessId.userId", "==", getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
-            let docData = doc.data()
-            console.log('doc.data: ' + docData)
-            console.log('doc.id: ' + doc.id)
-            docData.docId = doc.id
+            let docData = doc.data();
+            console.log("doc.data: " + docData);
+            console.log("doc.id: " + doc.id);
+            docData.docId = doc.id;
 
-            console.log('doc.data: ' + docData.docId)
-            commit('set_submissions_for_this_business', docData)
-            console.log(doc.id, ' => ', doc.data())
-          })
+            console.log("doc.data: " + docData.docId);
+            commit("set_submissions_for_this_business", docData);
+            console.log(doc.id, " => ", doc.data());
+          });
         })
         .catch(function (error) {
-          console.log('Error getting submissions: ', error)
-        })
+          console.log("Error getting submissions: ", error);
+        });
     },
 
-      // Styled by Jin. No modification on code.
-      uploadImage({commit, getters}, payload) {
-        // first put the image in the storage
-        // Create a root reference
-        let ref = firebase.storage().ref()
-        let uploadTask = ref
-          .child(
-            getters.user.id +
-            getters.image_folder +
-            getters.image_being_uploaded.file.name
-          )
-          .put(getters.image_being_uploaded.file)
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(
-          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function (snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused')
-                break
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running')
-                break
-            }
-          },
-          function (error) {
-            // A full list of error codes is available at
-            switch (error.code) {
-              case 'storage/unauthorized':
-                alert(error.code)
-                // User doesn't have permission to access the object
-                break
+    // Styled by Jin. No modification on code.
+    uploadImage({
+      commit,
+      getters
+    }, payload) {
+      // first put the image in the storage
+      // Create a root reference
+      let ref = firebase.storage().ref();
+      let uploadTask = ref
+        .child(
+          getters.user.id +
+          getters.image_folder +
+          getters.image_being_uploaded.file.name
+        )
+        .put(getters.image_being_uploaded.file);
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+        function (snapshot) {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) *
+            100;
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log("Upload is paused");
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log("Upload is running");
+              break;
+          }
+        },
+        function (error) {
+          // A full list of error codes is available at
+          switch (error.code) {
+            case "storage/unauthorized":
+              alert(error.code);
+              // User doesn't have permission to access the object
+              break;
 
-              case 'storage/canceled':
-                alert(error.code)
-                // User canceled the upload
-                break
-              case 'storage/unknown':
-                alert(error.code)
-                // Unknown error occurred, inspect error.serverResponse
-                break
-            }
-          },
-          function () {
-            // Upload completed successfully, now we can get the download URL
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              commit('setUrl', downloadURL) // Jin: this led to profile url change.
-              if (payload.operation === 'art_upload') {
+            case "storage/canceled":
+              alert(error.code);
+              // User canceled the upload
+              break;
+            case "storage/unknown":
+              alert(error.code);
+              // Unknown error occurred, inspect error.serverResponse
+              break;
+          }
+        },
+        function () {
+          // Upload completed successfully, now we can get the download URL
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then(function (downloadURL) {
+              commit("setUrl", downloadURL); // Jin: this led to profile url change.
+              if (payload.operation === "art_upload") {
                 let art = {
                   art_title: payload.art_title,
                   artist_name: payload.artist_name,
@@ -938,38 +1201,46 @@ signUserInGoogle({
                   upload_date: payload.upload_date,
                   artist_id: firebase.auth().currentUser.uid
                 };
-                const db = firebase.firestore()
-                const collectionRef = db.collection('art')
+                const db = firebase.firestore();
+                const collectionRef = db.collection("art");
                 collectionRef
                   .add(art)
                   .then(function (docRef) {
-                    commit('setArts', art);
-                    console.log('Document written with ID: ', docRef.id)
+                    commit("setArts", art);
+                    console.log(
+                      "Document written with ID: ",
+                      docRef.id
+                    );
                   })
                   .catch(function (error) {
-                    console.error('Error adding document: ', error)
-                  })
+                    console.error(
+                      "Error adding document: ",
+                      error
+                    );
+                  });
               }
-            })
-          }
-        )
-
-        let art = {
-          art_title: payload.art_title,
-          artist_name: payload.artist_name,
-          url: getters.url,
-          description: payload.description,
-          upload_date: payload.upload_date,
-          artist_id: getters.user.id
+            });
         }
+      );
 
-        // upload the artist data and the url
-      },
-   submit_submission_response ({ getters }) {
-      const db = firebase.firestore()
+      let art = {
+        art_title: payload.art_title,
+        artist_name: payload.artist_name,
+        url: getters.url,
+        description: payload.description,
+        upload_date: payload.upload_date,
+        artist_id: getters.user.id
+      };
+
+      // upload the artist data and the url
+    },
+    submit_submission_response({
+      getters
+    }) {
+      const db = firebase.firestore();
       const collectionRef = db
-        .collection('review_requests')
-        .doc(getters.art_being_replied.docId)
+        .collection("review_requests")
+        .doc(getters.art_being_replied.docId);
       return collectionRef
         .update({
           replied: true,
@@ -978,143 +1249,181 @@ signUserInGoogle({
           replied_date: Date.now()
         })
         .then(function () {
-          console.log('Submission successfully updated!')
+          console.log("Submission successfully updated!");
         })
         .catch(function (error) {
           // The document probably doesn't exist.
-          console.error('Error updating dsubmission: ', error)
-        })
+          console.error("Error updating dsubmission: ", error);
+        });
     },
-   submit_request ({ getters }) {
-     let businesses_being_submitted =  getters.businesses_being_submitted
-     for (let i = 0; i < businesses_being_submitted.length; i++) { 
-      let art_being_submitted = getters.art_being_submitted
-      art_being_submitted.submitted_on = Date.now()      
-      art_being_submitted.submitted_with_free_cerdit = false
-      console.log("art_being_submitted", art_being_submitted)
-      art_being_submitted.businessId = businesses_being_submitted[i]
-      console.log("art_being_submitted", art_being_submitted)
-      const db = firebase.firestore()
+    submit_request({
+      getters
+    }) {
+      let businesses_being_submitted =
+        getters.businesses_being_submitted;
+      for (
+        let i = 0; i < businesses_being_submitted.length; i++
+      ) {
+        let art_being_submitted = getters.art_being_submitted;
+        art_being_submitted.submitted_on = Date.now();
+        art_being_submitted.submitted_with_free_cerdit = false;
+        console.log("art_being_submitted", art_being_submitted);
+        art_being_submitted.businessId =
+          businesses_being_submitted[i];
+        console.log("art_being_submitted", art_being_submitted);
+        const db = firebase.firestore();
+        const collectionRef = db
+          .collection("review_requests")
+          .doc()
+          .set(art_being_submitted)
+          .then(function (docRef) {
+            console.log(
+              "Submission written with ID: ",
+              docRef.id
+            );
+            // router.push({
+            //   name: 'submit_result'
+            // })
+          })
+          .catch(function (error) {
+            console.error("Error adding document: ", error);
+          });
+      }
+    },
+    submit_school_request({
+        commit,
+        getters,
+        dispatch
+      },
+      payload
+    ) {
+      const db = firebase.firestore();
       const collectionRef = db
-        .collection('review_requests')
+        .collection("school_requests")
         .doc()
-        .set(art_being_submitted)
+        .set(payload)
         .then(function (docRef) {
-          console.log('Submission written with ID: ', docRef.id)
+          console.log(
+            "School submission written with ID: ",
+            docRef.id
+          );
           // router.push({
           //   name: 'submit_result'
           // })
         })
         .catch(function (error) {
-          console.error('Error adding document: ', error)
-        })
-      }    
+          console.error("Error adding document: ", error);
+        });
     },
-    submit_school_request ({ commit, getters, dispatch }, payload) {
-       const db = firebase.firestore()
-       const collectionRef = db
-         .collection('school_requests')
-         .doc()
-         .set(payload)
-         .then(function (docRef) {
-           console.log('School submission written with ID: ', docRef.id)
-           // router.push({
-           //   name: 'submit_result'
-           // })
-         })
-         .catch(function (error) {
-           console.error('Error adding document: ', error)
-         })
-     },
-    submit_request_with_free_credits ({ getters }) {
-      let businesses_being_submitted =  getters.businesses_being_submitted
-      for (let i = 0; i < businesses_being_submitted.length; i++) { 
-       let art_being_submitted = getters.art_being_submitted
-       art_being_submitted.submitted_on = Date.now()
-       art_being_submitted.submitted_with_free_cerdit = true
-       console.log("art_being_submitted", art_being_submitted)
-       art_being_submitted.businessId = businesses_being_submitted[i]
-       console.log("art_being_submitted", art_being_submitted)
-       const db = firebase.firestore()
-       const collectionRef = db
-         .collection('review_requests')
-         .doc()
-         .set(art_being_submitted)
-         .then(function (docRef) {
-           console.log('Submission written with ID: ', docRef.id)
-           // router.push({
-           //   name: 'submit_result'
-           // })
-         })
-         .catch(function (error) {
-           console.error('Error adding document: ', error)
-         })
-       }    
-     },
+    submit_request_with_free_credits({
+      getters
+    }) {
+      let businesses_being_submitted =
+        getters.businesses_being_submitted;
+      for (
+        let i = 0; i < businesses_being_submitted.length; i++
+      ) {
+        let art_being_submitted = getters.art_being_submitted;
+        art_being_submitted.submitted_on = Date.now();
+        art_being_submitted.submitted_with_free_cerdit = true;
+        console.log("art_being_submitted", art_being_submitted);
+        art_being_submitted.businessId =
+          businesses_being_submitted[i];
+        console.log("art_being_submitted", art_being_submitted);
+        const db = firebase.firestore();
+        const collectionRef = db
+          .collection("review_requests")
+          .doc()
+          .set(art_being_submitted)
+          .then(function (docRef) {
+            console.log(
+              "Submission written with ID: ",
+              docRef.id
+            );
+            // router.push({
+            //   name: 'submit_result'
+            // })
+          })
+          .catch(function (error) {
+            console.error("Error adding document: ", error);
+          });
+      }
+    },
 
     /*
     Sign up/Sign in flow
     Create record of business with upload avatar url in Firestore
     */
-    create_a_new_business ({ commit, getters, dispatch }, payload) {
-      console.log('Inside cretae a new business')
+    create_a_new_business({
+        commit,
+        getters,
+        dispatch
+      },
+      payload
+    ) {
+      console.log("Inside cretae a new business");
       // first put the image in the storage
       // Create a root reference
-      let ref = firebase.storage().ref()
+      let ref = firebase.storage().ref();
       let uploadTask = ref
         .child(
-          getters.user.id + '/logo/' + getters.image_being_uploaded.file.name
+          getters.user.id +
+          "/logo/" +
+          getters.image_being_uploaded.file.name
         )
-        .put(getters.image_being_uploaded.file)
+        .put(getters.image_being_uploaded.file);
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
         function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           var progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log('Upload is ' + progress + '% done')
+            (snapshot.bytesTransferred / snapshot.totalBytes) *
+            100;
+          console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
-              break
+              console.log("Upload is paused");
+              break;
             case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
-              break
+              console.log("Upload is running");
+              break;
           }
         },
         function (error) {
           // A full list of error codes is available at
           switch (error.code) {
-            case 'storage/unauthorized':
-              alert(error.code)
+            case "storage/unauthorized":
+              alert(error.code);
               // User doesn't have permission to access the object
-              break
+              break;
 
-            case 'storage/canceled':
-              alert(error.code)
+            case "storage/canceled":
+              alert(error.code);
               // User canceled the upload
-              break
-            case 'storage/unknown':
-              alert(error.code)
+              break;
+            case "storage/unknown":
+              alert(error.code);
               // Unknown error occurred, inspect error.serverResponse
-              break
+              break;
           }
         },
         function () {
           // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-            console.log('Url captured' + downloadURL)
-            commit('setUrl', downloadURL)
-            console.log('State url' + getters.url)
-             let  user = {
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then(function (downloadURL) {
+              console.log("Url captured" + downloadURL);
+              commit("setUrl", downloadURL);
+              console.log("State url" + getters.url);
+              let user = {
                 business_name: getters.business_signing_up.business_name,
                 email: getters.business_signing_up.email,
                 role: payload.role,
                 publication: payload.publication,
-                facebook_url:payload.facebook,
-                instagram_url:payload.instagram,
-                tumblr_url:payload.tumblr,
+                facebook_url: payload.facebook,
+                instagram_url: payload.instagram,
+                tumblr_url: payload.tumblr,
                 userId: getters.user.id,
                 about: payload.about,
                 worth_knowing: payload.worth_knowing,
@@ -1122,42 +1431,47 @@ signUserInGoogle({
                 upload_date: payload.upload_date,
                 the_good: payload.the_good,
                 url: getters.url
-              }
-              console.log('printing user in th ecreate a business: ', user)
-            const db = firebase.firestore()
-            db.collection('users')
-              .doc(getters.user.id)
-              .set(user)
-              .then(function () {
-                console.log('Document successfully written!')
-                router.push({
-                name: 'sign_in'
-                  
+              };
+              console.log(
+                "printing user in th ecreate a business: ",
+                user
+              );
+              const db = firebase.firestore();
+              db.collection("users")
+                .doc(getters.user.id)
+                .set(user)
+                .then(function () {
+                  console.log("Document successfully written!");
+                  router.push({
+                    name: "sign_in"
+                  });
+                  //location.reload()
+                  dispatch("signUserOut");
                 })
-                //location.reload()
-                dispatch('signUserOut')
-               
 
-              })
-              
-              .catch(function (error) {
-                console.error('Error writing document: ', error)
-              })
-            
-          })
+                .catch(function (error) {
+                  console.error(
+                    "Error writing document: ",
+                    error
+                  );
+                });
+            });
         }
-      )
+      );
     },
 
     /*
     Sign up/Sign in flow
     Create an artist record in Firestore
     */
-   create_a_new_artist ({ commit, getters }, payload) {
-      localStorage.setItem('userId', 1000)
+    create_a_new_artist({
+      commit,
+      getters
+    }, payload) {
+      localStorage.setItem("userId", 1000);
       router.push({
-        name: 'artist_dashboard'
-      })
+        name: "artist_dashboard"
+      });
       let user = {
         instagram: payload.instagram,
         role: payload.role,
@@ -1167,132 +1481,145 @@ signUserInGoogle({
         upload_date: payload.upload_date,
         userId: getters.user.id,
         credits: 0
-      }
-      const db = firebase.firestore()
+      };
+      const db = firebase.firestore();
 
-      db.collection('users')
+      db.collection("users")
         .doc(getters.user.id)
         .set(user)
         .then(function () {
-          console.log('Artist successfully written!')
+          console.log("Artist successfully written!");
         })
         .catch(function (error) {
-          console.error('Error writing document: ', error)
-        })
+          console.error("Error writing document: ", error);
+        });
 
       const collectionRef = db
-        .collection('users')
+        .collection("users")
         .doc(getters.user.id)
-        .collection('submissions')
+        .collection("submissions");
       collectionRef
-        .add({ initial_submission: true })
+        .add({
+          initial_submission: true
+        })
         .then(function (docRef) {
-          console.log('Submission: ', docRef.id)
+          console.log("Submission: ", docRef.id);
         })
         .catch(function (error) {
-          alert('Error adding submission: ', error)
-        })
+          alert("Error adding submission: ", error);
+        });
     },
 
-    uploadAvatar ({ commit, getters }, payload) {
+    uploadAvatar({
+      commit,
+      getters
+    }, payload) {
       firebase
         .storage()
         .ref(
           getters.signed_in_user_id +
-          '/logo/' +
+          "/logo/" +
           getters.image_being_uploaded.file.name
         )
-        .put(getters.image_being_uploaded.file)
+        .put(getters.image_being_uploaded.file);
     },
-    async singBusinessUp({commit},payload){
-      try{
-        let response = await firebase.auth()
-        .createUserAndRetrieveDataWithEmailAndPassword(
-          payload.email,
-          payload.password
-        )
+    async singBusinessUp({
+      commit
+    }, payload) {
+      try {
+        let response = await firebase
+          .auth()
+          .createUserAndRetrieveDataWithEmailAndPassword(
+            payload.email,
+            payload.password
+          );
 
-        let ref = await firebase.storage().ref()
+        let ref = await firebase.storage().ref();
         let uploadTask = ref
-          .child(
-            response.user.uid + '/logo/' + payload.file_name
-          )
-          .put(payload.file)
-          uploadTask.on(
-            firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-            function (snapshot) {
-              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-              var progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-              console.log('Upload is ' + progress + '% done')
-              switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                  console.log('Upload is paused')
-                  break
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                  console.log('Upload is running')
-                  break
-              }
-            },
-            function (error) {
-              // A full list of error codes is available at
-              switch (error.code) {
-                case 'storage/unauthorized':
-                  alert(error.code)
-                  // User doesn't have permission to access the object
-                  break
-  
-                case 'storage/canceled':
-                  alert(error.code)
-                  // User canceled the upload
-                  break
-                case 'storage/unknown':
-                  alert(error.code)
-                  // Unknown error occurred, inspect error.serverResponse
-                  break
-              }
-            },
-            function () {
-              // Upload completed successfully, now we can get the download URL
-              uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-                console.log('Url captured' + downloadURL)
-                payload.url = downloadURL
-                payload.userId = response.user.uid
-                payload.file = ''
-                const db = firebase.firestore()
-                db.collection('users')
+          .child(response.user.uid + "/logo/" + payload.file_name)
+          .put(payload.file);
+        uploadTask.on(
+          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function (snapshot) {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) *
+              100;
+            console.log("Upload is " + progress + "% done");
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log("Upload is paused");
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log("Upload is running");
+                break;
+            }
+          },
+          function (error) {
+            // A full list of error codes is available at
+            switch (error.code) {
+              case "storage/unauthorized":
+                alert(error.code);
+                // User doesn't have permission to access the object
+                break;
+
+              case "storage/canceled":
+                alert(error.code);
+                // User canceled the upload
+                break;
+              case "storage/unknown":
+                alert(error.code);
+                // Unknown error occurred, inspect error.serverResponse
+                break;
+            }
+          },
+          function () {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then(function (downloadURL) {
+                console.log("Url captured" + downloadURL);
+                payload.url = downloadURL;
+                payload.userId = response.user.uid;
+                payload.file = "";
+                const db = firebase.firestore();
+                db.collection("users")
                   .doc(payload.userId)
                   .set(payload)
                   .then(function () {
                     firebase
-                    .auth()
-                    .signOut()
-                    .then(user => {
-                      console.log('Document successfully written!')
-                      router.push({
-                      name: 'sign_in'
-                      })
-                      })
-                  })
-              })
-            })
-        console.log('response: ', response.user.uid)
-        console.log('payload: ',payload)
-      }
-      catch(e) {
-        console.log('Error!', e);
+                      .auth()
+                      .signOut()
+                      .then(user => {
+                        console.log(
+                          "Document successfully written!"
+                        );
+                        router.push({
+                          name: "sign_in"
+                        });
+                      });
+                  });
+              });
+          }
+        );
+        console.log("response: ", response.user.uid);
+        console.log("payload: ", payload);
+      } catch (e) {
+        console.log("Error!", e);
       }
 
-      //we have created a auth account and upladed the logo now we will 
+      //we have created a auth account and upladed the logo now we will
       // create auser document
-  },
+    },
     /*
     Sign up/Sign in flow
     Register user with Firebase Authentication
     */
-   signUserUp ({ commit }, payload) {
-      commit('setLoading', true)
-      commit('clearError')
+    signUserUp({
+      commit
+    }, payload) {
+      commit("setLoading", true);
+      commit("clearError");
       firebase
         .auth()
         .createUserAndRetrieveDataWithEmailAndPassword(
@@ -1300,17 +1627,17 @@ signUserInGoogle({
           payload.password
         )
         .then(user => {
-          commit('setLoading', false)
+          commit("setLoading", false);
           const newUser = {
             id: firebase.auth().currentUser.uid,
             email: firebase.auth().currentUser.email, // change this
             arts: [],
             user_role: payload.user_role
-          }
+          };
           // displayName updated to firebase
-          commit('setUser', newUser)
-          console.log('Payload in signuserUp: ', payload)
-          commit('setUserRole', payload.user_role)
+          commit("setUser", newUser);
+          console.log("Payload in signuserUp: ", payload);
+          commit("setUserRole", payload.user_role);
           firebase
             .auth()
             .currentUser.sendEmailVerification()
@@ -1318,50 +1645,63 @@ signUserInGoogle({
               // Email sent.
             })
             .catch(function (error) {
-              alert('error')
-            })
-          console.log(firebase.auth().currentUser.uid)
-          commit('signed_in_user_id', firebase.auth().currentUser.uid)
+              alert("error");
+            });
+          console.log(firebase.auth().currentUser.uid);
+          commit(
+            "signed_in_user_id",
+            firebase.auth().currentUser.uid
+          );
         })
         .catch(error => {
-          commit('setLoading', false)
-          commit('setError', error)
-          alert(error.message)
-        })
-        if(payload.user_role != 'artist') {
+          commit("setLoading", false);
+          commit("setError", error);
+          alert(error.message);
+        });
+      if (payload.user_role != "artist") {
         firebase
-            .auth()
-            .signOut()
-            .then(user => {
-            commit('setLoading', true)
-            commit('setUser', null)
-            commit('sign_out_signed_in_user')
-            commit('setLoading', false)
-            commit('setUserRole', null)
+          .auth()
+          .signOut()
+          .then(user => {
+            commit("setLoading", true);
+            commit("setUser", null);
+            commit("sign_out_signed_in_user");
+            commit("setLoading", false);
+            commit("setUserRole", null);
             //  router.push({
             //     name: 'sign_in'
             //    })
-            })
-        }
+          });
+      }
     },
-      image_being_uploaded({commit}, payload) {
-        commit('image_being_uploaded', payload)
-      },
-    logo_url ({ commit }, payload) {
-      commit('set_logo_url', payload)
+    image_being_uploaded({
+      commit
+    }, payload) {
+      commit("image_being_uploaded", payload);
+    },
+    logo_url({
+      commit
+    }, payload) {
+      commit("set_logo_url", payload);
     },
 
-    clearError ({ commit }) {
-      commit('clearError')
+    clearError({
+      commit
+    }) {
+      commit("clearError");
     },
 
     /*
     Sign up/Sign in flow
     Sign user in and load information from Firestore
     */
-    signUserIn ({ commit, dispatch, getters }, payload) {
-      commit('setLoading', true)
-      commit('clearError')
+    signUserIn({
+      commit,
+      dispatch,
+      getters
+    }, payload) {
+      commit("setLoading", true);
+      commit("clearError");
       const promise = firebase
         .auth()
         .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
@@ -1373,15 +1713,18 @@ signUserInGoogle({
           // New sign-in will be persisted with session persistence.
           return firebase
             .auth()
-            .signInWithEmailAndPassword(payload.email, payload.password)
+            .signInWithEmailAndPassword(
+              payload.email,
+              payload.password
+            )
             .then(
               user => {
                 if (user.emailVerified === false) {
-                  firebase.auth().signOut()
-                  alert('Please confirm your email account.')
+                  firebase.auth().signOut();
+                  alert("Please confirm your email account.");
                   router.push({
-                    name: 'Home'
-                  })
+                    name: "Home"
+                  });
                 } else {
                   const newUser = {
                     id: firebase.auth().currentUser.uid,
@@ -1389,114 +1732,144 @@ signUserInGoogle({
                     email: firebase.auth().currentUser.email,
                     // TODO: I need to call the existing arts for this user and push in to this array
                     arts: []
-                  }
-                  commit('setUser', newUser)
-                  localStorage.setItem('userId', 1000)
-                  let db = firebase.firestore()
+                  };
+                  commit("setUser", newUser);
+                  localStorage.setItem("userId", 1000);
+                  let db = firebase.firestore();
                   let user = db
-                    .collection('users')
-                    .where('userId', '==', firebase.auth().currentUser.uid)
+                    .collection("users")
+                    .where(
+                      "userId",
+                      "==",
+                      firebase.auth().currentUser.uid
+                    )
                     .get()
                     .then(function (querySnapshot) {
                       querySnapshot.forEach(function (doc) {
                         // doc.data() is never undefined for query doc snapshots
                         if (doc.data().color == null) {
-                          var docRef = db.collection('users').doc(doc.id)
-                          commit('setUserRandColor')
-                          docRef.set(
-                            {
-                              color: getters.color
-                            },
-                            { merge: true }
-                          )
+                          var docRef = db
+                            .collection("users")
+                            .doc(doc.id);
+                          commit("setUserRandColor");
+                          docRef.set({
+                            color: getters.color
+                          }, {
+                            merge: true
+                          });
                         } else {
-                          commit('setUserColor', { color: doc.data().color })
+                          commit("setUserColor", {
+                            color: doc.data().color
+                          });
                         }
-                        commit('setUserRole', doc.data().role)
-                        commit('setUrl',doc.data().url)
-                        commit('signed_in_user', doc.data())
-                        commit('set_free_credits', doc.data().free_credits)
-                        if (doc.data().role == 'artist') {
+                        commit("setUserRole", doc.data().role);
+                        commit("setUrl", doc.data().url);
+                        commit("signed_in_user", doc.data());
+                        commit(
+                          "set_free_credits",
+                          doc.data().free_credits
+                        );
+                        if (doc.data().role == "artist") {
                           router.push({
-                            name: 'artist_dashboard'
-                          })
+                            name: "artist_dashboard"
+                          });
                         }
-                        if (doc.data().role == 'business') {
-                          commit('setUrl', doc.data().url)
+                        if (doc.data().role == "business") {
+                          commit("setUrl", doc.data().url);
                           router.push({
-                            name: 'business_dashboard'
-                          })
+                            name: "business_dashboard"
+                          });
                         }
-                      })
+                      });
                     })
                     .catch(function (error) {
-                      console.log('Error getting documents: ', error)
-                    })
-                  console.log('getters.user_role:' + getters.user_role)
-                  console.log('getters.user_rid:' + getters.user.id)
+                      console.log(
+                        "Error getting documents: ",
+                        error
+                      );
+                    });
+                  console.log(
+                    "getters.user_role:" + getters.user_role
+                  );
+                  console.log(
+                    "getters.user_rid:" + getters.user.id
+                  );
 
                   setTimeout(function () {
-                    commit('setLoading', false)
-                  }, 10000)
+                    commit("setLoading", false);
+                  }, 10000);
                 }
               },
               function (err) {
                 alert(
                   err.message +
-                  'Or you may have not confirmed your email yet. If you need further assistance, please send us an email.'
-                )
+                  "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
+                );
               }
-            )
+            );
         })
         .catch(function (error) {
           // Handle Errors here.
-          var errorCode = error.code
-          var errorMessage = error.message
-          alert(error.message)
-        })
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(error.message);
+        });
     },
-    
+
     /*
     Sign up/Sign in flow
     Sign user out. Set every parameter to null
     */
-   signUserOut ({ commit }) {
-      commit('clearError')
-      localStorage.setItem('userId', null)
+    signUserOut({
+      commit
+    }) {
+      commit("clearError");
+      localStorage.setItem("userId", null);
       firebase
         .auth()
         .signOut()
         .then(user => {
-          commit('setLoading', true)
-          commit('setUser', null)
-          commit('sign_out_signed_in_user')
-          commit('setLoading', false)
-          commit('setUserRole', null)
+          commit("setLoading", true);
+          commit("setUser", null);
+          commit("sign_out_signed_in_user");
+          commit("setLoading", false);
+          commit("setUserRole", null);
         })
         .catch(error => {
-          commit('setLoading', true)
-          commit('setError', error)
-          commit('setLoading', false)
-          console.log(error.message)
-        })
+          commit("setLoading", true);
+          commit("setError", error);
+          commit("setLoading", false);
+          console.log(error.message);
+        });
     },
 
-    autoSignIn ({ commit }, payload) {
-      commit('setUser', { id: payload.uid })
+    autoSignIn({
+      commit
+    }, payload) {
+      commit("setUser", {
+        id: payload.uid
+      });
     },
-    clearError ({ commit }) {
-      commit(clearError)
+    clearError({
+      commit
+    }) {
+      commit(clearError);
     },
     // should change this function!
-    async sendMessageToFirebase ({ commit, getters }, payload) {
-      commit('set_send_chat_data', payload)
-      var message = getters.sendChatDataMessage
-      var role = getters.user_role
-      var url = payload.url
-      var color = payload.color
-      var user = { name: payload.user }
-      var daystamp = getters.sendChatDataDaystamp
-      var timestamp = getters.sendChatDataTimestamp
+    async sendMessageToFirebase({
+      commit,
+      getters
+    }, payload) {
+      commit("set_send_chat_data", payload);
+      var message = getters.sendChatDataMessage;
+      var role = getters.user_role;
+      var url = payload.url;
+      var color = payload.color;
+      var user = {
+        name: payload.user
+      };
+      var daystamp = getters.sendChatDataDaystamp;
+      var timestamp = getters.sendChatDataTimestamp;
 
       var sendData = {
         user: user,
@@ -1506,294 +1879,333 @@ signUserInGoogle({
         role: role,
         url: url,
         color: color
-      }
-      var chatDatabase = getters.chat_database
-      var newChatDatabaseRef = chatDatabase.ref('chat').push()
-      newChatDatabaseRef.set(sendData)
+      };
+      var chatDatabase = getters.chat_database;
+      var newChatDatabaseRef = chatDatabase.ref("chat").push();
+      newChatDatabaseRef.set(sendData);
     },
-      uploadProfileImage ({commit, getters}) {
-        let ref = firebase.storage().ref()
-        let uploadTask = ref
-          .child(
-            getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
-          )
-          .put(getters.image_being_uploaded.file)
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(
-          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function (snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            console.log('Upload is ' + progress + '% done')
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused')
-                break
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running')
-                break
-            }
-          },
-          function (error) {
-            // A full list of error codes is available at
-            switch (error.code) {
-              case 'storage/unauthorized':
-                alert(error.code)
-                // User doesn't have permission to access the object
-                break
-
-              case 'storage/canceled':
-                alert(error.code)
-                // User canceled the upload
-                break
-              case 'storage/unknown':
-                alert(error.code)
-                // Unknown error occurred, inspect error.serverResponse
-                break
-            }
-          },
-          function () {
-            // Upload completed successfully, now we can get the download URL
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured' + downloadURL)
-              commit('setUrl', downloadURL)
-              console.log('State url' + getters.url)
-            })
-          })
-      },
-      async updateArtistProfileToFirebase ({commit, dispatch, getters}, payload) {
-        commit('setLoading', true)
-        let instagram = payload.instagram
-        let name = payload.name
-        let photoUrl = payload.photoUrlreport_aug
-        let updateData = {}
-        let db = getters.db
-        let userId = getters.user.id
-        if (name !== undefined && name !== '') {
-          updateData.name = name
-        }
-        if (photoUrl !== undefined && photoUrl !== '') {
-          dispatch('uploadProfileImage').then(() => {
-            updateData.photoUrl = getters.url
-          })
-        }
-        if (instagram !== undefined && instagram !== '') {
-          updateData.instagram = instagram
-        }
-        
-        console.log(updateData)
-        let user = db
-          .collection('users').doc(userId).update(updateData).then((data) => {
-            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
-              if (doc.exists) {
-                commit('signed_in_user', doc.data())
-                commit('setLoading', false)
-              } else {
-                // doc.data() will be undefined in this case
-              }
-            }).catch(function (error) {
-              console.log("Error getting document:", error);
-            });
-          })
-      },
-      async updateBusinessProfileToFirebase ({commit, dispatch, getters}, payload) {
-        function setValidData(payload) {
-          let initData = payload.data
-          let initDataProperty = payload.property
-          let updateData = payload.updateData
-          if (initData !== undefined && initData !== '') {
-            updateData[initDataProperty] = initData
+    uploadProfileImage({
+      commit,
+      getters
+    }) {
+      let ref = firebase.storage().ref();
+      let uploadTask = ref
+        .child(
+          getters.user.id +
+          "/profile/" +
+          getters.image_being_uploaded.file.name
+        )
+        .put(getters.image_being_uploaded.file);
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+        function (snapshot) {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) *
+            100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log("Upload is paused");
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log("Upload is running");
+              break;
           }
-          return updateData
-        }
+        },
+        function (error) {
+          // A full list of error codes is available at
+          switch (error.code) {
+            case "storage/unauthorized":
+              alert(error.code);
+              // User doesn't have permission to access the object
+              break;
 
-        commit('setLoading', true)
-        let name = payload.name
-        let photoUrl = payload.photoUrl
-        let updateData = {}
-        let db = getters.db
-        let userId = getters.user.id
-        let publication = payload.publication
-        let follower_count = payload.follower_count
-        let website = payload.website
-        let about = payload.about
-        let worth_knowing = payload.worth_knowing
-        let additional_notes = payload.additional_notes
-        let instagram = payload.instagram
+            case "storage/canceled":
+              alert(error.code);
+              // User canceled the upload
+              break;
+            case "storage/unknown":
+              alert(error.code);
+              // Unknown error occurred, inspect error.serverResponse
+              break;
+          }
+        },
+        function () {
+          // Upload completed successfully, now we can get the download URL
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then(function (downloadURL) {
+              console.log("Url captured" + downloadURL);
+              commit("setUrl", downloadURL);
+              console.log("State url" + getters.url);
+            });
+        }
+      );
+    },
+    async updateArtistProfileToFirebase({
+        commit,
+        dispatch,
+        getters
+      },
+      payload
+    ) {
+      commit("setLoading", true);
+      let instagram = payload.instagram;
+      let name = payload.name;
+      let photoUrl = payload.photoUrlreport_aug;
+      let updateData = {};
+      let db = getters.db;
+      let userId = getters.user.id;
+      if (name !== undefined && name !== "") {
+        updateData.name = name;
+      }
+      if (photoUrl !== undefined && photoUrl !== "") {
+        dispatch("uploadProfileImage").then(() => {
+          updateData.photoUrl = getters.url;
+        });
+      }
+      if (instagram !== undefined && instagram !== "") {
+        updateData.instagram = instagram;
+      }
 
-        updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
-        if (follower_count !== 0) {
-          updateData.follower_count = follower_count
-        }
-        updateData = setValidData({updateData: updateData, data: website, property: 'website'})
-        updateData = setValidData({updateData: updateData, data: about, property: 'about'})
-        updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
-        updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
-        updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
-        
-        if (name !== undefined && name !== '') {
-          updateData.business_name = name
-        }
-        if (photoUrl !== undefined && photoUrl !== '') {
-          dispatch('uploadProfileImage').then(() => {
-          })
-        }
-        console.log(updateData)
-        let user = db
-          .collection('users').doc(userId).update(updateData).then((data) => {
-            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+      console.log(updateData);
+      let user = db
+        .collection("users")
+        .doc(userId)
+        .update(updateData)
+        .then(data => {
+          let updateData = db
+            .collection("users")
+            .doc(userId)
+            .get()
+            .then(function (doc) {
               if (doc.exists) {
-                commit('signed_in_user', doc.data())
-                commit('setLoading', false)
+                commit("signed_in_user", doc.data());
+                commit("setLoading", false);
               } else {
                 // doc.data() will be undefined in this case
               }
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               console.log("Error getting document:", error);
             });
-          })
-      }
+        });
     },
+    async updateBusinessProfileToFirebase({
+        commit,
+        dispatch,
+        getters
+      },
+      payload
+    ) {
+      function setValidData(payload) {
+        let initData = payload.data;
+        let initDataProperty = payload.property;
+        let updateData = payload.updateData;
+        if (initData !== undefined && initData !== "") {
+          updateData[initDataProperty] = initData;
+        }
+        return updateData;
+      }
+
+      commit("setLoading", true);
+      let name = payload.name;
+      let photoUrl = payload.photoUrl;
+      let updateData = {};
+      let db = getters.db;
+      let userId = getters.user.id;
+      let publication = payload.publication;
+      let follower_count = payload.follower_count;
+      let website = payload.website;
+      let about = payload.about;
+      let worth_knowing = payload.worth_knowing;
+      let additional_notes = payload.additional_notes;
+
+      updateData = setValidData({
+        updateData: updateData,
+        data: publication,
+        property: "publication"
+      });
+      if (follower_count !== 0) {
+        updateData.follower_count = follower_count;
+      }
+      updateData = setValidData({
+        updateData: updateData,
+        data: website,
+        property: "website"
+      });
+      updateData = setValidData({
+        updateData: updateData,
+        data: about,
+        property: "about"
+      });
+      updateData = setValidData({
+        updateData: updateData,
+        data: worth_knowing,
+        property: "worth_knowing"
+      });
+      updateData = setValidData({
+        updateData: updateData,
+        data: additional_notes,
+        property: "additional_notes"
+      });
+
+      if (name !== undefined && name !== "") {
+        updateData.business_name = name;
+      }
+      if (photoUrl !== undefined && photoUrl !== "") {
+        dispatch("uploadProfileImage").then(() => {});
+      }
+      console.log(updateData);
+      let user = db
+        .collection("users")
+        .doc(userId)
+        .update(updateData)
+        .then(data => {
+          let updateData = db
+            .collection("users")
+            .doc(userId)
+            .get()
+            .then(function (doc) {
+              if (doc.exists) {
+                commit("signed_in_user", doc.data());
+                commit("setLoading", false);
+              } else {
+                // doc.data() will be undefined in this case
+              }
+            })
+            .catch(function (error) {
+              console.log("Error getting document:", error);
+            });
+        });
+    }
+  },
   getters: {
-    businesses_being_submitted(state){
-      return state.businesses_being_submitted
-    } ,   
+    businesses_being_submitted(state) {
+      return state.businesses_being_submitted;
+    },
     report_month(state) {
-      return state.report_month
+      return state.report_month;
     },
     replied_for_report(state) {
-      return state.replied_for_report
+      return state.replied_for_report;
     },
-    credits(state){
-      return state.credits
+    credits(state) {
+      return state.credits;
     },
-    replied_submissions (state) {
-      return state.replied_submissions
+    replied_submissions(state) {
+      return state.replied_submissions;
     },
-    submission_response (state) {
-      return state.submission_response
+    submission_response(state) {
+      return state.submission_response;
     },
-    art_being_replied (state) {
-      return state.art_being_replied
+    art_being_replied(state) {
+      return state.art_being_replied;
     },
-    submissions_for_this_business (state) {
-      return state.submissions_for_this_business
+    submissions_for_this_business(state) {
+      return state.submissions_for_this_business;
     },
-    art_being_submitted (state) {
-      return state.art_being_submitted
+    art_being_submitted(state) {
+      return state.art_being_submitted;
     },
-    business_signing_up (state) {
-      return state.business_signing_up
+    business_signing_up(state) {
+      return state.business_signing_up;
     },
-    clicked_busliness (state) {
-      return state.clicked_business
+    clicked_busliness(state) {
+      return state.clicked_business;
     },
-    image_folder (state) {
-      return state.image_folder
+    image_folder(state) {
+      return state.image_folder;
     },
-    user_role (state) {
-      return state.user_role
+    user_role(state) {
+      return state.user_role;
     },
-    user (state) {
-      return state.user
+    user(state) {
+      return state.user;
     },
-    url (state) {
-      return state.url
+    url(state) {
+      return state.url;
     },
-    color (state) {
-      return state.color
+    color(state) {
+      return state.color;
     },
-    image_being_uploaded (state) {
-      return state.image_being_uploaded
+    image_being_uploaded(state) {
+      return state.image_being_uploaded;
     },
-    businesses (state) {
-      return state.businesses
+    businesses(state) {
+      return state.businesses;
     },
-    allArts (state) {
-      return state.arts
+    allArts(state) {
+      return state.arts;
     },
     // a getter function that returns an array that contains arts that are sorted by their upload date.
-    uploadedArts (state) {
+    uploadedArts(state) {
       return state.arts.sort((artA, artB) => {
-        return artA.upload_date < artB.upload_date
-      })
+        return artA.upload_date < artB.upload_date;
+      });
     },
     // a getter that rturns a function that takes in an artId and...
-    uploadedArt (state) {
+    uploadedArt(state) {
       return artId => {
         return state.uploadedArts.find(art => {
-          return art.id - artId
-        })
-      }
+          return art.id - artId;
+        });
+      };
     },
     // a getter function that tahes in an array that contains all of the arts and returns the first five of them as futured arts
-    featuredArts (state, getters) {
-      return getters.uploadedArts.slice(0, 5)
+    featuredArts(state, getters) {
+      return getters.uploadedArts.slice(0, 5);
     },
-    error (state) {
-      return state.error
+    error(state) {
+      return state.error;
     },
-    loading (state) {
-      return state.loading
+    loading(state) {
+      return state.loading;
     },
     // a getter that returns the chat database
-    chat_database (state) {
-      return state.chat_database
+    chat_database(state) {
+      return state.chat_database;
     },
-    replied_requests_for_report(state){
-      return state.replied_requests_for_report
+    replied_requests_for_report(state) {
+      return state.replied_requests_for_report;
     },
-    sendChatDataMessage (state) {
-      return state.sendChatData.message
+    sendChatDataMessage(state) {
+      return state.sendChatData.message;
     },
-    sendChatDataUser (state) {
-      return state.sendChatData.user
+    sendChatDataUser(state) {
+      return state.sendChatData.user;
     },
-    sendChatDataDaystamp (state) {
-      return state.sendChatData.daystamp
+    sendChatDataDaystamp(state) {
+      return state.sendChatData.daystamp;
     },
-    sendChatDataTimestamp (state) {
-      return state.sendChatData.timestamp
+    sendChatDataTimestamp(state) {
+      return state.sendChatData.timestamp;
     },
-    sendChatDataUrl (state){
-      return state.sendChatData.url
+    sendChatDataUrl(state) {
+      return state.sendChatData.url;
     },
-    signed_in_business (state) {
-      return state.signed_in_business
+    signed_in_business(state) {
+      return state.signed_in_business;
     },
-    avatar (state) {
-      return state.avatar
+    avatar(state) {
+      return state.avatar;
     },
-    signed_in_user (state) {
-      return state.signed_in_user
+    signed_in_user(state) {
+      return state.signed_in_user;
     },
-    signed_in_user_id (state) {
-      return state.signed_in_user_id
+    signed_in_user_id(state) {
+      return state.signed_in_user_id;
     },
-    db (state){
-      return state.db
+    db(state) {
+      return state.db;
     },
-    current_credits (state) {
-      return state.signed_in_user.credits
+    current_credits(state) {
+      return state.signed_in_user.credits;
     },
-    selectBlog(state){
-      return state.selectBlog
-    },
-    august(state){
-      return state.replied_requests_for_report_aug
-    },
-    september(state){
-      return state.replied_requests_for_report_sep
-    },
-    october(state){
-      return state.replied_requests_for_report_oct
-    },
-    november(state){
-      return state.replied_requests_for_report_nov
-    },
-    december(state){
-      return state.replied_requests_for_report_dec
+    selectBlog(state) {
+      return state.selectBlog;
     },
     datePicker(state){
       return state.replied_requests_for_report_datePicker
@@ -1804,8 +2216,14 @@ signUserInGoogle({
     free_credits(state){
       return state.free_credits
     },
-    artists_email_list(state){
-      return state.artists_email_list
+    artists_email_list(state) {
+      return state.artists_email_list;
+    },
+    submissions_for_month(state) {
+      return state.submissions_for_month;
+    },
+    monthly_report_submissions(state) {
+      return state.monthly_report_submissions
     }
   }
-})
+});
