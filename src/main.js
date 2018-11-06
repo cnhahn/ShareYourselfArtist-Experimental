@@ -7,7 +7,7 @@ import 'firebase/firestore'
 import App from './App'
 import router from './router'
 import { store } from './store'
-import AlertComp from './components/Shared/alert.vue'
+import AlertComp from './components/shared/alert.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -15,6 +15,9 @@ import PayPal from 'vue-paypal-checkout'
 import CustomSpinner from './components/shared/custom_spinner'
 import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
+import VueTour from 'vue-tour'
+
+require('vue-tour/dist/vue-tour.css')
 
 import {
 
@@ -61,6 +64,8 @@ import VueResource from '../node_modules/vue-resource';
 library.add(faCoffee)
 Vue.use(VueResource)
 
+Vue.use(VueTour)
+
 Vue.use(Vuetify, {
   components: {
     FontAwesomeIcon,
@@ -92,7 +97,7 @@ Vue.use(Vuetify, {
     VTabs,
     VExpansionPanel,
     transitions,
-    VStepper,	
+    VStepper,
     VSwitch,
     VDataTable,
     VCheckbox,
@@ -170,7 +175,7 @@ new Vue({
         this.$store.dispatch('autoSignIn', user);
         this.$store.dispatch('fetchArts')
         this.$store.dispatch('fetchSubmissions')
-        this.$store.dispatch('fetchUserDocument') 
+        this.$store.dispatch('fetchUserDocument')
         console.log('on mounted: ', user)
         this.$store.dispatch('get_user_credit', user.uid)
 
