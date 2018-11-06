@@ -10,8 +10,10 @@
       <v-spacer></v-spacer>
     </v-layout>
     <v-layout>
-      <div class="text-xs-center">
+      <div id="v-step-0" class="text-xs-center">
         <v-btn large depressed color="primary" router to="/submissions">Your Submissions</v-btn>
+
+        <v-tour name="myTour" :steps="steps"></v-tour>
       </div>
 
     </v-layout>
@@ -59,14 +61,28 @@
 
 <script>
   export default {
+    name: 'my-tour',
     data() {
       return {
         sideNav: false,
         number_of_submissions: this.$store.state.submissions_for_this_business.length,
         show_facebook:false,
         show_instagram:false,
-        show_tumblr:false
+        show_tumblr:false,
+        steps: [
+          {
+            target: '#v-step-0',  // We're using document.querySelector() under the hood
+            content: `This is where you check your submissions!`
+          },
+          {
+            target: '#v-step-1',  // We're using document.querySelector() under the hood
+            content: `This is where you can edit your profile!`
+          }
+        ]
       }
+    },
+    mounted: function () {
+      this.$tours['myTour'].start()
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length

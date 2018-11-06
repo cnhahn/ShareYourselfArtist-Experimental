@@ -169,7 +169,7 @@
 
 
      <v-menu bottom left v-if ="userIsAuthanticated">
-              <v-btn slot="activator" icon>
+              <v-btn id='v-step-1' slot="activator" icon>
                 <v-icon>more_vert</v-icon>
               </v-btn>
               <v-list>
