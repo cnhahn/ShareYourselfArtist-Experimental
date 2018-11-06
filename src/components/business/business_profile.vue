@@ -3,77 +3,44 @@
     <center>
       <v-card class="card">
           <v-layout row wrap>
-
             <v-flex lg6 md6 sm12 xs12>
               <v-avatar
-                  size="180px"
-                  class="avatarStyle"
-                  v-bind:color="businessInfo.color"
-                >
-                  <img v-if="businessInfo.url" :src='this.$store.getters.signed_in_user.url' alt="avatar">
-                  <div v-else>
-                    <span style="font-size: 20em; color: white;">{{initial()}}</span>
-                  </div>
-                  <!-- TODO: Code for editing profile image. -->
-                  <!--<div v-else-if="!onEdit">-->
-                  <!--<span style="font-size: 20em; color: white;">{{initial()}}</span>-->
-                  <!--</div>-->
-                  <!--<div v-else-if="editInfo.selectedPhotoUrl === ''">-->
-                  <!--<span style="font-size: 5em; color: white;">EDIT</span>-->
-                  <!--</div>-->
-                  <!--<img v-else :src='editInfo.selectedPhotoUrl' alt="avatar">-->
-                </v-avatar>
-                <p
-                  class="subheading text"
-                  v-if="!onEdit"
-                  style="margin-top: 2vh; margin-left:3vw; font-weight: lighter;
-                  margin-right: 3vw; align-content: center">
-                  Share Yourself Artists
-                </p>
-                <!--TODO: Code for Uploading image. Should modify.-->
-
-                <!--<div v-else>-->
-                  <!--<v-btn-->
-                    <!--style="margin-top: 2vh; margin-left: 1vw;"-->
-                    <!--depressed-->
-                    <!--block-->
-                    <!--outline-->
-                    <!--flat-->
-                    <!--:color="artistInfo.color"-->
-                    <!--:loading="imageNotLoaded"-->
-                    <!--:disabled="imageNotLoaded"-->
-                    <!--@click.native="onPickFile"-->
-                  <!--&gt;-->
-                    <!--Select Profile Image-->
-                  <!--</v-btn>-->
-                  <!--<input type="file"-->
-                         <!--style="display:none"-->
-                         <!--ref="fileInput"-->
-                         <!--accept="image/*"-->
-                         <!--@change ="onFilePicked">-->
-                <!--</div>-->
+                size="180px"
+                class="avatarStyle"
+                v-bind:color="businessInfo.color"
+              >
+              <!-- If profile picture download url exists in db, display it instead of default avatar -->
+              <img v-if="fetchUserProfilePicture" :src='fetchUserProfilePicture' alt="avatar">
+              <div v-else>
+                <span style="font-size: 20em; color: white;">{{initial()}}</span>
+              </div>
+              </v-avatar>
+              <!-- Button that when clicked prompts for image file for logo -->
+              <v-btn
+                style="margin-top: 2vh; margin-left: 1vw;"
+                block
+                flat
+                depressed
+                color="primary"
+                  :loading="imageNotLoaded"
+                  :disabled="imageNotLoaded"
+                  class="mx-0"
+                  @click.native="onPickFile"
+              >
+              Change Logo
+              </v-btn>
+              <input type="file"
+                style="display:none"
+                ref="fileInput"
+                accept="image/*"
+                @change=onFilePicked
+              >     
             </v-flex>
-
             <v-flex lg6 md6 sm12 xs12>
               <div class="infoContainer">
-                <h1
-                  v-if="!onEdit"
-                  v-bind="businessInfo.name"
-                  class="display-2 text"
-                  style="margin-bottom: 2vh; font-weight: lighter"
-                >
-                  {{fetchUserName}}
-                </h1>
-                <v-flex v-else xs12>
-                  <v-text-field
-                    v-model="editInfo.name"
-                    label="Name"
-                  ></v-text-field>
-                </v-flex>
-                <h3 class="subheading text" style="margin-bottom: 2vh;">Business</h3>
-                <v-divider></v-divider>
-                  <p class="text" style="margin-top: 3vh; text-align:left">Email: {{fetchUserEmail}}</p>
+                <!-- displays profile fields and if onEdit allows them to be edited -->
                 <div v-if="!onEdit" style="text-align:left">
+                  <p class="text" style="margin-top: 3vh; text-align:left">Email: {{fetchUserEmail}}</p> 
                   <p class="text" style="margin-top: 3vh;">Publication: {{this.$store.getters.signed_in_user.publication}}</p>
                   <p class="text" style="margin-top: 3vh">Follower Count: {{this.$store.getters.signed_in_user.follower_count}}</p>
                   <p class="text" style="margin-top: 3vh">Website: {{this.$store.getters.signed_in_user.website}}</p>
@@ -83,36 +50,43 @@
                   <p class="text" style="margin-top: 3vh">Instagram: {{this.$store.getters.signed_in_user.instagram}}</p> 
                 </div>
                 <div v-else>
-                  <v-text-field v-model="editInfo.publication" label="Publication"></v-text-field>
-                  <v-text-field v-model="editInfo.follower_count" label="Follower Count"></v-text-field>
+                  <v-text-field v-model="editInfo.publication" label="Publication"></v-text-field>  
                   <v-text-field v-model="editInfo.website" label="Website"></v-text-field>
                   <v-text-field v-model="editInfo.about" label="About"></v-text-field>
                   <v-text-field v-model="editInfo.worth_knowing" label="Worth Knowing"></v-text-field>
                   <v-text-field v-model="editInfo.additional_notes" label="Additional Notes"></v-text-field>
                   <v-text-field v-model="editInfo.instagram" label="Add/Change Instagram"></v-text-field>
                 </div>
-
                 <p class="text" style="margin-top: 3vh; text-align: left">{{getPassedTime(fetchUserSignUpDate)}}</p>
-                <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="setEdit">
-                  Edit
+                <v-flex row v-if="!onEdit">
+                <v-btn  
+                depressed 
+                block  
+                color="primary" 
+                @click.native="setEdit">
+                  Edit Profile
                 </v-btn>
-                <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="exit">
-                  Back
-                </v-btn>
+                </v-flex>
                 <v-flex row v-else>
-                  <v-btn depressed block outline flat :color="fetchUserColor"
-                         :loading="dataNotSent"
-                         :disabled="dataNotSent"
-                         @click.native="sendEditData">
+                  <v-btn 
+                  depressed 
+                  block   
+                  color="primary"
+                  :loading="dataNotSent"
+                  :disabled="dataNotSent"
+                  @click.native="sendEditData">
                     Submit
                   </v-btn>
-                  <v-btn depressed block outline flat :color="fetchUserColor" @click.native="resetEdit">
+                  <v-btn 
+                  depressed 
+                  block 
+                  dark 
+                  color="black" 
+                  @click.native="resetEdit">
                     Back
                   </v-btn>
                 </v-flex>
               </div>
-
-            
             </v-flex>
 
           </v-layout>
@@ -148,6 +122,9 @@
       this.setUserInfo()
     },
     computed: {
+      fetchUserProfilePicture () {
+        return this.$store.getters.signed_in_user.url
+      },
       fetchUserName () {
         return this.$store.getters.signed_in_user.business_name
       },
@@ -169,8 +146,7 @@
         this.businessInfo = {};
       },
       setUserInfo () {
-        let userInfo = this.$store.getters.signed_in_user
-        console.log(userInfo.name)
+        let userInfo = this.$store.getters.signed_in_users        
         let newBusinessInfo = {
           name: userInfo.name,
           email: userInfo.email,
@@ -187,26 +163,29 @@
       },
       onPickFile () {
         this.$refs.fileInput.click()
-        this.imageNotLoaded = true
       },
-      onFilePicked (event) {
+      onFilePicked (event) {  
         const files = event.target.files
-        let file = files[0]
-        console.log('file: ' + file)
+        let file = files[0]   
         this.file = file
         let filename = files[0].name
+        // Check if valid image file given
         if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
+          this.imageNotLoaded = false
         }
+        // fileReader.result returns the url of the file locally stored
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           this.editInfo.selectedPhotoUrl = fileReader.result
+          // update state 
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
             .then(() => {
-              this.imageNotLoaded = false
+              this.$store.dispatch('uploadProfileImage') // stores file in firebase store and download url in db
             })
         })
-        fileReader.readAsDataURL(files[0])
+        this.imageNotLoaded = false
+        fileReader.readAsDataURL(files[0])       
       },
       resetEdit () {
         this.onEdit = false
@@ -261,7 +240,6 @@
 
 <style scoped>
   .profileBackground {
-    background-image: url('/static/images/404.jpg');
     background-size: cover;
     background-blend-mode: darken;
     background-position: center;
@@ -269,7 +247,7 @@
     padding-right: auto;
   }
   .card {
-    max-width: 700px;
+    max-width: 900px;
     margin-bottom: 100px;
     padding: 15px;
   }
