@@ -93,31 +93,15 @@
     <v-text-field v-model="business_email" :counter="10" label="email" required></v-text-field>
     <v-btn color="primary" @click="fetch_report" :disabled="!formIsValid" router to="/dashboard2">Submit</v-btn>
 
-    <v-layout row>
-      <v-flex>
-        <v-card>
-
-          <v-container fill-height fluid>
-            <v-layout fill-height>
-              <v-flex xs12 align-end flexbox>
-                <span class="headline">Generate Artists Email List</span>
-              </v-flex>
-            </v-layout>
-          </v-container>
-          </v-img>
-          <v-card-title>
-            <div>
-              <span class="grey--text"></span><br>
-              <span>This function generates an email list of artists.</span><br>
-            </div>
-          </v-card-title>
-          <v-card-actions>
-            <v-btn @click="generate_artists_email_list" dark color="orange">Generate</v-btn>
-
-          </v-card-actions>
-        </v-card>
-      </v-flex>
-    </v-layout>
+    <v-container fill-height fluid>
+      <v-layout fill-height>
+        <v-flex xs12 align-end flexbox>  
+          <span class="headline">Search for Artists</span>
+          <v-text-field v-model="artist_email" label="email" required></v-text-field>
+          <v-btn color="primary" @click="search_artists" :disabled="!artist_email" router to="/dashboard2">Submit</v-btn>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <v-card-title>
       Artists Email List
       <v-spacer></v-spacer>
@@ -134,8 +118,6 @@
         Your search for "{{ search }}" found no results.
       </v-alert>
     </v-data-table>
-    </v-card>
-
   </v-container>
   <h1 v-else>You are not authorized to view this page</h1>
 
@@ -164,7 +146,11 @@ export default {
     goto_monthly_report() {
       this.$router.push("monthly_report");
     },
-
+    search_artists() {
+      if(artist_email in this.$store.getters.artists_email_list){
+        this.router.push();
+      }
+    },
     fetch_report() {
       this.$store.dispatch("report_aug", {
         business_email: this.business_email
@@ -186,6 +172,9 @@ export default {
   computed: {
     formIsValid() {
       return this.business_email !== "";
+    },
+    artistSearchFormIsValid(){
+      return this.artist_email !== "";
     },
     businesses() {
       //MODIFY THIS ONE
@@ -231,7 +220,7 @@ export default {
       business_email: "",
       count: "",
       search: "",
-
+      artist_email: "",
       headers: [
         {
           text: "Dessert (100g serving)",
