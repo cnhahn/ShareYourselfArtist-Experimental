@@ -161,6 +161,10 @@ export const store = new Vuex.Store({
     query_business_email: '',
   },
   mutations: { 
+    clear_query_datePicker_list(state){
+      console.log("I am in set query datePicker")
+      state.replied_requests_for_report_datePicker = [];
+    },
    set_query_business_email(state,payload){
      state.query_business_email = payload.business_email;
    },
