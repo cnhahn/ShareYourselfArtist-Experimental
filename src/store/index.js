@@ -171,7 +171,12 @@ export const store = new Vuex.Store({
 
       const end_date = payload.endDate + '-00-00-00';
       const end_d = end_date.split('-');
-      const end_epoch = (new Date(end_d[0], end_d[1] - 1, end_d[2], end_d[3], end_d[4], end_d[5])).valueOf();
+      let end_epoch = (new Date(end_d[0], end_d[1] - 1, end_d[2], end_d[3], end_d[4], end_d[5])).valueOf();
+
+      if(end_epoch == start_epoch){
+        console.log("end epoch is : ", end_epoch);
+        end_epoch = end_epoch + 86400000
+      }
 
       state.datePicker.startDate = start_epoch,
       state.datePicker.endDate = end_epoch
