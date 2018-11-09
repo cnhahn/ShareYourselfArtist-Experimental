@@ -462,14 +462,13 @@ export const store = new Vuex.Store({
       commit,
       getters
     }, year_month) {
-      console.log("year month: " + typeof year_month)
+      console.log("year month: " + year_month)
       let first_of_month_array = year_month.split("-")
-      first_of_month_array.push("00", "00", "00", "00")
+      first_of_month_array.push(first_of_month_array[0], first_of_month_array[1], 1)
       let last_of_month_array = first_of_month_array
-      let first_of_month = new Date(...first_of_month_array)
-      let last_of_month = new Date(...last_of_month_array)
-      last_of_month.setMonth(first_of_month.getMonth())
-      first_of_month.setMonth(first_of_month.getMonth() - 1)
+      let first_of_month = new Date(parseInt(first_of_month_array[0]), (parseInt(first_of_month_array[1]) - 1) % 12, 1)
+
+      let last_of_month = new Date(parseInt(first_of_month_array[0]), parseInt(first_of_month_array[1]) % 12, 1)
       console.log("first of month: " + first_of_month)
       console.log("last of month: " + last_of_month)
       first_of_month = first_of_month.valueOf()
