@@ -1667,7 +1667,8 @@ signUserInGoogle({
                 break
             }
           },
-          function () { //WAN
+          // Additional code to upload/update Profile Logo - Wan
+          function () { 
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured: ' + downloadURL)
@@ -1690,7 +1691,6 @@ signUserInGoogle({
                   }
                 }).catch(function (error) {
                   console.log("Error getting document:", error);
-                  console.log("this is line 1693");
                 });
               })
             })

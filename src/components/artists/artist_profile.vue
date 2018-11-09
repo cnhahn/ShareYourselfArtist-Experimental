@@ -192,6 +192,9 @@
           this.editInfo.selectedPhotoUrl = fileReader.result
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
             .then(() => {
+              /* Extra code here to call function UploadProfileImage in index.js
+                 store->index.js
+              */
               this.imageNotLoaded = false
               this.$store.dispatch('uploadProfileImage')
             })
