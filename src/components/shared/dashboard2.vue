@@ -39,6 +39,8 @@
 export default {
   methods: {
     selectDates() {
+      let business_email = localStorage.getItem('business_email');
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
       let queryDates = { startDate: this.picker, endDate: this.picker2 };
       this.$store.commit("set_datePicker", queryDates);
       this.$store.dispatch("report_datePicker");
