@@ -51,16 +51,16 @@
     </v-flex>
   </v-layout>
   
-  <v-card >
-    <v-card-title> Blogs
-
+  <v-card>
+    <v-card-title>
+      Blogs
         <v-spacer></v-spacer>
          
         <!-- Input to search for a blog  -->
         <v-text-field
           v-model="search"
           append-icon="search"
-          label="hello"
+          label="Search"
           single-line
           hide-details
           
@@ -88,18 +88,19 @@
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
           Your search for "{{ search }}" found no results.
         </v-alert>
-      </v-data-table>
-    </v-card>
+    </v-data-table>
+  </v-card>
+
     <v-layout row>
       <v-card-actions>
         <v-btn @click="goto_monthly_report()" dark color="orange">Monthly Report</v-btn>
       </v-card-actions>
     </v-layout>
 
-    <v-text-field v-model="business_email" :counter="10" label="email" required></v-text-field>
-    <v-btn color="primary" @click="fetch_report" :disabled="!formIsValid" router to="/dashboard2">Submit</v-btn>
+    <!-- <v-text-field v-model="business_email" :counter="10" label="email" required></v-text-field>
+    <v-btn color="primary" @click="fetch_report" :disabled="!formIsValid" router to="/dashboard2">Submit</v-btn> -->
 
-    <v-layout row>
+    <!-- <v-layout row>
       <v-flex>
         <v-card>
 
@@ -122,7 +123,8 @@
           </v-card-actions>
         </v-card>
       </v-flex>
-    </v-layout>
+    </v-layout> -->
+  <v-card>
     <v-card-title>
       Artists Email List
       <v-spacer></v-spacer>
@@ -141,8 +143,8 @@
         Your search for "{{ search }}" found no results.
       </v-alert>
     </v-data-table>
-
-  </v-container>
+  </v-card>
+</v-container>
   <h1 v-else>You are not authorized to view this page</h1>
 </template>
 
@@ -154,12 +156,13 @@ export default {
   },
   methods: {
     generate_artists_email_list() {
-      console.log("generating email list");
       this.$store.dispatch("get_email_list_of_artists");
       console.log(this.$store.getters.artists_email_list);
     },
     goto_dashboard2(business_email) {
-       this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      this.$store.commit("set_query_business_email", {
+        business_email: business_email
+      });
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();
@@ -169,9 +172,7 @@ export default {
       this.$router.push("monthly_report");
     },
 
-    fetch_report() {
-
-    }
+    fetch_report() {}
   },
   computed: {
     formIsValid() {
