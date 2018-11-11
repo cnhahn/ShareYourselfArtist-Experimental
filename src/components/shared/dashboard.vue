@@ -68,34 +68,27 @@
     </v-card-title>
 
     <!-- Headers -->
-    <v-data-table
-      :headers="headers"
-      :items="businesses"
-      :search="search"
-      hide-headers
-    >
+    <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
 
       <!-- Display business data table and make it clickable. -->
       <template slot="items" slot-scope="props">
         <tr @click="goto_dashboard2(props.item.email)">
-            <td>{{ props.item.business_name }}</td>
-            <td class="text-xs-right">{{ props.item.email }}</td>
-            <td class="text-xs-right">{{ props.item.upload_date }}</td>
-          </tr>
-
-
-        </template>
+          <td>{{ props.item.business_name }}</td>
+          <td class="text-xs-right">{{ props.item.email }}</td>
+          <td class="text-xs-right">{{ props.item.upload_date }}</td>
+        </tr>
+      </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
           Your search for "{{ search }}" found no results.
         </v-alert>
     </v-data-table>
   </v-card>
 
-    <v-layout row>
-      <v-card-actions>
-        <v-btn @click="goto_monthly_report()" dark color="orange">Monthly Report</v-btn>
-      </v-card-actions>
-    </v-layout>
+  <v-layout row>
+    <v-card-actions>
+      <v-btn @click="goto_monthly_report()" dark color="orange">Monthly Report</v-btn>
+    </v-card-actions>
+  </v-layout>
 
     <!-- <v-text-field v-model="business_email" :counter="10" label="email" required></v-text-field>
     <v-btn color="primary" @click="fetch_report" :disabled="!formIsValid" router to="/dashboard2">Submit</v-btn> -->
@@ -128,7 +121,6 @@
     <v-card-title>
       Artists Email List
       <v-spacer></v-spacer>
-
     </v-card-title>
     <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
       <template slot="items" slot-scope="props">
@@ -137,8 +129,6 @@
         <td class="text-xs-right">{{ props.item.artist_email }}</td>
 
       </template>
-
-
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
       </v-alert>
