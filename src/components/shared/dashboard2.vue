@@ -37,8 +37,15 @@
 
 <script>
 export default {
+  created(){
+      this.$store.commit("clear_query_datePicker_list");
+      let business_email = localStorage.getItem('business_email');
+      console.log("the business email to refresh : " + business_email)
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+  },
   methods: {
     selectDates() {
+
       let queryDates = { startDate: this.picker, endDate: this.picker2 };
       this.$store.commit("set_datePicker", queryDates);
       this.$store.dispatch("report_datePicker");

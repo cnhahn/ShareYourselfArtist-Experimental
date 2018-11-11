@@ -162,5 +162,5 @@ export default {
       this.$store.dispatch("get_monthly_report_submissions", this.picker);
     }
   }
-};
+}
 </script>

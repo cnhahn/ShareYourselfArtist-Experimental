@@ -150,9 +150,14 @@ export default {
       console.log(this.$store.getters.artists_email_list);
     },
     goto_dashboard2(business_email) {
+<<<<<<< HEAD
       this.$store.commit("set_query_business_email", {
         business_email: business_email
       });
+=======
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      localStorage.setItem('business_email', business_email);
+>>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();
