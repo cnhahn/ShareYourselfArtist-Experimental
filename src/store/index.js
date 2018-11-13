@@ -162,29 +162,19 @@ export const store = new Vuex.Store({
     },
     monthly_report_submissions: [],
     //store email of artist that was just clicked (worked on by Yas)
-
-    query_business_email: ""
+    //yiwayana
+    query_business_email: "",
+    //yiwayana
+    info_of_business_for_dashboard2: [],
   },
-<<<<<<< HEAD
-  mutations: {
-    set_query_business_email(state, payload) {
-      state.query_business_email = payload.business_email;
-    },
-    set_datePicker(state, payload) {
-      const start_date = payload.startDate + "-00-00-00";
-      const start_d = start_date.split("-");
-      const start_epoch = new Date(
-        start_d[0],
-        start_d[1] - 1,
-        start_d[2],
-        start_d[3],
-        start_d[4],
-        start_d[5]
-      ).valueOf();
-=======
   mutations: { 
+    set_info_of_business_for_dashboard2(state,payload){
+      state.info_of_business_for_dashboard2.push(payload);
+    },
+    clear_info_of_business_for_dashboard2(state){
+      state.info_of_business_for_dashboard2 = [];
+    },
     clear_query_datePicker_list(state){
-      console.log("I am in set query datePicker")
       state.replied_requests_for_report_datePicker = [];
     },
    set_query_business_email(state,payload){
@@ -194,7 +184,6 @@ export const store = new Vuex.Store({
       const start_date = payload.startDate + '-00-00-00';
       const start_d = start_date.split('-');
       const start_epoch = (new Date(start_d[0], start_d[1] - 1, start_d[2], start_d[3], start_d[4], start_d[5])).valueOf();
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
 
       const end_date = payload.endDate + "-00-00-00";
       const end_d = end_date.split("-");
@@ -423,24 +412,34 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    //for datePicker
 
-    //test cases:
-    //have to implement test cases for start and end date equaling each other.
-    //refereshing the page eliminates the artist email so we have to fix that
+    //yiwayana
+    query_info_of_business_for_dashboard2({commit,state}, payload){
+      let db = firebase.firestore();
+      let query = db.collection("users")
+      .where("email", "==", payload);
+      query.get().then(function(results){
+        if(results.empty){
+          ("no documents found")
+        }else{
+          results.forEach(function(doc) {
+            commit("set_info_of_business_for_dashboard2", doc.data().about);
+            commit("set_info_of_business_for_dashboard2", doc.data().additional_notes);
+            commit("set_info_of_business_for_dashboard2", doc.data().business_name);
+            commit("set_info_of_business_for_dashboard2", doc.data().email);
+            commit("set_info_of_business_for_dashboard2", doc.data().facebook_url);
+            commit("set_info_of_business_for_dashboard2", doc.data().instagram_url);
+            commit("set_info_of_business_for_dashboard2", doc.data().publication);
+            commit("set_info_of_business_for_dashboard2", doc.data().role);
+            commit("set_info_of_business_for_dashboard2", doc.data().the_good);
+            commit("set_info_of_business_for_dashboard2", doc.data().tumblr_url);
+            commit("set_info_of_business_for_dashboard2", doc.data().upload_date);
+          });
+        }
+      });
+    },
 
-    //Things to Accomplish before next meeting:
-    //The whole point of this is to make sure we know how to pay businesses . TO do so we have to know:
-    //put number of total artist submissions visibly somewhere
-    //put number of paid submissions somewhere that are replied
-    //SO here's the whole sytem. ARtists can submit htrough free or paid credits.
-    //If it's free, we will not have to pay the business for their response. IF it's not free, we will have to pay for their responses.
-    //number of paid submissions
-    //put headers to describe the contents
-    //put back button
-    //make the entire (dashboard) row clickable instead of just the email
-    //
-
+    //yiwayana
     report_datePicker({ commit, state }) {
       commit("clear_replied_for_report_datePicker");
       let db = firebase.firestore();
@@ -490,23 +489,6 @@ export const store = new Vuex.Store({
           console.log("Error getting report: ", error);
         });
     },
-<<<<<<< HEAD
-    get_monthly_report_submissions({ commit, getters }, year_month) {
-      console.log("year month: " + typeof year_month);
-      let first_of_month_array = year_month.split("-");
-      first_of_month_array.push("00", "00", "00", "00");
-      let last_of_month_array = first_of_month_array;
-      let first_of_month = new Date(...first_of_month_array);
-      let last_of_month = new Date(...last_of_month_array);
-      last_of_month.setMonth(first_of_month.getMonth());
-      first_of_month.setMonth(first_of_month.getMonth() - 1);
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
-      first_of_month = first_of_month.valueOf();
-      last_of_month = last_of_month.valueOf();
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
-=======
     get_monthly_report_submissions({
       commit,
       getters
@@ -524,7 +506,6 @@ export const store = new Vuex.Store({
       last_of_month = last_of_month.valueOf()
       console.log("first of month: " + first_of_month)
       console.log("last of month: " + last_of_month)
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
       let db = firebase.firestore();
       let temp_report = db.collection("review_requests");
       let query = temp_report
@@ -2052,6 +2033,10 @@ export const store = new Vuex.Store({
     },
     monthly_report_submissions(state) {
       return state.monthly_report_submissions;
+    },
+    info_of_business_for_dashboard2(state){
+      return state.info_of_business_for_dashboard2;
     }
+
   }
 });

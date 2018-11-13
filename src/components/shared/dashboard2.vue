@@ -30,6 +30,27 @@
     <div>
       <button variant="primary" v-on:click="selectDates">Select These Date Ranges</button>
     </div>
+ 
+    <p> {{info_of_business_for_dashboard2}} </p>
+
+    <!-- <v-data-table :items="datePicker_list" hide-headers>
+      <template slot="items" slot-scope="props">
+        <td>{{ props.item.artist_email }}</td>
+        <td class="text-xs-right">{{ props.item.art.art_title }}</td>
+        <td class="text-xs-right">{{ props.item.read_byartist }}</td>
+      </template>
+      <v-alert
+        slot="no-results"
+        :value="true"
+        color="error"
+        icon="warning"
+      >Your search for "{{ search }}" found no results.</v-alert>
+    </v-data-table> -->
+
+
+
+
+
   </v-container>
   <!-- If the current user is not an admin, then they will not be able to see the current dashboard. -->
   <h1 v-else>You are not authorized to view this page</h1>
@@ -39,25 +60,29 @@
 export default {
   created(){
       this.$store.commit("clear_query_datePicker_list");
+      this.$store.commit("clear_info_of_business_for_dashboard2");
       let business_email = localStorage.getItem('business_email');
       console.log("the business email to refresh : " + business_email)
       this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
+
   },
   methods: {
     selectDates() {
-
       let queryDates = { startDate: this.picker, endDate: this.picker2 };
       this.$store.commit("set_datePicker", queryDates);
       this.$store.dispatch("report_datePicker");
       this.month = "datePicker";
     },
-    showList() {}
   },
 
   computed: {
     datePicker_list() {
       return this.$store.getters.datePicker;
-    }
+    },
+    info_of_business_for_dashboard2(){
+      return this.$store.getters.info_of_business_for_dashboard2;
+    },
   },
 
   data() {
