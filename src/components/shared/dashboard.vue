@@ -1,53 +1,59 @@
 <template>
-  <v-container
-    v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'"
-  >
-    <v-layout row>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{businesses.length}}</h3>
-              <div>Businesses</div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{artists_email_list.length}}</h3>
-              <div>Artists</div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
-      </v-flex>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{submissions_for_month.length}}</h3>
-              <div>Submissions</div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{replied_for_month}}</h3>
-              <div>Replied</div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
-      </v-flex>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{free_submissions_for_month}}</h3>
-              <div>Free</div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{paid_submissions_for_month}}</h3>
-              <div>Paid</div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-card>
-      <v-card-title>Blogs
+<v-container v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'">
+  
+  <v-layout row>
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{businesses.length}}</h3>
+            <div>Businesses</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{artists_email_list.length}}</h3>
+            <div>Artists</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+
+
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{submissions_for_month.length}}</h3>
+            <div>Submissions</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{replied_for_month}}</h3>
+            <div>Replied</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+
+
+
+    <v-flex class="ml-3" xs12 sm6>
+      <v-card>
+        <v-card-title primary-title>
+          <v-flex class = "sm-6">
+            <h3 class="headline mb-0">{{free_submissions_for_month}}</h3>
+            <div>Free</div>
+          </v-flex>
+          <v-flex  class = "sm-6">
+            <h3 class="headline mb-0">{{paid_submissions_for_month}}</h3>
+            <div>Paid</div>
+          </v-flex>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+  </v-layout>
+  
+  <v-card>
+    <v-card-title>
+      Blogs
         <v-spacer></v-spacer>
         <!-- Input to search for a blog  -->
         <v-text-field v-model="search" append-icon="search" label="hello" single-line hide-details></v-text-field>
@@ -96,14 +102,12 @@
         <td class="text-xs-right">{{ props.item.artist_name }}</td>
         <td class="text-xs-right">{{ props.item.artist_email }}</td>
       </template>
-      <v-alert
-        slot="no-results"
-        :value="true"
-        color="error"
-        icon="warning"
-      >Your search for "{{ search }}" found no results.</v-alert>
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+        Your search for "{{ search }}" found no results.
+      </v-alert>
     </v-data-table>
-  </v-container>
+  </v-card>
+</v-container>
   <h1 v-else>You are not authorized to view this page</h1>
 </template>
 
@@ -115,7 +119,6 @@ export default {
   },
   methods: {
     generate_artists_email_list() {
-      console.log("generating email list");
       this.$store.dispatch("get_email_list_of_artists");
       console.log(this.$store.getters.artists_email_list);
     },
@@ -124,6 +127,9 @@ export default {
         business_email: business_email
       });
       localStorage.setItem("business_email", business_email);
+
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      localStorage.setItem('business_email', business_email);
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();
