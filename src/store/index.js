@@ -165,32 +165,11 @@ export const store = new Vuex.Store({
     //yiwayana
     query_business_email: "",
     //yiwayana
-    info_of_business_for_dashboard2: {
-      about: '',
-      additional_notes: '',
-      business_name: '',
-      email: '',
-      facebook_url: '',
-      instagram_url: '',
-      publication: '',
-      the_good: '',
-      tumblr_url: '',
-      upload_date: ''
-    },
+    info_of_business_for_dashboard2: {},
   },
   mutations: { 
     set_info_of_business_for_dashboard2(state,payload){
-      state.info_of_business_for_dashboard2.about = payload.about
-      state.info_of_business_for_dashboard2.additional_notes = payload.additional_notes;
-      state.info_of_business_for_dashboard2.business_name = payload.business_name;
-      state.info_of_business_for_dashboard2.email =  payload.email;
-      state.info_of_business_for_dashboard2.facebook_url = payload.facebook_url;
-      state.info_of_business_for_dashboard2.instagram_url = payload.instagram_url;
-      state.info_of_business_for_dashboard2.publication = payload.publication;
-      state.info_of_business_for_dashboard2.role = payload.role;
-      state.info_of_business_for_dashboard2.the_good = payload.the_good;
-      state.info_of_business_for_dashboard2.tumblr_url = payload.tumblr_url;
-      state.info_of_business_for_dashboard2.upload_date = payload.upload_date;
+      state.info_of_business_for_dashboard2 = payload
     },
     clear_info_of_business_for_dashboard2(state){
       

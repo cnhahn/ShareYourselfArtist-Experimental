@@ -88,8 +88,7 @@ export default {
       this.$store.commit("clear_info_of_business_for_dashboard2");
       let business_email = localStorage.getItem('business_email');
       this.$store.commit("set_query_business_email", {business_email: business_email}) 
-      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
-      this.info_of_business_for_dashboard2();
+      //this.info_of_business_for_dashboard2();
   },
   methods: {
     selectDates() {
