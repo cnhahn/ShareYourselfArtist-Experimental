@@ -165,23 +165,6 @@ export const store = new Vuex.Store({
 
     query_business_email: ""
   },
-<<<<<<< HEAD
-  mutations: {
-    set_query_business_email(state, payload) {
-      state.query_business_email = payload.business_email;
-    },
-    set_datePicker(state, payload) {
-      const start_date = payload.startDate + "-00-00-00";
-      const start_d = start_date.split("-");
-      const start_epoch = new Date(
-        start_d[0],
-        start_d[1] - 1,
-        start_d[2],
-        start_d[3],
-        start_d[4],
-        start_d[5]
-      ).valueOf();
-=======
   mutations: { 
     clear_query_datePicker_list(state){
       console.log("I am in set query datePicker")
@@ -194,7 +177,6 @@ export const store = new Vuex.Store({
       const start_date = payload.startDate + '-00-00-00';
       const start_d = start_date.split('-');
       const start_epoch = (new Date(start_d[0], start_d[1] - 1, start_d[2], start_d[3], start_d[4], start_d[5])).valueOf();
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
 
       const end_date = payload.endDate + "-00-00-00";
       const end_d = end_date.split("-");
@@ -490,23 +472,6 @@ export const store = new Vuex.Store({
           console.log("Error getting report: ", error);
         });
     },
-<<<<<<< HEAD
-    get_monthly_report_submissions({ commit, getters }, year_month) {
-      console.log("year month: " + typeof year_month);
-      let first_of_month_array = year_month.split("-");
-      first_of_month_array.push("00", "00", "00", "00");
-      let last_of_month_array = first_of_month_array;
-      let first_of_month = new Date(...first_of_month_array);
-      let last_of_month = new Date(...last_of_month_array);
-      last_of_month.setMonth(first_of_month.getMonth());
-      first_of_month.setMonth(first_of_month.getMonth() - 1);
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
-      first_of_month = first_of_month.valueOf();
-      last_of_month = last_of_month.valueOf();
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
-=======
     get_monthly_report_submissions({
       commit,
       getters
@@ -524,7 +489,6 @@ export const store = new Vuex.Store({
       last_of_month = last_of_month.valueOf()
       console.log("first of month: " + first_of_month)
       console.log("last of month: " + last_of_month)
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
       let db = firebase.firestore();
       let temp_report = db.collection("review_requests");
       let query = temp_report
