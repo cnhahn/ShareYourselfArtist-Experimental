@@ -31,25 +31,50 @@
       <button variant="primary" v-on:click="selectDates">Select These Date Ranges</button>
     </div>
  
-    <p> {{info_of_business_for_dashboard2}} </p>
+    <!-- By yiwayana -->
 
-    <!-- <v-data-table :items="datePicker_list" hide-headers>
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.artist_email }}</td>
-        <td class="text-xs-right">{{ props.item.art.art_title }}</td>
-        <td class="text-xs-right">{{ props.item.read_byartist }}</td>
-      </template>
-      <v-alert
-        slot="no-results"
-        :value="true"
-        color="error"
-        icon="warning"
-      >Your search for "{{ search }}" found no results.</v-alert>
-    </v-data-table> -->
-
-
-
-
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-text-field
+        v-model = "business_name"
+        label="Name"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_about"
+        label="About"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_additional_notes"
+        label="Additional Notes"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_email"
+        label="Email"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_facebook_url"
+        label="Facebook Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_instagram_url"
+        label="Instagram Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_tumblr_url"
+        label="Tumblr Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_publication"
+        label="Publication"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_the_good"
+        label="The Good"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_upload_date"
+        label="Upload Date"
+      ></v-text-field>
+    </v-form>
 
   </v-container>
   <!-- If the current user is not an admin, then they will not be able to see the current dashboard. -->
@@ -62,10 +87,9 @@ export default {
       this.$store.commit("clear_query_datePicker_list");
       this.$store.commit("clear_info_of_business_for_dashboard2");
       let business_email = localStorage.getItem('business_email');
-      console.log("the business email to refresh : " + business_email)
       this.$store.commit("set_query_business_email", {business_email: business_email}) 
       this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
-
+      this.info_of_business_for_dashboard2();
   },
   methods: {
     selectDates() {
@@ -81,6 +105,17 @@ export default {
       return this.$store.getters.datePicker;
     },
     info_of_business_for_dashboard2(){
+      let business_info = this.$store.getters.info_of_business_for_dashboard2
+      this.business_about = business_info.about;
+      this.business_additional_notes = business_info.additional_notes;
+      this.business_name = business_info.business_name;
+      this.business_email = business_info.email;
+      this.business_facebook_url =  business_info.facebook_url;
+      this.business_instagram_url = business_info.instagram_url;
+      this.business_publication = business_info.publication;
+      this.business_the_good = business_info.the_good;
+      this.business_tumblr_url = business_info.tumblr_url;
+      this.business_upload_date = business_info.upload_date;
       return this.$store.getters.info_of_business_for_dashboard2;
     },
   },
@@ -104,6 +139,16 @@ export default {
       ],
       picker: new Date().toISOString().substring(0, 10),
       picker2: new Date().toISOString().substring(0, 10),
+      business_about: '',
+      business_additional_notes: '',
+      business_name: '',
+      business_email: '',
+      business_facebook_url: '',
+      business_instagram_url: '',
+      business_publication: '',
+      business_the_good: '',
+      business_tumblr_url: '',
+      business_upload_date: '',
       landscape: false,
       reactive: false
     };

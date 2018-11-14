@@ -165,14 +165,35 @@ export const store = new Vuex.Store({
     //yiwayana
     query_business_email: "",
     //yiwayana
-    info_of_business_for_dashboard2: [],
+    info_of_business_for_dashboard2: {
+      about: '',
+      additional_notes: '',
+      business_name: '',
+      email: '',
+      facebook_url: '',
+      instagram_url: '',
+      publication: '',
+      the_good: '',
+      tumblr_url: '',
+      upload_date: ''
+    },
   },
   mutations: { 
     set_info_of_business_for_dashboard2(state,payload){
-      state.info_of_business_for_dashboard2.push(payload);
+      state.info_of_business_for_dashboard2.about = payload.about
+      state.info_of_business_for_dashboard2.additional_notes = payload.additional_notes;
+      state.info_of_business_for_dashboard2.business_name = payload.business_name;
+      state.info_of_business_for_dashboard2.email =  payload.email;
+      state.info_of_business_for_dashboard2.facebook_url = payload.facebook_url;
+      state.info_of_business_for_dashboard2.instagram_url = payload.instagram_url;
+      state.info_of_business_for_dashboard2.publication = payload.publication;
+      state.info_of_business_for_dashboard2.role = payload.role;
+      state.info_of_business_for_dashboard2.the_good = payload.the_good;
+      state.info_of_business_for_dashboard2.tumblr_url = payload.tumblr_url;
+      state.info_of_business_for_dashboard2.upload_date = payload.upload_date;
     },
     clear_info_of_business_for_dashboard2(state){
-      state.info_of_business_for_dashboard2 = [];
+      
     },
     clear_query_datePicker_list(state){
       state.replied_requests_for_report_datePicker = [];
@@ -205,7 +226,6 @@ export const store = new Vuex.Store({
         (state.datePicker.endDate = end_epoch);
     },
     set_free_credits(state, payload) {
-      console.log("inside set free credits");
       console.log(payload);
       if (payload != null || payload != undefined || payload != "") {
         state.free_credits = payload;
@@ -423,17 +443,7 @@ export const store = new Vuex.Store({
           ("no documents found")
         }else{
           results.forEach(function(doc) {
-            commit("set_info_of_business_for_dashboard2", doc.data().about);
-            commit("set_info_of_business_for_dashboard2", doc.data().additional_notes);
-            commit("set_info_of_business_for_dashboard2", doc.data().business_name);
-            commit("set_info_of_business_for_dashboard2", doc.data().email);
-            commit("set_info_of_business_for_dashboard2", doc.data().facebook_url);
-            commit("set_info_of_business_for_dashboard2", doc.data().instagram_url);
-            commit("set_info_of_business_for_dashboard2", doc.data().publication);
-            commit("set_info_of_business_for_dashboard2", doc.data().role);
-            commit("set_info_of_business_for_dashboard2", doc.data().the_good);
-            commit("set_info_of_business_for_dashboard2", doc.data().tumblr_url);
-            commit("set_info_of_business_for_dashboard2", doc.data().upload_date);
+            commit("set_info_of_business_for_dashboard2", doc.data());
           });
         }
       });
@@ -623,7 +633,6 @@ export const store = new Vuex.Store({
           );
           console.log("current picture");
           commit("setUser", newUser);
-          console.log("getters.user.id" + getters.user.id);
           const db = firebase.firestore();
           var artistRef = db.collection("users").doc(newUser.userId);
           var getDoc = artistRef
@@ -992,9 +1001,6 @@ export const store = new Vuex.Store({
         .catch(function(error) {
           console.log("Error getting documents: ", error);
         });
-      console.log("getters.user_role:" + getters.user_role);
-      console.log("getters.user_rid:" + getters.user.id);
-      console.log("getters.user_credit:" + getters.credits);
     },
 
     fetchArts({ commit, getters }) {

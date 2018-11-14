@@ -106,7 +106,7 @@
           </v-container>
           <v-card-title>
             <div>
-              <span class="grey--text"></span><br>
+              <span class="greytext"></span><br>
               <span>This function generates an email list of artists.</span><br>
             </div>
           </v-card-title>
@@ -124,10 +124,8 @@
     </v-card-title>
     <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
       <template slot="items" slot-scope="props">
-
         <td class="text-xs-right">{{ props.item.artist_name }}</td>
         <td class="text-xs-right">{{ props.item.artist_email }}</td>
-
       </template>
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
