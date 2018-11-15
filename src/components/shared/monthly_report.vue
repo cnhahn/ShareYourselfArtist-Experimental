@@ -155,7 +155,8 @@ export default {
 
       // console.log(businesses_with_submissions)
       return businesses_with_submissions
-    }
+    },
+
   },
   watch: {
     picker() {

@@ -148,12 +148,13 @@ export const store = new Vuex.Store({
     subscription_plan: {},
     replied_for_report: [],
     report_month: 1,
-    free_credits: 0,
-    artists_email_list: [],
-    selectBlog: {
-      userId: "",
-      name: "",
-      role: ""
+    free_credits:0,
+    artists_email_list:[],
+    artist_settings_artist: {},
+    selectBlog:{
+      userId:'',
+      name:'',
+      role:'',
     },
     //working on setting two dates into the date picker
     datePicker: {
@@ -402,6 +403,9 @@ export const store = new Vuex.Store({
     },
     set_monthly_report_submissions(state, payload) {
       state.monthly_report_submissions = payload;
+    },
+    set_artist_settings_artist(state, payload) {
+      state.artist_settings_artist = payload.obj
     }
   },
   actions: {
@@ -472,44 +476,87 @@ export const store = new Vuex.Store({
           console.log("Error getting report: ", error);
         });
     },
-    get_monthly_report_submissions({
-      commit,
-      getters
-    }, year_month) {
-      console.log("year month: " + year_month)
-      let first_of_month_array = year_month.split("-")
-      first_of_month_array.push(first_of_month_array[0], first_of_month_array[1], 1)
-      let last_of_month_array = first_of_month_array
-      let first_of_month = new Date(parseInt(first_of_month_array[0]), (parseInt(first_of_month_array[1]) - 1) % 12, 1)
-
-      let last_of_month = new Date(parseInt(first_of_month_array[0]), parseInt(first_of_month_array[1]) % 12, 1)
-      console.log("first of month: " + first_of_month)
-      console.log("last of month: " + last_of_month)
-      first_of_month = first_of_month.valueOf()
-      last_of_month = last_of_month.valueOf()
-      console.log("first of month: " + first_of_month)
-      console.log("last of month: " + last_of_month)
-      let db = firebase.firestore();
-      let temp_report = db.collection("review_requests");
-      let query = temp_report
-        .where("submitted_on", ">", first_of_month)
-        .where("submitted_on", "<", last_of_month);
+    get_artist_settings_artist ({commit, getters}, email) {
+      let db = firebase.firestore()
+      let users = db.collection('users')
+      let query = users
+        .where('role', '==', 'artist')
+        .where('email', '==', email)
       query
         .get()
-        .then(function(results) {
+        .then(function (user) {
           // go through all results
-          let submissions = [];
-          results.forEach(function(doc) {
-            submissions.push(doc.data());
-          });
-          commit("set_monthly_report_submissions", submissions);
+          let userObj
+          user.forEach(item => {
+            userObj = item.data()
+          })
+          // commit('set_artist_settings_artist', userObj)
+          console.log('Document data:', userObj)
+          localStorage.setItem('artist_settings_artist', JSON.stringify(userObj))
+        }).then(function () {
+          router.push('artist_settings')
+        })
+
+        .catch(function (error) {
+          console.log('Error getting documents:', error)
+        })
+    },
+    updateArtistSettings ({commit, getters}, artist) {
+      let db = firebase.firestore()
+      db.collection('users').doc(artist.userId).update({
+        name: artist.name,
+        email: artist.email,
+        free_cerdits: artist.free_cerdits || 0,
+        credits: artist.credits || 0,
+        role: artist.role,
+        instagram: artist.instagram || 'none',
+        photoUrl: artist.photoUrl || 'none'
+      }).then(function () {
+        console.log('Document successfully updated!')
+        localStorage.setItem('artist_settings_artist', JSON.stringify(artist))
+      })
+      .catch(function (error) {
+        console.error('Error writing document: ', error)
+      })
+    },
+    get_monthly_report_submissions ({
+      commit,
+      getters
+    }, yearMonth) {
+      console.log('year month: ' + yearMonth)
+      let firstOfMonthArray = yearMonth.split('-')
+      console.log(firstOfMonthArray)
+      let firstOfMonth = new Date(parseInt(firstOfMonthArray[0]), (parseInt(firstOfMonthArray[1]) - 1) % 12, 1)
+
+      let lastOfMonth = new Date(parseInt(firstOfMonthArray[0]), parseInt(firstOfMonthArray[1]) % 12, 1)
+      console.log('first of month: ' + firstOfMonth)
+      console.log('last of month: ' + lastOfMonth)
+      firstOfMonth = firstOfMonth.valueOf()
+      lastOfMonth = lastOfMonth.valueOf()
+      console.log('first of month: ' + firstOfMonth)
+      console.log('last of month: ' + lastOfMonth)
+      let db = firebase.firestore()
+      let tempReport = db.collection('review_requests')
+      let query = tempReport
+        .where('submitted_on', '>', firstOfMonth)
+        .where('submitted_on', '<', lastOfMonth)
+      query
+        .get()
+        .then(function (results) {
+          // go through all results
+          let submissions = []
+          results.forEach(function (doc) {
+            submissions.push(doc.data())
+          })
+          commit('set_monthly_report_submissions', submissions)
           // set_replied_requests_for_report
           // or if you only want the first result you can also do something like this:
-          console.log("Document data:", submissions);
+          console.log('Document data:', submissions)
         })
-        .catch(function(error) {
-          console.log("Error getting documents:", error);
-        });
+
+        .catch(function (error) {
+          console.log('Error getting documents:', error)
+        })
     },
     // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
     get_submissions_for_month({ commit, getters }) {
@@ -1875,6 +1922,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    artist_settings_artist(){
+      return state.artist_settings_artist
+    },
     businesses_being_submitted(state) {
       return state.businesses_being_submitted;
     },
@@ -2016,6 +2066,9 @@ export const store = new Vuex.Store({
     },
     monthly_report_submissions(state) {
       return state.monthly_report_submissions;
+    },
+    artist_settings_artist(state){
+      return state.artist_settings_artist;
     }
   }
 });
