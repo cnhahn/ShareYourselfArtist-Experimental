@@ -30,26 +30,12 @@
     <div>
       <button variant="primary" v-on:click="selectDates">Select These Date Ranges</button>
     </div>
+
+     <h2>{{info_of_business_for_dashboard2.business_name}} </h2>
  
     <!-- By yiwayana -->
 
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-text-field
-        v-model = "business_name"
-        label="Name"
-      ></v-text-field>
-      <v-text-field
-        v-model = "business_about"
-        label="About"
-      ></v-text-field>
-      <v-text-field
-        v-model = "business_additional_notes"
-        label="Additional Notes"
-      ></v-text-field>
-      <v-text-field
-        v-model = "business_email"
-        label="Email"
-      ></v-text-field>
+    <v-form>
       <v-text-field
         v-model = "business_facebook_url"
         label="Facebook Url"
@@ -73,7 +59,15 @@
       <v-text-field
         v-model = "business_upload_date"
         label="Upload Date"
+      ></v-text-field>  <v-text-field
+        v-model = "business_about"
+        label="About"
       ></v-text-field>
+      <v-text-field
+        v-model = "business_additional_notes"
+        label="Additional Notes"
+      ></v-text-field>
+ 
     </v-form>
 
   </v-container>
