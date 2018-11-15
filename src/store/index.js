@@ -172,7 +172,7 @@ export const store = new Vuex.Store({
       state.info_of_business_for_dashboard2 = payload
     },
     clear_info_of_business_for_dashboard2(state){
-      
+      state.info_of_business_for_dashboard2 = {};
     },
     clear_query_datePicker_list(state){
       state.replied_requests_for_report_datePicker = [];
@@ -411,6 +411,35 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    //yiwayana
+    push_updated_business_info_to_firebase({commit}, payload){
+      let db = firebase.firestore();
+      let userId = ''
+      let userid_of_business = db.collection('users').where('email', "==", payload.email);
+      //find the right business userId so we can edit the right collection
+      userid_of_business.get().then(function(results) {
+        if (results.empty) {
+          console.log("No documents found! in query");
+        } else {
+          // go through all results
+          results.forEach(function(doc) {
+            userId = doc.data().userId
+            let businessRef = db.collection('users').doc(userId);
+            businessRef.update({
+              about :  payload.about,
+              additional_notes :  payload.additional_notes ,
+              business_name : payload.business_name,
+              facebook_url : payload.facebook_url,
+              instagram_url : payload.instagram_url,
+              publication : payload.publication,
+              the_good : payload.the_good,
+              tumblr_url : payload.tumblr_url,
+              upload_date : payload.upload_date
+            })
+          });
+        }
+      });
+    },
 
     //yiwayana
     query_info_of_business_for_dashboard2({commit,state}, payload){
