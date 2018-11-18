@@ -10,10 +10,33 @@
       <v-spacer></v-spacer>
     </v-layout>
     <v-layout>
-      <div id="v-step-0" class="text-xs-center">
+      <div id="v-step-1" class="text-xs-center">
         <v-btn large depressed color="primary" router to="/submissions">Your Submissions</v-btn>
 
-        <v-tour name="myTour" :steps="steps"></v-tour>
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+                <template v-if="tour.currentStep === 0">
+                  <div slot="actions">
+                    <v-btn type="button" @click="nextStepCallback(tour.currentStep)" large depressed color="primary" router to="/submissions">Go to Submission</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
       </div>
 
     </v-layout>
@@ -71,18 +94,49 @@
         show_tumblr:false,
         steps: [
           {
-            target: '#v-step-0',  // We're using document.querySelector() under the hood
-            content: `This is where you check your submissions!`
+            target: '#v-step-1', 
+            content: `This is where you check your submissions from your artists! Click Next to Check out your submissions!`
+          }/*,
+          {
+            target: '#v-step-2',  // We're using document.querySelector() under the hood
+            content: `This is where you can edit your profile! Here you can check your profile and learn more about us!`
           },
           {
-            target: '#v-step-1',  // We're using document.querySelector() under the hood
-            content: `This is where you can edit your profile!`
-          }
-        ]
+            target: '#v-step-3',  // We're using document.querySelector() under the hood
+            content: `Here you can navigate throughout the website!`,
+            params: {
+              placement: 'bottom'
+            }
+          }*/
+          
+        ],
+        myCallbacks: {
+          onPreviousStep: this.previousStepCallback,
+          onNextStep: this.nextStepCallback
+        }
+      }
+    },
+    
+    methods: {
+      previousStepCallback(currentStep) {
+        console.log("Previous")
+      },
+      nextStepCallback(currentStep) {
+        console.log("Next")
       }
     },
     mounted: function () {
+      
+      if("firstTimeLogin" in localStorage){
+        localStorage.clear()
+        console.log('yes');
+        console.log(localStorage.getItem("firstTimeLogin"))
+      } else {
+        console.log('no');
+      }
+
       this.$tours['myTour'].start()
+      
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length

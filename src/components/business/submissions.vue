@@ -1,9 +1,36 @@
 <template>
   <v-container class ="container">
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
-    <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
-    <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
-    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
+    <div>
+      <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn>
+      <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
+      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
+      <v-tour name="myTour" :steps="steps">
+        <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+                <template v-if="tour.currentStep === 2">
+                  <div slot="actions">
+                    <button @click="tour.previousStep" class="btn">Previous step</button>
+                    <button @click="tour.nextStep" class="btn btn-primary">Next step</button>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+      </v-tour>
+    </div>
     <v-layout row justify-center>
       <v-layout row wrap mb-5>
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
@@ -105,6 +132,7 @@
 <script>
 
   export default {
+    name: 'my-tour-2',
     data () {
       return {
         show: false,
@@ -127,7 +155,31 @@
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 50 characters']
+        rules: [v => v.length > 50 || 'Min 50 characters'],
+        steps: [
+          {
+            target: '#v-step-allSubmissions',  // We're using document.querySelector() under the hood
+            content: `This is where you check all of your submissions`,
+            params: {
+              placement: 'top'
+            }
+          },
+          {
+            target: '#v-step-unrepliedSubmissions',  // We're using document.querySelector() under the hood
+            content: `This is where you check your submissions you have not replied to! Don't forget to reply to the artist!`,
+            params: {
+              placement: 'top'
+            }
+          }
+          ,
+          {
+            target: '#v-step-repliedSubmissions', 
+            content: `This is where you check your submissions you have replied to!`,
+            params: {
+              placement: 'top'
+            }
+          }
+        ]
       }
     },
 
@@ -249,6 +301,7 @@
 
       /* This component just got created, fetch some data here using an action */
       function() {
+        this.$tours['myTour'].start()
         this.$store.dispatch('fetch_all_Submissions').then(response => {
         this.submissions = this.$store.getters.submissions_for_this_business
         this.master_submissions = this.$store.getters.submissions_for_this_business
