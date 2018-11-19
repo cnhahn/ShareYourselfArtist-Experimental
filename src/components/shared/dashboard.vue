@@ -72,22 +72,29 @@
     </v-card>
     <v-layout row>
       <v-card-actions>
-        <v-btn @click="goto_monthly_report()" dark color="orange">Monthly Report</v-btn>
+        <router-link to="/monthly_report">
+          <v-btn router to dark color="primary">Monthly Report</v-btn>
+        </router-link>
       </v-card-actions>
     </v-layout>
-    <v-container fill-height fluid>
-      <v-layout fill-height>
-        <v-flex xs12 align-end flexbox>
-          <span class="headline">Search for Artists</span>
-          <v-text-field v-model="artist_email" label="email" required :rules="emailRules"></v-text-field>
-          <v-btn color="primary" @click="searchArtistEmail()" :disabled="isDisabled">Submit</v-btn>
-          <v-alert
-            type="error"
-            :value="alert"
-          >Your search for "{{ artist_email }}" found no results.</v-alert>
-        </v-flex>
-      </v-layout>
-    </v-container>
+  
+    <v-layout fill-height>
+      <v-flex xs12 align-end flexbox>
+        <span class="headline">Search for Artists</span>
+        <v-text-field v-model="artist_email" label="email" required :rules="emailRules"></v-text-field>
+        <v-btn color="primary" @click="searchArtistEmail()" :disabled="isDisabled">Submit</v-btn>
+        <v-alert
+          type="error"
+          :value="alert"
+        >Your search for "{{ artist_email }}" found no results.</v-alert>
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <span class="headline">Distribute Campaign Credits</span>
+      <v-spacer></v-spacer>
+      <v-text-field v-model="freeCredits" label='# of credits' :rules="giveCreditsRules" solo></v-text-field>
+      <v-btn color="primary" @click="giveCredits()">Submit</v-btn>
+    </v-layout>
     <v-card-title>Artists Email List
       <v-spacer></v-spacer>
     </v-card-title>
@@ -155,6 +162,9 @@ export default {
         }
       }
       this.alert = true;
+    },
+    giveFreeCredits(){
+      this.$store.dispatch('distributeCredits', this.freeCredits)
     }
   },
   computed: {
@@ -219,6 +229,10 @@ export default {
       search: "",
       artist_email: "",
       alert: false,
+      freeCredits: 0,
+      giveCreditsRules: [
+        v => v > 0 || "Number of credits must be more than zero"
+      ],
       emailRules: [
         v => /.+@.+/.test(v) || "E-mail must be valid"
       ],

@@ -501,6 +501,25 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
+    distributeCredits ({commit, getters}, numCredits) {
+      let db = firebase.firestore()
+      db.collection('users').get().then(function (users) {
+        users.forEach(function (doc) {
+          const userRef = db.collection('users').doc(doc.id)
+          const currentCredits = userRef.data().free_cerdits
+          console.log(currentCredits)
+          return userRef.update({
+            free_cerdits: currentCredits + numCredits
+          })
+        })
+      })
+      .then(function () {
+        console.log('Artist credits successfully updated!')
+      })
+      .catch(function (error) {
+        console.error('Error writing document: ', error)
+      })
+    },
     updateArtistSettings ({commit, getters}, artist) {
       let db = firebase.firestore()
       db.collection('users').doc(artist.userId).update({
