@@ -132,6 +132,14 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
+        <!-- Added additional button to show Blogs/Magazines - WF -->
+        <v-btn flat small
+          v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+          fullscreen="$vuetify.breakpoint.mdOnly"
+          @click= router to="/blogs" 
+          >Blogs/Magazines
+        </v-btn>
+      
          <v-btn color="primary" flat v-if ="userIsAuthanticated" 
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
