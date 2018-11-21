@@ -8,9 +8,11 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import config from "../config";
 import router from "../router";
+import VueGoogleCharts from "vue-google-charts";
 
 firebase.initializeApp(config);
 Vue.use(Vuex);
+Vue.use(VueGoogleCharts);
 
 export const store = new Vuex.Store({
   state: {
@@ -137,6 +139,8 @@ export const store = new Vuex.Store({
     replied_requests_for_report_datePicker: [],
     submissions_for_this_business: [],
     submissions_for_month: [],
+    submissions_for_year: [],
+    epoch_firstDayOfMonth_array: [], //aortizoj
     submission_response: {},
     art_being_replied: {},
     credits: 0,
@@ -165,8 +169,11 @@ export const store = new Vuex.Store({
 
     query_business_email: ""
   },
-<<<<<<< HEAD
   mutations: {
+    clear_query_datePicker_list(state) {
+      console.log("I am in set query datePicker");
+      state.replied_requests_for_report_datePicker = [];
+    },
     set_query_business_email(state, payload) {
       state.query_business_email = payload.business_email;
     },
@@ -181,20 +188,6 @@ export const store = new Vuex.Store({
         start_d[4],
         start_d[5]
       ).valueOf();
-=======
-  mutations: { 
-    clear_query_datePicker_list(state){
-      console.log("I am in set query datePicker")
-      state.replied_requests_for_report_datePicker = [];
-    },
-   set_query_business_email(state,payload){
-     state.query_business_email = payload.business_email;
-   },
-    set_datePicker(state,payload){
-      const start_date = payload.startDate + '-00-00-00';
-      const start_d = start_date.split('-');
-      const start_epoch = (new Date(start_d[0], start_d[1] - 1, start_d[2], start_d[3], start_d[4], start_d[5])).valueOf();
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
 
       const end_date = payload.endDate + "-00-00-00";
       const end_d = end_date.split("-");
@@ -410,9 +403,21 @@ export const store = new Vuex.Store({
         (state.selectBlog.userId = payload.userId),
         (state.selectBlog.role = payload.role);
     },
+    set_submissions_for_year(state, payload) {
+      //aortizoj
+      state.submissions_for_year.push(payload);
+    },
+    clear_submissions_for_year_array(state) {
+      //aortizoj
+      state.submissions_for_year = [];
+    },
     set_submissions_for_month(state, payload) {
       //aortizoj
       state.submissions_for_month.push(payload);
+    },
+    set_epoch_firstDayOfMonth_array(state, payload) {
+      //aortizoj
+      state.epoch_firstDayOfMonth_array.push(payload);
     },
     clear_submissions_for_month_array(state) {
       //aortizoj
@@ -490,41 +495,32 @@ export const store = new Vuex.Store({
           console.log("Error getting report: ", error);
         });
     },
-<<<<<<< HEAD
     get_monthly_report_submissions({ commit, getters }, year_month) {
-      console.log("year month: " + typeof year_month);
+      console.log("year month: " + year_month);
       let first_of_month_array = year_month.split("-");
-      first_of_month_array.push("00", "00", "00", "00");
+      first_of_month_array.push(
+        first_of_month_array[0],
+        first_of_month_array[1],
+        1
+      );
       let last_of_month_array = first_of_month_array;
-      let first_of_month = new Date(...first_of_month_array);
-      let last_of_month = new Date(...last_of_month_array);
-      last_of_month.setMonth(first_of_month.getMonth());
-      first_of_month.setMonth(first_of_month.getMonth() - 1);
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
+      let first_of_month = new Date(
+        parseInt(first_of_month_array[0]),
+        (parseInt(first_of_month_array[1]) - 1) % 12,
+        1
+      );
+
+      let last_of_month = new Date(
+        parseInt(first_of_month_array[0]),
+        parseInt(first_of_month_array[1]) % 12,
+        1
+      );
+      console.log("first of month1: " + first_of_month);
+      console.log("last of month1: " + last_of_month);
       first_of_month = first_of_month.valueOf();
       last_of_month = last_of_month.valueOf();
-      console.log("first of month: " + first_of_month);
-      console.log("last of month: " + last_of_month);
-=======
-    get_monthly_report_submissions({
-      commit,
-      getters
-    }, year_month) {
-      console.log("year month: " + year_month)
-      let first_of_month_array = year_month.split("-")
-      first_of_month_array.push(first_of_month_array[0], first_of_month_array[1], 1)
-      let last_of_month_array = first_of_month_array
-      let first_of_month = new Date(parseInt(first_of_month_array[0]), (parseInt(first_of_month_array[1]) - 1) % 12, 1)
-
-      let last_of_month = new Date(parseInt(first_of_month_array[0]), parseInt(first_of_month_array[1]) % 12, 1)
-      console.log("first of month: " + first_of_month)
-      console.log("last of month: " + last_of_month)
-      first_of_month = first_of_month.valueOf()
-      last_of_month = last_of_month.valueOf()
-      console.log("first of month: " + first_of_month)
-      console.log("last of month: " + last_of_month)
->>>>>>> 81e1c6cab56fae7ffbb51c9dcaebd3fcb7967d4c
+      console.log("first of month2: " + first_of_month);
+      console.log("last of month2: " + last_of_month);
       let db = firebase.firestore();
       let temp_report = db.collection("review_requests");
       let query = temp_report
@@ -547,7 +543,140 @@ export const store = new Vuex.Store({
           console.log("Error getting documents:", error);
         });
     },
+    get_month_to_month_epoch_times() {
+      let today = Date.now();
+      let date = new Date(today);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      let firstDayOfMonth =
+        year + "-" + month + "-" + "01" + "-" + "00" + "-" + "00" + "-" + "00";
+      let split_firstDayOfMonth = firstDayOfMonth.split("-");
+      let epoch_firstDayOfMonth = new Date(
+        split_firstDayOfMonth[0],
+        split_firstDayOfMonth[1] - 1,
+        split_firstDayOfMonth[2],
+        split_firstDayOfMonth[3],
+        split_firstDayOfMonth[4],
+        split_firstDayOfMonth[5]
+      ).valueOf();
+      let previousYear =
+        year -
+        1 +
+        "-" +
+        month +
+        "-" +
+        "01" +
+        "-" +
+        "00" +
+        "-" +
+        "00" +
+        "-" +
+        "00";
+      let split_previousYear = previousYear.split("-");
+      let epoch_previousYear = new Date(
+        split_previousYear[0],
+        split_previousYear[1] - 1,
+        split_previousYear[2],
+        split_previousYear[3],
+        split_previousYear[4],
+        split_previousYear[5]
+      ).valueOf();
+      console.log("epoch_previousYear: " + epoch_previousYear);
+      let epoch_firstDayOfMonth_array = [];
+      let monthCount = 0;
+      console.log("epoch_firstDayOfMonth: " + epoch_firstDayOfMonth);
+      epoch_firstDayOfMonth_array.push(epoch_previousYear);
+      while (monthCount < 12) {
+        let oneMonth = 86400000 * 30.5;
+        epoch_previousYear = epoch_previousYear + oneMonth;
+        epoch_firstDayOfMonth_array.push(epoch_previousYear);
+        console.log("epoch_previousYear_in_while: " + epoch_previousYear);
+        monthCount++;
+      }
+      return epoch_firstDayOfMonth_array;
+    },
     // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
+    get_submissions_for_year({ commit, getters }) {
+      //aortizoj
+      commit("clear_submissions_for_year_array");
+      let today = Date.now();
+      let date = new Date(today);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+
+      let currentDate =
+        year +
+        "-" +
+        (month + 1) +
+        "-" +
+        "01" +
+        "-" +
+        "00" +
+        "-" +
+        "00" +
+        "-" +
+        "00";
+      let split_currentDate = currentDate.split("-");
+      let epoch_currentDate = new Date(
+        split_currentDate[0],
+        split_currentDate[1] - 1,
+        split_currentDate[2],
+        split_currentDate[3],
+        split_currentDate[4],
+        split_currentDate[5]
+      ).valueOf();
+      let previousYear =
+        year -
+        1 +
+        "-" +
+        month +
+        "-" +
+        "01" +
+        "-" +
+        "00" +
+        "-" +
+        "00" +
+        "-" +
+        "00";
+      let split_previousYear = previousYear.split("-");
+      let epoch_previousYear = new Date(
+        split_previousYear[0],
+        split_previousYear[1] - 1,
+        split_previousYear[2],
+        split_previousYear[3],
+        split_previousYear[4],
+        split_previousYear[5]
+      ).valueOf();
+      let db = firebase.firestore();
+      let temp_report = db.collection("review_requests");
+      let query = temp_report
+        .where("submitted_on", "<", epoch_currentDate)
+        .where("submitted_on", ">", epoch_previousYear);
+      query
+        .get()
+        .then(function(results) {
+          if (results.empty) {
+            console.log("No documents found!");
+          } else {
+            // go through all results
+            results.forEach(function(doc) {
+              commit("set_submissions_for_year", doc.data());
+            });
+            // set_replied_requests_for_report
+            // or if you only want the first result you can also do something like this:
+            console.log("Document data:", results.docs[0].data());
+          }
+        })
+        .catch(function(error) {
+          console.log("Error getting documents:", error);
+        });
+    },
     get_submissions_for_month({ commit, getters }) {
       //aortizoj
       commit("clear_submissions_for_month_array");
@@ -613,6 +742,10 @@ export const store = new Vuex.Store({
         .catch(function(error) {
           console.log("Error getting documents:", error);
         });
+    },
+    get_submissions_past_months() {
+      // let epoch_array = dispatch("get_month_to_month_epoch_times");
+      // console.log("epoch_arrray: " + epoch_array);
     },
     signUserInGoogle({ commit, getters }) {
       commit("setLoading", true);
@@ -2049,6 +2182,9 @@ export const store = new Vuex.Store({
     },
     submissions_for_month(state) {
       return state.submissions_for_month;
+    },
+    submissions_for_year(state) {
+      return state.submissions_for_year;
     },
     monthly_report_submissions(state) {
       return state.monthly_report_submissions;

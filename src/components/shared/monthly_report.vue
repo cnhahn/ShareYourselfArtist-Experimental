@@ -22,11 +22,11 @@
 export default {
   data() {
     // for the table
-    
+
     return {
       picker: new Date().toISOString().substr(0, 7),
       landscape: false,
-      pagination: {'sortBy': 'column1', 'descending': true, 'rowsPerPage': -1},
+      pagination: { sortBy: "column1", descending: true, rowsPerPage: -1 },
       headers: [
         {
           text: "Business",
@@ -67,11 +67,8 @@ export default {
       ]
     };
   },
-  created(){
-
-      
-  },
-  beforeMount(){
+  created() {},
+  beforeMount() {
     this.$store.dispatch("get_submissions_for_month");
     this.$store.dispatch("get_monthly_report_submissions", this.picker);
   },
@@ -126,22 +123,21 @@ export default {
       let filtered_submissions = submissions.filter(function(submission) {
         return submission.businessId.userId == id;
       });
-      // console.log(filtered_submissions)
+      console.log("filtered_submissions: " + filtered_submissions);
       filtered_submissions = filtered_submissions.filter(function(submission) {
         return !submission.replied;
       });
       return filtered_submissions.length;
-    },
-    
+    }
   },
   computed: {
     businesses_with_submissions: function() {
-      let businesses = this.$store.getters.businesses
+      let businesses = this.$store.getters.businesses;
       // console.log(businesses)
-      let businesses_with_submissions = []
-      let self = this
+      let businesses_with_submissions = [];
+      let self = this;
       // console.log(this)
-      businesses.forEach(function(business){
+      businesses.forEach(function(business) {
         // console.log(business)
         businesses_with_submissions.push({
           name: business.business_name,
@@ -150,11 +146,11 @@ export default {
           free: self.filtered_free(business.userId),
           responses: self.filtered_responses(business.userId),
           awaiting: self.filtered_awaiting(business.userId)
-        })
-      })
+        });
+      });
 
       // console.log(businesses_with_submissions)
-      return businesses_with_submissions
+      return businesses_with_submissions;
     }
   },
   watch: {
@@ -162,5 +158,5 @@ export default {
       this.$store.dispatch("get_monthly_report_submissions", this.picker);
     }
   }
-}
+};
 </script>
