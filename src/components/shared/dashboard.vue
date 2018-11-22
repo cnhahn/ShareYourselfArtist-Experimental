@@ -30,12 +30,16 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ submissions_for_month.length }}</h3>
-              <div>Submissions</div>
+              <div v-on:click="yearly_submissions">
+                <h3 class="headline mb-0">{{ submissions_for_month.length }}</h3>
+                <div>Submissions</div>
+              </div>
             </v-flex>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ replied_for_month }}</h3>
-              <div>Replied</div>
+              <div v-on:click="yearly_replied">
+                <h3 class="headline mb-0">{{ replied_for_month }}</h3>
+                <div>Replied</div>
+              </div>
             </v-flex>
           </v-card-title>
         </v-card>
@@ -45,12 +49,16 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ free_submissions_for_month }}</h3>
-              <div>Free</div>
+              <div v-on:click="yearly_free">
+                <h3 class="headline mb-0">{{ free_submissions_for_month }}</h3>
+                <div>Free</div>
+              </div>
             </v-flex>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ paid_submissions_for_month }}</h3>
-              <div>Paid</div>
+              <div v-on:click="yearly_paid">
+                <h3 class="headline mb-0">{{ paid_submissions_for_month }}</h3>
+                <div>Paid</div>
+              </div>
             </v-flex>
           </v-card-title>
         </v-card>
@@ -60,7 +68,6 @@
     <v-card>
       <v-card-title>Graph</v-card-title>
       <GChart type="LineChart" :data="chartData" :options="chartOptions" />
-      <button v-on:click="testing2"> Test 2 </button>
     </v-card>
 
     <v-card>
@@ -169,6 +176,7 @@ export default {
     this.$store.dispatch("get_email_list_of_artists");
     this.$store.dispatch("get_submissions_for_year");
     this.$store.dispatch("get_submissions_past_months");
+   
   },
   methods: {
     generate_artists_email_list() {
@@ -188,8 +196,38 @@ export default {
     goto_monthly_report() {
       this.$router.push("monthly_report");
     },
-    testing2(){
+    yearly_submissions(){
       this.chartData = this.$store.getters.yearly_chart_array;
+    },
+    yearly_replied(){
+      this.chartData = this.$store.getters.yearly_chart_replied;
+      this.chartOptions =  {
+          title: 'Annual Response Report',
+          vAxis: {title: "Number of Replies"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
+    },
+    yearly_paid(){
+      this.chartData = this.$store.getters.yearly_chart_paid;
+      this.chartOptions =  {
+          title: 'Annual Paid Submission Report',
+          vAxis: {title: "Number of Paid Requests"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
+    },
+    yearly_free(){
+      this.chartData = this.$store.getters.yearly_chart_free;
+      this.chartOptions =  {
+          title: 'Annual Free Submission Report',
+          vAxis: {title: "Number of Free Requests"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
     },
     fetch_report() {}
   },
@@ -237,8 +275,7 @@ export default {
     },
     submissions_for_year() {
       return this.$store.getters.submissions_for_year;
-    }
-
+    },
   },
 
   data() {

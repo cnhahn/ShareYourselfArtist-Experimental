@@ -170,15 +170,27 @@ export const store = new Vuex.Store({
     query_business_email: "",
 
     // yiwayana and aortiz
-    epoch_month_time : [],
-    chart_array_for_submissions : [],
+    epoch_month_time: [],
+    chart_array_for_submissions: [],
+    chart_replied_for_submissions: [],
+    chart_free_for_submissions: [],
+    chart_paid_for_submissions: [],
   },
   mutations: {
-    set_epoch_month_times(state, payload){
+    set_epoch_month_times(state, payload) {
       state.epoch_month_time = payload;
     },
-    set_chart_array_for_submissions(state,payload){
+    set_chart_array_for_submissions(state, payload) {
       state.chart_array_for_submissions = payload;
+    },
+    set_chart_replied_for_submissions(state, payload) {
+      state.chart_replied_for_submissions = payload;
+    },
+    set_chart_paid_for_submissions(state, payload) {
+      state.chart_paid_for_submissions = payload;
+    },
+    set_chart_free_for_submissions(state, payload) {
+      state.chart_free_for_submissions = payload;
     },
     clear_query_datePicker_list(state) {
       console.log("I am in set query datePicker");
@@ -467,12 +479,12 @@ export const store = new Vuex.Store({
         .where("businessId.business_email", "==", business_query_email)
         .where("replied_date", ">=", start_Date)
         .where("replied_date", "<=", end_Date);
-      query.get().then(function(results) {
+      query.get().then(function (results) {
         if (results.empty) {
           console.log("No documents found!");
         } else {
           // go through all results
-          results.forEach(function(doc) {
+          results.forEach(function (doc) {
             commit("set_replied_requests_for_report_datePicker", doc.data());
           });
         }
@@ -489,8 +501,8 @@ export const store = new Vuex.Store({
       console.log("temp report", temp_report);
       let report = temp_report
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             var month = getters.report_month;
             const today = Date.now();
             const timeDiff = today - 1000 * 60 * 60 * 24 * 30 * month;
@@ -501,7 +513,7 @@ export const store = new Vuex.Store({
             }
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting report: ", error);
         });
     },
@@ -538,10 +550,10 @@ export const store = new Vuex.Store({
         .where("submitted_on", "<", last_of_month);
       query
         .get()
-        .then(function(results) {
+        .then(function (results) {
           // go through all results
           let submissions = [];
-          results.forEach(function(doc) {
+          results.forEach(function (doc) {
             submissions.push(doc.data());
           });
           commit("set_monthly_report_submissions", submissions);
@@ -549,11 +561,11 @@ export const store = new Vuex.Store({
           // or if you only want the first result you can also do something like this:
           console.log("Document data:", submissions);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents:", error);
         });
     },
-    get_month_to_month_epoch_times({state,commit}) {
+    get_month_to_month_epoch_times({ state, commit }) {
       console.log("in month to month");
       let today = Date.now();
       let date = new Date(today);
@@ -594,7 +606,7 @@ export const store = new Vuex.Store({
         split_previousYear[3],
         split_previousYear[4],
         split_previousYear[5]
-      ).valueOf(); 
+      ).valueOf();
       console.log("epoch_previousYear: " + epoch_previousYear);
       let epoch_firstDayOfMonth_array = [];
       let monthCount = 0;
@@ -612,94 +624,246 @@ export const store = new Vuex.Store({
 
     // Aortiz and Yiwayana 
     // Create an array of size 12, fill each index with submissions for that month
-    filter_submissions_by_month({ commit, state,dispatch } , payload) {
+    filter_submissions_by_month({ commit, state, dispatch }, payload) {
       dispatch("get_month_to_month_epoch_times");
 
       var month_epoch_times = state.epoch_month_time
       console.log("Inside filter submissions");
       var filter_submissions_array = payload.slice();
-      console.log("Filter submissions is " , filter_submissions_array)
+      console.log("Filter submissions is ", filter_submissions_array)
       // Create an array of 12 indices , where each index stores an integer representing # of submissions
-      var number_of_submissions_per_month = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-  
+      var number_of_submissions_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      var number_of_replied_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //aortizojyas
+      var number_of_paid_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //aortizojyas
+      var number_of_free_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //aortizojyas
+
       var i;
-      for( i = 0 ; i < filter_submissions_array.length; i++){
+      for (i = 0; i < filter_submissions_array.length; i++) {
         var submission_date = filter_submissions_array[i].submitted_on
-        if(submission_date >= month_epoch_times[0] && submission_date<month_epoch_times[1]){
+        var replied = filter_submissions_array[i].replied //aortizojyas
+        var free_credit = filter_submissions_array[i].submitted_with_free_cerdit //aortizojyas
+        if (submission_date >= month_epoch_times[0] && submission_date < month_epoch_times[1]) {
           // Nov-Dec
           number_of_submissions_per_month[0] += 1;
-        }else if(submission_date >= month_epoch_times[1] && submission_date<month_epoch_times[2]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[0] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[0] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[0] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[1] && submission_date < month_epoch_times[2]) {
           // Dec - Jan
           number_of_submissions_per_month[1] += 1;
-        }else if(submission_date >= month_epoch_times[2] && submission_date<month_epoch_times[3]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[1] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[1] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[1] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[2] && submission_date < month_epoch_times[3]) {
           // Jan - Feb
           number_of_submissions_per_month[2] += 1;
-        }else if(submission_date >= month_epoch_times[3] && submission_date<month_epoch_times[4]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[2] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[2] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[2] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[3] && submission_date < month_epoch_times[4]) {
           // Feb-March
           number_of_submissions_per_month[3] += 1;
-        }else if(submission_date >= month_epoch_times[4] && submission_date<month_epoch_times[5]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[3] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[3] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[3] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[4] && submission_date < month_epoch_times[5]) {
           // M-April
           number_of_submissions_per_month[4] += 1;
-        }else if(submission_date >= month_epoch_times[5] && submission_date<month_epoch_times[6]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[4] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[4] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[4] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[5] && submission_date < month_epoch_times[6]) {
           // Apr- May
           number_of_submissions_per_month[5] += 1;
-        }else if(submission_date >= month_epoch_times[6] && submission_date<month_epoch_times[7]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[5] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[5] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[5] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[6] && submission_date < month_epoch_times[7]) {
           // May -Jun
           number_of_submissions_per_month[6] += 1;
-        }else if(submission_date >= month_epoch_times[7] && submission_date<month_epoch_times[8]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[6] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[6] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[6] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[7] && submission_date < month_epoch_times[8]) {
           // Jun-July
           number_of_submissions_per_month[7] += 1;
-        }else if(submission_date >= month_epoch_times[8] && submission_date<month_epoch_times[9]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[7] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[7] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[7] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[8] && submission_date < month_epoch_times[9]) {
           // July-Aug
           number_of_submissions_per_month[8] += 1;
-        }else if(submission_date >= month_epoch_times[9] && submission_date<month_epoch_times[10]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[8] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[8] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[8] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[9] && submission_date < month_epoch_times[10]) {
           // Aug-Sep
           number_of_submissions_per_month[9] += 1;
-        }else if(submission_date >= month_epoch_times[10] && submission_date<month_epoch_times[11]){
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[9] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[9] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[9] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[10] && submission_date < month_epoch_times[11]) {
           // Sep-Oct
           number_of_submissions_per_month[10] += 1;
-        }else if(submission_date >= month_epoch_times[11] && submission_date< month_epoch_times[11]+(86400000 * 30.5)){ 
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[10] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[10] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[10] += 1;
+          }
+        } else if (submission_date >= month_epoch_times[11] && submission_date < month_epoch_times[11] + (86400000 * 30.5)) {
           // Oct-Nov
           number_of_submissions_per_month[11] += 1;
-        } else{
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[11] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[11] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[11] += 1;
+          }
+        } else {
           // Nov-Dec
           number_of_submissions_per_month[12] += 1;
+          //aortizojyas
+          if (replied == true) {
+            number_of_replied_per_month[12] += 1;
+          }
+          if (free_credit == true) {
+            number_of_free_per_month[12] += 1;
+          }
+          if (free_credit == false) {
+            number_of_paid_per_month[12] += 1;
+          }
         }
       }
+      console.log("number_of_submissions_per_month: " + number_of_submissions_per_month);
+      console.log("number_of_replied_per_month: " + number_of_replied_per_month);
+      console.log("number_of_free_per_month: " + number_of_free_per_month);
+      console.log("number_of_paid_per_month: " + number_of_paid_per_month);
+      
 
-      var months_array = ["January", "February", "March", "April", "May", "June" , "July", "August", "September", "October", "November", "Decemeber"]
+      var months_array = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Decemeber"]
       var start_month = new Date(month_epoch_times[0]).getMonth();
       var month_iterate;
       // Create an array of months starting from last year to this month.
       var right_month_array = [];
-      for(month_iterate = 0; month_iterate < 13; month_iterate++){
-        if(start_month >= 12) start_month = 0;
+      for (month_iterate = 0; month_iterate < 13; month_iterate++) {
+        if (start_month >= 12) start_month = 0;
         right_month_array.push(months_array[start_month]);
         start_month++;
       }
 
-      console.log("Display it  in the right order please : " + right_month_array );
+      console.log("Display it  in the right order please : " + right_month_array);
 
       var final_array = []
+      var final_replied_array = []
+      var final_paid_array = []
+      var final_free_array = []
       var fill_chart_array_index;
-      for(fill_chart_array_index = 0 ; fill_chart_array_index <= 13; fill_chart_array_index ++ ){
-        if(fill_chart_array_index == 0) {
+      for (fill_chart_array_index = 0; fill_chart_array_index <= 13; fill_chart_array_index++) {
+        if (fill_chart_array_index == 0) {
           final_array[fill_chart_array_index] = ["Month", "Submissions"];
-        }else{
-          final_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index-1], number_of_submissions_per_month[fill_chart_array_index-1]]
+          final_replied_array[fill_chart_array_index] = ["Month", "Replied"];
+          final_paid_array[fill_chart_array_index] = ["Month", "Paid"];
+          final_free_array[fill_chart_array_index] = ["Month", "Free"];
+        } else {
+          final_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index - 1], number_of_submissions_per_month[fill_chart_array_index - 1]]
+          final_replied_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index - 1], number_of_replied_per_month[fill_chart_array_index - 1]]
+          final_paid_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index - 1], number_of_paid_per_month[fill_chart_array_index - 1]]
+          final_free_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index - 1], number_of_free_per_month[fill_chart_array_index - 1]]
         }
       }
-
       commit("set_chart_array_for_submissions", final_array)
+      commit("set_chart_replied_for_submissions", final_replied_array)
+      commit("set_chart_free_for_submissions", final_free_array)
+      commit("set_chart_paid_for_submissions", final_paid_array)
+
     },
 
-    testing(){
+    testing() {
       console.log("We here?")
 
     },
- 
+
     // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
-    get_submissions_for_year({ commit, getters,dispatch}) {
+    get_submissions_for_year({ commit, getters, dispatch }) {
       console.log("Entered get submissions for year");
       //aortizoj
       commit("clear_submissions_for_year_array");
@@ -761,15 +925,15 @@ export const store = new Vuex.Store({
         .where("submitted_on", ">", epoch_previousYear);
       query
         .get()
-        .then(function(results) {
+        .then(function (results) {
           if (results.empty) {
             console.log("No documents found!");
           } else {
             // go through all results
-            results.forEach(function(doc) {
+            results.forEach(function (doc) {
               commit("set_submissions_for_year", doc.data());
             });
-            
+
             // Call the function to filter submissions by year
             dispatch("filter_submissions_by_month", getters.submissions_for_year);
             // set_replied_requests_for_report
@@ -777,7 +941,7 @@ export const store = new Vuex.Store({
             console.log("Document data:", results.docs[0].data());
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents:", error);
         });
     },
@@ -830,12 +994,12 @@ export const store = new Vuex.Store({
         .where("submitted_on", "<", epoch_lastDayOfMonth);
       query
         .get()
-        .then(function(results) {
+        .then(function (results) {
           if (results.empty) {
             console.log("No documents found!");
           } else {
             // go through all results
-            results.forEach(function(doc) {
+            results.forEach(function (doc) {
               commit("set_submissions_for_month", doc.data());
             });
             // set_replied_requests_for_report
@@ -843,7 +1007,7 @@ export const store = new Vuex.Store({
             console.log("Document data:", results.docs[0].data());
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents:", error);
         });
     },
@@ -871,11 +1035,11 @@ export const store = new Vuex.Store({
           };
           console.log(
             "newUserid: " +
-              newUser.userId +
-              "name" +
-              newUser.name +
-              "email " +
-              user.additionalUserInfo.profile.email
+            newUser.userId +
+            "name" +
+            newUser.name +
+            "email " +
+            user.additionalUserInfo.profile.email
           );
           console.log("current picture");
           commit("setUser", newUser);
@@ -897,7 +1061,7 @@ export const store = new Vuex.Store({
                 db.collection("users")
                   .doc(newUser.userId)
                   .set(newUser)
-                  .then(function() {
+                  .then(function () {
                     router.push({
                       name: "artist_dashboard"
                     });
@@ -909,8 +1073,8 @@ export const store = new Vuex.Store({
                   .collection("users")
                   .where("userId", "==", newUser.userId)
                   .get()
-                  .then(function(querySnapshot) {
-                    querySnapshot.forEach(function(doc) {
+                  .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
                       console.log("found a document");
                       if (typeof doc.data().photoUrl === "string") {
                         console.log(
@@ -929,7 +1093,7 @@ export const store = new Vuex.Store({
                       });
                     });
                   })
-                  .catch(function(error) {
+                  .catch(function (error) {
                     console.log("Error getting documents: ", error);
                   });
               }
@@ -959,11 +1123,11 @@ export const store = new Vuex.Store({
           };
           console.log(
             "newUserid: " +
-              newUser.userId +
-              "name" +
-              newUser.name +
-              "email " +
-              user.additionalUserInfo.profile.email
+            newUser.userId +
+            "name" +
+            newUser.name +
+            "email " +
+            user.additionalUserInfo.profile.email
           );
           commit("setUser", newUser);
           //console.log('getters.user.id' + getters.user.id)
@@ -988,7 +1152,7 @@ export const store = new Vuex.Store({
                 db.collection("users")
                   .doc(newUser.userId)
                   .set(newUser)
-                  .then(function() {
+                  .then(function () {
                     console.log("Artist successfully written!");
                   });
               } else {
@@ -997,8 +1161,8 @@ export const store = new Vuex.Store({
                   .collection("users")
                   .where("userId", "==", newUser.userId)
                   .get()
-                  .then(function(querySnapshot) {
-                    querySnapshot.forEach(function(doc) {
+                  .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
                       console.log("found a document");
                       console.log("photoUrl " + doc.data().photoUrl.data.url);
                       if (typeof doc.data().photoUrl === "string") {
@@ -1015,7 +1179,7 @@ export const store = new Vuex.Store({
                       console.log("user: " + doc.data());
                     });
                   })
-                  .catch(function(error) {
+                  .catch(function (error) {
                     console.log("Error getting documents: ", error);
                   });
               }
@@ -1032,18 +1196,18 @@ export const store = new Vuex.Store({
         .collection("review_requests")
         .where("art.upload_date", "==", payload)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             var docRef = db.collection("review_requests").doc(doc.id);
 
             return docRef
               .update({
                 read_byartist: true
               })
-              .then(function() {
+              .then(function () {
                 console.log("read_by user field successfully updated!");
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 // The document probably doesn't exist.
                 console.error("Error updating read by user field: ", error);
               });
@@ -1063,10 +1227,10 @@ export const store = new Vuex.Store({
       });
       console
         .log("credit amount: ", credit_after_purchase)
-        .then(function() {
+        .then(function () {
           console.log("Users credits successfully updated!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // The document probably doesn't exist.
           console.error("Error updating updating user credit: ", error);
         });
@@ -1083,10 +1247,10 @@ export const store = new Vuex.Store({
       });
       console
         .log("credit amount: ", credit_after_purchase)
-        .then(function() {
+        .then(function () {
           console.log("Users credits successfully updated!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // The document probably doesn't exist.
           console.error("Error updating updating user credit: ", error);
         });
@@ -1101,10 +1265,10 @@ export const store = new Vuex.Store({
         .update({
           subscription: payload
         })
-        .then(function() {
+        .then(function () {
           console.log("Users subscription successfully updated!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // The document probably doesn't exist.
           console.error("Error updating updating user subscription: ", error);
         });
@@ -1115,7 +1279,7 @@ export const store = new Vuex.Store({
         .collection("users")
         .doc(payload)
         .get()
-        .then(function(doc) {
+        .then(function (doc) {
           if (doc.exists) {
             console.log("Credits:", doc.data().credits);
             commit("set_credits", doc.data().credits);
@@ -1124,7 +1288,7 @@ export const store = new Vuex.Store({
             console.log("No such document!");
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting document:", error);
         });
     },
@@ -1133,11 +1297,11 @@ export const store = new Vuex.Store({
       admin
         .auth()
         .getUserByEmail(email)
-        .then(function(userRecord) {
+        .then(function (userRecord) {
           // See the UserRecord reference doc for the contents of userRecord.
           console.log("Successfully fetched user data:", userRecord.toJSON());
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error fetching user data:", error);
         });
     },
@@ -1148,10 +1312,10 @@ export const store = new Vuex.Store({
       let emailAddress = payload;
       auth
         .sendPasswordResetEmail(payload)
-        .then(function() {
+        .then(function () {
           // Email sent.
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // An error happened.
         });
     },
@@ -1162,13 +1326,13 @@ export const store = new Vuex.Store({
         .collection("users")
         .where("role", "==", "business")
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("setBusinesses", doc.data());
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting businesses: ", error);
         });
     },
@@ -1180,8 +1344,8 @@ export const store = new Vuex.Store({
         .collection("users")
         .where("role", "==", "artist")
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("set_artists_email_list", {
               artist_name: doc.data().name,
@@ -1189,7 +1353,7 @@ export const store = new Vuex.Store({
             });
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting businesses: ", error);
         });
     },
@@ -1202,13 +1366,13 @@ export const store = new Vuex.Store({
         .where("replied", "==", true)
         .where("art.artist_id", "==", getters.user.id)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("set_replied_submissions", doc.data());
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents: ", error);
         });
     },
@@ -1219,13 +1383,13 @@ export const store = new Vuex.Store({
         .collection("users")
         .where("userId", "==", getters.user.id)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("setUserRole", doc.data().role);
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents: ", error);
         });
     },
@@ -1236,8 +1400,8 @@ export const store = new Vuex.Store({
         .collection("users")
         .where("userId", "==", getters.user.id)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("setUserRole", doc.data().role);
             commit("signed_in_user", doc.data());
@@ -1245,7 +1409,7 @@ export const store = new Vuex.Store({
             commit("set_free_credits", doc.data().free_credits);
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents: ", error);
         });
       console.log("getters.user_role:" + getters.user_role);
@@ -1261,14 +1425,14 @@ export const store = new Vuex.Store({
         .collection("art")
         .where("artist_id", "==", getters.user.id)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit("setArts", doc.data());
           });
           commit("setLoading", false);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting documents: ", error);
         });
     },
@@ -1282,8 +1446,8 @@ export const store = new Vuex.Store({
         .where("businessId.userId", "==", getters.user.id)
         .where("replied", "==", false)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data();
             console.log("doc.data: " + docData);
@@ -1295,7 +1459,7 @@ export const store = new Vuex.Store({
             console.log(doc.id, " => ", doc.data());
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting submissions: ", error);
         });
     },
@@ -1306,8 +1470,8 @@ export const store = new Vuex.Store({
         .collection("review_requests")
         .where("businessId.userId", "==", getters.user.id)
         .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data();
             console.log("doc.data: " + docData);
@@ -1319,7 +1483,7 @@ export const store = new Vuex.Store({
             console.log(doc.id, " => ", doc.data());
           });
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("Error getting submissions: ", error);
         });
     },
@@ -1332,14 +1496,14 @@ export const store = new Vuex.Store({
       let uploadTask = ref
         .child(
           getters.user.id +
-            getters.image_folder +
-            getters.image_being_uploaded.file.name
+          getters.image_folder +
+          getters.image_being_uploaded.file.name
         )
         .put(getters.image_being_uploaded.file);
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function(snapshot) {
+        function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           var progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -1352,7 +1516,7 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function(error) {
+        function (error) {
           // A full list of error codes is available at
           switch (error.code) {
             case "storage/unauthorized":
@@ -1370,9 +1534,9 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function() {
+        function () {
           // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             commit("setUrl", downloadURL); // Jin: this led to profile url change.
             if (payload.operation === "art_upload") {
               let art = {
@@ -1387,11 +1551,11 @@ export const store = new Vuex.Store({
               const collectionRef = db.collection("art");
               collectionRef
                 .add(art)
-                .then(function(docRef) {
+                .then(function (docRef) {
                   commit("setArts", art);
                   console.log("Document written with ID: ", docRef.id);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                   console.error("Error adding document: ", error);
                 });
             }
@@ -1422,10 +1586,10 @@ export const store = new Vuex.Store({
           submission_response: getters.submission_response,
           replied_date: Date.now()
         })
-        .then(function() {
+        .then(function () {
           console.log("Submission successfully updated!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // The document probably doesn't exist.
           console.error("Error updating dsubmission: ", error);
         });
@@ -1444,13 +1608,13 @@ export const store = new Vuex.Store({
           .collection("review_requests")
           .doc()
           .set(art_being_submitted)
-          .then(function(docRef) {
+          .then(function (docRef) {
             console.log("Submission written with ID: ", docRef.id);
             // router.push({
             //   name: 'submit_result'
             // })
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error("Error adding document: ", error);
           });
       }
@@ -1461,13 +1625,13 @@ export const store = new Vuex.Store({
         .collection("school_requests")
         .doc()
         .set(payload)
-        .then(function(docRef) {
+        .then(function (docRef) {
           console.log("School submission written with ID: ", docRef.id);
           // router.push({
           //   name: 'submit_result'
           // })
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error("Error adding document: ", error);
         });
     },
@@ -1485,13 +1649,13 @@ export const store = new Vuex.Store({
           .collection("review_requests")
           .doc()
           .set(art_being_submitted)
-          .then(function(docRef) {
+          .then(function (docRef) {
             console.log("Submission written with ID: ", docRef.id);
             // router.push({
             //   name: 'submit_result'
             // })
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error("Error adding document: ", error);
           });
       }
@@ -1514,7 +1678,7 @@ export const store = new Vuex.Store({
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function(snapshot) {
+        function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           var progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -1528,7 +1692,7 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function(error) {
+        function (error) {
           // A full list of error codes is available at
           switch (error.code) {
             case "storage/unauthorized":
@@ -1546,9 +1710,9 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function() {
+        function () {
           // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             console.log("Url captured" + downloadURL);
             commit("setUrl", downloadURL);
             console.log("State url" + getters.url);
@@ -1573,7 +1737,7 @@ export const store = new Vuex.Store({
             db.collection("users")
               .doc(getters.user.id)
               .set(user)
-              .then(function() {
+              .then(function () {
                 console.log("Document successfully written!");
                 router.push({
                   name: "sign_in"
@@ -1582,7 +1746,7 @@ export const store = new Vuex.Store({
                 dispatch("signUserOut");
               })
 
-              .catch(function(error) {
+              .catch(function (error) {
                 console.error("Error writing document: ", error);
               });
           });
@@ -1614,10 +1778,10 @@ export const store = new Vuex.Store({
       db.collection("users")
         .doc(getters.user.id)
         .set(user)
-        .then(function() {
+        .then(function () {
           console.log("Artist successfully written!");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error("Error writing document: ", error);
         });
 
@@ -1629,10 +1793,10 @@ export const store = new Vuex.Store({
         .add({
           initial_submission: true
         })
-        .then(function(docRef) {
+        .then(function (docRef) {
           console.log("Submission: ", docRef.id);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           alert("Error adding submission: ", error);
         });
     },
@@ -1642,8 +1806,8 @@ export const store = new Vuex.Store({
         .storage()
         .ref(
           getters.signed_in_user_id +
-            "/logo/" +
-            getters.image_being_uploaded.file.name
+          "/logo/" +
+          getters.image_being_uploaded.file.name
         )
         .put(getters.image_being_uploaded.file);
     },
@@ -1662,7 +1826,7 @@ export const store = new Vuex.Store({
           .put(payload.file);
         uploadTask.on(
           firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function(snapshot) {
+          function (snapshot) {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -1676,7 +1840,7 @@ export const store = new Vuex.Store({
                 break;
             }
           },
-          function(error) {
+          function (error) {
             // A full list of error codes is available at
             switch (error.code) {
               case "storage/unauthorized":
@@ -1694,11 +1858,11 @@ export const store = new Vuex.Store({
                 break;
             }
           },
-          function() {
+          function () {
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref
               .getDownloadURL()
-              .then(function(downloadURL) {
+              .then(function (downloadURL) {
                 console.log("Url captured" + downloadURL);
                 payload.url = downloadURL;
                 payload.userId = response.user.uid;
@@ -1707,7 +1871,7 @@ export const store = new Vuex.Store({
                 db.collection("users")
                   .doc(payload.userId)
                   .set(payload)
-                  .then(function() {
+                  .then(function () {
                     firebase
                       .auth()
                       .signOut()
@@ -1758,10 +1922,10 @@ export const store = new Vuex.Store({
           firebase
             .auth()
             .currentUser.sendEmailVerification()
-            .then(function() {
+            .then(function () {
               // Email sent.
             })
-            .catch(function(error) {
+            .catch(function (error) {
               alert("error");
             });
           console.log(firebase.auth().currentUser.uid);
@@ -1809,7 +1973,7 @@ export const store = new Vuex.Store({
       const promise = firebase
         .auth()
         .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(function() {
+        .then(function () {
           // Existing and future Auth states are now persisted in the current
           // session only. Closing the window would clear any existing state even
           // if a user forgets to sign out.
@@ -1841,8 +2005,8 @@ export const store = new Vuex.Store({
                     .collection("users")
                     .where("userId", "==", firebase.auth().currentUser.uid)
                     .get()
-                    .then(function(querySnapshot) {
-                      querySnapshot.forEach(function(doc) {
+                    .then(function (querySnapshot) {
+                      querySnapshot.forEach(function (doc) {
                         // doc.data() is never undefined for query doc snapshots
                         if (doc.data().color == null) {
                           var docRef = db.collection("users").doc(doc.id);
@@ -1877,26 +2041,26 @@ export const store = new Vuex.Store({
                         }
                       });
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                       console.log("Error getting documents: ", error);
                     });
                   console.log("getters.user_role:" + getters.user_role);
                   console.log("getters.user_rid:" + getters.user.id);
 
-                  setTimeout(function() {
+                  setTimeout(function () {
                     commit("setLoading", false);
                   }, 10000);
                 }
               },
-              function(err) {
+              function (err) {
                 alert(
                   err.message +
-                    "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
+                  "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
                 );
               }
             );
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
@@ -1973,7 +2137,7 @@ export const store = new Vuex.Store({
       // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function(snapshot) {
+        function (snapshot) {
           // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           var progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -1987,7 +2151,7 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function(error) {
+        function (error) {
           // A full list of error codes is available at
           switch (error.code) {
             case "storage/unauthorized":
@@ -2005,9 +2169,9 @@ export const store = new Vuex.Store({
               break;
           }
         },
-        function() {
+        function () {
           // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             console.log("Url captured" + downloadURL);
             commit("setUrl", downloadURL);
             console.log("State url" + getters.url);
@@ -2048,7 +2212,7 @@ export const store = new Vuex.Store({
             .collection("users")
             .doc(userId)
             .get()
-            .then(function(doc) {
+            .then(function (doc) {
               if (doc.exists) {
                 commit("signed_in_user", doc.data());
                 commit("setLoading", false);
@@ -2056,7 +2220,7 @@ export const store = new Vuex.Store({
                 // doc.data() will be undefined in this case
               }
             })
-            .catch(function(error) {
+            .catch(function (error) {
               console.log("Error getting document:", error);
             });
         });
@@ -2121,7 +2285,7 @@ export const store = new Vuex.Store({
         updateData.business_name = name;
       }
       if (photoUrl !== undefined && photoUrl !== "") {
-        dispatch("uploadProfileImage").then(() => {});
+        dispatch("uploadProfileImage").then(() => { });
       }
       console.log(updateData);
       let user = db
@@ -2133,7 +2297,7 @@ export const store = new Vuex.Store({
             .collection("users")
             .doc(userId)
             .get()
-            .then(function(doc) {
+            .then(function (doc) {
               if (doc.exists) {
                 commit("signed_in_user", doc.data());
                 commit("setLoading", false);
@@ -2141,7 +2305,7 @@ export const store = new Vuex.Store({
                 // doc.data() will be undefined in this case
               }
             })
-            .catch(function(error) {
+            .catch(function (error) {
               console.log("Error getting document:", error);
             });
         });
@@ -2294,8 +2458,17 @@ export const store = new Vuex.Store({
       return state.monthly_report_submissions;
     },
     // Yiwayana and aortiz
-    yearly_chart_array(state){
-        return state.chart_array_for_submissions;
-    }
+    yearly_chart_array(state) {
+      return state.chart_array_for_submissions;
+    },
+    yearly_chart_replied(state) {
+      return state.chart_replied_for_submissions;
+    },
+    yearly_chart_paid(state) {
+      return state.chart_paid_for_submissions;
+    },
+    yearly_chart_free(state) {
+      return state.chart_free_for_submissions;
+    },
   }
 });
