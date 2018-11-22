@@ -167,9 +167,19 @@ export const store = new Vuex.Store({
     monthly_report_submissions: [],
     //store email of artist that was just clicked (worked on by Yas)
 
-    query_business_email: ""
+    query_business_email: "",
+
+    // yiwayana and aortiz
+    epoch_month_time : [],
+    chart_array_for_submissions : [],
   },
   mutations: {
+    set_epoch_month_times(state, payload){
+      state.epoch_month_time = payload;
+    },
+    set_chart_array_for_submissions(state,payload){
+      state.chart_array_for_submissions = payload;
+    },
     clear_query_datePicker_list(state) {
       console.log("I am in set query datePicker");
       state.replied_requests_for_report_datePicker = [];
@@ -543,7 +553,8 @@ export const store = new Vuex.Store({
           console.log("Error getting documents:", error);
         });
     },
-    get_month_to_month_epoch_times() {
+    get_month_to_month_epoch_times({state,commit}) {
+      console.log("in month to month");
       let today = Date.now();
       let date = new Date(today);
       let year = date.getFullYear();
@@ -583,7 +594,7 @@ export const store = new Vuex.Store({
         split_previousYear[3],
         split_previousYear[4],
         split_previousYear[5]
-      ).valueOf();
+      ).valueOf(); 
       console.log("epoch_previousYear: " + epoch_previousYear);
       let epoch_firstDayOfMonth_array = [];
       let monthCount = 0;
@@ -593,13 +604,103 @@ export const store = new Vuex.Store({
         let oneMonth = 86400000 * 30.5;
         epoch_previousYear = epoch_previousYear + oneMonth;
         epoch_firstDayOfMonth_array.push(epoch_previousYear);
-        console.log("epoch_previousYear_in_while: " + epoch_previousYear);
         monthCount++;
       }
-      return epoch_firstDayOfMonth_array;
+
+      commit("set_epoch_month_times", epoch_firstDayOfMonth_array)
     },
+
+    // Aortiz and Yiwayana 
+    // Create an array of size 12, fill each index with submissions for that month
+    filter_submissions_by_month({ commit, state,dispatch } , payload) {
+      dispatch("get_month_to_month_epoch_times");
+
+      var month_epoch_times = state.epoch_month_time
+      console.log("Inside filter submissions");
+      var filter_submissions_array = payload.slice();
+      console.log("Filter submissions is " , filter_submissions_array)
+      // Create an array of 12 indices , where each index stores an integer representing # of submissions
+      var number_of_submissions_per_month = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+  
+      var i;
+      for( i = 0 ; i < filter_submissions_array.length; i++){
+        var submission_date = filter_submissions_array[i].submitted_on
+        if(submission_date >= month_epoch_times[0] && submission_date<month_epoch_times[1]){
+          // Nov-Dec
+          number_of_submissions_per_month[0] += 1;
+        }else if(submission_date >= month_epoch_times[1] && submission_date<month_epoch_times[2]){
+          // Dec - Jan
+          number_of_submissions_per_month[1] += 1;
+        }else if(submission_date >= month_epoch_times[2] && submission_date<month_epoch_times[3]){
+          // Jan - Feb
+          number_of_submissions_per_month[2] += 1;
+        }else if(submission_date >= month_epoch_times[3] && submission_date<month_epoch_times[4]){
+          // Feb-March
+          number_of_submissions_per_month[3] += 1;
+        }else if(submission_date >= month_epoch_times[4] && submission_date<month_epoch_times[5]){
+          // M-April
+          number_of_submissions_per_month[4] += 1;
+        }else if(submission_date >= month_epoch_times[5] && submission_date<month_epoch_times[6]){
+          // Apr- May
+          number_of_submissions_per_month[5] += 1;
+        }else if(submission_date >= month_epoch_times[6] && submission_date<month_epoch_times[7]){
+          // May -Jun
+          number_of_submissions_per_month[6] += 1;
+        }else if(submission_date >= month_epoch_times[7] && submission_date<month_epoch_times[8]){
+          // Jun-July
+          number_of_submissions_per_month[7] += 1;
+        }else if(submission_date >= month_epoch_times[8] && submission_date<month_epoch_times[9]){
+          // July-Aug
+          number_of_submissions_per_month[8] += 1;
+        }else if(submission_date >= month_epoch_times[9] && submission_date<month_epoch_times[10]){
+          // Aug-Sep
+          number_of_submissions_per_month[9] += 1;
+        }else if(submission_date >= month_epoch_times[10] && submission_date<month_epoch_times[11]){
+          // Sep-Oct
+          number_of_submissions_per_month[10] += 1;
+        }else if(submission_date >= month_epoch_times[11] && submission_date< month_epoch_times[11]+(86400000 * 30.5)){ 
+          // Oct-Nov
+          number_of_submissions_per_month[11] += 1;
+        } else{
+          // Nov-Dec
+          number_of_submissions_per_month[12] += 1;
+        }
+      }
+
+      var months_array = ["January", "February", "March", "April", "May", "June" , "July", "August", "September", "October", "November", "Decemeber"]
+      var start_month = new Date(month_epoch_times[0]).getMonth();
+      var month_iterate;
+      // Create an array of months starting from last year to this month.
+      var right_month_array = [];
+      for(month_iterate = 0; month_iterate < 13; month_iterate++){
+        if(start_month >= 12) start_month = 0;
+        right_month_array.push(months_array[start_month]);
+        start_month++;
+      }
+
+      console.log("Display it  in the right order please : " + right_month_array );
+
+      var final_array = []
+      var fill_chart_array_index;
+      for(fill_chart_array_index = 0 ; fill_chart_array_index <= 13; fill_chart_array_index ++ ){
+        if(fill_chart_array_index == 0) {
+          final_array[fill_chart_array_index] = ["Month", "Submissions"];
+        }else{
+          final_array[fill_chart_array_index] = [right_month_array[fill_chart_array_index-1], number_of_submissions_per_month[fill_chart_array_index-1]]
+        }
+      }
+
+      commit("set_chart_array_for_submissions", final_array)
+    },
+
+    testing(){
+      console.log("We here?")
+
+    },
+ 
     // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
-    get_submissions_for_year({ commit, getters }) {
+    get_submissions_for_year({ commit, getters,dispatch}) {
+      console.log("Entered get submissions for year");
       //aortizoj
       commit("clear_submissions_for_year_array");
       let today = Date.now();
@@ -668,6 +769,9 @@ export const store = new Vuex.Store({
             results.forEach(function(doc) {
               commit("set_submissions_for_year", doc.data());
             });
+            
+            // Call the function to filter submissions by year
+            dispatch("filter_submissions_by_month", getters.submissions_for_year);
             // set_replied_requests_for_report
             // or if you only want the first result you can also do something like this:
             console.log("Document data:", results.docs[0].data());
@@ -2188,6 +2292,10 @@ export const store = new Vuex.Store({
     },
     monthly_report_submissions(state) {
       return state.monthly_report_submissions;
+    },
+    // Yiwayana and aortiz
+    yearly_chart_array(state){
+        return state.chart_array_for_submissions;
     }
   }
 });

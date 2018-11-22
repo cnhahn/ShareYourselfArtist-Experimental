@@ -60,6 +60,7 @@
     <v-card>
       <v-card-title>Graph</v-card-title>
       <GChart type="LineChart" :data="chartData" :options="chartOptions" />
+      <button v-on:click="testing2"> Test 2 </button>
     </v-card>
 
     <v-card>
@@ -187,7 +188,9 @@ export default {
     goto_monthly_report() {
       this.$router.push("monthly_report");
     },
-
+    testing2(){
+      this.chartData = this.$store.getters.yearly_chart_array;
+    },
     fetch_report() {}
   },
   computed: {
@@ -235,201 +238,16 @@ export default {
     submissions_for_year() {
       return this.$store.getters.submissions_for_year;
     }
-    // submissions_for_january() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   console.log("sub for year: " + JSON.stringify(submissionsForYear));
-    //   var subForJan = [];
-    //   for (let i = 0; i < submissionsForYear.length; i++) {
-    //     if (
-    //       submissionsForYear[i].submitted_on >= 1538352000000 &&
-    //       submissionsForYear[i].submitted_on <= 1541030400000
-    //     ) {
-    //       subForJan.push(submissionsForYear[i]);
-    //     }
-    //   }
-    //   console.log("subForJan: " + JSON.stringify(subForJan));
 
-    //   return subForJan.length;
-    // }
-    // submissions_for_january() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let janSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1514764800000 &&
-    //       submissionsArray.submitted_on < 1517443200000
-    //     );
-    //   });
-    //   console.log("jan jan jan");
-
-    //   return janSubmissions;
-    // },
-    // submissions_for_february() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let febSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1517443200000 &&
-    //       submissionsArray.submitted_on < 1519862400000
-    //     );
-    //   });
-    //   console.log("feb feb feb");
-    //   return febSubmissions;
-    // },
-    // submissions_for_march() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let marSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1519862400000 &&
-    //       submissionsArray.submitted_on < 1522540800000
-    //     );
-    //   });
-    //   return marSubmissions;
-    // },
-    // submissions_for_april() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let aprilSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1522540800000 &&
-    //       submissionsArray.submitted_on < 1525132800000
-    //     );
-    //   });
-    //   return aprilSubmissions;
-    // },
-    // submissions_for_may() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let maySubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1525132800000 &&
-    //       submissionsArray.submitted_on < 1527811200000
-    //     );
-    //   });
-    //   return maySubmissions;
-    // },
-    // submissions_for_june() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let juneSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1527811200000 &&
-    //       submissionsArray.submitted_on < 1530403200000
-    //     );
-    //   });
-    //   return juneSubmissions;
-    // },
-    // submissions_for_july() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let julySubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1530403200000 &&
-    //       submissionsArray.submitted_on < 1533081600000
-    //     );
-    //   });
-    //   return julySubmissions;
-    // },
-    // submissions_for_august() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let augSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1533081600000 &&
-    //       submissionsArray.submitted_on < 1535760000000
-    //     );
-    //   });
-    //   return augSubmissions;
-    // },
-    // submissions_for_september() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let septSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1535760000000 &&
-    //       submissionsArray.submitted_on < 1538352000000
-    //     );
-    //   });
-    //   return septSubmissions;
-    // },
-    // submissions_for_october() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let octSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1538352000000 &&
-    //       submissionsArray.submitted_on < 1541030400000
-    //     );
-    //   });
-    //   return this.octSubmissions;
-    // },
-    // submissions_for_november() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let novSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1541030400000 &&
-    //       submissionsArray.submitted_on < 1543622400000
-    //     );
-    //   });
-    //   console.log("nov: " + novSubmissions);
-
-    //   return novSubmissions;
-    // },
-    // submissions_for_december() {
-    //   let submissionsForYear = this.$store.getters.submissions_for_year;
-    //   let decSubmissions = submissionsForYear.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return (
-    //       submissionsArray.submitted_on >= 1543622400000 &&
-    //       submissionsArray.submitted_on < 1546300800000
-    //     );
-    //   });
-    //   return decSubmissions;
-    // },
-    // paid_submissions_january() {
-    //   let janSubmissions = this.submissions_for_january();
-    //   let paid_submissions_january = janSubmissions.filter(function(
-    //     submissionsArray
-    //   ) {
-    //     return submissionsArray.submitted_with_free_cerdit == false;
-    //   });
-    //   console.log("paid submissions january: " + paid_submissions_january);
-
-    //   return paid_submissions_january;
-    // }
   },
 
   data() {
     return {
-      chartData: [
-        ["Month", "Submissions"],
-        ["June", 400],
-        ["July", 417],
-        ["August", 460],
-        ["September", 503],
-        ["October", 599],
-        ["November", 650],
-        ["December", 699]
-      ],
+      chartData: [1],
       chartOptions: {
-        chart: {
-          title: "Businesses",
-          subtitle: "Monthly Report of Businesses"
-        },
+          title: 'Annual Submission Report',
+          vAxis: {title: "Number of Submissions"},
+          hAxis: {title: "Months"},
         width: 800,
         height: 300
       },
