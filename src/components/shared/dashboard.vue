@@ -81,8 +81,8 @@
     <v-layout fill-height>
       <v-flex xs12 align-end flexbox>
         <span class="headline">Search for Artists</span>
-        <v-text-field v-model="artist_email" label="email" required :rules="emailRules"></v-text-field>
-        <v-btn color="primary" @click="searchArtistEmail()" :disabled="isDisabled">Submit</v-btn>
+        <v-text-field v-model="artist_email" label="email" :rules="emailRules"></v-text-field>
+        <v-btn color="primary" @click="searchArtistEmail()">Submit</v-btn>
         <v-alert
           type="error"
           :value="alert"
@@ -93,7 +93,8 @@
       <span class="headline">Distribute Campaign Credits</span>
       <v-spacer></v-spacer>
       <v-text-field v-model="freeCredits" label='# of credits' :rules="giveCreditsRules" solo></v-text-field>
-      <v-btn color="primary" @click="giveCredits()">Submit</v-btn>
+      <!-- :disabled="isCreditBtnDisabled" -->
+      <v-btn color="primary" @click="giveCredits()" >Submit</v-btn>
     </v-layout>
     <v-card-title>Artists Email List
       <v-spacer></v-spacer>
@@ -163,19 +164,13 @@ export default {
       }
       this.alert = true;
     },
-    giveFreeCredits(){
+    giveCredits(){
       this.$store.dispatch('distributeCredits', this.freeCredits)
     }
   },
   computed: {
-    isDisabled() {
-      for (let rule in this.emailRules) {
-        console.log(rule);
-        // if(rule()){
-
-        // }
-      }
-      return false;
+    isCreditBtnDisabled() {
+      return this.freeCredits > 0 ? false : true
     },
     formIsValid() {
       return this.business_email !== "";

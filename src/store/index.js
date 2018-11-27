@@ -505,11 +505,17 @@ export const store = new Vuex.Store({
       let db = firebase.firestore()
       db.collection('users').get().then(function (users) {
         users.forEach(function (doc) {
-          const userRef = db.collection('users').doc(doc.id)
-          const currentCredits = userRef.data().free_cerdits
+          let currentCredits
+          if (doc.data().free_credits !== undefined) {
+            currentCredits = doc.data().free_credits
+          } else {
+            currentCredits = 0
+          }
           console.log(currentCredits)
+          // console.log(doc.data().userId)
+          const userRef = db.collection('users').doc(doc.data().userId)
           return userRef.update({
-            free_cerdits: currentCredits + numCredits
+            free_credits: currentCredits + numCredits
           })
         })
       })
