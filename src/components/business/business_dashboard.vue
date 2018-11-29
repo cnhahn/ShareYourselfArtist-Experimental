@@ -28,8 +28,15 @@
                 :is-last="tour.isLast"
                 :labels="tour.labels"
               >
-                <template v-if="tour.currentStep === 0">
+              <template v-if="tour.currentStep === 0">
                   <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 1">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
                     <v-btn type="button" @click="nextStepCallback(tour.currentStep)" large depressed color="primary" router to="/submissions">Go to Submission</v-btn>
                   </div>
                 </template>
@@ -39,6 +46,11 @@
         </v-tour>
       </div>
 
+    </v-layout>
+    <v-layout>
+      <div id="v-step-0" class="text-xs-center">
+        <v-btn large depressed color="primary" @click="$tours['myTour'].start()">Tutorial</v-btn>
+      </div>
     </v-layout>
     <v-layout row wrap mt-5>
       <p class="title">{{ user_info.business_name }}</p>
@@ -94,21 +106,16 @@
         show_tumblr:false,
         steps: [
           {
-            target: '#v-step-1', 
-            content: `This is where you check your submissions from your artists! Click Next to Check out your submissions!`
-          }/*,
-          {
-            target: '#v-step-2',  // We're using document.querySelector() under the hood
-            content: `This is where you can edit your profile! Here you can check your profile and learn more about us!`
+            target: '#v-step-0', 
+            content: `Welcome to our website! Would you like to proceed with our tutorial?`
           },
           {
-            target: '#v-step-3',  // We're using document.querySelector() under the hood
-            content: `Here you can navigate throughout the website!`,
+            target: '#v-step-1', 
+            content: `This is where you check your submissions from your artists! Let's check out your submissions!`,
             params: {
-              placement: 'bottom'
+              placement: 'right'
             }
-          }*/
-          
+          }
         ],
         myCallbacks: {
           onPreviousStep: this.previousStepCallback,

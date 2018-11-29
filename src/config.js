@@ -5,3 +5,4 @@ const config = {
   projectId: 'sya-app',
   storageBucket: 'sya-app.appspot.com'
 }
+export default config

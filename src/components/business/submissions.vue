@@ -5,7 +5,7 @@
       <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn>
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
       <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
-      <v-tour name="myTour" :steps="steps">
+      <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
         <template slot-scope="tour">
             <transition name="fade">
               <v-step
@@ -20,10 +20,43 @@
                 :is-last="tour.isLast"
                 :labels="tour.labels"
               >
-                <template v-if="tour.currentStep === 2">
+                <template v-if="tour.currentStep == 2">
                   <div slot="actions">
-                    <button @click="tour.previousStep" class="btn">Previous step</button>
-                    <button @click="tour.nextStep" class="btn btn-primary">Next step</button>
+                    <v-btn @click="tour.stop"  depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn @click="tour.previousStep"  depressed color="primary">Previous</v-btn>
+                    <v-btn @click="tour.nextStep"  depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 3">
+                  <div slot="actions">
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn type="button" @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">See Description</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 4">
+                  <div slot="actions">
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn @click="tour.nextStep" large depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 5">
+                  <div slot="actions">
+                    <p>Here are a few example questions that you should answer to give feedback to the artists:</p>
+                    <ul>
+                      <li>What do you like/dislike about the piece?</li>
+                      <li>Does this piece fit your blog style?</li>
+                      <li>What improvements would you like to see in the piece?</li>
+                    </ul>
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn @click="tour.nextStep" large depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 6">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Next</v-btn>
                   </div>
                 </template>
               </v-step>
@@ -33,7 +66,7 @@
     </div>
     <v-layout row justify-center>
       <v-layout row wrap mb-5>
-        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
+        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id' id="v-step-dummySubmission">
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -176,10 +209,48 @@
             target: '#v-step-repliedSubmissions', 
             content: `This is where you check your submissions you have replied to!`,
             params: {
-              placement: 'top'
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like you got a submission! Let's check out the description!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like the artist was really passionate about this piece! We should leave them some feedback.`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Let's be nice to artists whether we accept their piece or not! We need to make sure to leave them constuctive feedback!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like you've left good feedback to the artist! Now you can choose to accept or decline the art piece!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `You have finished our tutorial! Don't forget to reply to your artists!`,
+            params: {
+              placement: 'right'
             }
           }
-        ]
+        ],
+        myCallbacks: {
+          onNextStep: this.myCustomNextStepCallback
+        }
       }
     },
 
@@ -189,6 +260,15 @@
         
         console.log(art_link)
 
+      },
+
+      myCustomNextStepCallback: function(currentStep) {
+        console.log("Called next callback")
+        console.log(currentStep)
+        if(currentStep == 3) {
+          this.show = true
+        }
+        
       },
       
       /* Retrieves all review requests from the server */
