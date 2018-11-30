@@ -1585,6 +1585,7 @@ export const store = new Vuex.Store({
                     name: "Home"
                   });
                 } else {
+               
                   const newUser = {
                     id: firebase.auth().currentUser.uid,
                     name: firebase.auth().currentUser.displayName,
@@ -1601,6 +1602,8 @@ export const store = new Vuex.Store({
                     .get()
                     .then(function(querySnapshot) {
                       querySnapshot.forEach(function(doc) {
+
+                        console.log("Do we get here?")
                         // doc.data() is never undefined for query doc snapshots
                         if (doc.data().color == null) {
                           var docRef = db.collection("users").doc(doc.id);
@@ -1647,10 +1650,19 @@ export const store = new Vuex.Store({
                 }
               },
               function(err) {
-                alert(
-                  err.message +
-                    "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
-                );
+                firebase.auth().fetchProvidersForEmail(payload.email).then(function( result ){
+                  // … show OAuthProvider Login Button
+                  if(result == 'google.com'){
+                    dispatch('signUserInGoogle')
+                  }else if (result == 'facebook.com'){
+                    dispatch('signUserInFacebook')
+                  }else{
+                    alert(
+                      err.message +
+                        "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
+                    );
+                  }
+                });
               }
             );
         })
