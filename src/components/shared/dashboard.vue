@@ -114,58 +114,22 @@
       </v-card-actions>
     </v-layout>
 
-    <!--
-      <v-text-field v-model="business_email" :counter="10" label="email" required></v-text-field>
-      <v-btn color="primary" @click="fetch_report" :disabled="!formIsValid" router to="/dashboard2">Submit</v-btn>
-    -->
-
-    <!--
-      <v-layout row>
-        <v-flex>
-          <v-card>
-
-            <v-container fill-height fluid>
-              <v-layout fill-height>
-                <v-flex xs12 align-end flexbox>
-                  <span class="headline">Generate Artists Email List</span>
-                </v-flex>
-              </v-layout>
-            </v-container>
-            <v-card-title>
-              <div>
-                <span class="grey--text"></span><br>
-                <span>This function generates an email list of artists.</span><br>
-              </div>
-            </v-card-title>
-            <v-card-actions>
-              <v-btn @click="generate_artists_email_list" dark color="orange">Generate</v-btn>
-
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    -->
-    <v-card>
-      <v-card-title>
-        Artists Email List
-        <v-spacer></v-spacer>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="artists_email_list"
-        :search="search"
-        hide-headers
-      >
-        <template slot="items" slot-scope="props">
-          <td class="text-xs-right">{{ props.item.artist_name }}</td>
-          <td class="text-xs-right">{{ props.item.artist_email }}</td>
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-          Your search for "{{ search }}" found no results.
-        </v-alert>
-      </v-data-table>
-    </v-card>
-  </v-container>
+  <v-card>
+    <v-card-title>
+      Artists Email List
+      <v-spacer></v-spacer>
+    </v-card-title>
+    <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-right">{{ props.item.artist_name }}</td>
+        <td class="text-xs-right">{{ props.item.artist_email }}</td>
+      </template>
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+        Your search for "{{ search }}" found no results.
+      </v-alert>
+    </v-data-table>
+  </v-card>
+</v-container>
   <h1 v-else>You are not authorized to view this page</h1>
 </template>
 
@@ -184,10 +148,10 @@ export default {
       console.log(this.$store.getters.artists_email_list);
     },
     goto_dashboard2(business_email) {
-      this.$store.commit("set_query_business_email", {
-        business_email: business_email
-      });
-      localStorage.setItem("business_email", business_email);
+      // this.$store.commit("set_query_business_email", {business_email: business_email});
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
+      localStorage.setItem('business_email', business_email);
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();

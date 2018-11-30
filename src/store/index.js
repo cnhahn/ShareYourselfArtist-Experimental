@@ -166,8 +166,9 @@ export const store = new Vuex.Store({
     },
     monthly_report_submissions: [],
     //store email of artist that was just clicked (worked on by Yas)
-
     query_business_email: "",
+    //yiwayana
+    info_of_business_for_dashboard2: {},
 
     // yiwayana and aortiz
     epoch_month_time: [],
@@ -177,6 +178,12 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: [],
   },
   mutations: {
+    set_info_of_business_for_dashboard2(state,payload){
+      state.info_of_business_for_dashboard2 = payload
+    },
+    clear_info_of_business_for_dashboard2(state){
+      state.info_of_business_for_dashboard2 = {};
+    },
     set_epoch_month_times(state, payload) {
       state.epoch_month_time = payload;
     },
@@ -210,7 +217,6 @@ export const store = new Vuex.Store({
         start_d[4],
         start_d[5]
       ).valueOf();
-
       const end_date = payload.endDate + "-00-00-00";
       const end_d = end_date.split("-");
       let end_epoch = new Date(
@@ -231,7 +237,6 @@ export const store = new Vuex.Store({
         (state.datePicker.endDate = end_epoch);
     },
     set_free_credits(state, payload) {
-      console.log("inside set free credits");
       console.log(payload);
       if (payload != null || payload != undefined || payload != "") {
         state.free_credits = payload;
@@ -372,7 +377,6 @@ export const store = new Vuex.Store({
       state.sendChatData.timestamp = payload.timestamp;
       state.sendChatData.url = payload.url;
     },
-
     setUserRandColor(state) {
       var rand = Math.floor(Math.random() * 10);
       var randColors = [
@@ -447,27 +451,56 @@ export const store = new Vuex.Store({
     },
     set_monthly_report_submissions(state, payload) {
       state.monthly_report_submissions = payload;
-    }
+    },
   },
   actions: {
-    //for datePicker
+    //yiwayana
+    push_updated_business_info_to_firebase({commit}, payload){
+      let db = firebase.firestore();
+      let userId = ''
+      let userid_of_business = db.collection('users').where('email', "==", payload.email);
+      //find the right business userId so we can edit the right collection
+      userid_of_business.get().then(function(results) {
+        if (results.empty) {
+          console.log("No documents found! in query");
+        } else {
+          // go through all results
+          results.forEach(function(doc) {
+            userId = doc.data().userId
+            let businessRef = db.collection('users').doc(userId);
+            businessRef.update({
+              about :  payload.about,
+              additional_notes :  payload.additional_notes ,
+              business_name : payload.business_name,
+              facebook_url : payload.facebook_url,
+              instagram_url : payload.instagram_url,
+              publication : payload.publication,
+              the_good : payload.the_good,
+              tumblr_url : payload.tumblr_url,
+              upload_date : payload.upload_date
+            })
+          });
+        }
+      });
+    },
 
-    //test cases:
-    //have to implement test cases for start and end date equaling each other.
-    //refereshing the page eliminates the artist email so we have to fix that
+    //yiwayana
+    query_info_of_business_for_dashboard2({commit,state}, payload){
+      let db = firebase.firestore();
+      let query = db.collection("users")
+      .where("email", "==", payload);
+      query.get().then(function(results){
+        if(results.empty){
+          ("no documents found")
+        }else{
+          results.forEach(function(doc) {
+            commit("set_info_of_business_for_dashboard2", doc.data());
+          });
+        }
+      });
+    },
 
-    //Things to Accomplish before next meeting:
-    //The whole point of this is to make sure we know how to pay businesses . TO do so we have to know:
-    //put number of total artist submissions visibly somewhere
-    //put number of paid submissions somewhere that are replied
-    //SO here's the whole sytem. ARtists can submit htrough free or paid credits.
-    //If it's free, we will not have to pay the business for their response. IF it's not free, we will have to pay for their responses.
-    //number of paid submissions
-    //put headers to describe the contents
-    //put back button
-    //make the entire (dashboard) row clickable instead of just the email
-    //
-
+    //yiwayana
     report_datePicker({ commit, state }) {
       commit("clear_replied_for_report_datePicker");
       let db = firebase.firestore();
@@ -517,32 +550,23 @@ export const store = new Vuex.Store({
           console.log("Error getting report: ", error);
         });
     },
-    get_monthly_report_submissions({ commit, getters }, year_month) {
-      console.log("year month: " + year_month);
-      let first_of_month_array = year_month.split("-");
-      first_of_month_array.push(
-        first_of_month_array[0],
-        first_of_month_array[1],
-        1
-      );
-      let last_of_month_array = first_of_month_array;
-      let first_of_month = new Date(
-        parseInt(first_of_month_array[0]),
-        (parseInt(first_of_month_array[1]) - 1) % 12,
-        1
-      );
+    get_monthly_report_submissions({
+      commit,
+      getters
+    }, year_month) {
+      console.log("year month: " + year_month)
+      let first_of_month_array = year_month.split("-")
+      first_of_month_array.push(first_of_month_array[0], first_of_month_array[1], 1)
+      let last_of_month_array = first_of_month_array
+      let first_of_month = new Date(parseInt(first_of_month_array[0]), (parseInt(first_of_month_array[1]) - 1) % 12, 1)
 
-      let last_of_month = new Date(
-        parseInt(first_of_month_array[0]),
-        parseInt(first_of_month_array[1]) % 12,
-        1
-      );
-      console.log("first of month1: " + first_of_month);
-      console.log("last of month1: " + last_of_month);
-      first_of_month = first_of_month.valueOf();
-      last_of_month = last_of_month.valueOf();
-      console.log("first of month2: " + first_of_month);
-      console.log("last of month2: " + last_of_month);
+      let last_of_month = new Date(parseInt(first_of_month_array[0]), parseInt(first_of_month_array[1]) % 12, 1)
+      console.log("first of month: " + first_of_month)
+      console.log("last of month: " + last_of_month)
+      first_of_month = first_of_month.valueOf()
+      last_of_month = last_of_month.valueOf()
+      console.log("first of month: " + first_of_month)
+      console.log("last of month: " + last_of_month)
       let db = firebase.firestore();
       let temp_report = db.collection("review_requests");
       let query = temp_report
@@ -1043,7 +1067,6 @@ export const store = new Vuex.Store({
           );
           console.log("current picture");
           commit("setUser", newUser);
-          console.log("getters.user.id" + getters.user.id);
           const db = firebase.firestore();
           var artistRef = db.collection("users").doc(newUser.userId);
           var getDoc = artistRef
@@ -1412,9 +1435,6 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log("Error getting documents: ", error);
         });
-      console.log("getters.user_role:" + getters.user_role);
-      console.log("getters.user_rid:" + getters.user.id);
-      console.log("getters.user_credit:" + getters.credits);
     },
 
     fetchArts({ commit, getters }) {
@@ -1991,6 +2011,7 @@ export const store = new Vuex.Store({
                     name: "Home"
                   });
                 } else {
+               
                   const newUser = {
                     id: firebase.auth().currentUser.uid,
                     name: firebase.auth().currentUser.displayName,
@@ -2052,11 +2073,20 @@ export const store = new Vuex.Store({
                   }, 10000);
                 }
               },
-              function (err) {
-                alert(
-                  err.message +
-                  "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
-                );
+              function(err) {
+                firebase.auth().fetchProvidersForEmail(payload.email).then(function( result ){
+                  // … show OAuthProvider Login Button
+                  if(result == 'google.com'){
+                    dispatch('signUserInGoogle')
+                  }else if (result == 'facebook.com'){
+                    dispatch('signUserInFacebook')
+                  }else{
+                    alert(
+                      err.message +
+                        "Or you may have not confirmed your email yet. If you need further assistance, please send us an email."
+                    );
+                  }
+                });
               }
             );
         })
@@ -2469,6 +2499,9 @@ export const store = new Vuex.Store({
     },
     yearly_chart_free(state) {
       return state.chart_free_for_submissions;
+    },
+    info_of_business_for_dashboard2(state){
+      return state.info_of_business_for_dashboard2;
     },
   }
 });

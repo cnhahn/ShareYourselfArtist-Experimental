@@ -30,6 +30,49 @@
     <div>
       <button variant="primary" v-on:click="selectDates">Select These Date Ranges</button>
     </div>
+
+     <h2>{{info_of_business_for_dashboard2.business_name}} </h2>
+ 
+    <!-- By yiwayana -->
+
+    <v-form>
+      <v-text-field
+        v-model = "business_about"
+        label="About"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_facebook_url"
+        label="Facebook Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_instagram_url"
+        label="Instagram Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_tumblr_url"
+        label="Tumblr Url"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_publication"
+        label="Publication"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_the_good"
+        label="The Good"
+      ></v-text-field>
+      <v-text-field
+        v-model = "business_upload_date"
+        label="Upload Date"
+      ></v-text-field>  
+      <v-text-field
+        v-model = "business_additional_notes"
+        label="Additional Notes"
+      ></v-text-field>
+ 
+    </v-form>
+
+    <button v-on:click="submit_edited_business_info" style="color:orange" > Submit </button>
+
   </v-container>
   <!-- If the current user is not an admin, then they will not be able to see the current dashboard. -->
   <h1 v-else>You are not authorized to view this page</h1>
@@ -37,13 +80,12 @@
 
 <script>
 export default {
-  created() {
-    this.$store.commit("clear_query_datePicker_list");
-    let business_email = localStorage.getItem("business_email");
-    console.log("the business email to refresh : " + business_email);
-    this.$store.commit("set_query_business_email", {
-      business_email: business_email
-    });
+  created(){
+      this.$store.commit("clear_query_datePicker_list");
+      this.$store.commit("clear_info_of_business_for_dashboard2");
+      let business_email = localStorage.getItem('business_email');
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
   },
   methods: {
     selectDates() {
@@ -52,13 +94,41 @@ export default {
       this.$store.dispatch("report_datePicker");
       this.month = "datePicker";
     },
-    showList() {}
+    submit_edited_business_info(){
+      let updated_business_info = {
+        about :  this.business_about,
+        additional_notes :  this.business_additional_notes ,
+        business_name : this.business_name,
+        email : this.business_email,
+        facebook_url : this.business_facebook_url,
+        instagram_url : this.business_instagram_url,
+        publication : this.business_publication,
+        the_good : this.business_the_good,
+        tumblr_url : this.business_tumblr_url,
+        upload_date : this.business_upload_date
+      };
+      this.$store.dispatch('push_updated_business_info_to_firebase', updated_business_info)
+    }
   },
 
   computed: {
     datePicker_list() {
       return this.$store.getters.datePicker;
-    }
+    },
+    info_of_business_for_dashboard2(){
+      let business_info = this.$store.getters.info_of_business_for_dashboard2
+      this.business_about = business_info.about;
+      this.business_additional_notes = business_info.additional_notes;
+      this.business_name = business_info.business_name;
+      this.business_email = business_info.email;
+      this.business_facebook_url =  business_info.facebook_url;
+      this.business_instagram_url = business_info.instagram_url;
+      this.business_publication = business_info.publication;
+      this.business_the_good = business_info.the_good;
+      this.business_tumblr_url = business_info.tumblr_url;
+      this.business_upload_date = business_info.upload_date;
+      return this.$store.getters.info_of_business_for_dashboard2;
+    },
   },
 
   data() {
@@ -80,6 +150,16 @@ export default {
       ],
       picker: new Date().toISOString().substring(0, 10),
       picker2: new Date().toISOString().substring(0, 10),
+      business_about: ' ',
+      business_additional_notes: ' ',
+      business_name: ' ',
+      business_email: ' ',
+      business_facebook_url: ' ',
+      business_instagram_url: ' ',
+      business_publication: ' ',
+      business_the_good: ' ',
+      business_tumblr_url: ' ',
+      business_upload_date: ' ',
       landscape: false,
       reactive: false
     };
