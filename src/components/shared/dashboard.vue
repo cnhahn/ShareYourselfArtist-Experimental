@@ -1,17 +1,25 @@
 <template>
   <v-container
-    v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'"
+    v-if="
+      this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' ||
+        this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' ||
+        this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' ||
+        this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' ||
+        this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'
+    "
   >
     <v-layout row>
       <v-flex class="ml-3" xs12 sm6>
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{businesses.length}}</h3>
+              <h3 class="headline mb-0">
+                {{ businesses.length }}
+              </h3>
               <div>Businesses</div>
             </v-flex>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{artists_email_list.length}}</h3>
+              <h3 class="headline mb-0">{{ artists_email_list.length }}</h3>
               <div>Artists</div>
             </v-flex>
           </v-card-title>
@@ -21,12 +29,16 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{submissions_for_month.length}}</h3>
-              <div>Submissions</div>
+              <div v-on:click="yearly_submissions">
+                <h3 class="headline mb-0">{{ submissions_for_month.length }}</h3>
+                <div>Submissions</div>
+              </div>
             </v-flex>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{replied_for_month}}</h3>
-              <div>Replied</div>
+              <div v-on:click="yearly_replied">
+                <h3 class="headline mb-0">{{ replied_for_month }}</h3>
+                <div>Replied</div>
+              </div>
             </v-flex>
           </v-card-title>
         </v-card>
@@ -35,28 +47,52 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{free_submissions_for_month}}</h3>
-              <div>Free</div>
+              <div v-on:click="yearly_free">
+                <h3 class="headline mb-0">{{ free_submissions_for_month }}</h3>
+                <div>Free</div>
+              </div>
             </v-flex>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{paid_submissions_for_month}}</h3>
-              <div>Paid</div>
+              <div v-on:click="yearly_paid">
+                <h3 class="headline mb-0">{{ paid_submissions_for_month }}</h3>
+                <div>Paid</div>
+              </div>
             </v-flex>
           </v-card-title>
         </v-card>
       </v-flex>
     </v-layout>
+
     <v-card>
-      <v-card-title>Blogs
+      <v-card-title>Graph</v-card-title>
+      <GChart type="LineChart" :data="chartData" :options="chartOptions" />
+    </v-card>
+
+    <v-card>
+      <v-card-title>
+        Blogs
         <v-spacer></v-spacer>
-        <!-- Input to search for a blog  -->
-        <v-text-field v-model="search" append-icon="search" label="hello" single-line hide-details></v-text-field>
+
+        <!-- Input to search for a blog -->
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
       </v-card-title>
+
       <!-- Headers -->
-      <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
+      <v-data-table
+        :headers="headers"
+        :items="businesses"
+        :search="search"
+        hide-headers
+      >
         <!-- Display business data table and make it clickable. -->
         <template slot="items" slot-scope="props">
-          <tr @click="goto_dashboard2(props.item.email)">
+          <tr @click="goto_dashboard2(props.item.email);">
             <td>{{ props.item.business_name }}</td>
             <td class="text-xs-right">{{ props.item.email }}</td>
             <td class="text-xs-right">{{ props.item.upload_date }}</td>
@@ -120,6 +156,9 @@ export default {
   beforeCreate() {
     this.$store.dispatch("get_email_list_of_artists");
     this.$store.dispatch("get_submissions_for_month");
+    this.$store.dispatch("get_submissions_for_year");
+    this.$store.dispatch("get_submissions_past_months");
+   
   },
   methods: {
     generate_artists_email_list() {
@@ -127,15 +166,10 @@ export default {
       console.log(this.$store.getters.artists_email_list);
     },
     goto_dashboard2(business_email) {
-      this.$store.commit("set_query_business_email", {
-        business_email: business_email
-      });
-      localStorage.setItem("business_email", business_email);
-
-      this.$store.commit("set_query_business_email", {
-        business_email: business_email
-      });
-      localStorage.setItem("business_email", business_email);
+      // this.$store.commit("set_query_business_email", {business_email: business_email});
+      this.$store.commit("set_query_business_email", {business_email: business_email}) 
+      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
+      localStorage.setItem('business_email', business_email);
       console.log("email" + business_email);
       this.business_email = business_email;
       this.fetch_report();
@@ -149,7 +183,6 @@ export default {
         this.router.push();
       }
     },
-    fetch_report() {},
     searchArtistEmail() {
       const artistList = this.$store.getters.artists_email_list;
       // console.log(artistList)
@@ -166,7 +199,40 @@ export default {
     },
     giveCredits(){
       this.$store.dispatch('distributeCredits', this.freeCredits)
-    }
+    },
+    yearly_submissions(){
+      this.chartData = this.$store.getters.yearly_chart_array;
+    },
+    yearly_replied(){
+      this.chartData = this.$store.getters.yearly_chart_replied;
+      this.chartOptions =  {
+          title: 'Annual Response Report',
+          vAxis: {title: "Number of Replies"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
+    },
+    yearly_paid(){
+      this.chartData = this.$store.getters.yearly_chart_paid;
+      this.chartOptions =  {
+          title: 'Annual Paid Submission Report',
+          vAxis: {title: "Number of Paid Requests"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
+    },
+    yearly_free(){
+      this.chartData = this.$store.getters.yearly_chart_free;
+      this.chartOptions =  {
+          title: 'Annual Free Submission Report',
+          vAxis: {title: "Number of Free Requests"},
+          hAxis: {title: "Months"},
+          width: 800,
+          height: 300
+      }
+    },
   },
   computed: {
     isCreditBtnDisabled() {
@@ -209,15 +275,28 @@ export default {
       ) {
         return submissionsArray.submitted_with_free_cerdit == false;
       });
+      console.log("paid subs: " + paid_submissions);
+
       return paid_submissions.length;
     },
     submissions_for_month() {
       return this.$store.getters.submissions_for_month;
-    }
+    },
+    submissions_for_year() {
+      return this.$store.getters.submissions_for_year;
+    },
   },
 
   data() {
     return {
+      chartData: [1],
+      chartOptions: {
+          title: 'Annual Submission Report',
+          vAxis: {title: "Number of Submissions"},
+          hAxis: {title: "Months"},
+        width: 800,
+        height: 300
+      },
       name: "",
       business_email: "",
       count: "",
