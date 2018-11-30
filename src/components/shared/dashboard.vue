@@ -81,7 +81,7 @@
     <v-layout fill-height>
       <v-flex xs12 align-end flexbox>
         <span class="headline">Search for Artists</span>
-        <v-text-field v-model="artist_email" label="email" :rules="emailRules"></v-text-field>
+        <v-text-field v-model="artist_email" label="email" :rules="emailRules" v-on:keyup.enter='searchArtistEmail()'></v-text-field>
         <v-btn color="primary" @click="searchArtistEmail()">Submit</v-btn>
         <v-alert
           type="error"

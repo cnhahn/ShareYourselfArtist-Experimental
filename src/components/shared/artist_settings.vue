@@ -23,6 +23,20 @@
       <v-text-field v-model="artist_obj.photoUrl" v-bind:label="artistPhoto" solo></v-text-field>
       <span>Role:</span>
       <v-text-field v-model="artist_obj.role" v-bind:label="artistRole" solo></v-text-field>
+      <v-alert></v-alert>
+      <v-alert
+      :value="successAlert"
+      type="success"
+      >
+        Settings changed Successfully.
+      </v-alert>
+      <v-alert
+      :value="failureAlert"
+      type="error"
+      >
+        Settings changes failed.
+      </v-alert>
+
       <v-btn primary :disabled="!valid" @click="submitData()">Submit Changes</v-btn>
     </v-form>
   </v-container>
@@ -39,7 +53,17 @@ export default {
   },
   methods: {
     submitData(){
-      this.$store.dispatch('updateArtistSettings', this.artist_obj)
+      const promise = this.$store.dispatch('updateArtistSettings', this.artist_obj)
+      console.log(promise)
+      const self = this
+      promise.then(function(status) {
+        self.successAlert = true
+        self.failureAlert = false
+        return
+      }).catch(function(){
+        self.failureAlert = true
+        self.successAlert = false
+      })
     }
   },
 
@@ -51,7 +75,7 @@ export default {
       return this.artist_obj.name
     },
     artistFree(){
-      return this.artist_obj.free_cerdits || 'No free credits'
+      return this.artist_obj.free_credits || 'No free credits'
     },
     artistPaid(){
       return this.artist_obj.credits || 'No paid credits'
@@ -71,6 +95,8 @@ export default {
     return {
       valid: true,
       artist_obj: {},
+      successAlert: false,
+      failureAlert: false,
       emailRules: [
         v => /.+@.+/.test(v) || 'E-mail must be valid'
       ],

@@ -531,7 +531,7 @@ export const store = new Vuex.Store({
       db.collection('users').doc(artist.userId).update({
         name: artist.name,
         email: artist.email,
-        free_cerdits: artist.free_cerdits || 0,
+        free_credits: artist.free_credits || 0,
         credits: artist.credits || 0,
         role: artist.role,
         instagram: artist.instagram || 'none',
