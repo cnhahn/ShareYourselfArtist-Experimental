@@ -27,7 +27,6 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 let numDays = 0
-let sixOrEightDayToggle = false
 
 //Triggers an email once someone signs up
 exports.payEmail = functions.firestore
@@ -256,7 +255,7 @@ exports.daily_job = functions.https.onRequest((req, res) => {
     return null;
   }
   function distributeCredits (numCredits) {
-    let db = firebase.firestore()
+    let db = admin.firestore()
     db.collection('users').get().then(function (users) {
       users.forEach(function (doc) {
         let currentCredits
@@ -268,9 +267,11 @@ exports.daily_job = functions.https.onRequest((req, res) => {
         console.log(currentCredits)
         // console.log(doc.data().userId)
         const userRef = db.collection('users').doc(doc.data().userId)
-        return userRef.update({
-          free_credits: currentCredits + numCredits
-        })
+        if (currentCredits < 2) {
+          return userRef.update({
+            free_credits: numCredits
+          })
+        }
       })
     })
     .then(function () {
@@ -281,17 +282,22 @@ exports.daily_job = functions.https.onRequest((req, res) => {
     })
   }
 
+  function daysInMonth (month, year) {
+    return new Date(year, month, 0).getDate()
+  }
+
   // to-do update function & compare time to limit document searches talk to Karl if you have questions
   let db = admin.firestore()
   numDays += 2
-  if (sixOrEightDayToggle && numDays % 8 === 0) {
+  let date = Date.now()
+  let month = date.getMonth()
+  let year = date.getYear()
+  let monthDays = daysInMonth(month, year)
+  if (numDays > daysInMonth) {
+    numDays = numDays - monthDays
     distributeCredits(2)
-    sixOrEightDayToggle = !sixOrEightDayToggle
   }
-  if (!sixOrEightDayToggle && numDays % 6 === 0) {
-    distributeCredits(2)
-    sixOrEightDayToggle = !sixOrEightDayToggle
-  }
+
   const promise = db.collection('review_requests').where('replied', '==', false).where('refunded', '==', 0).get()
   const p2 = promise.then(function (querySnapshot) {
     querySnapshot.forEach(function (doc) {
