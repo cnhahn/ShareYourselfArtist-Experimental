@@ -2,7 +2,7 @@
   <v-container class ="container">
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <div style="margin-bottom: 40px">
-      <div class="counters">Total Submissions: {{ master_submissions.length }}</div>
+      <!-- <div class="counters">Total Submissions: {{ master_submissions.length }}</div> -->
       <div class="counters">Unreplied Submissions: {{ master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         }).length }}</div>
@@ -11,7 +11,7 @@
         }).length }}</div>
     </div>
     <div>
-      <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn>
+      <!-- <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn> -->
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
       <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
       <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
