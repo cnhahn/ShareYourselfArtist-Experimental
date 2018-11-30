@@ -1,6 +1,15 @@
 <template>
   <v-container class ="container">
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
+    <div style="margin-bottom: 40px">
+      <div class="counters">Total Submissions: {{ master_submissions.length }}</div>
+      <div class="counters">Unreplied Submissions: {{ master_submissions.filter((review) => {
+          return review.replied == undefined || review.replied == false
+        }).length }}</div>
+      <div class="counters">Replied Submissions: {{ master_submissions.filter((review) => {
+          return review.replied == true
+        }).length }}</div>
+    </div>
     <div>
       <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn>
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
@@ -20,13 +29,6 @@
                 :is-last="tour.isLast"
                 :labels="tour.labels"
               >
-                <template v-if="tour.currentStep == 2">
-                  <div slot="actions">
-                    <v-btn @click="tour.stop"  depressed color="primary">Skip Tutorial</v-btn>
-                    <v-btn @click="tour.previousStep"  depressed color="primary">Previous</v-btn>
-                    <v-btn @click="tour.nextStep"  depressed color="primary">Next</v-btn>
-                  </div>
-                </template>
                 <template v-if="tour.currentStep == 3">
                   <div slot="actions">
                     <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
@@ -38,7 +40,7 @@
                   <div slot="actions">
                     <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
                     <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
-                    <v-btn @click="tour.nextStep" large depressed color="primary">Next</v-btn>
+                    <v-btn @click="tour.nextStep"  large depressed color="primary">Next</v-btn>
                   </div>
                 </template>
                 <template v-if="tour.currentStep == 5">
@@ -49,6 +51,7 @@
                       <li>Does this piece fit your blog style?</li>
                       <li>What improvements would you like to see in the piece?</li>
                     </ul>
+                    <p>Then you can choose whether you accept or decline the artist submission!</p>
                     <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
                     <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
                     <v-btn @click="tour.nextStep" large depressed color="primary">Next</v-btn>
@@ -92,7 +95,7 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined "><v-icon>reply</v-icon></v-btn>
+              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
@@ -228,14 +231,15 @@
           },
           {
             target: '#v-step-dummySubmission', 
-            content: `Let's be nice to artists whether we accept their piece or not! We need to make sure to leave them constuctive feedback!`,
+            content: `Let's be nice to artists whether we accept their piece or not! We need to make sure to leave them constuctive feedback! Hit the reply button to start a response!`,
             params: {
-              placement: 'right'
+              placement: 'right',
+              
             }
           },
           {
             target: '#v-step-dummySubmission', 
-            content: `Looks like you've left good feedback to the artist! Now you can choose to accept or decline the art piece!`,
+            content: `Looks like you've left good feedback to the artist!`,
             params: {
               placement: 'right'
             }
@@ -268,6 +272,9 @@
         if(currentStep == 3) {
           this.show = true
         }
+        if(currentStep == 5) {
+          this.clicked_art(1536125937702)
+        }
         
       },
       
@@ -284,7 +291,7 @@
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
         this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == undefined
+          return review.replied == undefined || review.replied == false
         })
       },
 
@@ -405,5 +412,10 @@
   }
   .replied_image_small {
     max-width: 100%;
+  }
+  .counters {
+    float: left; 
+    margin-right: 35px; 
+    margin-left: 20px
   }
 </style>

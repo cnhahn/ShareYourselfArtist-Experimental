@@ -49,7 +49,7 @@
     </v-layout>
     <v-layout>
       <div id="v-step-0" class="text-xs-center">
-        <v-btn large depressed color="primary" @click="$tours['myTour'].start()">Tutorial</v-btn>
+        <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
     <v-layout row wrap mt-5>
