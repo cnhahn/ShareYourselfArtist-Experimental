@@ -45,8 +45,19 @@
     <v-layout class="divbottomline" row wrap>
       <p class="body-1"><b>Additional Notes: </b> {{ selected_business.additional_notes }}</p>
     </v-layout>
-    <v-layout class="" row wrap mb-2>
-      <p class="body-2 subheadingfont">Statistics: N/A</p>
+    <v-layout class="" row wrap mb-2 mt-2>
+      <p class="body-2 subheadingfont"><b>Statistics:</b></p> 
+      <p v-if="show_follower_count" class="ml-3"> {{ selected_business.follower_count }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Followers</b></p>
+      <p v-if="show_total_submissions" class="ml-3"> {{ selected_business.total_submissions }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Total Submissions</b></p>
+      <p v-if="show_replied_submissions" class="ml-3"> {{ selected_business.replied_submissions }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Replied Submissions</b></p>
+      <p class="ml-3"> {{ selected_business.reply_time }}</p>
+      <p v-if="show_reply_time" style="color:#ff7d27"> &nbsp;<b>Reply Time</b></p> 
     </v-layout>
   </v-container>
 
@@ -61,10 +72,13 @@
       return {
         business_list:[],
         select_blog:'',
-        show_facebook:'',
-        show_instagram:'',
-        show_tumblr:'',
-       
+        show_facebook:false,
+        show_instagram:false,
+        show_tumblr:false,
+        show_follower_count:false,
+        show_total_submissions:false,
+        show_replied_submissions:false,
+        show_reply_time:false,
       }
     },
     computed: {
@@ -84,6 +98,14 @@
           this.show_instagram=true
         if(myBusiness.tumblr_url !== "")
           this.show_tumblr=true
+        if(myBusiness.follower_count != "" && myBusiness.follower_count != undefined)
+          this.show_follower_count=true
+        if(myBusiness.total_submissions != "" && myBusiness.total_submissions != undefined)
+          this.show_total_submissions=true
+        if(myBusiness.replied_submissions != "" && myBusiness.replied_submissions != undefined)
+          this.show_replied_submissions=true
+        if(myBusiness.reply_time != "" && myBusiness.reply_time != undefined)
+          this.show_reply_time=true
 
         return myBusiness
       },

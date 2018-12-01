@@ -1180,23 +1180,23 @@ signUserInGoogle({
             console.log('Url captured' + downloadURL)
             commit('setUrl', downloadURL)
             console.log('State url' + getters.url)
-             let  user = {
-                business_name: getters.business_signing_up.business_name,
-                email: getters.business_signing_up.email,
-                role: payload.role,
-                publication: payload.publication,
-                facebook_url:payload.facebook,
-                instagram_url:payload.instagram,
-                tumblr_url:payload.tumblr,
-                userId: getters.user.id,
-                about: payload.about,
-                worth_knowing: payload.worth_knowing,
-                additional_notes: payload.additional_notes,
-                upload_date: payload.upload_date,
-                the_good: payload.the_good,
-                url: getters.url
-              }
-              console.log('printing user in th ecreate a business: ', user)
+            let user = {
+              business_name: getters.business_signing_up.business_name,
+              email: getters.business_signing_up.email,
+              role: payload.role,
+              publication: payload.publication,
+              facebook_url: payload.facebook_url,
+              instagram_url: payload.instagram_url,
+              tumblr_url: payload.tumblr_url,
+              userId: getters.user.id,
+              about: payload.about,
+              worth_knowing: payload.worth_knowing,
+              additional_notes: payload.additional_notes,
+              upload_date: payload.upload_date,
+              the_good: payload.the_good,
+              url: getters.url
+            }
+            console.log('printing user in th ecreate a business: ', user)
             const db = firebase.firestore()
             db.collection('users')
               .doc(getters.user.id)
@@ -1204,19 +1204,14 @@ signUserInGoogle({
               .then(function () {
                 console.log('Document successfully written!')
                 router.push({
-                name: 'sign_in'
-                  
+                  name: 'sign_in'
                 })
-                //location.reload()
+                // location.reload()
                 dispatch('signUserOut')
-               
-
               })
-              
               .catch(function (error) {
                 console.error('Error writing document: ', error)
               })
-            
           })
         }
       )
@@ -1232,7 +1227,7 @@ signUserInGoogle({
         name: 'artist_dashboard'
       })
       let user = {
-        instagram: payload.instagram,
+        instagram_url: payload.instagram_url,
         role: payload.role,
         free_credits: payload.free_credits,
         name: payload.name,
@@ -1637,7 +1632,7 @@ signUserInGoogle({
       },
       async updateArtistProfileToFirebase ({commit, dispatch, getters}, payload) {
         commit('setLoading', true)
-        let instagram = payload.instagram
+        let instagram_url = payload.instagram_url
         let name = payload.name
         let photoUrl = payload.photoUrlreport_aug
         let updateData = {}
@@ -1651,8 +1646,8 @@ signUserInGoogle({
             updateData.photoUrl = getters.url
           })
         }
-        if (instagram !== undefined && instagram !== '') {
-          updateData.instagram = instagram
+        if (instagram_url !== undefined && instagram_url !== '') {
+          updateData.instagram_url = instagram_url
         }
         
         console.log(updateData)
@@ -1692,8 +1687,9 @@ signUserInGoogle({
         let website = payload.website
         let about = payload.about
         let worth_knowing = payload.worth_knowing
+        let statistics = payload.statistics
         let additional_notes = payload.additional_notes
-        let instagram = payload.instagram
+        let instagram_url = payload.instagram_url
 
         updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
         if (follower_count !== 0) {
@@ -1703,7 +1699,8 @@ signUserInGoogle({
         updateData = setValidData({updateData: updateData, data: about, property: 'about'})
         updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
         updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
-        updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
+        updateData = setValidData({updateData: updateData, data: statistics, property: 'statistics'})
+        updateData = setValidData({updateData: updateData, data: instagram_url, property: 'instagram_url'})
         
         if (name !== undefined && name !== '') {
           updateData.business_name = name

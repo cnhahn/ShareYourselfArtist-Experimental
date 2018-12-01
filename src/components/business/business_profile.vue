@@ -80,7 +80,7 @@
                   <p class="text" style="margin-top: 3vh">About: {{this.$store.getters.signed_in_user.about}}</p>
                   <p class="text" style="margin-top: 3vh">Worth Knowing: {{this.$store.getters.signed_in_user.worth_knowing}}</p>
                   <p class="text" style="margin-top: 3vh">Additional Notes: {{this.$store.getters.signed_in_user.additional_notes}}</p>
-                  <p class="text" style="margin-top: 3vh">Instagram: {{this.$store.getters.signed_in_user.instagram}}</p> 
+                  <p class="text" style="margin-top: 3vh">Instagram: {{this.$store.getters.signed_in_user.instagram_url}}</p> 
                 </div>
                 <div v-else>
                   <v-text-field v-model="editInfo.publication" label="Publication"></v-text-field>
@@ -89,7 +89,7 @@
                   <v-text-field v-model="editInfo.about" label="About"></v-text-field>
                   <v-text-field v-model="editInfo.worth_knowing" label="Worth Knowing"></v-text-field>
                   <v-text-field v-model="editInfo.additional_notes" label="Additional Notes"></v-text-field>
-                  <v-text-field v-model="editInfo.instagram" label="Add/Change Instagram"></v-text-field>
+                  <v-text-field v-model="editInfo.instagram_url" label="Add/Change Instagram"></v-text-field>
                 </div>
 
                 <p class="text" style="margin-top: 3vh; text-align: left">{{getPassedTime(fetchUserSignUpDate)}}</p>
@@ -138,7 +138,7 @@
           about: '',
           worth_knowing: '',
           additional_notes: '',
-          instagram: '',
+          instagram_url: '',
           selectedPhotoUrl: ''
         },
         businessInfo: {}
@@ -224,7 +224,7 @@
           about: this.editInfo.about,
           worth_knowing: this.editInfo.worth_knowing,
           additional_notes: this.editInfo.additional_notes,
-          instagram: this.editInfo.instagram,
+          instagram_url: this.editInfo.instagram_url,
         }
         this.$store.dispatch('updateBusinessProfileToFirebase', editData).then(() => {
           setTimeout(function () {
