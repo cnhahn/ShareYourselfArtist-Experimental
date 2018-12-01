@@ -25,8 +25,8 @@ export const store = new Vuex.Store({
     ],
     business_side_nav_items: [
       { title: 'Dashboard', icon: 'dashboard', link: '/business_dashboard' },
-      //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
-      //{ title: 'My Account', icon: 'account_box', link: '/account' },
+     // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
+     // { title: 'My Account', icon: 'account_box', link: '/account' },
       { title: 'Report', icon: 'assessment', link: '/report' },
       { title: 'Chat', icon: 'chat', link: '/chat' }
     ],
@@ -92,7 +92,7 @@ export const store = new Vuex.Store({
       message: '',
       daystamp: '',
       timestamp: '',
-      url:'',
+      url: ''
     },
     uploadedArts: [],
     user: null,
@@ -108,39 +108,38 @@ export const store = new Vuex.Store({
     business_signing_up: {},
     artist_signing_up: {},
     clicked_business: {},
-    clicked_art:'',
+    clicked_art: '',
     art_being_submitted_is_selected: false,
     business_being_submitted_is_selected: false,
-    businesses_being_submitted:[],
+    businesses_being_submitted: [],
     test: 4,
     signed_in_user: {},
     art_being_submitted: {
       refunded: 0
     },
-    replied_requests_for_report_aug:[],
-    replied_requests_for_report_sep:[],
-    replied_requests_for_report_oct:[],
-    replied_requests_for_report_nov:[],
-    replied_requests_for_report_dec:[],
+    replied_requests_for_report_aug: [],
+    replied_requests_for_report_sep: [],
+    replied_requests_for_report_oct: [],
+    replied_requests_for_report_nov: [],
+    replied_requests_for_report_dec: [],
     submissions_for_this_business: [],
     submission_response: {},
     art_being_replied: {},
-    credits:0,
+    credits: 0,
     replied_submissions: [],
     avatar: '',
     signed_in_user_id: '',
-    signed_in_user:{},
-    blog_for_report:'',
-    subscription_plan:{},
+    blog_for_report: '',
+    subscription_plan: {},
     replied_for_report: [],
     report_month: 1,
-    free_credits:0,
-    artists_email_list:[],
-    selectBlog:{
-      userId:'',
-      name:'',
-      role:'',
-    },
+    free_credits: 0,
+    artists_email_list: [],
+    selectBlog: {
+      userId: '',
+      name: '',
+      role: ''
+    }
   },
   mutations: { 
     set_free_credits(state, payload){
@@ -1621,12 +1620,31 @@ signUserInGoogle({
                 break
             }
           },
-          function () {
+          function () { //WAN
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured' + downloadURL)
+              console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
+              
+              // Now that download URL is obtained, downloadURL is sent to Firebase
+              // to connect the user's ID to the updated profile picture
+              let updateData = {}
+              let db = getters.db
+              let userId = getters.user.id
+              let user = db
+              .collection('users').doc(userId).update({url: downloadURL}).then((data) => {
+                let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+                  if (doc.exists) {
+                    commit('signed_in_user', doc.data())
+                    commit('setLoading', false)
+                  } else {
+                    // doc.data() will be undefined in this case
+                  }
+                }).catch(function (error) {
+                  console.log("Error getting document:", error);
+                });
+              })
             })
           })
       },

@@ -1,12 +1,75 @@
 <template>
   <v-container class ="container">
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
-    <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
-    <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
-    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
+    <div style="margin-bottom: 40px">
+      <!-- <div class="counters">Total Submissions: {{ master_submissions.length }}</div> -->
+      <div class="counters">Unreplied Submissions: {{ master_submissions.filter((review) => {
+          return review.replied == undefined || review.replied == false
+        }).length }}</div>
+      <div class="counters">Replied Submissions: {{ master_submissions.filter((review) => {
+          return review.replied == true
+        }).length }}</div>
+    </div>
+    <div>
+      <!-- <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn> -->
+      <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
+      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
+      <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+        <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+                <template v-if="tour.currentStep == 3">
+                  <div slot="actions">
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn type="button" @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">See Description</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 4">
+                  <div slot="actions">
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn @click="tour.nextStep"  large depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 5">
+                  <div slot="actions">
+                    <p>Here are a few example questions that you should answer to give feedback to the artists:</p>
+                    <ul>
+                      <li>What do you like/dislike about the piece?</li>
+                      <li>Does this piece fit your blog style?</li>
+                      <li>What improvements would you like to see in the piece?</li>
+                    </ul>
+                    <p>Then you can choose whether you accept or decline the artist submission!</p>
+                    <v-btn @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn @click="tour.previousStep" large depressed color="primary">Previous</v-btn>
+                    <v-btn @click="tour.nextStep" large depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep == 6">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Next</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+      </v-tour>
+    </div>
     <v-layout row justify-center>
       <v-layout row wrap mb-5>
-        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
+        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id' id="v-step-dummySubmission">
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -32,7 +95,7 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined "><v-icon>reply</v-icon></v-btn>
+              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
@@ -105,6 +168,7 @@
 <script>
 
   export default {
+    name: 'my-tour-2',
     data () {
       return {
         show: false,
@@ -127,7 +191,70 @@
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 50 characters']
+        rules: [v => v.length > 50 || 'Min 50 characters'],
+        steps: [
+          {
+            target: '#v-step-allSubmissions',  // We're using document.querySelector() under the hood
+            content: `This is where you check all of your submissions`,
+            params: {
+              placement: 'top'
+            }
+          },
+          {
+            target: '#v-step-unrepliedSubmissions',  // We're using document.querySelector() under the hood
+            content: `This is where you check your submissions you have not replied to! Don't forget to reply to the artist!`,
+            params: {
+              placement: 'top'
+            }
+          }
+          ,
+          {
+            target: '#v-step-repliedSubmissions', 
+            content: `This is where you check your submissions you have replied to!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like you got a submission! Let's check out the description!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like the artist was really passionate about this piece! We should leave them some feedback.`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Let's be nice to artists whether we accept their piece or not! We need to make sure to leave them constuctive feedback! Hit the reply button to start a response!`,
+            params: {
+              placement: 'right',
+              
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `Looks like you've left good feedback to the artist!`,
+            params: {
+              placement: 'right'
+            }
+          },
+          {
+            target: '#v-step-dummySubmission', 
+            content: `You have finished our tutorial! Don't forget to reply to your artists!`,
+            params: {
+              placement: 'right'
+            }
+          }
+        ],
+        myCallbacks: {
+          onNextStep: this.myCustomNextStepCallback
+        }
       }
     },
 
@@ -137,6 +264,18 @@
         
         console.log(art_link)
 
+      },
+
+      myCustomNextStepCallback: function(currentStep) {
+        console.log("Called next callback")
+        console.log(currentStep)
+        if(currentStep == 3) {
+          this.show = true
+        }
+        if(currentStep == 5) {
+          this.clicked_art(1536125937702)
+        }
+        
       },
       
       /* Retrieves all review requests from the server */
@@ -152,7 +291,7 @@
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
         this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == undefined
+          return review.replied == undefined || review.replied == false
         })
       },
 
@@ -249,6 +388,7 @@
 
       /* This component just got created, fetch some data here using an action */
       function() {
+        this.$tours['myTour'].start()
         this.$store.dispatch('fetch_all_Submissions').then(response => {
         this.submissions = this.$store.getters.submissions_for_this_business
         this.master_submissions = this.$store.getters.submissions_for_this_business
@@ -272,5 +412,10 @@
   }
   .replied_image_small {
     max-width: 100%;
+  }
+  .counters {
+    float: left; 
+    margin-right: 35px; 
+    margin-left: 20px
   }
 </style>

@@ -5,10 +5,11 @@
       temporary
       absolute
       style="z-index: 350"
+       id='v-step-3'
     >
       <!--button elements(Paypal) are set on the sandbox as z-index 300, so this style(z-index) is NEEDED-->
 
-        <div class="sideNav" >
+        <div class="sideNav">
       <v-list class="pa-1">
         <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'business'">
           <v-list-tile-avatar v-if ="signed_in_user_avatar != null">
@@ -170,7 +171,7 @@
 
 
      <v-menu bottom left v-if ="userIsAuthanticated">
-              <v-btn slot="activator" icon>
+              <v-btn id='v-step-2' slot="activator" icon>
                 <v-icon>more_vert</v-icon>
               </v-btn>
               <v-list>

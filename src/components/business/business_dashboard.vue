@@ -10,10 +10,47 @@
       <v-spacer></v-spacer>
     </v-layout>
     <v-layout>
-      <div class="text-xs-center">
+      <div id="v-step-1" class="text-xs-center">
         <v-btn large depressed color="primary" router to="/submissions">Your Submissions</v-btn>
+
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+              <template v-if="tour.currentStep === 0">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 1">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">Skip Tutorial</v-btn>
+                    <v-btn type="button" @click="nextStepCallback(tour.currentStep)" large depressed color="primary" router to="/submissions">Go to Submission</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
       </div>
 
+    </v-layout>
+    <v-layout>
+      <div id="v-step-0" class="text-xs-center">
+        <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
+      </div>
     </v-layout>
     <v-layout row wrap mt-5>
       <p class="title">{{ user_info.business_name }}</p>
@@ -70,6 +107,7 @@
 
 <script>
   export default {
+    name: 'my-tour',
     data() {
       return {
         sideNav: false,
@@ -81,7 +119,47 @@
         show_total_submissions:false,
         show_replied_submissions:false,
         show_reply_time:false,
+        
+        steps: [
+          {
+            target: '#v-step-0', 
+            content: `Welcome to our website! Would you like to proceed with our tutorial?`
+          },
+          {
+            target: '#v-step-1', 
+            content: `This is where you check your submissions from your artists! Let's check out your submissions!`,
+            params: {
+              placement: 'right'
+            }
+          }
+        ],
+        myCallbacks: {
+          onPreviousStep: this.previousStepCallback,
+          onNextStep: this.nextStepCallback
+        }
       }
+    },
+    
+    methods: {
+      previousStepCallback(currentStep) {
+        console.log("Previous")
+      },
+      nextStepCallback(currentStep) {
+        console.log("Next")
+      }
+    },
+    mounted: function () {
+      
+      if("firstTimeLogin" in localStorage){
+        localStorage.clear()
+        console.log('yes');
+        console.log(localStorage.getItem("firstTimeLogin"))
+      } else {
+        console.log('no');
+      }
+
+      this.$tours['myTour'].start()
+      
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
