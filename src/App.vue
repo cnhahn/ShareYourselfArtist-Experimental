@@ -32,6 +32,7 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
+             <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
