@@ -2,7 +2,7 @@
   <v-container class ="container">
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <div style="margin-bottom: 40px">
-      <!-- <div class="counters">Total Submissions: {{ master_submissions.length }}</div> -->
+      <div class="counters">Total Submissions: {{ master_submissions.length }}</div>
       <div class="counters">Unreplied Submissions: {{ master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         }).length }}</div>
@@ -11,7 +11,7 @@
         }).length }}</div>
     </div>
     <div>
-      <!-- <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn> -->
+      <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
       <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
       <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
@@ -78,7 +78,7 @@
                 <v-flex>
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
                   <v-layout row >
-                    <div class="text-xs-center" v-for="(c, index) in 3">
+                    <div class="text-xs-center" v-if="submission.art.categories != null" v-for="(c, index) in 3">
                       <v-chip>{{ submission.art.categories[index] }}</v-chip>
                     </div>
                   </v-layout>
@@ -273,7 +273,7 @@
           this.show = true
         }
         if(currentStep == 5) {
-          this.clicked_art(1536125937702)
+          this.clicked_art(123456789)
         }
         
       },
