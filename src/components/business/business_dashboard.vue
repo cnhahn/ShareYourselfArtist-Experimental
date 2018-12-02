@@ -73,8 +73,19 @@
     <v-layout class="divbottomline" row wrap>
       <p class="body-1"><b>Additional Notes: </b> {{ user_info.additional_notes }}</p>
     </v-layout>
-    <v-layout class="" row wrap mb-2>
-      <p class="body-2 subheadingfont">Statistics: N/A</p>
+    <v-layout class="" row wrap mb-2 mt-2>
+      <p class="body-2 subheadingfont"><b>Statistics:</b></p> 
+      <p v-if="show_follower_count" class="ml-3"> {{ user_info.follower_count }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Followers</b></p>
+      <p v-if="show_total_submissions" class="ml-3"> {{ user_info.total_submissions }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Total Submissions</b></p>
+      <p v-if="show_replied_submissions" class="ml-3"> {{ user_info.replied_submissions }}</p>
+      <p v-else class="ml-3"> 0 </p>
+      <p style="color:#ff7d27"> &nbsp;<b>Replied Submissions</b></p>
+      <p class="ml-3"> {{ user_info.reply_time }}</p>
+      <p v-if="show_reply_time" style="color:#ff7d27"> &nbsp;<b>Reply Time</b></p> 
     </v-layout>
     <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <div style="margin-bottom: 40px">
@@ -200,6 +211,11 @@
         show_facebook:false,
         show_instagram:false,
         show_tumblr:false,
+        show_follower_count:false,
+        show_total_submissions:false,
+        show_replied_submissions:false,
+        show_reply_time:false,
+        
         steps: [
           {
             target: '#v-step-0', 
@@ -444,6 +460,14 @@
           this.show_instagram=true
         if(myArray.tumblr_url != "")
           this.show_tumblr=true
+        if(myArray.follower_count != "" && myArray.follower_count != undefined)
+          this.show_follower_count=true
+        if(myArray.total_submissions != "" && myArray.total_submissions != undefined)
+          this.show_total_submissions=true
+        if(myArray.replied_submissions != "" && myArray.replied_submissions != undefined)
+          this.show_replied_submissions=true
+        if(myArray.reply_time != "" && myArray.reply_time != undefined)
+          this.show_reply_time=true
         
         return myArray 
       },

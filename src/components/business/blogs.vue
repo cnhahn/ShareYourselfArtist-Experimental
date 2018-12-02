@@ -20,19 +20,22 @@
               </router-link>
               <p style="color:orange" v-if="!userIsAuthanticated" class="headline businessName">{{props.item.business_name}}</p>
             <!-- <p>{{ getPassedTime(props.item.upload_date) }}</p> -->
+            <div class="text-xs-left">
+              <div style="margin-top: 1vh">
+                <p class="mb-0"><span style="font-weight: bold;">Followers: </span>{{ props.item.follower_count }}</p>
+                <p class="mb-0"><span style="font-weight: bold;">Total Submissions: </span>{{ props.item.total_submissions }}</p>
+                <p class="mb-0"><span style="font-weight: bold;">Replied Submissions: </span>{{ props.item.replied_submissions }}</p>
+                <p class="mb-0"><span style="font-weight: bold;">Reply Time: </span>N/A</p>
+                <p class="mb-0"><span style="font-weight: bold;">Email: </span>{{ props.item.email }}</p>
+                <a  v-if="props.item.instagram_url !== ''" :href="props.item.instagram_url" target="_blank">
+                <img class="icon" src="/static/images/instagram-logo.png" style="width:20%"></a>
+                <a v-if="props.item.tumblr_url !== ''" :href="props.item.tumblr_url" target="_blank">
+                <img class="icon" src="/static/images/tumblr-logo-2.png" style="width:20%"></a>
+                <a v-if="props.item.facebook_url !== ''" :href="props.item.facebook_url" target="_blank">
+                <img class="icon" src="/static/images/facebook-logo.png" style="width:20%"></a>
+              </div>
             </div>
-            <v-btn
-              v-if="user_role === 'artist'"
-              color="primary"
-              flat
-              outline
-              class="hidden-md-and-up"
-              @click='clicked_business({
-              userId:props.item.userId,
-              business_email: props.item.email,
-              business_name:props.item.business_name
-              })'>Select Blog
-            </v-btn>
+            </div>
           </v-flex>
           <v-flex lg6 md6 sm6 xs12>
             <div class="text-xs-left">
@@ -45,7 +48,7 @@
             </div>
           </v-flex>
 
-          <v-flex lg2 md2 sm2 xs12 class="hidden-sm-and-down">
+          <v-flex lg2 md2 sm2 xs12>
             <v-btn
             v-if="user_role === 'artist'"
             color="primary"
@@ -57,7 +60,7 @@
             business_email: props.item.email,
             business_name:props.item.business_name
             })'>Select Blog
-          </v-btn>
+            </v-btn>
           </v-flex>
 
         </v-layout>
@@ -72,10 +75,11 @@
     data() {
       return {
         dialog: false,
+        search: '',
         businesses: [],
         headers: [
           {
-            text: 'Name',
+            text: 'Name', 
             align: 'left',
             value: 'user_name'
           },
@@ -83,7 +87,7 @@
          // {text: '', value: ''}
         ],
         business_name:'',
-        select_business:'',
+        select_business:''
       }
     },
     computed: {
@@ -92,10 +96,24 @@
       },
       user_info() {
         function filter_test(business) {
-          return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
+          return (business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1' && business.userId != '7WYxLJb96zN9fkJfTPPq6xywN1j2' 
+          && business.userId != 'BvLoRQZ8q3UXh2nVFYHWXXrTMI13' && business.userId != 'cv1X9FelzXVH00qWWK9iENURxRb2')
         }
         return this.$store.state.businesses.filter(filter_test)
       },
+      // filteredBlogs:function(){
+      //   console.log('HERE!', this.search);
+      //   return this.$store.state.businesses.filter((business) => {
+      //     return business.business_name.match(this.search);
+      //   });
+      // },
+      // filteredBlogs() {
+      //   function search_filter(business) {
+      //     console.log('HERE!', this.search);
+      //     return business.business_name.match(this.search)
+      //   }
+      //   return this.$store.state.businesses.filter(search_filter)
+      // },
       userIsAuthanticated () {
         if(this.$store.getters.user !== null && this.$store.getters.user !== undefined){
           return true
@@ -103,6 +121,8 @@
           return false
         }
       },
+
+
     },
     methods:{
       clicked_business(userId){
