@@ -74,7 +74,7 @@
       </div>
 
     </v-layout>
-    <v-layout mb-2 ml-2 mt-2>
+    <v-layout mb-2 ml-2>
       <div id="v-step-0" class="text-xs-center">
         <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
@@ -86,7 +86,7 @@
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions ({{ master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         }).length }})</v-btn>
-      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions ({{ submissions.filter((review) => {
+      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions ({{ master_submissions.filter((review) => {
           return review.replied == true
         }).length }})</v-btn>
     </div>
