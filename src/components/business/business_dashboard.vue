@@ -74,7 +74,7 @@
       </div>
 
     </v-layout>
-    <v-layout mb-2 ml-2>
+    <v-layout mb-2 ml-2 mt-2>
       <div id="v-step-0" class="text-xs-center">
         <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
