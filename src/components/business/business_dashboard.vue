@@ -254,7 +254,7 @@
             target: '#v-step-dummySubmission', 
             content: `Looks like the artist was really passionate about this piece! We should leave them some feedback.`,
             params: {
-              placement: 'left'
+              placement: 'right'
             }
           },
           {
@@ -267,7 +267,7 @@
                       <p>What improvements would you like to see in the piece?</p>
             `,
             params: {
-              placement: 'left',
+              placement: 'top',
               
             }
           },
@@ -275,14 +275,14 @@
             target: '#v-step-dummySubmission', 
             content: `Looks like you've left good feedback to the artist!`,
             params: {
-              placement: 'left'
+              placement: 'right'
             }
           },
           {
             target: '#v-step-dummySubmission', 
             content: `You have finished our tutorial! Don't forget to reply to your artists!`,
             params: {
-              placement: 'left'
+              placement: 'right'
             }
           }
         ],
@@ -338,7 +338,7 @@
           this.show = true
         }
         if(currentStep == 6) {
-          this.clicked_art(1536125937702)
+          this.clicked_art(123456789)
         }
         
       },
@@ -473,11 +473,9 @@
       },
       loading() {
         return this.$store.getters.loading;
-      }
-    },
-
-    // Submissions computed
-    format_timestamp(timestamp) {
+      },
+      // Submissions computed
+      format_timestamp(timestamp) {
         var date = new Date(timestamp);
         var month = date.getMonth();
         var day = date.getDay();
@@ -488,7 +486,7 @@
 
       },
       /* Verifies that the business entered data into the field */
-      formIsValid () {
+      formIsValid() {
         return this.submission_response.length > 50
       },
 
@@ -502,6 +500,7 @@
           }
         }
       }
+    }
   }
 
 </script>
