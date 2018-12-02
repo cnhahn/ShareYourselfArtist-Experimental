@@ -77,21 +77,6 @@
           </v-list-tile-content>
         </v-list-tile>
 
-
-        <v-list-tile v-if ="userIsAuthanticated && user_role == 'business'" >
-          <v-list-tile-action >
-                <!-- <v-badge left color="red">
-                  <span slot="badge">{{unreplied_submission}}</span> -->
-                  <v-icon>forum</v-icon>
-                <!-- </v-badge> -->
-          </v-list-tile-action>
-          <v-list-tile-content light>
-            <router-link to="/submissions">
-            <v-list-tile-title>Your submissions</v-list-tile-title>
-            </router-link>
-          </v-list-tile-content>
-        </v-list-tile>
-
         <v-list-tile v-if="userIsAuthanticated && user_role == 'artist'">
           <v-list-tile-action>
             <!-- <v-badge left color="red">

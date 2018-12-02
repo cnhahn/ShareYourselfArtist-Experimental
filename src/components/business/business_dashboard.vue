@@ -7,12 +7,51 @@
   <v-container class="container" v-else>
     <v-layout row mt-5 justify-space-between>
       <img :src="`${user_info.url}`" height="200px" alt="">
-      <v-spacer></v-spacer>
+      <v-flex row wrap ml-5 mt-3>
+        <h2 style="font-weight: bold; margin-bottom: 1vh; margin-left: 1vh">{{ user_info.business_name }}</h2>
+        <p style="margin-top: 2vh; margin-left: 1vh">
+          <span v-if="show_follower_count"> {{ user_info.follower_count }}</span>
+          <span v-else> 0 </span>
+          <span style="color:#ff7d27"><b>Followers</b></span>
+          <span v-if="show_total_submissions"> &nbsp;&nbsp; {{ master_submissions.filter((review) => {
+              return review.replied == undefined || review.replied == false || review.replied == true
+            }).length }}</span>
+          <span v-else> &nbsp;&nbsp; 0 </span>
+          <span style="color:#ff7d27"><b>Total Submissions</b></span>
+        </p>
+        <p style="margin-top: 2vh; margin-left: 1vh">
+          <!-- <span>{{ user_info.reply_time }}</span>
+          <span v-if="show_reply_time" style="color:#ff7d27"><b>Reply Time</b></span> -->
+          <span v-if="show_follower_count"> {{ master_submissions.filter((review) => {
+              return review.replied == true
+            }).length }}</span>
+          <span v-else> &nbsp;&nbsp; 0 </span>
+          <span style="color:#ff7d27"> <b>Replied Submissions</b></span>
+        </p>
+        <a v-if="user_info.facebook_url !== ''" :href="user_info.facebook_url" target="_blank">
+          <img class='icon' src="/static/images/facebook-logo.png">
+        </a>
+        <a v-if="user_info.instagram_url !== ''" :href="user_info.instagram_url" target="_blank">
+          <img class='icon' src="/static/images/instagram-logo.png">
+        </a>
+        <a v-if="user_info.tumblr_url !== ''" :href="user_info.tumblr_url" target="_blank">
+          <img class='icon' src="/static/images/tumblr-logo-2.png">
+        </a>
+      </v-flex>
+      <v-flex lg6 md6 sm6 xs12 ml-5>
+        <div class="text-xs-left">
+          <div style="margin-top: 1vh">
+            <p><span style="font-weight: bold;">About: </span>{{ user_info.publication }}</p>
+            <p><span style="font-weight: bold;">The good: </span>{{ user_info.about }}</p>
+            <p><span style="font-weight: bold;">Worth knowing: </span>{{ user_info.worth_knowing }}</p>
+            <p><span style="font-weight: bold;">Additional notes: </span>{{ user_info.additional_notes }}</p>
+          </div>
+        </div>
+      </v-flex>
     </v-layout>
+
     <v-layout>
       <div class="text-xs-center">
-        <v-btn large depressed color="primary" router to="/submissions">Your Submissions</v-btn>
-
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
             <transition name="fade">
@@ -35,72 +74,21 @@
       </div>
 
     </v-layout>
-    <v-layout>
+    <v-layout mb-2 ml-2>
       <div id="v-step-0" class="text-xs-center">
         <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
-    <v-layout row wrap mt-5>
-      <p class="title">{{ user_info.business_name }}</p>
-    </v-layout>
-    <v-layout row>
-      <p class="caption">Email: {{ user_info.email }}</p>
-    </v-layout>
-    <v-layout row mb-1 >
-      <v-flex>
-      <a v-if="show_facebook" :href="user_info.facebook_url" target="_blank">
-          <img class='icon' src="/static/images/facebook-logo.png">
-      </a>
-      <a v-if="show_instagram" :href="user_info.instagram_url" target="_blank">
-          <img class='icon' src="/static/images/instagram-logo.png">
-      </a>
-      <a v-if="show_tumblr" :href="user_info.tumblr_url" target="_blank">
-          <img class='icon' src="/static/images/tumblr-logo-2.png">
-      </a>
-      </v-flex>
-    </v-layout>
-
-
-    <v-layout class="" row wrap mt-5>
-      <p class="body-1"><b>Publication: </b> {{ user_info.publication }}</p>
-    </v-layout>
-    <v-layout class="" row wrap>
-      <p class="body-1"><b>About: </b> {{ user_info.about }}</p>
-    </v-layout>
-    <v-layout class="" row wrap>
-      <p class="body-1"><b>Worth Knowing: </b> {{ user_info.worth_knowing }}</p>
-    </v-layout>
-    <v-layout class="divbottomline" row wrap>
-      <p class="body-1"><b>Additional Notes: </b> {{ user_info.additional_notes }}</p>
-    </v-layout>
-    <v-layout class="" row wrap mb-2 mt-2>
-      <p class="body-2 subheadingfont"><b>Statistics:</b></p> 
-      <p v-if="show_follower_count" class="ml-3"> {{ user_info.follower_count }}</p>
-      <p v-else class="ml-3"> 0 </p>
-      <p style="color:#ff7d27"> &nbsp;<b>Followers</b></p>
-      <p v-if="show_total_submissions" class="ml-3"> {{ user_info.total_submissions }}</p>
-      <p v-else class="ml-3"> 0 </p>
-      <p style="color:#ff7d27"> &nbsp;<b>Total Submissions</b></p>
-      <p v-if="show_replied_submissions" class="ml-3"> {{ user_info.replied_submissions }}</p>
-      <p v-else class="ml-3"> 0 </p>
-      <p style="color:#ff7d27"> &nbsp;<b>Replied Submissions</b></p>
-      <p class="ml-3"> {{ user_info.reply_time }}</p>
-      <p v-if="show_reply_time" style="color:#ff7d27"> &nbsp;<b>Reply Time</b></p> 
-    </v-layout>
-    <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
-    <div style="margin-bottom: 40px">
-      <!-- <div class="counters">Total Submissions: {{ master_submissions.length }}</div> -->
-      <div class="counters">Unreplied Submissions: {{ master_submissions.filter((review) => {
-          return review.replied == undefined || review.replied == false
-        }).length }}</div>
-      <div class="counters">Replied Submissions: {{ master_submissions.filter((review) => {
-          return review.replied == true
-        }).length }}</div>
-    </div>
-    <div>
+    <v-divider></v-divider>
+    <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh; text-align:center">Submissions</h1>
+    <div style="text-align:center">
       <!-- <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn> -->
-      <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions</v-btn>
-      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions</v-btn>
+      <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions ({{ master_submissions.filter((review) => {
+          return review.replied == undefined || review.replied == false
+        }).length }})</v-btn>
+      <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions ({{ submissions.filter((review) => {
+          return review.replied == true
+        }).length }})</v-btn>
     </div>
     <v-layout row justify-center>
       <v-layout row wrap mb-5>
