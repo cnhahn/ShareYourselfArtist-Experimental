@@ -9,6 +9,7 @@
       <img :src="`${user_info.url}`" height="200px" alt="">
       <v-flex row wrap ml-5 mt-3>
         <h2 style="font-weight: bold; margin-bottom: 1vh; margin-left: 1vh">{{ user_info.business_name }}</h2>
+        <!-- Fall2018: Display stats, if null display 0 -->
         <p style="margin-top: 2vh; margin-left: 1vh">
           <span v-if="show_follower_count"> {{ user_info.follower_count }}</span>
           <span v-else> 0 </span>
@@ -79,6 +80,7 @@
         <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
+    <!-- Fall2018 - combine submissions and dashboard page -->
     <v-divider></v-divider>
     <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh; text-align:center">Submissions</h1>
     <div style="text-align:center">
