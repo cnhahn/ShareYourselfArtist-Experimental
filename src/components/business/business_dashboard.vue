@@ -76,7 +76,7 @@
     </v-layout>
     <v-layout mb-2 ml-2>
       <div id="v-step-0" class="text-xs-center">
-        <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
+        <v-btn large depressed color="primary" @click="showDummy = !showDummy; $tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
     <v-divider></v-divider>
@@ -276,10 +276,13 @@
         ],
         myCallbacks: {
           onPreviousStep: this.previousStepCallback,
-          onNextStep: this.myCustomNextStepCallback
+          onNextStep: this.myCustomNextStepCallback,
+          onStart: this.myCustomOnStart,
+          onStop: this.myCustomOnStop
         },
 
         // Submissions data
+        showDummy: false,
         show: false,
         radios: 'declined',
         dialog: false,
@@ -331,6 +334,14 @@
 
       },
 
+      myCustomOnStart: function () {
+        this.submissions = this.$store.getters.demo_arts
+      },
+
+      myCustomOnStop: function () {
+        this.submissions = this.$store.getters.submissions_for_this_business
+      },
+
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
         this.$store.dispatch('fetch_all_Submissions').then(response => {
@@ -375,9 +386,14 @@
         let subs = this.submissions
         let new_subs = this.submissions
         this.submissions = new_subs
+        myArray = null
         let myArray = this.$store.state.submissions_for_this_business
+        if (this.showDummy) {
+          myArray = this.$store.state.demo_arts
+          console.log(myArray[0]);
+        }
         for (var i = 0; i < myArray.length; i++) {
-          if (myArray[i].art.upload_date === nameKey) {
+          if (myArray[i].art.upload_date === nameKey || this.showDummy) {
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
             this.instagram = myArray[i].instagram
@@ -419,7 +435,7 @@
       } else {
         console.log('no');
       }
-      
+
       //submissions mounted
 
         this.$tours['myTour'].start()
@@ -438,6 +454,21 @@
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
     },
     computed: {
+      // master_submissions.filter((review) => {
+          // return review.replied == undefined || review.replied == false
+      submissionsCheck: function () {
+        if (this.showDummy) {
+          this.submissions = this.$store.state.submissions_for_this_business.filter((submission) => {
+            return submission.art.submitted_on == 123456789
+          })
+          console.log("submissions: ", this.submissions)
+        } else {
+          this.submissions = this.$store.state.submissions_for_this_business.filter((submission) => {
+            return submission.art.submitted_on != 123456789
+          })
+          console.log("submissions: ", this.submissions)
+        }
+      },
       user_info() {
         let myArray=this.$store.getters.signed_in_user
         if(myArray.facebook_url != "")
