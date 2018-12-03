@@ -41,8 +41,8 @@
       <v-flex lg6 md6 sm6 xs12 ml-5>
         <div class="text-xs-left">
           <div style="margin-top: 1vh">
-            <p><span style="font-weight: bold;">About: </span>{{ user_info.publication }}</p>
-            <p><span style="font-weight: bold;">The good: </span>{{ user_info.about }}</p>
+            <p><span style="font-weight: bold;">Publication: </span>{{ user_info.publication }}</p>
+            <p><span style="font-weight: bold;">About: </span>{{ user_info.about }}</p>
             <p><span style="font-weight: bold;">Worth knowing: </span>{{ user_info.worth_knowing }}</p>
             <p><span style="font-weight: bold;">Additional notes: </span>{{ user_info.additional_notes }}</p>
           </div>
