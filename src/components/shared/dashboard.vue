@@ -172,7 +172,6 @@ export default {
       localStorage.setItem('business_email', business_email);
       console.log("email" + business_email);
       this.business_email = business_email;
-      this.fetch_report();
       this.$router.push("dashboard2");
     },
     goto_monthly_report() {

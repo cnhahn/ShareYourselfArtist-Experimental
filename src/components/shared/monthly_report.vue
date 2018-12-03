@@ -1,6 +1,6 @@
 <template>
   <v-container
-    v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1'"
+    v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'"
   >
     <v-date-picker v-model="picker" :landscape="landscape" type="month"></v-date-picker>
     <v-data-table :headers="headers" :items="businesses_with_submissions" :pagination.sync="pagination" hide-actions class="elevation-1">
@@ -82,7 +82,14 @@ export default {
       let filtered_submissions = submissions.filter(function(submission) {
         // console.log(submission.businessId)
         // console.log(submission.userId)
-        return submission.businessId.userId == id;
+        if(submission.businessId != undefined){
+          console.log("in if statement ")
+          return submission.businessId.userId == id;
+        }else{
+          console.log("in here error ")
+          return false;
+        }
+  
       });
       // console.log("length: " + filtered_submissions.length)
       return filtered_submissions.length;
@@ -90,7 +97,13 @@ export default {
     filtered_paid(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-        return submission.businessId.userId == id;
+              if(submission.businessId != undefined){
+          console.log("in if statement ")
+          return submission.businessId.userId == id;
+        }else{
+          console.log("in here error ")
+          return false;
+        }
       });
       filtered_submissions = filtered_submissions.filter(function(submission) {
         return !submission.submitted_with_free_cerdit;
@@ -100,7 +113,13 @@ export default {
     filtered_free(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-        return submission.businessId.userId == id;
+                if(submission.businessId != undefined){
+          console.log("in if statement ")
+          return submission.businessId.userId == id;
+        }else{
+          console.log("in here error ")
+          return false;
+        }
       });
       filtered_submissions = filtered_submissions.filter(function(submission) {
         return submission.submitted_with_free_cerdit;
@@ -110,7 +129,13 @@ export default {
     filtered_responses(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-        return submission.businessId.userId == id;
+                if(submission.businessId != undefined){
+          console.log("in if statement ")
+          return submission.businessId.userId == id;
+        }else{
+          console.log("in here error ")
+          return false;
+        }
       });
       // console.log(filtered_submissions)
       filtered_submissions = filtered_submissions.filter(function(submission) {
@@ -121,7 +146,13 @@ export default {
     filtered_awaiting(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-        return submission.businessId.userId == id;
+               if(submission.businessId != undefined){
+          console.log("in if statement ")
+          return submission.businessId.userId == id;
+        }else{
+          console.log("in here error ")
+          return false;
+        }
       });
       console.log("filtered_submissions: " + filtered_submissions);
       filtered_submissions = filtered_submissions.filter(function(submission) {
@@ -139,14 +170,17 @@ export default {
       // console.log(this)
       businesses.forEach(function(business) {
         // console.log(business)
-        businesses_with_submissions.push({
-          name: business.business_name,
-          total: self.filtered_total(business.userId),
-          paid: self.filtered_paid(business.userId),
-          free: self.filtered_free(business.userId),
-          responses: self.filtered_responses(business.userId),
-          awaiting: self.filtered_awaiting(business.userId)
-        });
+        console.log( business)
+        if(business !== undefined){
+          businesses_with_submissions.push({
+            name: business.business_name,
+            total: self.filtered_total(business.userId),
+            paid: self.filtered_paid(business.userId),
+            free: self.filtered_free(business.userId),
+            responses: self.filtered_responses(business.userId),
+            awaiting: self.filtered_awaiting(business.userId)
+          });
+        }
       });
 
       // console.log(businesses_with_submissions)
