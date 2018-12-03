@@ -96,8 +96,7 @@
       },
       user_info() {
         function filter_test(business) {
-          return (business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1' && business.userId != '7WYxLJb96zN9fkJfTPPq6xywN1j2' 
-          && business.userId != 'BvLoRQZ8q3UXh2nVFYHWXXrTMI13' && business.userId != 'cv1X9FelzXVH00qWWK9iENURxRb2')
+          return (business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1')
         }
         return this.$store.state.businesses.filter(filter_test)
       },

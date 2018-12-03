@@ -9,6 +9,7 @@
       <img :src="`${user_info.url}`" height="200px" alt="">
       <v-flex row wrap ml-5 mt-3>
         <h2 style="font-weight: bold; margin-bottom: 1vh; margin-left: 1vh">{{ user_info.business_name }}</h2>
+        <!-- Fall2018: Display stats, if null display 0 -->
         <p style="margin-top: 2vh; margin-left: 1vh">
           <span v-if="show_follower_count"> {{ user_info.follower_count }}</span>
           <span v-else> 0 </span>
@@ -41,8 +42,8 @@
       <v-flex lg6 md6 sm6 xs12 ml-5>
         <div class="text-xs-left">
           <div style="margin-top: 1vh">
-            <p><span style="font-weight: bold;">About: </span>{{ user_info.publication }}</p>
-            <p><span style="font-weight: bold;">The good: </span>{{ user_info.about }}</p>
+            <p><span style="font-weight: bold;">Publication: </span>{{ user_info.publication }}</p>
+            <p><span style="font-weight: bold;">About: </span>{{ user_info.about }}</p>
             <p><span style="font-weight: bold;">Worth knowing: </span>{{ user_info.worth_knowing }}</p>
             <p><span style="font-weight: bold;">Additional notes: </span>{{ user_info.additional_notes }}</p>
           </div>
@@ -79,6 +80,7 @@
         <v-btn large depressed color="primary" @click="showDummy = !showDummy; $tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
+    <!-- Fall2018 - combine submissions and dashboard page -->
     <v-divider></v-divider>
     <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh; text-align:center">Submissions</h1>
     <div style="text-align:center">
