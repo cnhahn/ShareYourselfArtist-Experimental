@@ -42,7 +42,7 @@ export const store = new Vuex.Store({
         title: 'Support',
         icon: 'help',
         link: '/support',
-    
+
       },
       {
         title: 'About Us',
@@ -54,7 +54,7 @@ export const store = new Vuex.Store({
         title: 'Sign In',
         icon: 'nature_people',
         link: '/sign_in',
-     
+
       }
     ],
     navItems_User: [
@@ -150,7 +150,7 @@ export const store = new Vuex.Store({
       }else{
         console.log('An error occured reading the free credits. This user may have never given any free credits.')
       }
-      
+
     },
     set_artists_email_list(state,payload){
       state.artists_email_list.push(payload)
@@ -384,7 +384,7 @@ export const store = new Vuex.Store({
           .catch(function (error) {
             console.log('Error getting report: ', error)
           })
-    }, 
+    },
       // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
     report_aug ({commit, getters}, payload) {
       commit('clear_replied_for_report_aug')
@@ -393,7 +393,7 @@ export const store = new Vuex.Store({
       let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1533081600000).where("replied_date", "<", 1535760000000)
       query.get().then(function (results) {
       if(results.empty) {
-          console.log("No documents found!");   
+          console.log("No documents found!");
       } else {
       // go through all results
     results.forEach(function (doc) {
@@ -406,7 +406,7 @@ export const store = new Vuex.Store({
 }).catch(function(error) {
     console.log("Error getting documents:", error);
 });
-  }, 
+  },
   report_sep({commit, getters}, payload) {
     commit('clear_replied_for_report_sep')
     let db = firebase.firestore()
@@ -414,7 +414,7 @@ export const store = new Vuex.Store({
     let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1537488000000).where("replied_date", "<", 1538870400000)
   query.get().then(function(results) {
   if(results.empty) {
-      console.log("No documents found!");   
+      console.log("No documents found!");
   } else {
   // go through all results
 results.forEach(function (doc) {
@@ -435,7 +435,7 @@ report_oct({commit, getters}, payload) {
   let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1535760000000).where("replied_date", "<", 1538352000000)
 query.get().then(function(results) {
 if(results.empty) {
-    console.log("No documents found!");   
+    console.log("No documents found!");
 } else {
 // go through all results
 results.forEach(function (doc) {
@@ -477,7 +477,7 @@ report_dec({commit, getters}, payload) {
   let query = temp_report.where("businessId.business_email", "==", payload.business_email).where("replied_date", ">", 1535760000000).where("replied_date", "<", 1538352000000)
 query.get().then(function(results) {
 if(results.empty) {
-    console.log("No documents found!");   
+    console.log("No documents found!");
 } else {
 // go through all results
 results.forEach(function (doc) {
@@ -553,7 +553,7 @@ signUserInGoogle({
             }
             commit('setUserRole', doc.data().role)
             commit('signed_in_user', doc.data())
-           
+
             console.log('user: ' + doc.data())
             router.push({
               name: 'artist_dashboard'
@@ -674,7 +674,7 @@ signUserInGoogle({
                 });
             })
   },
-  
+
 
 
 
@@ -1059,9 +1059,9 @@ signUserInGoogle({
     },
    submit_request ({ getters }) {
      let businesses_being_submitted =  getters.businesses_being_submitted
-     for (let i = 0; i < businesses_being_submitted.length; i++) { 
+     for (let i = 0; i < businesses_being_submitted.length; i++) {
       let art_being_submitted = getters.art_being_submitted
-      art_being_submitted.submitted_on = Date.now()      
+      art_being_submitted.submitted_on = Date.now()
       art_being_submitted.submitted_with_free_cerdit = false
       console.log("art_being_submitted", art_being_submitted)
       art_being_submitted.businessId = businesses_being_submitted[i]
@@ -1080,7 +1080,7 @@ signUserInGoogle({
         .catch(function (error) {
           console.error('Error adding document: ', error)
         })
-      }    
+      }
     },
     submit_school_request ({ commit, getters, dispatch }, payload) {
        const db = firebase.firestore()
@@ -1100,7 +1100,7 @@ signUserInGoogle({
      },
     submit_request_with_free_credits ({ getters }) {
       let businesses_being_submitted =  getters.businesses_being_submitted
-      for (let i = 0; i < businesses_being_submitted.length; i++) { 
+      for (let i = 0; i < businesses_being_submitted.length; i++) {
        let art_being_submitted = getters.art_being_submitted
        art_being_submitted.submitted_on = Date.now()
        art_being_submitted.submitted_with_free_cerdit = true
@@ -1121,7 +1121,7 @@ signUserInGoogle({
          .catch(function (error) {
            console.error('Error adding document: ', error)
          })
-       }    
+       }
      },
 
     /*
@@ -1271,8 +1271,8 @@ signUserInGoogle({
         )
         .put(getters.image_being_uploaded.file)
     },
-    async singBusinessUp({commit},payload){
-      try{
+    async singBusinessUp({commit, getters},payload){
+      try {
         let response = await firebase.auth()
         .createUserAndRetrieveDataWithEmailAndPassword(
           payload.email,
@@ -1285,7 +1285,7 @@ signUserInGoogle({
             response.user.uid + '/logo/' + payload.file_name
           )
           .put(payload.file)
-          uploadTask.on(
+        uploadTask.on(
             firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
             function (snapshot) {
               // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -1308,7 +1308,7 @@ signUserInGoogle({
                   alert(error.code)
                   // User doesn't have permission to access the object
                   break
-  
+
                 case 'storage/canceled':
                   alert(error.code)
                   // User canceled the upload
@@ -1337,20 +1337,52 @@ signUserInGoogle({
                     .then(user => {
                       console.log('Document successfully written!')
                       router.push({
-                      name: 'sign_in'
+                        name: 'sign_in'
                       })
                       })
                   })
               })
             })
-        console.log('response: ', response.user.uid)
-        console.log('payload: ',payload)
-      }
-      catch(e) {
-        console.log('Error!', e);
+              // Beginning of dummy sumission creation
+                // dummy submission: picture of SYA logo
+        const art = {
+          art: {
+            url: 'https://firebasestorage.googleapis.com/v0/b/sya-dev.appspot.com/o/logo.png?alt=media&token=124cfcbb-be0b-41ad-827a-b0a0accb071c',
+            art_title: 'Your Lovely Art',
+            description: 'This is a sample submission.',
+            submitted_on: 123456789,
+            submitted_with_free_cerdit: false,
+            artist_id: 'dummyartist',
+            artist_name: 'Vincent Van Gogh',
+          },
+          businessId: {
+            business_name: payload.business_name,
+            business_email: payload.email,
+            userId: response.user.uid
+          },
+          read_byartist: false,
+          refunded: 0,
+          replied: false
+        }
+        // add submission to this business's received submissions
+        console.log('dummy submission: ', art)
+        const db = firebase.firestore()
+        const collectionRef = db
+          .collection('review_requests')
+          .doc()
+          .set(art)
+          .then(function (docRef) {
+            console.log('DocRef: ', docRef)
+            console.log('Submission written with ID: ', docRef.id)
+          })
+          .catch(function (error) {
+            console.error('Error adding document: ', error)
+          })
+      } catch (e) {
+        console.log('Error!', e)
       }
 
-      //we have created a auth account and upladed the logo now we will 
+      //we have created a auth account and upladed the logo now we will
       // create auser document
   },
     /*
@@ -1522,7 +1554,7 @@ signUserInGoogle({
           alert(error.message)
         })
     },
-    
+
     /*
     Sign up/Sign in flow
     Sign user out. Set every parameter to null
@@ -1626,7 +1658,7 @@ signUserInGoogle({
               console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
-              
+
               // Now that download URL is obtained, downloadURL is sent to Firebase
               // to connect the user's ID to the updated profile picture
               let updateData = {}
@@ -1667,7 +1699,7 @@ signUserInGoogle({
         if (instagram_url !== undefined && instagram_url !== '') {
           updateData.instagram_url = instagram_url
         }
-        
+
         console.log(updateData)
         let user = db
           .collection('users').doc(userId).update(updateData).then((data) => {
@@ -1719,7 +1751,7 @@ signUserInGoogle({
         updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
         updateData = setValidData({updateData: updateData, data: statistics, property: 'statistics'})
         updateData = setValidData({updateData: updateData, data: instagram_url, property: 'instagram_url'})
-        
+
         if (name !== undefined && name !== '') {
           updateData.business_name = name
         }
@@ -1746,7 +1778,7 @@ signUserInGoogle({
   getters: {
     businesses_being_submitted(state){
       return state.businesses_being_submitted
-    } ,   
+    } ,
     report_month(state) {
       return state.report_month
     },

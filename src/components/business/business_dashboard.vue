@@ -203,14 +203,14 @@
         show_total_submissions:false,
         show_replied_submissions:false,
         show_reply_time:false,
-        
+
         steps: [
           {
-            target: '#v-step-0', 
+            target: '#v-step-0',
             content: `Welcome to our website! Would you like to proceed with our tutorial?`
           },
           {
-            target: '#v-step-1', 
+            target: '#v-step-1',
             content: `This is where you check your submissions from your artists! Let's check out your submissions!`,
             params: {
               placement: 'top'
@@ -225,49 +225,49 @@
           }
           ,
           {
-            target: '#v-step-repliedSubmissions', 
+            target: '#v-step-repliedSubmissions',
             content: `This is where you check your submissions you have replied to!`,
             params: {
               placement: 'right'
             }
           },
           {
-            target: '#v-step-dummySubmission', 
+            target: '#v-step-dummySubmission',
             content: `Looks like you got a submission! Let's check out the description!`,
             params: {
               placement: 'right'
             }
           },
           {
-            target: '#v-step-dummySubmission', 
+            target: '#v-step-dummySubmission',
             content: `Looks like the artist was really passionate about this piece! We should leave them some feedback.`,
             params: {
               placement: 'right'
             }
           },
           {
-            target: '#v-step-dummySubmission', 
+            target: '#v-step-dummySubmission',
             content: `Let's be nice to artists whether we accept their piece or not! We need to make sure to leave them constuctive feedback! Hit the reply button to start a response!
             <p><p>Here are a few example questions that you should answer to give feedback to the artists:</p></p>
-            
+
                       <p>What do you like/dislike about the piece?</p>
                       <p>Does this piece fit your blog style?</p>
                       <p>What improvements would you like to see in the piece?</p>
             `,
             params: {
               placement: 'top',
-              
+
             }
           },
           {
-            target: '#v-step-dummySubmission', 
+            target: '#v-step-dummySubmission',
             content: `Looks like you've left good feedback to the artist!`,
             params: {
               placement: 'right'
             }
           },
           {
-            target: '#v-step-dummySubmission', 
+            target: '#v-step-dummySubmission',
             content: `You have finished our tutorial! Don't forget to reply to your artists!`,
             params: {
               placement: 'right'
@@ -303,7 +303,7 @@
         rules: [v => v.length > 50 || 'Min 50 characters']
       }
     },
-    
+
     methods: {
       previousStepCallback(currentStep) {
         console.log("Previous")
@@ -314,7 +314,7 @@
 
       // Submissions methods
       download: function(art_link) {
-        
+
         console.log(art_link)
 
       },
@@ -328,9 +328,9 @@
         if(currentStep == 6) {
           this.clicked_art(123456789)
         }
-        
+
       },
-      
+
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
         this.$store.dispatch('fetch_all_Submissions').then(response => {
@@ -411,7 +411,7 @@
       }
     },
     mounted: function () {
-      
+
       if("firstTimeLogin" in localStorage){
         localStorage.clear()
         console.log('yes');
@@ -419,11 +419,9 @@
       } else {
         console.log('no');
       }
-
-      this.$tours['myTour'].start()
       
       //submissions mounted
-      
+
         this.$tours['myTour'].start()
         this.$store.dispatch('fetch_all_Submissions').then(response => {
         this.submissions = this.$store.getters.submissions_for_this_business
@@ -434,7 +432,7 @@
         if (this.submissions === null) {
           this.$router.push('/submissions/empty')
         }
-      
+
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
@@ -456,8 +454,8 @@
           this.show_replied_submissions=true
         if(myArray.reply_time != "" && myArray.reply_time != undefined)
           this.show_reply_time=true
-        
-        return myArray 
+
+        return myArray
       },
       loading() {
         return this.$store.getters.loading;
@@ -526,9 +524,8 @@
     max-width: 100%;
   }
   .counters {
-    float: left; 
-    margin-right: 35px; 
+    float: left;
+    margin-right: 35px;
     margin-left: 20px
   }
 </style>
-

@@ -3,7 +3,7 @@
       jumbotron>
      <center><div class = "card" style = "max-width: 700px;  padding-top:1%; padding-bottom:1%; margin-top:20%; margin-bottom:300px;" >
      <div>
-       
+
     </div>
     <v-flex m5>
         <v-stepper class="mb-5 ml-5 mr-5 " v-model="e1">
@@ -17,12 +17,12 @@
       <v-stepper-step dark :complete="e1 > 2" step="2"></v-stepper-step>
       <v-divider></v-divider>
       <v-stepper-step dark :complete="e1 > 3" step="3"></v-stepper-step>
-      
+
     </v-stepper-header>
     <v-stepper-items >
       <v-stepper-content step="1" >
        <form class="form white--text">
-           
+
           <v-text-field
                             name='business_name'
                             label= 'Business Name'
@@ -61,16 +61,16 @@
     </v-text-field>
   </form>
        <img v-if='uploaded_image' :src="image_url" width="50%" height="auto">
-       <input type="file" 
-       style="display:none"                         
-        ref="fileInput" 
+       <input type="file"
+       style="display:none"
+        ref="fileInput"
         accept="image/*"
         @change ="onFilePicked">
-     <v-layout row> 
+     <v-layout row>
        <v-flex> <v-btn depressed large color="primary" @click="onPickFile">Upload Your Logo</v-btn></v-flex>
          </v-layout>
         <v-layout row>
-       <v-flex 12> <v-btn 
+       <v-flex 12> <v-btn
         v-if ="this.formIsValid"
         large
           color="primary"
@@ -89,11 +89,11 @@
         </v-flex>
 
       </v-layout>
-        
+
       </v-stepper-content>
       <v-stepper-content step="2">
           <form class="form white--text">
-     <v-text-field 
+     <v-text-field
                             name='publication'
                             label= 'Name of Publication'
                             id= 'publication'
@@ -154,8 +154,8 @@
         >
           Next
         </v-btn>
-          
-        <v-btn 
+
+        <v-btn
         @click="e1 = 1"
         flat>Previous</v-btn>
       </v-stepper-content>
@@ -193,8 +193,8 @@
         >
           Submit
         </v-btn>
-    
-        <v-btn 
+
+        <v-btn
         @click="e1 = 2"
         flat>Previous</v-btn>
         </v-stepper-content>
@@ -249,7 +249,7 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
         v => /.+@.+/.test(v) || 'E-mail must be valid'
       ],
       select: null,
-      
+
        e1: 0,
       items: [
         'Item 1',
@@ -264,24 +264,25 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
       onSubmit(){
             let currentdate = new Date()
             //this.$store.dispatch('signUserOut')
-            this.$store.dispatch('singBusinessUp', {publication:this.publication, 
+            this.$store.dispatch('singBusinessUp', {publication:this.publication,
                                                             facebook:this.facebook,
                                                             email:this.email,
                                                             password:this.password,
                                                             instagram:this.instagram,
                                                             tumblr:this.tumblr,
                                                             website: this.website,
-                                                            role:'business', 
+                                                            role:'business',
                                                             file:this.file,
                                                             follower_count: this.follower_count,
                                                             file_name: this.file_name,
-                                                            about: this.about,  
-                                                            additional_notes: this.additional_notes, 
+                                                            about: this.about,
+                                                            additional_notes: this.additional_notes,
                                                             joined_on:Date.now(),
-                                                            upload_date:Date.now() })
+                                                            upload_date:Date.now(),
+                                                            business_name: this.business_name})
 
         },
-        
+
       onPickFile(){
             this.$refs.fileInput.click()
         },
@@ -308,7 +309,7 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
         },
       goSignIn(){
            this.$router.push({
-                        name: 'sign_in' 
+                        name: 'sign_in'
             })
       },
       validFalse(){
@@ -318,14 +319,14 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
       info(){
         this.dialog = true
       },
-     
+
       clear () {
         this.$refs.form.reset()
       }
     },
     computed:{
-      
-      
+
+
       formIsValid () {
             return this.name !=='' && this.file!== '' && this.email !== ''  &&this.password !== null && this.password_retype !== null && this.password == this.password_retype
         },
@@ -335,5 +336,3 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
     }
   }
 </script>
-
-
