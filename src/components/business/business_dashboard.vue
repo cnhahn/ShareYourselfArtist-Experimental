@@ -13,6 +13,7 @@
           <span v-if="show_follower_count"> {{ user_info.follower_count }}</span>
           <span v-else> 0 </span>
           <span style="color:#ff7d27"><b>Followers</b></span>
+          <!-- Counts the total submissions to display on dashboard -->
           <span v-if="show_total_submissions"> &nbsp;&nbsp; {{ master_submissions.filter((review) => {
               return review.replied == undefined || review.replied == false || review.replied == true
             }).length }}</span>
@@ -22,6 +23,7 @@
         <p style="margin-top: 2vh; margin-left: 1vh">
           <!-- <span>{{ user_info.reply_time }}</span>
           <span v-if="show_reply_time" style="color:#ff7d27"><b>Reply Time</b></span> -->
+          <!-- Counts the total submissions that were replied by taking the master list and checking if true -->
           <span v-if="show_follower_count"> {{ master_submissions.filter((review) => {
               return review.replied == true
             }).length }}</span>
@@ -50,6 +52,7 @@
       </v-flex>
     </v-layout>
 
+    <!-- Tour Div Customization Callbacks and Steps -->
     <v-layout>
       <div class="text-xs-center">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
@@ -72,20 +75,24 @@
           </template>
         </v-tour>
       </div>
-
     </v-layout>
+
     <v-layout mb-2 ml-2>
       <div id="v-step-0" class="text-xs-center">
         <v-btn large depressed color="primary" @click="$tours['myTour'].start()">&nbsp; &nbsp;Start Tutorial&nbsp; &nbsp;</v-btn>
       </div>
     </v-layout>
+
+    <!-- Merged Submissions Page Here -->
     <v-divider></v-divider>
     <h1 id="v-step-1" style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh; text-align:center">Submissions</h1>
     <div style="text-align:center">
       <!-- <v-btn flat @click="fetch_submissions" id='v-step-allSubmissions'>All Submissions</v-btn> -->
+      <!-- Counts the amount of unreplied submissions by filtering out undefined and false from master list-->
       <v-btn flat @click="submissions_unreplied_submissions" id='v-step-unrepliedSubmissions'>Unreplied Submissions ({{ master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         }).length }})</v-btn>
+      <!-- Counts the amount of replied submissions by filtering true from master list -->
       <v-btn flat @click="submissions_replied_submissions" id='v-step-repliedSubmissions'>Replied Submissions ({{ master_submissions.filter((review) => {
           return review.replied == true
         }).length }})</v-btn>
@@ -204,6 +211,7 @@
         show_replied_submissions:false,
         show_reply_time:false,
 
+        // All VueTour Steps
         steps: [
           {
             target: '#v-step-0',
@@ -279,7 +287,7 @@
           onNextStep: this.myCustomNextStepCallback
         },
 
-        // Submissions data
+        // Submissions data injection
         show: false,
         radios: 'declined',
         dialog: false,
@@ -305,13 +313,6 @@
     },
 
     methods: {
-      previousStepCallback(currentStep) {
-        console.log("Previous")
-      },
-      nextStepCallback(currentStep) {
-        console.log("Next")
-      },
-
       // Submissions methods
       download: function(art_link) {
 
@@ -323,9 +324,11 @@
         console.log("Called next callback")
         console.log(currentStep)
         if(currentStep == 4) {
+          // Change show to true so that we can open up the descriptions when we say so in the tour
           this.show = true
         }
         if(currentStep == 6) {
+          // Gets the time stamp of the dummy submission and brings up the submit review form
           this.clicked_art(123456789)
         }
 
@@ -411,16 +414,7 @@
       }
     },
     mounted: function () {
-
-      if("firstTimeLogin" in localStorage){
-        localStorage.clear()
-        console.log('yes');
-        console.log(localStorage.getItem("firstTimeLogin"))
-      } else {
-        console.log('no');
-      }
-      
-      //submissions mounted
+      //submissions mounted injection
 
         this.$tours['myTour'].start()
         this.$store.dispatch('fetch_all_Submissions').then(response => {
@@ -460,7 +454,7 @@
       loading() {
         return this.$store.getters.loading;
       },
-      // Submissions computed
+      // Submissions computed injection
       format_timestamp(timestamp) {
         var date = new Date(timestamp);
         var month = date.getMonth();
