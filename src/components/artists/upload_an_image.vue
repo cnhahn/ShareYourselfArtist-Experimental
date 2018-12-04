@@ -1,5 +1,37 @@
 <template>
   <v-container>
+    <div class="text-xs-center" offset-sm4 id="tour">
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+              <template v-if="tour.currentStep === 2">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 3">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
+      </div>
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <h2 class="title">
@@ -89,7 +121,7 @@
               <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
               <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
               <v-layout>
-      <div class="text-xs-center" offset-sm4>
+      <div class="text-xs-center" offset-sm4 id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
             <transition name="fade">
@@ -209,6 +241,7 @@
     margin-top: 20px;
     margin-bottom: 20px;
   }
+
 </style>
 
 

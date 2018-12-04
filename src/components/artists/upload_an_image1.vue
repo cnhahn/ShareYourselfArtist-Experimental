@@ -34,7 +34,7 @@
 
         </v-btn>
         <v-layout>
-      <div class="text-xs-center">
+      <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
             <transition name="fade">
@@ -59,6 +59,14 @@
                 <template v-if="tour.currentStep === 1">
                   <div slot="actions">
                     <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                    <v-btn type="button" @click="tour.nextStep" depressed color="primary">Next Step</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 2">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" depressed color="primary">
+                      Close
+                    </v-btn>
                   </div>
                 </template>
               </v-step>
@@ -94,6 +102,10 @@
           {
             target: '#v-step-1', 
             content: 'Click the "UPLOAD YOUR ART" button and select your art to be uploaded from your local files'
+          },
+          {
+            target: '#v-step-2', 
+            content: 'Once you have finished uploading your image, you will be sent to your dashboard. At your dashboard, you can view your uploads and even submit your work to various art sharing platforms'
           }
         ], myCallbacks: {
           onPreviousStep: this.previousStepCallback,
@@ -157,5 +169,8 @@
 
   .display-2 {
     margin-top: 10px;
+  }
+  #tour {
+    margin-top: 50px;
   }
 </style>
