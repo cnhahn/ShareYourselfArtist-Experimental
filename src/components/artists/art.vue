@@ -8,7 +8,7 @@
         <h2>{{this.art_title}}</h2>
         <p>{{this.description}}</p>
         <!-- v-select for new categories to be added -->
-          <v-card id="selectbox">
+          <v-card id="selectbox" style="display: block;">
                   <v-container
                     fluid
                   >
@@ -65,13 +65,21 @@
         window.history.back();
       },
       toggleDiv() {
-        console.log("fired");
           var div = document.getElementById('selectbox');
           var updatebtn = document.getElementById('updatebtn');
           var addbtn = document.getElementById('addbtn');
-          // if(updatebtn.style.display == 'block'){
-          //   updatebtn.
-          // }
+          console.log(div.style.display);
+          if(div.style.display === 'block') {
+            div.style.display = 'none';
+            addbtn.style.display = 'none';
+            updatebtn.innerHTML = 'edit categories';
+            updatebtn.style.color = 'orange';
+          } else {
+            div.style.display = 'block';
+            addbtn.style.display = 'block';
+            updatebtn.innerHTML = 'hide categories';
+            updatebtn.style.color = 'black';
+          }
       },
 
 // function to update tags to firestore
