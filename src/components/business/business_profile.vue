@@ -66,6 +66,14 @@
                 @click.native="setEdit">
                   Edit Profile
                 </v-btn>
+                <v-btn 
+                  depressed 
+                  block 
+                  dark 
+                  color="black" 
+                  @click="exit">
+                    Exit
+                </v-btn>
                 </v-flex>
                 <v-flex row v-else>
                   <v-btn 
