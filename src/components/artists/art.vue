@@ -8,7 +8,7 @@
         <h2>{{this.art_title}}</h2>
         <p>{{this.description}}</p>
         <!-- v-select for new categories to be added -->
-        <v-card id="selectbox">
+          <v-card id="selectbox">
                   <v-container
                     fluid
                   >
@@ -30,10 +30,10 @@
                     </v-layout>
                   </v-container>
                 </v-card>
-
         <div class="buttons">
           <v-btn depressed dark large color="black" @click="back">Back</v-btn>
-          <v-btn depressed large color="primary" style="width:120px" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
+          <v-btn depressed large @click="toggleDiv()" id="updatebtn">Hide Categories</v-btn>
+          <v-btn depressed large color="primary" id="addbtn" style="width:120px;" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
         </div>
       </v-flex>
     </v-layout>
@@ -63,6 +63,15 @@
       },
       back(){
         window.history.back();
+      },
+      toggleDiv() {
+        console.log("fired");
+          var div = document.getElementById('selectbox');
+          var updatebtn = document.getElementById('updatebtn');
+          var addbtn = document.getElementById('addbtn');
+          // if(updatebtn.style.display == 'block'){
+          //   updatebtn.
+          // }
       },
 
 // function to update tags to firestore
@@ -104,6 +113,13 @@
     margin-top: 15px;
     margin-bottom: 15px;
   }
-
+  #addbtn {
+    /*display: none; */
+    float: right;
+  }
+  #updatebtn{
+    padding-left: 32px;
+    padding-right: 32px;
+  }
 </style>
 

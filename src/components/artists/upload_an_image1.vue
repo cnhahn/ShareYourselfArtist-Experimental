@@ -31,7 +31,43 @@
           router to="/upload_an_image"
           :disabled="image_is_not_loaded"
           @click="getUserId">Next
+
         </v-btn>
+        <v-layout>
+      <div class="text-xs-center">
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+              <template v-if="tour.currentStep === 0">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 1">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
+      </div>
+
+    </v-layout>
       </v-flex>
     </v-layout>
   </v-container>
@@ -40,6 +76,7 @@
 <script>
   // Styled by Jin. No modification on code.
   export default {
+    name: 'myTour',
     data () {
       return {
         checkbox: true,
@@ -48,8 +85,25 @@
         image_url: '',
         file_name: null,
         file: {},
-        image_is_not_loaded: true
+        image_is_not_loaded: true,
+        steps: [
+          {
+            target: '#v-step-0', 
+            content: 'Would you like help with uploading?'
+          },
+          {
+            target: '#v-step-1', 
+            content: 'Click the "UPLOAD YOUR ART" button and select your art to be uploaded from your local files'
+          }
+        ], myCallbacks: {
+          onPreviousStep: this.previousStepCallback,
+          onNextStep: this.nextStepCallback
+        }
       }
+    },
+
+    mounted: function(){
+      this.$tours['myTour'].start()
     },
     computed: {},
     methods: {
@@ -78,6 +132,12 @@
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
         })
         fileReader.readAsDataURL(files[0])
+      },
+        previousStepCallback(currentStep) {
+        console.log("Previous")
+      },
+        nextStepCallback(currentStep) {
+        console.log("Next")
       }
     }
   }
