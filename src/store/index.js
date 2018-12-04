@@ -1,3 +1,4 @@
+
 // Scott Davis
 // store/index.js is afile that contains the global state of the application
 // as well as provides some getter functions
@@ -18,6 +19,21 @@ export const store = new Vuex.Store({
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    demo_arts:[{
+      art: {
+        url: 'https://firebasestorage.googleapis.com/v0/b/sya-dev.appspot.com/o/logo.png?alt=media&token=124cfcbb-be0b-41ad-827a-b0a0accb071c',
+        art_title: 'Your Lovely Art',
+        description: 'This is a sample submission.',
+        submitted_on: 123456789,
+        submitted_with_free_cerdit: false,
+        artist_id: 'dummyartist',
+        artist_name: 'Vincent Van Gogh',
+      },
+      read_byartist: false,
+      refunded: 0,
+      replied: false
+    }
+    ],
     sideNavItems: [
       { title: 'Dashboard', icon: 'dashboard', link: '/artist_dashboard' },
       //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
@@ -1343,41 +1359,6 @@ signUserInGoogle({
                   })
               })
             })
-              // Beginning of dummy sumission creation
-                // dummy submission: picture of SYA logo
-        const art = {
-          art: {
-            url: 'https://firebasestorage.googleapis.com/v0/b/sya-dev.appspot.com/o/logo.png?alt=media&token=124cfcbb-be0b-41ad-827a-b0a0accb071c',
-            art_title: 'Your Lovely Art',
-            description: 'This is a sample submission.',
-            submitted_on: 123456789,
-            submitted_with_free_cerdit: false,
-            artist_id: 'dummyartist',
-            artist_name: 'Vincent Van Gogh',
-          },
-          businessId: {
-            business_name: payload.business_name,
-            business_email: payload.email,
-            userId: response.user.uid
-          },
-          read_byartist: false,
-          refunded: 0,
-          replied: false
-        }
-        // add submission to this business's received submissions
-        console.log('dummy submission: ', art)
-        const db = firebase.firestore()
-        const collectionRef = db
-          .collection('review_requests')
-          .doc()
-          .set(art)
-          .then(function (docRef) {
-            console.log('DocRef: ', docRef)
-            console.log('Submission written with ID: ', docRef.id)
-          })
-          .catch(function (error) {
-            console.error('Error adding document: ', error)
-          })
       } catch (e) {
         console.log('Error!', e)
       }
@@ -1776,6 +1757,9 @@ signUserInGoogle({
       }
     },
   getters: {
+    demo_arts(state) {
+      return state.demo_arts
+    },
     businesses_being_submitted(state){
       return state.businesses_being_submitted
     } ,
