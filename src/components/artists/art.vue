@@ -30,11 +30,12 @@
                     </v-layout>
                   </v-container>
                 </v-card>
+
         <div class="buttons">
-          <v-btn depressed dark large color="black" @click="back">Back</v-btn>
-          <v-btn depressed large @click="toggleDiv()" id="updatebtn">Hide Categories</v-btn>
-          <v-btn depressed large color="primary" id="addbtn" style="width:120px;" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
+          <v-btn depressed small dark color="black" @click="back">Back</v-btn>
+          <v-btn depressed small @click="toggleDiv()" id="updatebtn">Hide Categories</v-btn>
         </div>
+        <v-btn depressed small color="primary" id="addbtn" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -122,12 +123,11 @@
     margin-bottom: 15px;
   }
   #addbtn {
-    /*display: none; */
-    float: right;
+    margin-left: 0;
   }
   #updatebtn{
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 2.5px;
+    padding-right: 2.5px;
   }
 </style>
 
