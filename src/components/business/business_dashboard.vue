@@ -283,7 +283,6 @@
           }
         ],
         myCallbacks: {
-          onPreviousStep: this.previousStepCallback,
           onNextStep: this.myCustomNextStepCallback,
           onStart: this.myCustomOnStart,
           onStop: this.myCustomOnStop
