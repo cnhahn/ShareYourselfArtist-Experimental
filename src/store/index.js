@@ -1550,6 +1550,7 @@ signUserInGoogle({
                           commit('setUserColor', { color: doc.data().color })
                         }
                         commit('setUserRole', doc.data().role)
+                        commit('setUserRole', doc.data().role)
                         commit('setUrl',doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
@@ -1648,6 +1649,7 @@ signUserInGoogle({
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
       newChatDatabaseRef.set(sendData)
     },
+      
       uploadProfileImage ({commit, getters}) {
         let ref = firebase.storage().ref()
         let uploadTask = ref
@@ -1690,20 +1692,33 @@ signUserInGoogle({
                 break
             }
           },
+<<<<<<< HEAD
           function () { //WAN
+=======
+          // Additional code to upload/update Profile Logo - Wan
+          function () { 
+>>>>>>> CMPS183_F18
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> CMPS183_F18
               // Now that download URL is obtained, downloadURL is sent to Firebase
               // to connect the user's ID to the updated profile picture
               let updateData = {}
               let db = getters.db
               let userId = getters.user.id
               let user = db
+<<<<<<< HEAD
               .collection('users').doc(userId).update({url: downloadURL}).then((data) => {
+=======
+              .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
+>>>>>>> CMPS183_F18
                 let updateData = db.collection('users').doc(userId).get().then(function (doc) {
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
@@ -1812,6 +1827,7 @@ signUserInGoogle({
       }
     },
   getters: {
+<<<<<<< HEAD
     top_12_recent_art(state){
      return state.top_12_recent_art
     },
@@ -1819,12 +1835,18 @@ signUserInGoogle({
       return state.businesses_being_submitted
     } ,
     report_month(state) {
+=======
+    businesses_being_submitted (state){
+      return state.businesses_being_submitted
+    } ,   
+    report_month (state) {
+>>>>>>> CMPS183_F18
       return state.report_month
     },
-    replied_for_report(state) {
+    replied_for_report (state) {
       return state.replied_for_report
     },
-    credits(state){
+    credits (state) {
       return state.credits
     },
     replied_submissions (state) {
@@ -1906,7 +1928,7 @@ signUserInGoogle({
     chat_database (state) {
       return state.chat_database
     },
-    replied_requests_for_report(state){
+    replied_requests_for_report (state) {
       return state.replied_requests_for_report
     },
     sendChatDataMessage (state) {
@@ -1921,7 +1943,7 @@ signUserInGoogle({
     sendChatDataTimestamp (state) {
       return state.sendChatData.timestamp
     },
-    sendChatDataUrl (state){
+    sendChatDataUrl (state) {
       return state.sendChatData.url
     },
     signed_in_business (state) {
@@ -1933,37 +1955,38 @@ signUserInGoogle({
     signed_in_user (state) {
       return state.signed_in_user
     },
+
     signed_in_user_id (state) {
       return state.signed_in_user_id
     },
-    db (state){
+    db (state) {
       return state.db
     },
     current_credits (state) {
       return state.signed_in_user.credits
     },
-    selectBlog(state){
+    selectBlog (state) {
       return state.selectBlog
     },
-    august(state){
+    august (state) {
       return state.replied_requests_for_report_aug
     },
-    september(state){
+    september (state) {
       return state.replied_requests_for_report_sep
     },
-    october(state){
+    october (state) {
       return state.replied_requests_for_report_oct
     },
-    november(state){
+    november (state) {
       return state.replied_requests_for_report_nov
     },
-    december(state){
+    december (state) {
       return state.replied_requests_for_report_dec
     },
-    free_credits(state){
+    free_credits (state) {
       return state.free_credits
     },
-    artists_email_list(state){
+    artists_email_list (state) {
       return state.artists_email_list
     }
   }

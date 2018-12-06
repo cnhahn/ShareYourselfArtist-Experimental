@@ -127,7 +127,19 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
+<<<<<<< HEAD
          <v-btn color="primary" flat v-if ="userIsAuthanticated"
+=======
+        <!-- Added additional button to show Blogs/Magazines - WF -->
+        <v-btn flat small
+          v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+          fullscreen="$vuetify.breakpoint.mdOnly"
+          @click= router to="/blogs" 
+          >Blogs/Magazines
+        </v-btn>
+      
+         <v-btn color="primary" flat v-if ="userIsAuthanticated" 
+>>>>>>> CMPS183_F18
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
         </v-btn>
