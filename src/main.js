@@ -15,15 +15,11 @@ import PayPal from 'vue-paypal-checkout'
 import CustomSpinner from './components/shared/custom_spinner'
 import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
-<<<<<<< HEAD
 import VueTour from 'vue-tour'
 import VueAgile from 'vue-agile'
 
 require('vue-tour/dist/vue-tour.css')
 
-=======
-  
->>>>>>> pardis-branch-fixed
 import {
 
   Vuetify,

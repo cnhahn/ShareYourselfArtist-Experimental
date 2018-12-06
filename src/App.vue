@@ -31,19 +31,13 @@
           <v-list-tile-content>
             <!--Adds artist's name to sidebar-->
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
-<<<<<<< HEAD
-<<<<<<< HEAD
              <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
-=======
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
               <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
             </div>
->>>>>>> vue_artist_instagram_button-Connor
-=======
             <!--Adds link to artist's instagram to sidebar-->
             <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
->>>>>>> pardis-branch-fixed
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -310,24 +304,21 @@ artist_initial () {
   artist_name () {
     return String(this.$store.state.signed_in_user.name)
   },
-<<<<<<< HEAD
 //This function gets artist's saved instagram from the firestore
 artist_instagram() {
     let instagram_string = ""
     if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
       if(this.$store.state.signed_in_user.instagram.includes('https://') || this.$store.state.signed_in_user.instagram.includes('http://')) {
-        console.log('fired');
+        console.log('fired')
         instagram_string = String(this.$store.state.signed_in_user.instagram)
       } else {
       instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
     }
-=======
 //This function get's artist's saved instagram from the firestore
 artist_instagram () {
     let instagram_string = ""
     if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
       instagram_string = String(this.$store.state.signed_in_user.instagram)
->>>>>>> pardis-branch-fixed
     }
     return instagram_string
   },
