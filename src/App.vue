@@ -117,7 +117,17 @@
     <v-toolbar flat style="background-color: #fff" class="">
 
       <v-toolbar-side-icon @click="sideNav = !sideNav"  v-if ="userIsAuthanticated"></v-toolbar-side-icon>
-      <router-link to="/" tag="span" style= "cursor:pointer">
+      <router-link v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" to="/artist_dashboard" tag="span" style= "cursor:pointer">
+        <v-avatar>
+        <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+      </v-avatar>
+      </router-link>
+      <router-link v-else-if="userIsAuthanticated && this.$store.state.user_role == 'business'" to="/business_dashboard" tag="span" style= "cursor:pointer">
+        <v-avatar>
+          <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+        </v-avatar>
+      </router-link>  
+      <router-link v-else to="/" tag="span" style= "cursor:pointer">
       <v-avatar>
         <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
       </v-avatar>
@@ -127,9 +137,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-<<<<<<< HEAD
          <v-btn color="primary" flat v-if ="userIsAuthanticated"
-=======
         <!-- Added additional button to show Blogs/Magazines - WF -->
         <v-btn flat small
           v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
@@ -139,7 +147,6 @@
         </v-btn>
       
          <v-btn color="primary" flat v-if ="userIsAuthanticated" 
->>>>>>> CMPS183_F18
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
         </v-btn>
@@ -203,10 +210,13 @@
     </v-toolbar>
     <main>
       <v-layout row>
-      <v-flex xs9>
-         <router-view ></router-view>
+      <v-flex v-if="userIsAuthanticated" xs9>
+        <router-view ></router-view>
+      </v-flex>  
+      <v-flex v-else xs12>
+        <router-view ></router-view>
       </v-flex>
-       <v-flex xs3>
+       <v-flex v-if="userIsAuthanticated" xs3>
 
  <v-card flat>
         <v-list two-line>

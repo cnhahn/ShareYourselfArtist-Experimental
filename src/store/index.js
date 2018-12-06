@@ -1692,33 +1692,22 @@ signUserInGoogle({
                 break
             }
           },
-<<<<<<< HEAD
-          function () { //WAN
-=======
           // Additional code to upload/update Profile Logo - Wan
+           // Additional code to upload/update Profile Logo - Wan
           function () { 
->>>>>>> CMPS183_F18
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
-<<<<<<< HEAD
-
-=======
               
->>>>>>> CMPS183_F18
               // Now that download URL is obtained, downloadURL is sent to Firebase
               // to connect the user's ID to the updated profile picture
               let updateData = {}
               let db = getters.db
               let userId = getters.user.id
               let user = db
-<<<<<<< HEAD
-              .collection('users').doc(userId).update({url: downloadURL}).then((data) => {
-=======
               .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
->>>>>>> CMPS183_F18
                 let updateData = db.collection('users').doc(userId).get().then(function (doc) {
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
@@ -1752,7 +1741,7 @@ signUserInGoogle({
         if (instagram !== undefined && instagram !== '') {
           updateData.instagram = instagram
         }
-
+        
         console.log(updateData)
         let user = db
           .collection('users').doc(userId).update(updateData).then((data) => {
@@ -1827,7 +1816,6 @@ signUserInGoogle({
       }
     },
   getters: {
-<<<<<<< HEAD
     top_12_recent_art(state){
      return state.top_12_recent_art
     },
@@ -1835,12 +1823,12 @@ signUserInGoogle({
       return state.businesses_being_submitted
     } ,
     report_month(state) {
-=======
+      return state.report_month
+    } ,
     businesses_being_submitted (state){
       return state.businesses_being_submitted
     } ,   
     report_month (state) {
->>>>>>> CMPS183_F18
       return state.report_month
     },
     replied_for_report (state) {
