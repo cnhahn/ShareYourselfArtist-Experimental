@@ -269,7 +269,12 @@ artist_initial () {
 artist_instagram() {
     let instagram_string = ""
     if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
+      if(this.$store.state.signed_in_user.instagram.includes('https://') || this.$store.state.signed_in_user.instagram.includes('http://')) {
+        console.log('fired');
+        instagram_string = String(this.$store.state.signed_in_user.instagram)
+      } else {
       instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
+    }
     }
     return instagram_string
   },
