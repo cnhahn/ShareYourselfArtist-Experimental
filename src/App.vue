@@ -7,7 +7,6 @@
       style="z-index: 350"
     >
       <!--button elements(Paypal) are set on the sandbox as z-index 300, so this style(z-index) is NEEDED-->
-
         <div class="sideNav" >
       <v-list class="pa-1">
         <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'business'">
@@ -22,7 +21,7 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'artist'">
-          <v-list-tile-avatar v-if ="signed_in_user_avatar != null" 
+          <v-list-tile-avatar v-if ="signed_in_user_avatar != null"
           :size="avatarSize">
             <img :src="signed_in_user_avatar">
           </v-list-tile-avatar>
@@ -33,6 +32,7 @@
             <!--Adds artist's name to sidebar-->
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
 <<<<<<< HEAD
+<<<<<<< HEAD
              <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
 =======
             <!--Adds link to artist's instagram to sidebar-->
@@ -40,20 +40,20 @@
               <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
             </div>
 >>>>>>> vue_artist_instagram_button-Connor
+=======
+            <!--Adds link to artist's instagram to sidebar-->
+            <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
+>>>>>>> pardis-branch-fixed
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
       <div class="buttons" >
-         <router-link 
-         to="/upload_an_image1"> 
+         <router-link
+         to="/upload_an_image1">
          <v-btn  v-if ="userIsAuthanticated && user_role == 'artist'" color="black" dark large depressed >
            Upload Art</v-btn>
            </router-link>
       </div>
-    
-
-
-
        <v-container v-if="this.$store.getters.user != null">
       <v-btn  flat small  v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'"
     to="/dashboard"
@@ -83,8 +83,6 @@
             <v-list-tile-title>{{ item.title }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-
-
         <v-list-tile v-if ="userIsAuthanticated && user_role == 'business'" >
           <v-list-tile-action >
                 <!-- <v-badge left color="red">
@@ -98,7 +96,6 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
-
         <v-list-tile v-if="userIsAuthanticated && user_role == 'artist'">
           <v-list-tile-action>
             <!-- <v-badge left color="red">
@@ -112,7 +109,6 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
-
         <v-list-tile v-if="userIsAuthanticated && user_role == 'artist'">
           <v-list-tile-action>
             <v-icon>chat</v-icon>
@@ -127,7 +123,7 @@
       </div>
     </v-navigation-drawer>
     <v-toolbar flat style="background-color: #fff" class="">
-      
+
       <v-toolbar-side-icon @click="sideNav = !sideNav"  v-if ="userIsAuthanticated"></v-toolbar-side-icon>
       <router-link to="/" tag="span" style= "cursor:pointer">
       <v-avatar>
@@ -137,19 +133,17 @@
       <v-toolbar-title class="large-logo hidden-sm-and-down">
         <p>Share Yourself Artists</p>
       </v-toolbar-title>
-
       <v-spacer></v-spacer>
-
       <v-toolbar-items>
-         <v-btn color="primary" flat v-if ="userIsAuthanticated" 
+         <v-btn color="primary" flat v-if ="userIsAuthanticated"
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
         </v-btn>
-        <v-btn color="primary" flat v-if ="userIsAuthanticated && this.$store.state.credits" 
+        <v-btn color="primary" flat v-if ="userIsAuthanticated && this.$store.state.credits"
         to="/account">
         Premium Credits: {{this.$store.state.credits}}
         </v-btn>
-      <v-btn  flat small 
+      <v-btn  flat small
      v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
       fullscreen="$vuetify.breakpoint.mdOnly"
      @click="route_to"
@@ -157,8 +151,6 @@
       </v-btn>
 
 
-  
-   
          <!-- <v-chip  v-if ="userIsAuthanticated" color="primary"><b>Credits: {{this.$store.state.credits}}</b> </v-chip> -->
         <v-btn flat small
         class="hidden-sm-and-down"
@@ -169,14 +161,11 @@
           {{item.title}}
        </v-btn>
        <v-btn flat small class="hidden-md-and-up"
-       v-if="!userIsAuthanticated" 
+       v-if="!userIsAuthanticated"
       :fullscreen="$vuetify.breakpoint.mdOnly"
       to="/sign_in"
       >Sign In
       </v-btn>
-
-
-
      <v-menu bottom left v-if ="userIsAuthanticated">
               <v-btn slot="activator" icon>
                 <v-icon>more_vert</v-icon>
@@ -203,27 +192,80 @@
                     <v-list-tile-title @click="onSignOut">Sign Out</v-list-tile-title>
                   </router-link>
                 </v-list-tile>
-                
+
               </v-list>
             </v-menu>
       </v-toolbar-items>
     </v-toolbar>
     <main>
-      <router-view></router-view>
+      <v-layout row>
+      <v-flex xs9>
+         <router-view ></router-view>
+      </v-flex>
+       <v-flex xs3>
+
+ <v-card flat>
+        <v-list two-line>
+
+         <template v-for="index in 12">
+
+            <v-list-tile
+              :key="top_12_recent_art[index].art.art_title"
+              avatar
+              @click="go_to_viewed_artist_page(index)"
+            >
+              <v-list-tile-avatar>
+                <img :src="top_12_recent_art[index].art.url">
+              </v-list-tile-avatar>
+               <v-list-tile-content>
+                 <v-list-tile-title v-html="top_12_recent_art[index].art.art_title"></v-list-tile-title>
+                 <v-list-tile-title v-html="top_12_recent_art[index].art.artist_name"></v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+        </v-list>
+      </v-card>
+      </v-flex>
+     </v-layout>
     </main>
-
-
-
   </v-app>
 </template>
 <script>
 export default {
+  ///this calls the data for the side bar you need this
+  //you also need to add this func in main.vues
+  beforeMount(){
+    this.$store.dispatch('fetch_top_12_recent_art')
+    console.log('fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
+  },
   data(){
     return{
       sideNav: false,
+      top_12_recent_art: this.$store.getters.top_12_recent_art,
+/////////////////items is a dummy element for testing only
+      items: [
+          { header: 'Today' },
+          {
+            avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+            title: 'Brunch this weekend?',
+            subtitle: "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
+          },
+          { divider: true, inset: true },
+          {
+            avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+            title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
+            subtitle: "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
+          },
+          { divider: true, inset: true },
+          {
+            avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+            title: 'Oui oui',
+            subtitle: "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
+          }
+        ]
+/////////////////THIS IS FOR TESTING ONLY
     }
   },
-
 computed:{
     avatarSize () {
       return `55px`
@@ -247,7 +289,6 @@ computed:{
   //     }
   //   }
   //   return unreply
-  // },
   num_submissions(){
     return this.$store.state.submissions_for_this_business.length
   },
@@ -269,6 +310,7 @@ artist_initial () {
   artist_name () {
     return String(this.$store.state.signed_in_user.name)
   },
+<<<<<<< HEAD
 //This function gets artist's saved instagram from the firestore
 artist_instagram() {
     let instagram_string = ""
@@ -279,6 +321,13 @@ artist_instagram() {
       } else {
       instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
     }
+=======
+//This function get's artist's saved instagram from the firestore
+artist_instagram () {
+    let instagram_string = ""
+    if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
+      instagram_string = String(this.$store.state.signed_in_user.instagram)
+>>>>>>> pardis-branch-fixed
     }
     return instagram_string
   },
@@ -315,6 +364,15 @@ artist_instagram() {
   }
   },
   methods: {
+  //This method handles going to a new artist page once you click on one of the featured artworks
+  go_to_viewed_artist_page(index){
+    const test = this.$store.getters.top_12_recent_art
+    console.log('this.items[index] $#$#%#^#^', test[index])
+    this.$store.commit('set_viewed_artist_data',this.items[index])
+    this.$router.push({
+      name:'viewed_artist_dashboard'
+    })
+  },
     route_to(){
       if (!this.$store.state.art_being_submitted_is_selected && this.$store.state.business_being_submitted_is_selected){
         this.$router.push({
@@ -343,13 +401,9 @@ artist_instagram() {
     },
 }
 }
-
-
 </script>
-
 <style scoped>
    @import url('https://fonts.googleapis.com/css?family=Covered+By+Your+Grace|Over+the+Rainbow" rel="stylesheet');
-
     .large-logo {
       margin-top:20px;
       margin-left: 30px;
@@ -371,8 +425,6 @@ artist_instagram() {
   position: absolute;
    margin-left: 20px;
    margin-top: 20px;
-
-
   }
   .sideNav{
     margin-left: 30px;
@@ -383,5 +435,4 @@ artist_instagram() {
   a {
     text-decoration: none;
     }
-
  </style>
