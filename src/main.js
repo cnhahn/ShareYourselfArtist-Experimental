@@ -7,7 +7,7 @@ import 'firebase/firestore'
 import App from './App'
 import router from './router'
 import { store } from './store'
-import AlertComp from './components/shared/alert.vue'
+//import AlertComp from './components/Shared/alert.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -15,7 +15,7 @@ import PayPal from 'vue-paypal-checkout'
 import CustomSpinner from './components/shared/custom_spinner'
 import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
-
+  
 import {
 
   Vuetify,
@@ -92,7 +92,7 @@ Vue.use(Vuetify, {
     VTabs,
     VExpansionPanel,
     transitions,
-    VStepper,
+    VStepper, 
     VSwitch,
     VDataTable,
     VCheckbox,
@@ -123,7 +123,7 @@ Vue.use(Vuetify, {
 })
 
 Vue.config.productionTip = false
-Vue.component('app-alert', AlertComp)
+//Vue.component('app-alert', AlertComp)
 Vue.component('c-spinner', CustomSpinner)
 
 /* eslint-disable no-new */
@@ -146,7 +146,7 @@ new Vue({
     //the following is a FB SDK to check if the user is signed in already
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        //this.$store.dispatch('fetchUserDocument')
+        this.$store.dispatch('fetchUserDocument')
       }
     })
   },
@@ -156,8 +156,8 @@ new Vue({
     this.$store.dispatch('get_users')
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // this.$store.dispatch('fetch_replied_submissions')
-        // this.$store.dispatch('fetchUserDocument');
+         this.$store.dispatch('fetch_replied_submissions')
+         this.$store.dispatch('fetchUserDocument');
       }
     })
   },
@@ -166,11 +166,12 @@ new Vue({
   mounted() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-          // this.$store.dispatch('fetchUserDocument'); //added
+        this.$store.dispatch('fetchUserDocument'); //added
         this.$store.dispatch('autoSignIn', user);
         this.$store.dispatch('fetchArts')
         this.$store.dispatch('fetchSubmissions')
-        this.$store.dispatch('fetchUserDocument')
+        this.$store.dispatch('fetchUserDocument') 
+        this.$store.dispatch('fetch_top_12_recent_art')
         console.log('on mounted: ', user)
         this.$store.dispatch('get_user_credit', user.uid)
 
