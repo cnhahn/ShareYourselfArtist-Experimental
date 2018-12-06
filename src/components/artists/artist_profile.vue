@@ -74,6 +74,7 @@
                 <div style="text-align: left">
                   <p class="text" style="margin-top: 2vh"><strong>Credits:</strong> {{fetchUserCredits}}</p>
                   <p class="text" style="margin-top: 2vh"><strong>Email:</strong> {{fetchUserEmail}}</p>
+                  <p class="text" style="margin-top: 2vh"><strong>Instagram:</strong> {{fetchUserInstagram}}</p>
                   <p class="text" style="margin-top: 2vh">{{getPassedTime(fetchUserSignUpDate)}}</p>
                 </div>
                 <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="setEdit">
@@ -143,6 +144,9 @@
       },
       fetchUserCredits () {
         return this.$store.getters.signed_in_user.credits
+      },
+      fetchUserInstagram () {
+        return this.$store.getters.signed_in_user.instagram
       }
     },
     methods: {
