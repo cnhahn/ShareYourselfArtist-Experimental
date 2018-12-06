@@ -335,6 +335,7 @@ artist_instagram() {
       instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
     }
   }
+  return instagram_string
 },
   sideNavItems() {
     if (this.$store.getters.user_role =='artist'){
