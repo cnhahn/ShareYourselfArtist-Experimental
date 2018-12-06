@@ -134,7 +134,6 @@ export const store = new Vuex.Store({
     subscription_plan: {},
     replied_for_report: [],
     report_month: 1,
-<<<<<<< HEAD
     free_credits:0,
     artists_email_list:[],
     categories: [],
@@ -144,7 +143,6 @@ export const store = new Vuex.Store({
       name:'',
       role:'',
     },
-=======
     free_credits: 0,
     artists_email_list: [],
     selectBlog: {
@@ -152,7 +150,6 @@ export const store = new Vuex.Store({
       name: '',
       role: ''
     }
->>>>>>> pardis-branch-fixed
   },
   mutations: {
     set_top_12_recent_art (state, payload) {

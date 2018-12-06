@@ -36,8 +36,6 @@
             <div v-if = "check_if_artist_has_entered_instagram">
               <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
             </div>
-            <!--Adds link to artist's instagram to sidebar-->
-            <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -314,14 +312,8 @@ artist_instagram() {
       } else {
       instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
     }
-//This function get's artist's saved instagram from the firestore
-artist_instagram () {
-    let instagram_string = ""
-    if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
-      instagram_string = String(this.$store.state.signed_in_user.instagram)
-    }
-    return instagram_string
-  },
+  }
+},
   sideNavItems() {
     if (this.$store.getters.user_role =='artist'){
         return this.$store.state.sideNavItems
