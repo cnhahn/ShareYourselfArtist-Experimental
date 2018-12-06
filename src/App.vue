@@ -30,8 +30,16 @@
             <span class="white--text headline">{{ this.artist_initial }}</span>
           </v-list-tile-avatar>
           <v-list-tile-content>
+            <!--Adds artist's name to sidebar-->
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
+<<<<<<< HEAD
              <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
+=======
+            <!--Adds link to artist's instagram to sidebar-->
+            <div v-if = "check_if_artist_has_entered_instagram">
+              <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
+            </div>
+>>>>>>> vue_artist_instagram_button-Connor
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -261,6 +269,19 @@ artist_initial () {
   artist_name () {
     return String(this.$store.state.signed_in_user.name)
   },
+//This function gets artist's saved instagram from the firestore
+artist_instagram() {
+    let instagram_string = ""
+    if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
+      if(this.$store.state.signed_in_user.instagram.includes('https://') || this.$store.state.signed_in_user.instagram.includes('http://')) {
+        console.log('fired');
+        instagram_string = String(this.$store.state.signed_in_user.instagram)
+      } else {
+      instagram_string = "http://" + String(this.$store.state.signed_in_user.instagram)
+    }
+    }
+    return instagram_string
+  },
   sideNavItems() {
     if (this.$store.getters.user_role =='artist'){
         return this.$store.state.sideNavItems
@@ -281,6 +302,10 @@ artist_initial () {
   },
   userIsAuthanticated () {
     return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+  },
+  //This statement checks the firestore db to see if the artists has entered an instagram
+  check_if_artist_has_entered_instagram(){
+    return (this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined' && this.$store.state.signed_in_user.instagram != "")
   },
   user_role(){
     return this.$store.getters.user_role

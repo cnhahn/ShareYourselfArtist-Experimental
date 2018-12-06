@@ -67,7 +67,7 @@
             // if the user doesn't have enough credits we urge them to buy some
             alert("Buy more credits! You have " + this.$store.getters.credits + " credits")
             this.$router.push({
-              name: 'account' 
+              name: 'account'
             })
           }
         },
