@@ -136,6 +136,8 @@ export const store = new Vuex.Store({
     report_month: 1,
     free_credits:0,
     artists_email_list:[],
+    categories: [],
+    updatedCategories: [],
     selectBlog:{
       userId:'',
       name:'',
@@ -158,6 +160,12 @@ export const store = new Vuex.Store({
     },
     set_blog_for_report(state, payload){
       state.blog_for_report = payload
+    },
+    set_categories(state, payload){
+      state.categories = payload
+    },
+    set_updatedCategories(state, payload){
+      state.updatedCategories = payload
     },
     set_businesses_being_submitted(state, payload){
       state.businesses_being_submitted = payload
@@ -232,6 +240,11 @@ export const store = new Vuex.Store({
     },
     setArts (state, payload) {
       state.arts.push(payload)
+    },
+    setArtCategory (state, payload) {
+      console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
+      console.log('payload.categories', payload.categories)
+      state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
     clearBusinesses (state) {
       state.businesses = []
@@ -1006,6 +1019,7 @@ signUserInGoogle({
                 let art = {
                   art_title: payload.art_title,
                   artist_name: payload.artist_name,
+                  categories: payload.categories,
                   url: getters.url,
                   description: payload.description,
                   upload_date: payload.upload_date,
@@ -1058,6 +1072,31 @@ signUserInGoogle({
           console.error('Error updating dsubmission: ', error)
         })
     },
+
+
+    update_art_category_tags ({ getters }, payload) {
+      const db = firebase.firestore()
+      const uploadDate = parseInt(payload.upload_date, 10)
+      const categories = payload.categories
+      const collectionRef = db.collection('art').where("upload_date", "==", uploadDate)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc){
+          var docRef = db.collection('art').doc(doc.id)
+          return docRef.update(
+            {"categories": categories}
+            )
+        })
+      })
+      .then(function() {
+          
+        console.log("successfully updated categories")
+      })
+      .catch(function(error) {
+        console.error("Error updating categories: ", error)
+      })
+    },
+
    submit_request ({ getters }) {
      let businesses_being_submitted =  getters.businesses_being_submitted
      for (let i = 0; i < businesses_being_submitted.length; i++) { 
@@ -1777,6 +1816,12 @@ signUserInGoogle({
     color (state) {
       return state.color
     },
+    categories (state) {
+      return state.categories
+    },
+    updatedCategories (state) {
+      return state.updatedCategories
+    },
     image_being_uploaded (state) {
       return state.image_being_uploaded
     },
@@ -1792,7 +1837,7 @@ signUserInGoogle({
         return artA.upload_date < artB.upload_date
       })
     },
-    // a getter that rturns a function that takes in an artId and...
+    // a getter that returns a function that takes in an artId and...
     uploadedArt (state) {
       return artId => {
         return state.uploadedArts.find(art => {
@@ -1800,7 +1845,7 @@ signUserInGoogle({
         })
       }
     },
-    // a getter function that tahes in an array that contains all of the arts and returns the first five of them as futured arts
+    // a getter function that takes in an array that contains all of the arts and returns the first five of them as futured arts
     featuredArts (state, getters) {
       return getters.uploadedArts.slice(0, 5)
     },

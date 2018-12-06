@@ -5,7 +5,7 @@ this.$store.getters.property
 
 how to use mutations
 Mutations must be synchronous and shouldn’t return a value. They can be used directly by running 
-this.$store.commit(‘mutationName’, payload)
+this.$store.commit('mutationName', payload)
 
 Asynchronous Actions
 They are expected (but not required) to return a promise indicating completion status. 
