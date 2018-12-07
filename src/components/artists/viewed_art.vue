@@ -11,7 +11,7 @@
           <v-btn depressed dark large color="black" @click="back">Back</v-btn>
           <!-- <v-btn depressed large color="primary" style="width:120px" @click="submit_art(this.art)" router to="/blogs">Submit</v-btn> -->
 
-          <div v-if="this.$store.getters.commenting_mode == false">
+<!--           <div v-if="this.$store.getters.commenting_mode == false">
             <v-btn flat  color="primary"
             @click="comment_art()"
             >Comment on this piece</v-btn>
@@ -19,7 +19,7 @@
           <div v-if="this.$store.getters.commenting_mode == true">
             <textarea style="border: 2px solid black" v-model="art.newComment" placeholder="Enter your comment here..."></textarea>
             <v-btn flat  color="primary"
-            @click="save_comment()"
+            @click="save_comment(art.upload_date)"
             >Post Comment</v-btn>
             <v-btn flat  color="primary"
             @click="comment_art()"
@@ -33,7 +33,7 @@
                   <h3>{{comment.body}}</h3>
                 </div>
               </div>
-            </div>
+            </div> -->
 
         </div>
       </v-flex>
@@ -48,7 +48,9 @@
         art:{
           url: localStorage.getItem('url'),
           art_title: localStorage.getItem('art_title'),
-          description: localStorage.getItem('description')
+          description: localStorage.getItem('description'),
+          upload_date: localStorage.getItem('upload_date'),
+          newComment:''
         }
     }
         },
@@ -59,30 +61,40 @@
       comment_art(){
         this.$store.commit('set_commenting_mode',!this.$store.getters.commenting_mode)
       },
-      save_comment(){
+       save_comment(upload_date){
+        console.log("upload_date " + upload_date)
         this.$store.commit('set_commenting_mode',!this.$store.getters.commenting_mode)
         const db = this.$store.getters.db
-        var artRef = db.collection("art").doc("5gWmUSOeEZX49S5cJtIW") //5gWmUSOeEZX49S5cJtIW  this.art.upload_date*/
-        var newComment = {
-          author: this.$store.getters.signed_in_user.name,
-          id: this.$store.getters.signed_in_user.id,
-          body: this.art.newComment,
-        }
-        this.$store.commit('set_comments', newComment)
-        //console.log("artRef: ",artRef);
+        var artRef = db.collection("art")
+                        .where('upload_date', '==', upload_date)
+                        .get()
+                        .then(function (querySnapshot){
+                  querySnapshot.forEach(function(doc){
+                    var docRef = db.collection("art").doc(doc.id).collection("comments").doc("scott").add({comments: this.art.newComment})
+
+          })
+        }) //5gWmUSOeEZX49S5cJtIW  this.art.upload_date*/
+        // console.log(artRef)
+        // var newComment = {
+        //   author: this.$store.getters.signed_in_user.name,
+        //   id: this.$store.getters.signed_in_user.id,
+        //   body: this.art.newComment,
+        // }
+        // this.$store.commit('set_comments', newComment)
+        // //console.log("artRef: ",artRef);
         
-        return artRef.update({
-          test2: this.$store.getters.comments
-        })
-        console.log("uploading was a success!")
-        .then(function() {
-            console.log("Document successfully updated!");
-        })
-        .catch(function(error) {
-            // The document probably doesn't exist.
-            console.error("Error updating document: ", error);
-        });
-        //console.log(this.$store.getters.comments)
+        // return artRef.update({
+        //   comments: this.$store.getters.comments
+        // })
+        // console.log("uploading was a success!")
+        // .then(function() {
+        //     console.log("Document successfully updated!");
+        // })
+        // .catch(function(error) {
+        //     // The document probably doesn't exist.
+        //     console.error("Error updating document: ", error);
+        // });
+        // //console.log(this.$store.getters.comments)
       },
       submit_art(art){
         this.$store.commit('set_user_email')

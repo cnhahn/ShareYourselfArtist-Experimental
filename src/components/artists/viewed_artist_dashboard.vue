@@ -70,6 +70,7 @@
            localStorage.setItem('art_title',arts[i].art_title)
            localStorage.setItem('artist_name',arts[i].artist_name)
            localStorage.setItem('description',arts[i].description)
+           localStorage.setItem('upload_date', arts[i].upload_date)
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
            console.log('art_title',localStorage.getItem('art_title'))
