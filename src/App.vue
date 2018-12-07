@@ -28,13 +28,16 @@
           <v-list-tile-avatar color="primary" v-if ="signed_in_user_avatar == null">
             <span class="white--text headline">{{ this.artist_initial }}</span>
           </v-list-tile-avatar>
-          <v-list-tile-content>
+          <v-list-tile-content flex style="font-size:14px;">
+
+           
             <!--Adds artist's name to sidebar-->
-            <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
-             <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
+            <a v-bind:href="' mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
               <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
+               <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
+              
             </div>
           </v-list-tile-content>
         </v-list-tile>
@@ -218,27 +221,31 @@
       </v-flex>
        <v-flex v-if="userIsAuthanticated" xs3>
 
- <v-card flat>
-        <v-list two-line>
+        <v-card flat>
+          <v-list two-line>
 
-         <template v-for="index in 12">
+                <template v-for="index in 12">
 
-            <v-list-tile
-              :key="top_12_recent_art[index].art.upload_date"
-              avatar
-              @click="go_to_viewed_artist_page(index)"
-            >
-              <v-list-tile-avatar>
-                <img :src="top_12_recent_art[index].art.url">
-              </v-list-tile-avatar>
-               <v-list-tile-content>
-                 <v-list-tile-title v-html="top_12_recent_art[index].art.art_title"></v-list-tile-title>
-                 <v-list-tile-title v-html="top_12_recent_art[index].art.artist_name"></v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-card>
+                    <v-list-tile
+                      :key="top_12_recent_art[index].art.upload_date"
+                      avatar
+                      @click="go_to_viewed_artist_page(index)"
+                    >
+                      <v-list-tile-avatar>
+                        <img :src="top_12_recent_art[index].art.url">
+                      </v-list-tile-avatar>
+                      <v-list-tile-content>
+                        <v-list-tile-title v-html="top_12_recent_art[index].art.art_title"></v-list-tile-title>
+                        <v-list-tile-title v-html="top_12_recent_art[index].art.artist_name"></v-list-tile-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                  </template>
+                </v-list>
+              </v-card>
+
+
+
+
       </v-flex>
      </v-layout>
     </main>
