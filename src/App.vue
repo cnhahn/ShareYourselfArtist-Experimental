@@ -221,7 +221,7 @@
  <v-card flat>
         <v-list two-line>
 
-         <template v-for="index in 2">
+         <template v-for="index in 12">
 
             <v-list-tile
               :key="top_12_recent_art[index].art.upload_date"
