@@ -61,45 +61,45 @@
             sortable: false,
             value: 'title'
           },
-          {text: 'Art title', value: 'title'},
+          { text: 'Art title', value: 'title'},
           { text: 'Date', value: 'date' },
-          { text: 'Credits', value: 'credits' }
-        ]
+          { text: 'Credits', value: 'credits' },
+        ]        
       }
     },
     components: {
     },
     computed: {
-      loading () {
-        // MODIFY THIS ONE
+      loading() {
+        //MODIFY THIS ONE
         return this.onLoading
       },
-      get_reports () {
+      get_reports() {
         return this.$store.getters.replied_for_report
-      }
+      },
     },
     methods: {
-      report () {
+      report() {
         this.$store.commit('clear_replied_for_report')
         this.$store.dispatch('get_replied')
       },
-      timestamp (items) {
-        console.log('milli:', items.submitted_on)
+      timestamp(items) {
+        console.log("milli:", items.submitted_on)
         var milli = items.submitted_on
         var d = new Date(milli)
-        console.log('d:', d)
+        console.log("d:", d)
         return d.toLocaleString()
       },
-      month3 () {
-        this.$store.commit('set_report_month', 3)
+      month3() {
+        this.$store.commit('set_report_month',3)
         this.report()
       },
-      month6 () {
-        this.$store.commit('set_report_month', 6)
+      month6() {
+        this.$store.commit('set_report_month',6)
         this.report()
       }
     },
-    created: function () {
+    created: function() {
     }
   }
 </script>

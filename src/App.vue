@@ -7,7 +7,6 @@
       style="z-index: 350"
     >
       <!--button elements(Paypal) are set on the sandbox as z-index 300, so this style(z-index) is NEEDED-->
-
         <div class="sideNav" >
       <v-list class="pa-1">
         <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'business'">
@@ -30,6 +29,7 @@
             <span class="white--text headline">{{ this.artist_initial }}</span>
           </v-list-tile-avatar>
           <v-list-tile-content>
+            <!--Adds artist's name to sidebar-->
             <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -41,9 +41,6 @@
            Upload Art</v-btn>
            </router-link>
       </div>
-    
-
-
 
        <v-container v-if="this.$store.getters.user != null">
       <v-btn  flat small  v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'"
@@ -132,14 +129,6 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <!-- Added additional button to show Blogs/Magazines - WF -->
-        <v-btn flat small
-          v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
-          fullscreen="$vuetify.breakpoint.mdOnly"
-          @click= router to="/blogs" 
-          >Blogs/Magazines
-        </v-btn>
-      
          <v-btn color="primary" flat v-if ="userIsAuthanticated" 
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
@@ -208,7 +197,49 @@
       </v-toolbar-items>
     </v-toolbar>
     <main>
-      <router-view></router-view>
+      <v-layout row>
+      <v-flex xs9>
+         <router-view ></router-view>
+      </v-flex>
+       <v-flex xs3>
+      
+      <v-card flat>
+
+        <v-list two-line>
+          <template v-for="(item, index) in items">
+            <v-subheader
+              v-if="item.header"
+              :key="item.header"
+            >
+              {{ item.header }}
+            </v-subheader>
+
+            <v-divider
+              v-else-if="item.divider"
+              :inset="item.inset"
+              :key="index"
+            ></v-divider>
+
+            <v-list-tile
+              v-else
+              :key="item.art_title"
+              avatar
+              @click="go_to_viewed_artist_page(index)"
+            >
+              <v-list-tile-avatar>
+                <img :src="item.url">
+              </v-list-tile-avatar>
+
+              <v-list-tile-content>
+                <v-list-tile-title v-html="item.art_title"></v-list-tile-title>
+                <v-list-tile-sub-title v-html="item.artist_name"></v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+        </v-list>
+      </v-card>
+      </v-flex>
+     </v-layout>
     </main>
 
 
@@ -217,11 +248,15 @@
 </template>
 <script>
 export default {
+  beforeMount(){
+    this.$store.dispatch('fetch_top_12_recent_art')
+  },
   data(){
     return{
-      sideNav: false,
+      sideNav: false,  
     }
   },
+
 
 computed:{
     avatarSize () {
@@ -246,7 +281,7 @@ computed:{
   //     }
   //   }
   //   return unreply
-  // },
+  
   num_submissions(){
     return this.$store.state.submissions_for_this_business.length
   },
@@ -297,6 +332,15 @@ artist_initial () {
   }
   },
   methods: {
+  //This method handles going to a new artist page once you click on one of the featured artworks
+  go_to_viewed_artist_page(index){
+    //const test = this.$store.getters.top_12_recent_art
+    //console.log('this.items[index] $#$#%#^#^', test[index])
+    this.$store.commit('set_viewed_artist_data',this.items[index])
+    this.$router.push({
+      name:'viewed_artist_dashboard'
+    })
+  },
     route_to(){
       if (!this.$store.state.art_being_submitted_is_selected && this.$store.state.business_being_submitted_is_selected){
         this.$router.push({

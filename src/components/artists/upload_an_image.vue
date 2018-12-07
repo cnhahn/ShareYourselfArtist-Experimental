@@ -53,37 +53,6 @@
             </v-flex>
           </v-layout>
 
-<!-- Associated tags for uploads -->
-
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-card id="selectbox">
-                  <v-container
-                    fluid
-                  >
-                    <v-layout
-                      align-center
-                      wrap
-                    >
-                        <v-select
-                          :items="items"
-                          attach
-                          chips
-                          name='categories'
-                          id='categories'
-                          label='categories'
-                          v-model='categories'
-                          required
-                          multiple
-                        ></v-select>
-                    </v-layout>
-                  </v-container>
-                </v-card>
-            </v-flex>
-          </v-layout>
-
-
-
           <v-layout row>
             <v-flex xs12 sm6 offset-sm8>
               <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
@@ -96,9 +65,6 @@
   </v-container>
 </template>
 
-
-
-
 <script>
   export default {
     data() {
@@ -108,15 +74,13 @@
         artTitle: '',
         artUrl: '',
         description: '',
-        categories: '',
-        items: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10'],
-        value: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7', 'tag8', 'tag9', 'tag10']
+
       }
     },
     computed: {
       // Styled by Jin. No modification on code.
       formIsValid () {
-        return this.artistName !== '' && this.artTitle !== '' && this.description !== '' && this.categories !== ''
+        return this.artistName !== '' && this.artTitle !== '' && this.description !== ''
       },
 
     },
@@ -133,7 +97,6 @@
           artist_name: this.artistName,
           description: this.description,
           art_title: this.artTitle,
-          categories: this.categories,
           folder: this.folder,
           upload_date: Date.now()
         }).then(response => {
@@ -144,20 +107,6 @@
 
   }
 </script>
-
-<style type="text/css">
-  #selectbox{
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-</style>
-
-
-
-
-
-
-
 
 
 

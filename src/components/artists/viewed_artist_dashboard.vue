@@ -16,11 +16,8 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/viewed_art'>View</v-btn>
             <v-spacer></v-spacer>
-            <v-btn flat  color="primary"
-            @click="submit_art(art)" 
-            >Submit this piece</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -33,30 +30,15 @@
     /*
     Real-time data(art) fetching from the firestore database.
      */
+    /*mounted: function () {
+     this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.artist_id).then(response => {
+       console.log("Fetch Arts Here! " + this.$store.getters.viewed_arts)
+     })
+    },*/
     mounted: function () {
-      const db = this.$store.getters.db
-      const userId = this.$store.getters.user.id
-      const newArtList = this.artList
-      const that = this
-      db.collection('art')
-        .where('artist_id', '==', userId)
-        .onSnapshot(function (querySnapshot) {
-          newArtList.length = 0;
-          querySnapshot.forEach(function (doc) {
-            var newArt = {
-              id: doc.id,
-              art_title: doc.data().art_title,
-              url: doc.data().url
-            }
-            newArtList.push(newArt)
-          })
-          // if there's no art, route to artist_dashboard_empty
-          if (querySnapshot.empty) {
-            that.$router.push({
-              name: 'artist_dashboard_empty'
-            })
-          }
-        })
+     this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.artist_id).then(response => {
+       console.log("Fetch Arts Here! " + this.$store.getters.viewed_arts)
+     })
     },
     data() {
       return {
@@ -64,8 +46,8 @@
       }
     },
     computed: {
-      arts() {
-        return this.$store.getters.uploadedArts;
+     arts() {
+        return this.$store.getters.viewed_arts;
       },
       loading() {
         return this.$store.getters.loading;
@@ -75,7 +57,8 @@
       clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
-        const arts= this.$store.state.arts
+        console.log("this.$store.getters.viewed_artist_data",this.$store.getters.viewed_artist_data)
+        const arts= this.$store.getters.viewed_arts
         var art = {}
         console.log('art_unique_timestamp', art_unique_timestamp)
         for (var i=0; i < arts.length; i++) {
@@ -93,23 +76,6 @@
           }
         }
       },
-      submit_art(art){
-        this.$store.commit('set_user_email')
-        if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
-          this.$store.commit('set_user_instagram')
-        }
-        this.$store.commit('set_art_being_submitted',art)
-        this.$store.commit('set_art_being_submitted_is_selected',true)
-        if(this.$store.state.business_being_submitted_is_selected == true){
-           this.$router.push({
-                        name: 'submit_result' 
-            })
-        }else{
-          this.$router.push({
-              name: 'blogs2'
-            })
-        }
-       },
     }
 }
 </script>

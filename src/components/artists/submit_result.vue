@@ -7,7 +7,7 @@
           You are submitting <b>{{art.art.art_title}}</b><br/>
           <b>to</b>
           <ul id="example-1">
-        <li v-for="business in businesses_being_submitted" >
+        <li v-for="business in businesses_being_submitted">
           {{ business.business_name }}
         </li>
         </ul>
@@ -36,20 +36,22 @@
      methods:{
        //submission of an artpiece
        submit_art(){
+     console.log("submit art called!")
           const costOfBusiness = this.$store.getters.businesses_being_submitted.length
           //checks if the current credits is more than business cost
           if (this.$store.getters.free_credits >= costOfBusiness){
             const free_creditAfterSubmit = this.$store.getters.free_credits - costOfBusiness 
-            this.$store.dispatch('submit_request_with_free_credits') 
+            this.$store.dispatch('submit_request_with_free_credits')
             this.$store.commit('set_free_credits', free_creditAfterSubmit)
             this.$store.dispatch('update_user_free_credit', free_creditAfterSubmit)
             //this.$store.commit('set_free_credits', free_creditAfterSubmit)
             this.$store.commit('set_art_being_submitted_is_selected',false)
             this.$store.commit('set_business_being_submitted_is_selected',false)
-            alert('Success! You have submitted your art using your free credits!')
+          console.log("router push")
             this.$router.push({
               name: 'artist_dashboard' 
             })
+          console.log("router push complete")
           }
           else if(this.$store.getters.credits >= costOfBusiness ) { 
             // decrements user credits, submits the artwork, updates user credits, and removes mutations specific to the selected art and business
@@ -67,7 +69,7 @@
             // if the user doesn't have enough credits we urge them to buy some
             alert("Buy more credits! You have " + this.$store.getters.credits + " credits")
             this.$router.push({
-              name: 'account' 
+              name: 'account'
             })
           }
         },

@@ -2,6 +2,7 @@ import Vue from "vue"
 import Router from "vue-router"
 import Home from "@/components/Home"
 
+//Shared Components
 import sign_in from "@/components/shared/sign_in"
 import support from "@/components/shared/support"
 import about_us from "@/components/shared/about_us"
@@ -15,6 +16,7 @@ import dashboard from '@/components/shared/dashboard'
 import dashboard2 from '@/components/shared/dashboard2'
 import colleges from '@/components/shared/colleges'
 
+//Business Components
 import blogs from "@/components/business/blogs"
 import blogs2 from "@/components/business/blogs2"
 import business_signup from "@/components/business/business_signup"
@@ -26,11 +28,14 @@ import submissionsEmpty from '@/components/business/submissions_empty'
 import report from "@/components/business/report"
 import businessProfile from '@/components/business/business_profile'
 
+//Artist Components
 import artistDashboardEmpty from '@/components/artists/artist_dashboard_empty'
 import payment_confirmation from '@/components/artists/payment_confirmation'
 import bio from '@/components/artists/bio'
 import art from "@/components/artists/art"
+import viewed_art from "@/components/artists/viewed_art"
 import artist_dashboard from "@/components/artists/artist_dashboard"
+import viewed_artist_dashboard from "@/components/artists/viewed_artist_dashboard"
 import artist_signup from "@/components/artists/artist_signup"
 import upload_an_image from "@/components/artists/upload_an_image"
 import upload_an_image1 from "@/components/artists/upload_an_image1"
@@ -80,6 +85,15 @@ export default new Router({
       path: "/artist_dashboard",
       name: "artist_dashboard",
       component: artist_dashboard,
+      beforeEnter: auth_guard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/viewed_artist_dashboard",
+      name: "viewed_artist_dashboard",
+      component: viewed_artist_dashboard,
       beforeEnter: auth_guard,
       meta: {
         requiresAuth: true
@@ -149,6 +163,12 @@ export default new Router({
       path: "/art",
       name: "art",
       component: art,
+      beforeEnter: auth_guard
+    },
+    {
+      path: "/viewed_art",
+      name: "viewed_art",
+      component: viewed_art,
       beforeEnter: auth_guard
     },
     {

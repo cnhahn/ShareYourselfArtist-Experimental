@@ -14,10 +14,18 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
+    top_12_recent_art:[],
+    viewed_artist_data: {},
     localStorage,
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    //This is an array of comment objects that should be assigned to each art peice
+    comments: [],
+
+    comment: {},
+    //This is a simple boolean used on pages to determine if the user is commenting or not
+    commenting_mode: false,
     sideNavItems: [
       { title: 'Dashboard', icon: 'dashboard', link: '/artist_dashboard' },
       //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
@@ -95,6 +103,7 @@ export const store = new Vuex.Store({
       url:'',
     },
     uploadedArts: [],
+    viewed_arts: [],
     user: null,
     color: 'primary',
     loading: false,
@@ -136,15 +145,13 @@ export const store = new Vuex.Store({
     report_month: 1,
     free_credits:0,
     artists_email_list:[],
-    categories: [],
-    updatedCategories: [],
     selectBlog:{
       userId:'',
       name:'',
       role:'',
     },
   },
-  mutations: { 
+  mutations: {
     set_free_credits(state, payload){
       console.log('inside set free credits')
       console.log(payload)
@@ -155,17 +162,17 @@ export const store = new Vuex.Store({
       }
       
     },
-    set_artists_email_list(state,payload){
+    set_artists_email_list(state, payload){
       state.artists_email_list.push(payload)
+    },
+    set_commenting_mode(state, payload){
+      state.commenting_mode = payload
+    },
+    set_viewed_artist_data (state, payload){
+      state.viewed_artist_data = payload
     },
     set_blog_for_report(state, payload){
       state.blog_for_report = payload
-    },
-    set_categories(state, payload){
-      state.categories = payload
-    },
-    set_updatedCategories(state, payload){
-      state.updatedCategories = payload
     },
     set_businesses_being_submitted(state, payload){
       state.businesses_being_submitted = payload
@@ -238,13 +245,21 @@ export const store = new Vuex.Store({
     clear_arts_array (state) {
       state.arts = []
     },
+    clear_viewed_arts_array (state) {
+      state.viewed_arts = []
+    },
+    //deletes all comments currently in the comment array
+    clear_comments_array(state){
+      state.comments = []
+    },
+    set_comments(state, payload){
+      state.comments.push(payload)
+    },
     setArts (state, payload) {
       state.arts.push(payload)
     },
-    setArtCategory (state, payload) {
-      console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
-      console.log('payload.categories', payload.categories)
-      state.arts[payload.indexOfUpdatedArt].categories = payload.categories
+    set_viewed_arts (state, payload) {
+      state.viewed_arts.push(payload)
     },
     clearBusinesses (state) {
       state.businesses = []
@@ -346,6 +361,10 @@ export const store = new Vuex.Store({
     set_user_email (state) {
       state.art_being_submitted.artist_email = firebase.auth().currentUser.email
     },
+    //This is used to assign the artist's instagram to the artwork
+    set_user_instagram (state){
+      state.art_being_submitted.artist_instagram = state.signed_in_user.instagram
+    },
     clearError (state) {
       state.error = null
     },
@@ -370,10 +389,28 @@ export const store = new Vuex.Store({
       (state.selectBlog.name = payload.name),
       (state.selectBlog.userId = payload.userId),
       (state.selectBlog.role = payload.role)
+    },
+    set_top_12_recent_art (state, payload) {
+      state.top_12_recent_art.push(payload) 
     }
   },
+
   actions: {
     // for report
+    fetch_top_12_recent_art ({commit, getters}) {
+      let db = firebase.firestore()
+      var temp_report = db.collection('review_requests')
+                          .orderBy('submitted_on').limit(12)
+      let report = temp_report.get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+              console.log('doc.data: ', doc.data())
+            })
+          })
+          .catch(function (error) {
+            console.log('Error getting report: ', error)
+          })
+    },
     get_replied ({commit, getters}) {
       let db = firebase.firestore()
       var temp_report = db.collection('review_requests')
@@ -913,6 +950,24 @@ signUserInGoogle({
           console.log('Error getting documents: ', error)
         })
     },
+    //This is a fetchArts function to get another user's artwork
+    fetchViewedArts ({ commit, getters }, payload) {
+      commit('clear_viewed_arts_array')
+      let db = firebase.firestore()
+      let arts = db
+        .collection('art')
+        .where('artist_id', '==', payload)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            commit('set_viewed_arts', doc.data())
+          })
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
+        })
+    },
 
     // this function gets the submissions for a business and
    async fetchSubmissions ({ commit, getters }) {
@@ -1019,7 +1074,6 @@ signUserInGoogle({
                 let art = {
                   art_title: payload.art_title,
                   artist_name: payload.artist_name,
-                  categories: payload.categories,
                   url: getters.url,
                   description: payload.description,
                   upload_date: payload.upload_date,
@@ -1072,31 +1126,6 @@ signUserInGoogle({
           console.error('Error updating dsubmission: ', error)
         })
     },
-
-
-    update_art_category_tags ({ getters }, payload) {
-      const db = firebase.firestore()
-      const uploadDate = parseInt(payload.upload_date, 10)
-      const categories = payload.categories
-      const collectionRef = db.collection('art').where("upload_date", "==", uploadDate)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc){
-          var docRef = db.collection('art').doc(doc.id)
-          return docRef.update(
-            {"categories": categories}
-            )
-        })
-      })
-      .then(function() {
-          
-        console.log("successfully updated categories")
-      })
-      .catch(function(error) {
-        console.error("Error updating categories: ", error)
-      })
-    },
-
    submit_request ({ getters }) {
      let businesses_being_submitted =  getters.businesses_being_submitted
      for (let i = 0; i < businesses_being_submitted.length; i++) { 
@@ -1525,7 +1554,6 @@ signUserInGoogle({
                           commit('setUserColor', { color: doc.data().color })
                         }
                         commit('setUserRole', doc.data().role)
-                        commit('setUserRole', doc.data().role)
                         commit('setUrl',doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
@@ -1624,7 +1652,6 @@ signUserInGoogle({
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
       newChatDatabaseRef.set(sendData)
     },
-      
       uploadProfileImage ({commit, getters}) {
         let ref = firebase.storage().ref()
         let uploadTask = ref
@@ -1667,32 +1694,12 @@ signUserInGoogle({
                 break
             }
           },
-          // Additional code to upload/update Profile Logo - Wan
-          function () { 
+          function () {
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured: ' + downloadURL)
+              console.log('Url captured' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
-              
-              // Now that download URL is obtained, downloadURL is sent to Firebase
-              // to connect the user's ID to the updated profile picture
-              let updateData = {}
-              let db = getters.db
-              let userId = getters.user.id
-              let user = db
-              .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
-                let updateData = db.collection('users').doc(userId).get().then(function (doc) {
-                  if (doc.exists) {
-                    commit('signed_in_user', doc.data())
-                    commit('setLoading', false)
-                  } else {
-                    // doc.data() will be undefined in this case
-                  }
-                }).catch(function (error) {
-                  console.log("Error getting document:", error);
-                });
-              })
             })
           })
       },
@@ -1790,6 +1797,15 @@ signUserInGoogle({
       }
     },
   getters: {
+    viewed_artist_data(state){
+      return state.viewed_artist_data
+    },
+    top_12_recent_art(state){
+      return state.top_12_recent_art
+    },
+    commenting_mode(state){
+      return state.commenting_mode
+    },
     businesses_being_submitted(state){
       return state.businesses_being_submitted
     } ,   
@@ -1838,12 +1854,6 @@ signUserInGoogle({
     color (state) {
       return state.color
     },
-    categories (state) {
-      return state.categories
-    },
-    updatedCategories (state) {
-      return state.updatedCategories
-    },
     image_being_uploaded (state) {
       return state.image_being_uploaded
     },
@@ -1853,13 +1863,19 @@ signUserInGoogle({
     allArts (state) {
       return state.arts
     },
+    viewed_arts (state) {
+      return state.viewed_arts
+    },
+    comments (state) {
+      return state.comments
+    },
     // a getter function that returns an array that contains arts that are sorted by their upload date.
     uploadedArts (state) {
       return state.arts.sort((artA, artB) => {
         return artA.upload_date < artB.upload_date
       })
     },
-    // a getter that returns a function that takes in an artId and...
+    // a getter that rturns a function that takes in an artId and...
     uploadedArt (state) {
       return artId => {
         return state.uploadedArts.find(art => {
@@ -1867,7 +1883,7 @@ signUserInGoogle({
         })
       }
     },
-    // a getter function that takes in an array that contains all of the arts and returns the first five of them as futured arts
+    // a getter function that tahes in an array that contains all of the arts and returns the first five of them as futured arts
     featuredArts (state, getters) {
       return getters.uploadedArts.slice(0, 5)
     },
@@ -1908,7 +1924,6 @@ signUserInGoogle({
     signed_in_user (state) {
       return state.signed_in_user
     },
-  
     signed_in_user_id (state) {
       return state.signed_in_user_id
     },

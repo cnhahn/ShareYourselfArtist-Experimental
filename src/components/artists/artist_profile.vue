@@ -6,7 +6,7 @@
 
             <v-flex lg6 md6 sm12 xs12>
               <v-avatar size="180px" class="avatarStyle" v-bind:color="artistInfo.color">
-                  <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
+                  <img v-if="artistInfo.photoUrl" :src='artistInfo.photoUrl' alt="avatar">
                   <div v-else>
                     <span style="font-size: 10em; color: white;">{{initial()}}</span>
                   </div>
@@ -27,27 +27,27 @@
                   Share Yourself Artists
                 </p>
                 <!--TODO: Code for Uploading image. Should modify.-->
-                <!-- From store to url -->
-                <v-btn
-                    style="margin-top: 2vh; margin-left: 1vw;"
-                    block
-                    outline
-                    flat
-                    depressed
-                    :color="artistInfo.color"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
-                    class="mx-0"
-                    @click.native="onPickFile"
-                  >
-                    Upload New Logo
-                  </v-btn>
-                  <input type="file"
-                        style="display:none"
-                        ref="fileInput"
-                        accept="image/*"
-                        @change=onFilePicked
-                  >     
+
+                <!--<div v-else>-->
+                  <!--<v-btn-->
+                    <!--style="margin-top: 2vh; margin-left: 1vw;"-->
+                    <!--depressed-->
+                    <!--block-->
+                    <!--outline-->
+                    <!--flat-->
+                    <!--:color="artistInfo.color"-->
+                    <!--:loading="imageNotLoaded"-->
+                    <!--:disabled="imageNotLoaded"-->
+                    <!--@click.native="onPickFile"-->
+                  <!--&gt;-->
+                    <!--Select Profile Image-->
+                  <!--</v-btn>-->
+                  <!--<input type="file"-->
+                         <!--style="display:none"-->
+                         <!--ref="fileInput"-->
+                         <!--accept="image/*"-->
+                         <!--@change ="onFilePicked">-->
+                <!--</div>-->
             </v-flex>
 
             <v-flex lg6 md6 sm12 xs12>
@@ -109,7 +109,6 @@
     name: 'artist_profile',
     data () {
       return {
-        urlProfilepic: this.$store.getters.url,
         file: null,
         onEdit: false,
         dataNotSent: false,
@@ -122,13 +121,10 @@
         artistInfo: {}
       }
     },
-    beforeMount () {
+    mounted () {
       this.setUserInfo()
     },
     computed: {
-      fetchUserProfilePicture () {
-        return this.$store.getters.signed_in_user.profileUrl
-      },
       fetchUserName () {
         return this.$store.getters.signed_in_user.name
       },
@@ -146,12 +142,10 @@
       }
     },
     methods: {
-      
       emptyUserInfo () {
         this.artistInfo = {};
       },
       setUserInfo () {
-        this.urlProfilepic = this.$store.getters.signed_in_user.profileUrl
         let userInfo = this.$store.getters.signed_in_user
         console.log(userInfo.name)
         let newArtistInfo = {
@@ -160,7 +154,6 @@
           signUpDate: userInfo.upload_date,
           color: userInfo.color,
           credits: userInfo.credits
-          
         }
         if (typeof userInfo.photoUrl === 'string' && userInfo.photoUrl !== null) {
           newArtistInfo.photoUrl = userInfo.photoUrl
@@ -192,11 +185,7 @@
           this.editInfo.selectedPhotoUrl = fileReader.result
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
             .then(() => {
-              /* Extra code here to call function UploadProfileImage in index.js
-                 store->index.js
-              */
               this.imageNotLoaded = false
-              this.$store.dispatch('uploadProfileImage')
             })
         })
         fileReader.readAsDataURL(files[0])
