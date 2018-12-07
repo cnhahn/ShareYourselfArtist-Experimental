@@ -147,7 +147,6 @@ export const store = new Vuex.Store({
     replied_submissions: [],
     avatar: '',
     signed_in_user_id: '',
-    signed_in_user: {},
     blog_for_report: '',
     subscription_plan: {},
     replied_for_report: [],
@@ -201,7 +200,6 @@ export const store = new Vuex.Store({
       state.chart_free_for_submissions = payload
     },
     clear_query_datePicker_list (state) {
-      console.log('I am in set query datePicker')
       state.replied_requests_for_report_datePicker = []
     },
     set_query_business_email (state, payload) {
@@ -234,8 +232,8 @@ export const store = new Vuex.Store({
         end_epoch = end_epoch + 86400000
       }
 
-      (state.datePicker.startDate = start_epoch),
-        (state.datePicker.endDate = end_epoch)
+      state.datePicker.startDate = start_epoch
+      state.datePicker.endDate = end_epoch
     },
     set_free_credits (state, payload) {
       console.log(payload)

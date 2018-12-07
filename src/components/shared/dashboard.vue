@@ -153,7 +153,7 @@ export default {
       console.log(this.$store.getters.artists_email_list);
     },
     goto_dashboard2(business_email) {
-      // this.$store.commit("set_query_business_email", {business_email: business_email});
+
       this.$store.commit("set_query_business_email", {
         business_email: business_email
       });
@@ -176,9 +176,8 @@ export default {
     },
     searchArtistEmail() {
       const artistList = this.$store.getters.artists_email_list;
-      // console.log(artistList)
+
       for (let obj in artistList) {
-        // console.log('search: ' + this.artist_email + ' current obj email: ' + obj.artist_email)
         if (this.artist_email == artistList[obj].artist_email) {
           //get from firebase the user for this email
           this.$store.dispatch("get_artist_settings_artist", this.artist_email);
