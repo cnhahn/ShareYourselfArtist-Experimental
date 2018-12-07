@@ -31,6 +31,8 @@ import payment_confirmation from '@/components/artists/payment_confirmation'
 import bio from '@/components/artists/bio'
 import art from "@/components/artists/art"
 import artist_dashboard from "@/components/artists/artist_dashboard"
+import viewed_artist_dashboard from "@/components/artists/viewed_artist_dashboard"
+import viewed_art from "@/components/artists/viewed_art"
 import artist_signup from "@/components/artists/artist_signup"
 import upload_an_image from "@/components/artists/upload_an_image"
 import upload_an_image1 from "@/components/artists/upload_an_image1"
@@ -80,6 +82,15 @@ export default new Router({
       path: "/artist_dashboard",
       name: "artist_dashboard",
       component: artist_dashboard,
+      beforeEnter: auth_guard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/viewed_artist_dashboard",
+      name: "viewed_artist_dashboard",
+      component: viewed_artist_dashboard,
       beforeEnter: auth_guard,
       meta: {
         requiresAuth: true
@@ -149,6 +160,12 @@ export default new Router({
       path: "/art",
       name: "art",
       component: art,
+      beforeEnter: auth_guard
+    },
+    {
+      path: "/viewed_art",
+      name: "viewed_art",
+      component: viewed_art,
       beforeEnter: auth_guard
     },
     {

@@ -15,10 +15,13 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     top_12_recent_art: [],
+    viewed_artist_data: {},
     localStorage,
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    comments: [],
+    commenting_mode: false,
     sideNavItems: [
       { title: 'Dashboard', icon: 'dashboard', link: '/artist_dashboard' },
       //{ title: 'Bio & Stats', icon: 'face', link: '/bio' },
@@ -96,6 +99,7 @@ export const store = new Vuex.Store({
       url: ''
     },
     uploadedArts: [],
+    viewed_arts: [],
     user: null,
     color: 'primary',
     loading: false,
@@ -154,6 +158,12 @@ export const store = new Vuex.Store({
   mutations: {
     set_top_12_recent_art (state, payload) {
       state.top_12_recent_art.push(payload)
+    },
+    set_commenting_mode(state, payload){
+      state.commenting_mode = payload
+    },
+    set_viewed_artist_data (state, payload){
+      state.viewed_artist_data = payload
     },
     clear_top_12_recent_art (state) {
       state.top_12_recent_art = []
@@ -253,6 +263,18 @@ export const store = new Vuex.Store({
     },
     setArts (state, payload) {
       state.arts.push(payload)
+    },
+    set_comments(state, payload){
+      state.comments.push(payload)
+    },
+    clear_viewed_arts_array (state) {
+      state.viewed_arts = []
+    },
+    clear_comments_array(state){
+      state.comments = []
+    },
+    set_viewed_arts (state, payload) {
+      state.viewed_arts.push(payload)
     },
     setArtCategory (state, payload) {
       console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
@@ -932,6 +954,25 @@ signUserInGoogle({
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             commit('setArts', doc.data())
+          })
+          commit('setLoading', false)
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
+        })
+    },
+     fetchViewedArts ({ commit, getters }, payload) {
+      commit('clear_viewed_arts_array')
+      console.log("payload " + payload)
+      let db = firebase.firestore()
+      let arts = db
+        .collection('art')
+        .where('artist_id', '==', payload)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            commit('set_viewed_arts', doc.data())
           })
           commit('setLoading', false)
         })
@@ -1816,6 +1857,18 @@ signUserInGoogle({
       }
     },
   getters: {
+    viewed_artist_data(state){
+      return state.viewed_artist_data
+    },
+    commenting_mode(state){
+      return state.commenting_mode
+    },
+    viewed_arts (state) {
+      return state.viewed_arts
+    },
+    comments (state) {
+      return state.comments
+    },
     top_12_recent_art(state){
      return state.top_12_recent_art
     },

@@ -30,7 +30,7 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <!--Adds artist's name to sidebar-->
-            <v-list-tile-title style="margin-left: 10px">{{this.artist_name}}</v-list-tile-title>
+            <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
              <a v-bind:href="'mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
@@ -221,10 +221,10 @@
  <v-card flat>
         <v-list two-line>
 
-         <template v-for="index in 12">
+         <template v-for="index in 2">
 
             <v-list-tile
-              :key="top_12_recent_art[index].art.art_title"
+              :key="top_12_recent_art[index].art.upload_date"
               avatar
               @click="go_to_viewed_artist_page(index)"
             >
@@ -255,28 +255,8 @@ export default {
   data(){
     return{
       sideNav: false,
-      top_12_recent_art: this.$store.getters.top_12_recent_art,
-/////////////////items is a dummy element for testing only
-      items: [
-          { header: 'Today' },
-          {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-            title: 'Brunch this weekend?',
-            subtitle: "<span class='text--primary'>Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
-          },
-          { divider: true, inset: true },
-          {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-            title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
-            subtitle: "<span class='text--primary'>to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
-          },
-          { divider: true, inset: true },
-          {
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-            title: 'Oui oui',
-            subtitle: "<span class='text--primary'>Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?"
-          }
-        ]
+      items: this.$store.getters.top_12_recent_art,
+      top_12_recent_art: this.$store.getters.top_12_recent_art
 /////////////////THIS IS FOR TESTING ONLY
     }
   },
@@ -370,6 +350,14 @@ artist_instagram() {
   }
   },
   methods: {
+  go_to_viewed_artist_page(index){
+    //const test = this.$store.getters.top_12_recent_art
+    //console.log('this.items[index] $#$#%#^#^', test[index])
+    this.$store.commit('set_viewed_artist_data',this.items[index])
+    this.$router.push({
+      name:'viewed_artist_dashboard'
+    })
+  },
   //This method handles going to a new artist page once you click on one of the featured artworks
   go_to_viewed_artist_page(index){
     const test = this.$store.getters.top_12_recent_art
