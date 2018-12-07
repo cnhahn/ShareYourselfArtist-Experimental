@@ -13,9 +13,7 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <h3 class="headline mb-0">
-                {{ businesses.length }}
-              </h3>
+              <h3 class="headline mb-0">{{ businesses.length }}</h3>
               <div>Businesses</div>
             </v-flex>
             <v-flex class="sm-6">
@@ -65,31 +63,19 @@
 
     <v-card>
       <v-card-title>Graph</v-card-title>
-      <GChart type="LineChart" :data="chartData" :options="chartOptions" />
+      <GChart type="LineChart" :data="chartData" :options="chartOptions"/>
     </v-card>
 
     <v-card>
-      <v-card-title>
-        Blogs
+      <v-card-title>Blogs
         <v-spacer></v-spacer>
 
         <!-- Input to search for a blog -->
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
 
       <!-- Headers -->
-      <v-data-table
-        :headers="headers"
-        :items="businesses"
-        :search="search"
-        hide-headers
-      >
+      <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
         <!-- Display business data table and make it clickable. -->
         <template slot="items" slot-scope="props">
           <tr @click="goto_dashboard2(props.item.email);">
@@ -113,24 +99,26 @@
         </router-link>
       </v-card-actions>
     </v-layout>
-  
+
     <v-layout fill-height>
       <v-flex xs12 align-end flexbox>
         <span class="headline">Search for Artists</span>
-        <v-text-field v-model="artist_email" label="email" :rules="emailRules" v-on:keyup.enter='searchArtistEmail()'></v-text-field>
+        <v-text-field
+          v-model="artist_email"
+          label="email"
+          :rules="emailRules"
+          v-on:keyup.enter="searchArtistEmail()"
+        ></v-text-field>
         <v-btn color="primary" @click="searchArtistEmail()">Submit</v-btn>
-        <v-alert
-          type="error"
-          :value="alert"
-        >Your search for "{{ artist_email }}" found no results.</v-alert>
+        <v-alert type="error" :value="alert">Your search for "{{ artist_email }}" found no results.</v-alert>
       </v-flex>
     </v-layout>
     <v-layout>
       <span class="headline">Distribute Campaign Credits</span>
       <v-spacer></v-spacer>
-      <v-text-field v-model="freeCredits" label='# of credits' :rules="giveCreditsRules" solo></v-text-field>
+      <v-text-field v-model="freeCredits" label="# of credits" :rules="giveCreditsRules" solo></v-text-field>
       <!-- :disabled="isCreditBtnDisabled" -->
-      <v-btn color="primary" @click="giveCredits()" >Submit</v-btn>
+      <v-btn color="primary" @click="giveCredits()">Submit</v-btn>
     </v-layout>
     <v-card-title>Artists Email List
       <v-spacer></v-spacer>
@@ -158,7 +146,6 @@ export default {
     this.$store.dispatch("get_submissions_for_month");
     this.$store.dispatch("get_submissions_for_year");
     this.$store.dispatch("get_submissions_past_months");
-   
   },
   methods: {
     generate_artists_email_list() {
@@ -167,9 +154,14 @@ export default {
     },
     goto_dashboard2(business_email) {
       // this.$store.commit("set_query_business_email", {business_email: business_email});
-      this.$store.commit("set_query_business_email", {business_email: business_email}) 
-      this.$store.dispatch("query_info_of_business_for_dashboard2", business_email)
-      localStorage.setItem('business_email', business_email);
+      this.$store.commit("set_query_business_email", {
+        business_email: business_email
+      });
+      this.$store.dispatch(
+        "query_info_of_business_for_dashboard2",
+        business_email
+      );
+      localStorage.setItem("business_email", business_email);
       console.log("email" + business_email);
       this.business_email = business_email;
       this.$router.push("dashboard2");
@@ -186,56 +178,55 @@ export default {
       const artistList = this.$store.getters.artists_email_list;
       // console.log(artistList)
       for (let obj in artistList) {
-        
         // console.log('search: ' + this.artist_email + ' current obj email: ' + obj.artist_email)
         if (this.artist_email == artistList[obj].artist_email) {
           //get from firebase the user for this email
           this.$store.dispatch("get_artist_settings_artist", this.artist_email);
-          return
+          return;
         }
       }
       this.alert = true;
     },
-    giveCredits(){
-      this.$store.dispatch('distributeCredits', this.freeCredits)
+    giveCredits() {
+      this.$store.dispatch("distributeCredits", this.freeCredits);
     },
-    yearly_submissions(){
+    yearly_submissions() {
       this.chartData = this.$store.getters.yearly_chart_array;
     },
-    yearly_replied(){
+    yearly_replied() {
       this.chartData = this.$store.getters.yearly_chart_replied;
-      this.chartOptions =  {
-          title: 'Annual Response Report',
-          vAxis: {title: "Number of Replies"},
-          hAxis: {title: "Months"},
-          width: 800,
-          height: 300
-      }
+      this.chartOptions = {
+        title: "Annual Response Report",
+        vAxis: { title: "Number of Replies" },
+        hAxis: { title: "Months" },
+        width: 1100,
+        height: 300
+      };
     },
-    yearly_paid(){
+    yearly_paid() {
       this.chartData = this.$store.getters.yearly_chart_paid;
-      this.chartOptions =  {
-          title: 'Annual Paid Submission Report',
-          vAxis: {title: "Number of Paid Requests"},
-          hAxis: {title: "Months"},
-          width: 800,
-          height: 300
-      }
+      this.chartOptions = {
+        title: "Annual Paid Submission Report",
+        vAxis: { title: "Number of Paid Requests" },
+        hAxis: { title: "Months" },
+        width: 1100,
+        height: 300
+      };
     },
-    yearly_free(){
+    yearly_free() {
       this.chartData = this.$store.getters.yearly_chart_free;
-      this.chartOptions =  {
-          title: 'Annual Free Submission Report',
-          vAxis: {title: "Number of Free Requests"},
-          hAxis: {title: "Months"},
-          width: 800,
-          height: 300
-      }
-    },
+      this.chartOptions = {
+        title: "Annual Free Submission Report",
+        vAxis: { title: "Number of Free Requests" },
+        hAxis: { title: "Months" },
+        width: 1100,
+        height: 300
+      };
+    }
   },
   computed: {
     isCreditBtnDisabled() {
-      return this.freeCredits > 0 ? false : true
+      return this.freeCredits > 0 ? false : true;
     },
     formIsValid() {
       return this.business_email !== "";
@@ -283,17 +274,17 @@ export default {
     },
     submissions_for_year() {
       return this.$store.getters.submissions_for_year;
-    },
+    }
   },
 
   data() {
     return {
       chartData: [1],
       chartOptions: {
-          title: 'Annual Submission Report',
-          vAxis: {title: "Number of Submissions"},
-          hAxis: {title: "Months"},
-        width: 800,
+        title: "Annual Submission Report",
+        vAxis: { title: "Number of Submissions" },
+        hAxis: { title: "Months" },
+        width: 1100,
         height: 300
       },
       name: "",
@@ -306,9 +297,7 @@ export default {
       giveCreditsRules: [
         v => v > 0 || "Number of credits must be more than zero"
       ],
-      emailRules: [
-        v => /.+@.+/.test(v) || "E-mail must be valid"
-      ],
+      emailRules: [v => /.+@.+/.test(v) || "E-mail must be valid"],
       headers: [
         {
           text: "Dessert (100g serving)",
