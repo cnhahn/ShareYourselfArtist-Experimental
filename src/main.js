@@ -15,6 +15,10 @@ import PayPal from 'vue-paypal-checkout'
 import CustomSpinner from './components/shared/custom_spinner'
 import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
+import VueTour from 'vue-tour'
+import VueAgile from 'vue-agile'
+
+require('vue-tour/dist/vue-tour.css')
 
 import {
 
@@ -60,6 +64,10 @@ import '../node_modules/vuetify/src/stylus/app.styl'
 import VueResource from '../node_modules/vue-resource';
 library.add(faCoffee)
 Vue.use(VueResource)
+
+Vue.use(VueTour)
+
+Vue.use(VueAgile)
 
 Vue.use(Vuetify, {
   components: {

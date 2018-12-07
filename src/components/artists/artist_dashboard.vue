@@ -5,9 +5,91 @@
     </div>
   </div>
   <v-container v-else>
+    <div v-if="noneFound">
+      <v-card>
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="y === 'bottom'"
+          :left="x === 'left'"
+          :multi-line="mode === 'multi-line'"
+          :right="x === 'right'"
+          :timeout="timeout"
+          :top="y === 'top'"
+          :vertical="mode === 'vertical'"
+        >
+          {{ text }}
+          <v-btn
+            color="pink"
+            flat
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </v-snackbar>
+      </v-card>
+    </div>
+    <v-layout row>
+            <v-flex lg9 offset-lg1 mt-5>
+              <v-card id="selectbox">
+                  <v-container
+                    fluid
+                  >
+                    <v-layout
+                      align-center
+                      wrap
+                    >
+                        <v-select
+                          :items="items"
+                          attach
+                          chips
+                          name='categories'
+                          id='categories'
+                          label='categories'
+                          v-model='categories'
+                          required
+                          multiple
+                        ></v-select>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+                <v-btn @click="updateCon(categories, def, arts, noneFound, snackbar)">Filter By Categories
+                </v-btn>
+            </v-flex>
+            
+          </v-layout>
     <v-layout row wrap mb-5>
-      <v-flex xs12 lg4 offset-lg1 mt-5 v-for="art in arts" :key='art.id'>
-        <v-card mt-3>
+      <v-flex v-if="def.length != 0" xs12 lg4 offset-lg1 mt-5 v-for="art in def" :key='art.id'>
+            <v-card mt-3>
+          <v-card-media img :src="art.url" height="450px">
+          </v-card-media>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <div>
+                <v-chip 
+                  v-for="(tag, index) in art.categories" 
+                  :key='tag.id' 
+                  v-model = 'art.categories[index]' 
+                  class="display_chips"
+                  close
+                  @input="removeChip(art.upload_date, art.categories)"
+                  
+                > 
+                  {{art.categories[index]}} </v-chip>
+              </div>
+            </div>
+          </v-card-title>
+          <v-card-actions>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn flat  color="primary"
+            @click="submit_art(art)" 
+            >Submit this piece</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+        <v-flex v-if="def.length == 0" xs12 lg4 offset-lg1 mt-5 v-for="art in arts" :key='art.id'>
+          <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
           </v-card-media>
           <v-card-title primary-title>
@@ -60,7 +142,23 @@
     },
     data() {
       return {
+<<<<<<< HEAD
         artList: []
+=======
+        snackbar: true,
+        y: 'top',
+        x: null,
+        mode: '',
+        timeout: 6000,
+        text: 'No submissions with selected categories found',
+        artList: [],
+        chip1:true,
+        categories: '',
+        def: [],
+        noneFound: false,
+        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+>>>>>>> ef126a91614745d0695ed9ff2fa3e92167c38177
       }
     },
     computed: {
@@ -93,6 +191,48 @@
           }
         }
       },
+<<<<<<< HEAD
+=======
+
+      filterCategories(filterCategories, artCategories, def, art) {
+          return filterCategories.every(function (value) {
+            if(artCategories.indexOf(value) >= 0){
+              return true
+            }
+            return false
+          });
+      },
+
+      updateCon(categories, def, arts, noneFound, snackbar){
+          if(def.length != 0){
+            def.splice(0, def.length);
+          }
+        for(var i = 0; i<arts.length; i++){
+          categories.every(function(value){
+            if(arts[i].categories.indexOf(value) >= 0){
+              if(def.indexOf(arts[i]) < 0){
+                def.push(arts[i]);
+                console.log("made it here")
+              }
+            }
+          });
+        }
+        this.noneFound = false
+        if(def.length == 0){
+          if(categories.length != 0){
+            this.noneFound = true
+            this.snackbar = true
+          }
+        }
+        console.log("value of none: " + this.noneFound)
+      },
+
+      removeChip(upload_date, categories) {
+        console.log(upload_date + " " + categories)
+          this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
+      },
+
+>>>>>>> ef126a91614745d0695ed9ff2fa3e92167c38177
       submit_art(art){
         this.$store.commit('set_user_email')
         if(this.$store.state.signed_in_user.instagram != null && this.$store.state.signed_in_user.instagram != 'undefined'){
