@@ -2,19 +2,32 @@
   <v-container
     v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' || this.$store.getters.user.id == 'OkvqiVsL6cc4hdaOL97QWU7gCEM2' || this.$store.getters.user.id == 'L8ZKmImHhpbKQEbNVVTzzwj4pls1' || this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'"
   >
-    <v-date-picker v-model="picker" :landscape="landscape" type="month"></v-date-picker>
-    <v-data-table :headers="headers" :items="businesses_with_submissions" :pagination.sync="pagination" hide-actions class="elevation-1">
-      <template slot="items" slot-scope="props">
-        <tr>
-          <td>{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.total }}</td>
-          <td class="text-xs-center">{{ props.item.paid }}</td>
-          <td class="text-xs-center">{{ props.item.free }}</td>
-          <td class="text-xs-center">{{ props.item.responses }}</td>
-          <td class="text-xs-center">{{ props.item.awaiting }}</td>
-        </tr>
-      </template>
-    </v-data-table>
+    <v-layout row justify-center align-center>
+      <v-flex ml-1 class="text-xs-center">
+        <v-date-picker v-model="picker" :landscape="landscape" type="month"></v-date-picker>
+      </v-flex>
+      <v-flex>
+      <v-data-table 
+        :headers="headers"
+        :items="businesses_with_submissions"
+        :pagination.sync="pagination"
+        hide-actions
+        class="elevation-1"
+      >
+        <template slot="items" slot-scope="props">
+          <tr>
+            <td>{{ props.item.name }}</td>
+            <td class="text-xs-center">{{ props.item.total }}</td>
+            <td class="text-xs-center">{{ props.item.paid }}</td>
+            <td class="text-xs-center">{{ props.item.free }}</td>
+            <td class="text-xs-center">{{ props.item.responses }}</td>
+            <td class="text-xs-center">{{ props.item.awaiting }}</td>
+          </tr>
+        </template>
+      </v-data-table>
+      </v-flex>
+     
+    </v-layout>
   </v-container>
 </template>
 
@@ -82,14 +95,13 @@ export default {
       let filtered_submissions = submissions.filter(function(submission) {
         // console.log(submission.businessId)
         // console.log(submission.userId)
-        if(submission.businessId != undefined){
-          console.log("in if statement ")
+        if (submission.businessId != undefined) {
+          console.log("in if statement ");
           return submission.businessId.userId == id;
-        }else{
-          console.log("in here error ")
+        } else {
+          console.log("in here error ");
           return false;
         }
-  
       });
       // console.log("length: " + filtered_submissions.length)
       return filtered_submissions.length;
@@ -97,11 +109,11 @@ export default {
     filtered_paid(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-              if(submission.businessId != undefined){
-          console.log("in if statement ")
+        if (submission.businessId != undefined) {
+          console.log("in if statement ");
           return submission.businessId.userId == id;
-        }else{
-          console.log("in here error ")
+        } else {
+          console.log("in here error ");
           return false;
         }
       });
@@ -113,11 +125,11 @@ export default {
     filtered_free(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-                if(submission.businessId != undefined){
-          console.log("in if statement ")
+        if (submission.businessId != undefined) {
+          console.log("in if statement ");
           return submission.businessId.userId == id;
-        }else{
-          console.log("in here error ")
+        } else {
+          console.log("in here error ");
           return false;
         }
       });
@@ -129,11 +141,11 @@ export default {
     filtered_responses(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-                if(submission.businessId != undefined){
-          console.log("in if statement ")
+        if (submission.businessId != undefined) {
+          console.log("in if statement ");
           return submission.businessId.userId == id;
-        }else{
-          console.log("in here error ")
+        } else {
+          console.log("in here error ");
           return false;
         }
       });
@@ -146,11 +158,11 @@ export default {
     filtered_awaiting(id) {
       let submissions = this.$store.getters.monthly_report_submissions;
       let filtered_submissions = submissions.filter(function(submission) {
-               if(submission.businessId != undefined){
-          console.log("in if statement ")
+        if (submission.businessId != undefined) {
+          console.log("in if statement ");
           return submission.businessId.userId == id;
-        }else{
-          console.log("in here error ")
+        } else {
+          console.log("in here error ");
           return false;
         }
       });
@@ -170,8 +182,8 @@ export default {
       // console.log(this)
       businesses.forEach(function(business) {
         // console.log(business)
-        console.log( business)
-        if(business !== undefined){
+        console.log(business);
+        if (business !== undefined) {
           businesses_with_submissions.push({
             name: business.business_name,
             total: self.filtered_total(business.userId),
@@ -184,9 +196,8 @@ export default {
       });
 
       // console.log(businesses_with_submissions)
-      return businesses_with_submissions
-    },
-
+      return businesses_with_submissions;
+    }
   },
   watch: {
     picker() {

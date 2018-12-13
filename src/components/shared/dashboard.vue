@@ -1,5 +1,5 @@
 <template>
-  <v-container
+  <v-container 
     v-if="
       this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' ||
         this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1' ||
@@ -27,13 +27,13 @@
         <v-card>
           <v-card-title primary-title>
             <v-flex class="sm-6">
-              <div v-on:click="yearly_submissions">
+              <div v-on:click="yearly_submissions" id="submissions">
                 <h3 class="headline mb-0">{{ submissions_for_month.length }}</h3>
                 <div>Submissions</div>
               </div>
             </v-flex>
             <v-flex class="sm-6">
-              <div v-on:click="yearly_replied">
+              <div v-on:click="yearly_replied" id="replied">
                 <h3 class="headline mb-0">{{ replied_for_month }}</h3>
                 <div>Replied</div>
               </div>
@@ -60,14 +60,15 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <br>
 
+  <br>
     <v-card>
-      <v-card-title>Graph</v-card-title>
-      <GChart type="LineChart" :data="chartData" :options="chartOptions"/>
+      <GChart type="LineChart" :data="chartData" :options="chartOptions" />
     </v-card>
-
+  <br>
     <v-card>
-      <v-card-title>Blogs
+      <v-card-title><h3>Businesses</h3>
         <v-spacer></v-spacer>
 
         <!-- Input to search for a blog -->
@@ -75,33 +76,38 @@
       </v-card-title>
 
       <!-- Headers -->
-      <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
+      <v-data-table :headers="business_headers" :items="businesses" :search="search" hide-headers>
         <!-- Display business data table and make it clickable. -->
         <template slot="items" slot-scope="props">
           <tr @click="goto_dashboard2(props.item.email);">
             <td>{{ props.item.business_name }}</td>
-            <td class="text-xs-right">{{ props.item.email }}</td>
-            <td class="text-xs-right">{{ props.item.upload_date }}</td>
+            <td>{{ props.item.email }}</td>
+            <!-- <td>{{ props.item.upload_date }}</td> -->
           </tr>
         </template>
         <v-alert
-          slot="no-results"
+          slot="no-result"
           :value="true"
           color="error"
           icon="warning"
         >Your search for "{{ search }}" found no results.</v-alert>
       </v-data-table>
     </v-card>
-    <v-layout row>
-      <v-card-actions>
-        <router-link to="/monthly_report">
-          <v-btn router to dark color="primary">Monthly Report</v-btn>
-        </router-link>
-      </v-card-actions>
-    </v-layout>
+    <br>
+    <v-layout row align-center>
+      
+      <v-flex xs4 ma-2 class="text-xs-center">
+        <v-card-actions class="justify-center">
+          <router-link to="/monthly_report">
 
-    <v-layout fill-height>
-      <v-flex xs12 align-end flexbox>
+            <v-btn pa-7 large router to dark color="primary"><h3>Monthly Report</h3></v-btn>
+
+          </router-link>
+        </v-card-actions>
+      </v-flex>
+    <br>
+
+      <v-flex xs4 ma-2 >
         <span class="headline">Search for Artists</span>
         <v-text-field
           v-model="artist_email"
@@ -109,24 +115,24 @@
           :rules="emailRules"
           v-on:keyup.enter="searchArtistEmail()"
         ></v-text-field>
-        <v-btn color="primary" @click="searchArtistEmail()">Submit</v-btn>
+        <v-btn color="primary" @click="searchArtistEmail()" >Search</v-btn>
         <v-alert type="error" :value="alert">Your search for "{{ artist_email }}" found no results.</v-alert>
       </v-flex>
-    </v-layout>
-    <v-layout>
-      <span class="headline">Distribute Campaign Credits</span>
+      <v-flex xs4 ma-2>
+      <span class="headline">Give Promotional Credits</span>
       <v-spacer></v-spacer>
-      <v-text-field v-model="freeCredits" label="# of credits" :rules="giveCreditsRules" solo></v-text-field>
+      <v-text-field v-model="freeCredits" label="# of credits to add to all users" :rules="giveCreditsRules" solo></v-text-field>
       <!-- :disabled="isCreditBtnDisabled" -->
       <v-btn color="primary" @click="giveCredits()">Submit</v-btn>
+      </v-flex>
     </v-layout>
-    <v-card-title>Artists Email List
+    <v-card-title><h3>Artists</h3>
       <v-spacer></v-spacer>
     </v-card-title>
-    <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
+    <v-data-table :headers="artist_headers" :items="artists_email_list" :search="search">
       <template slot="items" slot-scope="props">
-        <td class="text-xs-right">{{ props.item.artist_name }}</td>
-        <td class="text-xs-right">{{ props.item.artist_email }}</td>
+        <td>{{ props.item.artist_name }}</td>
+        <td>{{ props.item.artist_email }}</td>
       </template>
       <v-alert
         slot="no-results"
@@ -297,33 +303,31 @@ export default {
         v => v > 0 || "Number of credits must be more than zero"
       ],
       emailRules: [v => /.+@.+/.test(v) || "E-mail must be valid"],
-      headers: [
+      artist_headers: [
         {
-          text: "Dessert (100g serving)",
+          text: "Name",
           align: "left",
           sortable: false,
-          value: "name"
+          // value: "name"
         },
         {
-          text: "Calories",
-          value: "calories"
+          text: "Email",
+          sortable: false,
+          // value: "calories"
+        },
+      ],
+      business_headers: [
+        {
+          text: "Name",
+          align: "left",
+          sortable: false,
+          // value: "name"
         },
         {
-          text: "Fat (g)",
-          value: "fat"
+          text: "Email",
+          sortable: false,
+          // value: "calories"
         },
-        {
-          text: "Carbs (g)",
-          value: "carbs"
-        },
-        {
-          text: "Protein (g)",
-          value: "protein"
-        },
-        {
-          text: "Iron (%)",
-          value: "iron"
-        }
       ]
     };
   }
