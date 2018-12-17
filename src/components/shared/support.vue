@@ -151,6 +151,10 @@
             body: 'The majority of money from premium purchases goes to the blogs. The rest goes toward transaction fees, hosting fees, and salaries so that we can keep making Share Yourself Artists better.',
             anchor: 'anchor-nine'
           },
+          {
+            divider: true,
+            inset: false
+          },
            {
             title: '10. Does using Share Yourself Artists guarantee I will get on blogs?',
             body: "I'm afraid not. SYA’s mission is to connect blogs with people who want their work promoted. We make the process transparent, and work to improve the chances that you'll actually hear back after sending your masterpiece out. That said, we cannot force a blog to share your submission. That's entirely up to them :)",
