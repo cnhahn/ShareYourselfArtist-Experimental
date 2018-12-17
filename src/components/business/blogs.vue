@@ -1,13 +1,18 @@
 <template>
+
   <v-container>
+
+  <h5 class="headline ml-3" style="font-weight: bold;">Blogs</h5>
+
     <v-data-table
     :items="user_info"
+    hide-headers
     hide-actions
-    class="elevation-1"
+    class="mt-4 mb-5"
   >
     <template slot="items" slot-scope="props">
       <td> 
-        <v-layout row wrap>
+        <v-layout row wrap mt-2>
           <v-flex lg1 md1 sm1 xs12>
             <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
               <img :src="`${props.item.url}`">
@@ -64,7 +69,9 @@
       </td>
     </template>
     </v-data-table>
+
   </v-container>
+
 </template>
 
 <script>
