@@ -1,36 +1,47 @@
 <template>
   <v-container>
-    <v-parallax class="hidden-sm-and-down"  src="/static/images/4.jpg" height="400"></v-parallax>
+    <v-parallax class="hidden-sm-and-down"  src="/static/images/4.jpg" height="350"></v-parallax>
 
-    <h1 class="display-1 header">Support/FAQs</h1>
-  <a href="mailto:nick@shareyourselfartists.com?Subject=Support" target="_top">Send us an email</a>
+    <h5 class="headline header mt-4">
+      Support / FAQs
+      <span>
+        <a class="ml-3" style="font-size:.6em" href="mailto:nick@shareyourselfartists.com?Subject=Support" target="_top">Send us an email</a>
+      </span>
+    </h5>
+
     <v-layout column>
-      <v-container>
+
+      <v-container style="margin-top: -25px; margin-bottom: -15px;">
         <v-list id="titleList">
           <template v-for="FAQ in FAQs">
-            <p class="title question" v-if="FAQ.title">
-              <a :name="returnAnchor(FAQ.anchor)" :href="returnAnchor(FAQ.anchor)" style="text-decoration: none">{{ FAQ.title }}</a>
+            <p class="title question" v-if="FAQ.title" v-bind:key="FAQ.title">
+              <a :name="returnAnchor(FAQ.anchor)" :href="returnAnchor(FAQ.anchor)" style="text-decoration: none; margin-left: -15px; font-size: .9em;">{{ FAQ.title }}</a>
             </p>
           </template>
         </v-list>
       </v-container>
 
-      <v-container style="display: table">
+      <v-divider class="mb-1"></v-divider>
+
+      <v-container style="display: table; margin-left: -15px;">
         <template v-for="FAQ in FAQs">
-          <div v-if="FAQ.title">
+          <div v-if="FAQ.title" v-bind:key="FAQ.title">
             <p class="title question">
-              <a :name="FAQ.anchor" :href="returnAnchor(returnAnchor(FAQ.anchor))" style="text-decoration: none">{{ FAQ.title }}</a>
+              <a :name="FAQ.anchor" :href="returnAnchor(returnAnchor(FAQ.anchor))" style="text-decoration: none; font-size: .9em;">{{ FAQ.title }}</a>
             </p>
-            <p class="subheading passage">{{ FAQ.body }}</p>
+            <p class="body-1" style="font-size: 1.1em !important">{{FAQ.body}}</p>
           </div>
 
           <v-divider
             class="dividerFAQ"
+            v-bind:key="FAQ.title"
             v-else-if="FAQ.divider"
             :inset="FAQ.inset"
           ></v-divider>
         </template>
       </v-container>
+
+      <v-divider class="mb-5"></v-divider>
 
     </v-layout>
 
@@ -87,6 +98,10 @@
             anchor: 'anchor-four'
           },
           {
+            divider: true,
+            inset: false
+          },
+          {
             title: '5. Do I have to pay to use Share Yourself Artists?',
             body: 'Nope. Standard credits are completely free.',
             anchor: 'anchor-five'
@@ -128,6 +143,10 @@
             anchor: 'anchor-eight'
           },
           {
+            divider: true,
+            inset: false
+          },
+          {
             title: '9. Where does the money go?',
             body: 'The majority of money from premium purchases goes to the blogs. The rest goes toward transaction fees, hosting fees, and salaries so that we can keep making Share Yourself Artists better.',
             anchor: 'anchor-nine'
@@ -138,11 +157,18 @@
             anchor: 'anchor-ten'
           },
           {
+            divider: true,
+            inset: false
+          },
+          {
             title: "11. I've got credits. Now what?",
             body: "Click 'Upload My Art' in the sidebar...  Once there, you'll be able to add a new art piece, or select one you've already uploaded. After you've done that, you can then select the type of credit you'd like to use, and choose the blogs you want to send your art to.",
             anchor: 'anchor-eleven'
           },
-
+          {
+            divider: true,
+            inset: false
+          },
           {
             title: '12. How do blogs get paid?',
             body: 'Blogs get paid at least $0.15 per response given. Larger and more active publications will be ' +
@@ -201,6 +227,7 @@
 
   .passage {
     font-weight: normal;
+    font-size: 1em !important;
   }
 
   .dividerFAQ {
