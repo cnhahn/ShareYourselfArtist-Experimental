@@ -271,6 +271,53 @@
       </v-flex>
      </v-layout>
     </main>
+
+    <v-footer
+    height="auto"
+    style="background-color: #e5e5e5"
+  >
+    <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
+      <v-spacer></v-spacer>
+      <p
+          class="ml-3 mr-3"
+          v-on:click="$router.push('/about_us')"
+          style="cursor: pointer; color: #676d6a"
+        >
+          About
+        </p>
+        <p
+          class="ml-3 mr-3"
+          v-on:click="$router.push('/support')"
+          style="cursor: pointer; color: #676d6a"
+        >
+          Support / FAQs
+        </p>
+        <a
+          href="mailto:nick@shareyourselfartists.com?Subject=Support"
+          target="_top"
+          style="cursor: pointer; color: #676d6a"
+          class="ml-3 mr-3"
+        >
+          Contact
+        </a>
+
+        <v-flex
+        style="background-color: #e5e5e5; color: #676d6a"
+        text-xs-left
+        xs12
+      >
+        <v-avatar>
+          <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+        </v-avatar>
+        <p style="color: #676d6a" class="mt-2">
+          &copy; Copyright 2018 Share Yourself Artists
+        </p>
+      </v-flex>
+
+    </v-layout>
+  </v-footer>
+
+
   </v-app>
 </template>
 <script>

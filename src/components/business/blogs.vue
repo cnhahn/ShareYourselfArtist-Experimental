@@ -2,7 +2,7 @@
 
   <v-container>
 
-  <h5 class="headline ml-3" style="font-weight: bold;">Blogs</h5>
+  <h5 class="headline ml-3" style="font-weight: bold; color: black !important">Blogs</h5>
 
     <v-data-table
     :items="user_info"
@@ -181,9 +181,6 @@
   }
 </script>
 <style scoped>
-  .container {
-    height: 100vh;
-  }
   .divbottomline {
     border-bottom: 1px solid #e0e0e0;
   }

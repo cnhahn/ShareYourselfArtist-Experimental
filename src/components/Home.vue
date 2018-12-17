@@ -242,4 +242,8 @@
     color: black;
   }
 
+  .textRow {
+    margin-bottom: 2px;
+  }
+
 </style>
