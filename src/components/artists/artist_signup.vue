@@ -1,14 +1,13 @@
 <template>
-  <v-parallax src="/static/images/15.jpg" height="100%" jumbotron>
+  <v-parallax src="/static/images/15.jpg" height="100%">
     <center>
-      <div class="card" style="background-color: rgb(240, 240, 240)">
-        <v-card style="margin: 15px;">
-          <v-card-title primary-title mx-auto>
-            <div>
-              <h3 class="headline mb-0">Get Your Art Seen today – guaranteed a response.</h3>
-            </div>
-          </v-card-title>
-          <v-card-text>
+      <div class="card mt-5 mb-5 pt-4 pb-4 pl-4 pr-4" style="max-width: 700px;background-color: #f9f9fa">
+        
+        <v-card class="elevation-0">
+          
+          <h6 class="title pt-4 ml-4 mr-4" style="color: #FF7D27;">Get Your Art Seen today – guaranteed a response.</h6>
+
+          <v-card-text style="margin-top: -15px;">
             <v-container>
               <form @submit.prevent="onSignup">
                   <v-layout row>
@@ -37,7 +36,7 @@
                       </v-text-field>
                       <v-text-field 
                       name="instagram"
-                      label="Instagram (don't have an instagram - enter N/A )"
+                      label="Instagram (or enter N/A)"
                       id="instagram"
                       v-model="instagram"
                       required> 
@@ -46,10 +45,19 @@
                     </v-flex>
                   </v-layout>
                   <v-layout row>
+
                     <v-flex>
-                      <v-btn type="submit" :disabled = "comparePasswords"  >Sign up
+                      <v-btn 
+                        depressed 
+                        large 
+                        color="primary" 
+                        type="submit"
+                        :disabled="comparePasswords"
+                      >
+                        Sign Up
                       </v-btn>
                     </v-flex>
+
                   </v-layout>
               </form>
             </v-container>
@@ -120,19 +128,5 @@ export default {
 </script>
 
 <style>
-  .signInBackground {
-    background-image: url('/static/images/15.jpg');
-    background-size: cover;
-    background-position: center;
-  }
-  .headline {
-    color: orange;
-  }
-  .card {
-    max-width: 700px;
-    padding-top: 1%;
-    padding-bottom: 1%; 
-    margin-top: 5%;
-    margin-bottom: 300px;
-  }
+
 </style>

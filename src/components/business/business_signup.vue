@@ -1,9 +1,8 @@
 <template>
 <v-parallax src="/static/images/15.jpg" height="100%">
      <center>
-       <div class="card mt-5 mb-5" style="max-width: 700px;background-color: #f9f9fa" >
+       <div class="card mt-5 mb-5 pt-4 pb-4" style="max-width: 700px;background-color: #f9f9fa" >
  
-    <v-flex pt-4 pb-4>
         <v-stepper class="ml-4 mr-4 elevation-0" v-model="e1">
            <h6 v-if = "this.e1 == 1" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Get Paid Today with Share Yourself Artists's easy to use platform.</h6>
            <h6 v-if = "this.e1 == 2" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Artists will see these account details so answer with care.</h6>
@@ -53,7 +52,7 @@
     <v-text-field
                             name='password_retype'
                             id='password_retype'
-                            label= 'Retype your password'
+                            label= 'Confirm Password'
                             v-model='password_retype'
                             :type="show2 ? 'text' : 'password'"
                             required
@@ -67,9 +66,9 @@
         accept="image/*"
         @change ="onFilePicked">
 
-     <v-layout row> 
+     <v-layout row wrap> 
 
-       <v-flex lg6 xs6> 
+       <v-flex lg6 sm6 xs12> 
          <v-btn 
           depressed 
           large 
@@ -80,7 +79,7 @@
           </v-btn>
         </v-flex>
 
-       <v-flex lg6 xs6> 
+       <v-flex lg6 sm6 xs12> 
          <v-btn 
           v-if ="this.formIsValid"
           large
@@ -229,7 +228,7 @@
 
     </v-stepper-items>
   </v-stepper>
-</v-flex>
+
   </div></center>
 </v-parallax>
 </template>
