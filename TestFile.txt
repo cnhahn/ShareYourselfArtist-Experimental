@@ -1,0 +1,21 @@
+
+<html> 
+
+
+
+</html>
+
+
+<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBtJwHja_PXMh4xotZNbXrpt1ETmlYPHZE",
+    authDomain: "syavuetest.firebaseapp.com",
+    databaseURL: "https://syavuetest.firebaseio.com",
+    projectId: "syavuetest",
+    storageBucket: "syavuetest.appspot.com",
+    messagingSenderId: "227451014720"
+  };
+  firebase.initializeApp(config);
+</script>

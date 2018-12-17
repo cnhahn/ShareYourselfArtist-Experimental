@@ -13,6 +13,8 @@ import pageNotFound from '@/components/shared/page_not_found'
 import Profile from '@/components/shared/profile'
 import dashboard from '@/components/shared/dashboard'
 import dashboard2 from '@/components/shared/dashboard2'
+import monthly_report from '@/components/shared/monthly_report'
+import artist_settings from '@/components/shared/artist_settings'
 import colleges from '@/components/shared/colleges'
 
 import blogs from "@/components/business/blogs"
@@ -45,8 +47,7 @@ import auth_guard from "./auth_guard";
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
+  routes: [{
       path: "/colleges",
       name: "colleges",
       component: colleges
@@ -95,7 +96,7 @@ export default new Router({
       path: '/business_signup3',
       name: 'business_signup3',
       component: business_signup3
-  
+
     },
     {
       path: "/business_signup",
@@ -143,6 +144,18 @@ export default new Router({
       path: "/dashboard2",
       name: "dashboard2",
       component: dashboard2,
+      beforeEnter: auth_guard
+    },
+    {
+      path: "/monthly_report",
+      name: "monthly_report",
+      component: monthly_report,
+      beforeEnter: auth_guard
+    },
+    {
+      path: "/artist_settings",
+      name: "artist_settings",
+      component: artist_settings,
       beforeEnter: auth_guard
     },
     {
