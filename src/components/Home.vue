@@ -179,7 +179,7 @@
 <style scoped>
 
   .title1 {
-    margin-top: 20px;
+    margin-top: 10px;
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
     font-size: 1.6em;

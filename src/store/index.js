@@ -35,30 +35,38 @@ export const store = new Vuex.Store({
       { title: 'Chat', icon: 'chat', link: '/chat' }
     ],
     navItems: [
-      { title: 'Home', icon: 'home', link: '/', method: '' },
+      /*
+      { 
+        title: 'Home',
+        icon: 'home',
+        link: '/',
+        method: '',
+        spacing: false
+      },
+      */
       {
         title: 'Blogs/Magazines',
         icon: 'chrome_reader_mode',
         link: '/blogs',
-
+        spacing: false
       },
       {
         title: 'Support',
         icon: 'help',
         link: '/support',
-
+        spacing: false
       },
       {
         title: 'About Us',
         icon: 'nature_people',
         link: '/about_us',
-
+        spacing: false
       },
       {
-        title: 'Sign In',
+        title: 'Sign In | Sign Up',
         icon: 'nature_people',
         link: '/sign_in',
-
+        spacing: true
       }
     ],
     navItems_User: [
