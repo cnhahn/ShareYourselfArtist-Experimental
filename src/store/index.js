@@ -16,10 +16,14 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    top_12_recent_art: [],
+    viewed_artist_data: {},
     localStorage,
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    comments: [],
+    commenting_mode: false,
     sideNavItems: [
       {
         title: 'Dashboard',
@@ -114,6 +118,7 @@ export const store = new Vuex.Store({
       url: ''
     },
     uploadedArts: [],
+    viewed_arts: [],
     user: null,
     color: 'primary',
     loading: false,
@@ -151,9 +156,17 @@ export const store = new Vuex.Store({
     subscription_plan: {},
     replied_for_report: [],
     report_month: 1,
+    free_credits:0,
+    artists_email_list:[],
+    categories: [],
+    updatedCategories: [],
+    selectBlog:{
+      userId:'',
+      name:'',
+      role:'',
+    },
     free_credits: 0,
     artists_email_list: [],
-    artist_settings_artist: {},
     selectBlog: {
       userId: '',
       name: '',
@@ -235,7 +248,20 @@ export const store = new Vuex.Store({
       state.datePicker.startDate = start_epoch
       state.datePicker.endDate = end_epoch
     },
+    set_top_12_recent_art (state, payload) {
+      state.top_12_recent_art.push(payload)
+    },
+    set_commenting_mode (state, payload) {
+      state.commenting_mode = payload
+    },
+    set_viewed_artist_data (state, payload) {
+      state.viewed_artist_data = payload
+    },
+    clear_top_12_recent_art (state) {
+      state.top_12_recent_art = []
+    },
     set_free_credits (state, payload) {
+      console.log('inside set free credits')
       console.log(payload)
       if (payload != null || payload != undefined || payload != '') {
         state.free_credits = payload
@@ -253,6 +279,12 @@ export const store = new Vuex.Store({
     },
     set_blog_for_report (state, payload) {
       state.blog_for_report = payload
+    },
+    set_categories (state, payload) {
+      state.categories = payload
+    },
+    set_updatedCategories (state, payload) {
+      state.updatedCategories = payload
     },
     set_businesses_being_submitted (state, payload) {
       state.businesses_being_submitted = payload
@@ -326,6 +358,23 @@ export const store = new Vuex.Store({
     },
     setArts (state, payload) {
       state.arts.push(payload)
+    },
+    set_comments(state, payload){
+      state.comments.push(payload)
+    },
+    clear_viewed_arts_array (state) {
+      state.viewed_arts = []
+    },
+    clear_comments_array(state){
+      state.comments = []
+    },
+    set_viewed_arts (state, payload) {
+      state.viewed_arts.push(payload)
+    },
+    setArtCategory (state, payload) {
+      console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
+      console.log('payload.categories', payload.categories)
+      state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
     clearBusinesses (state) {
       state.businesses = []
@@ -485,6 +534,48 @@ export const store = new Vuex.Store({
         }
       })
     },
+    // for report
+    fetch_top_12_recent_art ({commit, getters}) {
+      //commit('clear_top_12_recent_art')
+      let db = firebase.firestore()
+      let temp_report = db.collection('review_requests')
+                          .orderBy('submitted_on').limit(12)
+      let report = temp_report.get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+
+              commit('set_top_12_recent_art', doc.data())
+              console.log('getters.top_12_recent_art', getters.top_12_recent_art)
+            })
+          })
+          .catch(function (error) {
+            console.log('Error getting report: ', error)
+          })
+    },
+    get_replied ({commit, getters}) {
+      let db = firebase.firestore()
+      var temp_report = db.collection('review_requests')
+                          .where('replied', '==', true)
+                          .where('businessId.userId', '==', getters.user.id)
+                          console.log("temp report", temp_report)
+      let report = temp_report
+          .get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+              var month = getters.report_month
+              const today = Date.now()
+              const timeDiff = today - (1000*60*60*24*30*month)
+              if (doc.data().submitted_on >= timeDiff) {
+                if (doc.data().submitted_on <= today) {
+                  commit('set_replied_for_report', doc.data())
+                }
+              }
+            })
+          })
+          .catch(function (error) {
+            console.log('Error getting report: ', error)
+          })
+    },
 
     // yiwayana
     query_info_of_business_for_dashboard2 ({commit, state}, payload) {
@@ -546,6 +637,13 @@ export const store = new Vuex.Store({
                 commit('set_replied_for_report', doc.data())
               }
             }
+            commit('setUserRole', doc.data().role)
+            commit('signed_in_user', doc.data())
+
+            console.log('user: ' + doc.data())
+            router.push({
+              name: 'artist_dashboard'
+            })
           })
         })
         .catch(function (error) {
@@ -1496,6 +1594,25 @@ export const store = new Vuex.Store({
           console.log('Error getting documents: ', error)
         })
     },
+     fetchViewedArts ({ commit, getters }, payload) {
+      commit('clear_viewed_arts_array')
+      console.log("payload " + payload)
+      let db = firebase.firestore()
+      let arts = db
+        .collection('art')
+        .where('artist_id', '==', payload)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            commit('set_viewed_arts', doc.data())
+          })
+          commit('setLoading', false)
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
+        })
+    },
 
     // this function gets the submissions for a business and
     async fetchSubmissions ({ commit, getters }) {
@@ -1548,16 +1665,80 @@ export const store = new Vuex.Store({
         })
     },
 
-    // Styled by Jin. No modification on code.
-    uploadImage ({ commit, getters }, payload) {
-      // first put the image in the storage
-      // Create a root reference
-      let ref = firebase.storage().ref()
-      let uploadTask = ref
-        .child(
-          getters.user.id +
-          getters.image_folder +
-          getters.image_being_uploaded.file.name
+      // Styled by Jin. No modification on code.
+      uploadImage({commit, getters}, payload) {
+        // first put the image in the storage
+        // Create a root reference
+        let ref = firebase.storage().ref()
+        let uploadTask = ref
+          .child(
+            getters.user.id +
+            getters.image_folder +
+            getters.image_being_uploaded.file.name
+          )
+          .put(getters.image_being_uploaded.file)
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(
+          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function (snapshot) {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused')
+                break
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running')
+                break
+            }
+          },
+          function (error) {
+            // A full list of error codes is available at
+            switch (error.code) {
+              case 'storage/unauthorized':
+                alert(error.code)
+                // User doesn't have permission to access the object
+                break
+
+              case 'storage/canceled':
+                alert(error.code)
+                // User canceled the upload
+                break
+              case 'storage/unknown':
+                alert(error.code)
+                // Unknown error occurred, inspect error.serverResponse
+                break
+            }
+          },
+          function () {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+              commit('setUrl', downloadURL) // Jin: this led to profile url change.
+              if (payload.operation === 'art_upload') {
+                let art = {
+                  art_title: payload.art_title,
+                  artist_name: payload.artist_name,
+                  categories: payload.categories,
+                  url: getters.url,
+                  description: payload.description,
+                  upload_date: payload.upload_date,
+                  artist_id: firebase.auth().currentUser.uid
+                };
+                const db = firebase.firestore()
+                const collectionRef = db.collection('art')
+                collectionRef
+                  .add(art)
+                  .then(function (docRef) {
+                    commit('setArts', art);
+                    console.log('Document written with ID: ', docRef.id)
+                  })
+                  .catch(function (error) {
+                    console.error('Error adding document: ', error)
+                  })
+              }
+            })
+          }
         )
         .put(getters.image_being_uploaded.file)
       // Listen for state changes, errors, and completion of the upload.
@@ -1654,32 +1835,39 @@ export const store = new Vuex.Store({
           console.error('Error updating dsubmission: ', error)
         })
     },
-    submit_request ({ getters }) {
-      let businesses_being_submitted = getters.businesses_being_submitted
-      for (let i = 0; i < businesses_being_submitted.length; i++) {
-        let art_being_submitted = getters.art_being_submitted
-        art_being_submitted.submitted_on = Date.now()
-        art_being_submitted.submitted_with_free_cerdit = false
-        console.log('art_being_submitted', art_being_submitted)
-        art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
-        const db = firebase.firestore()
-        const collectionRef = db
-          .collection('review_requests')
-          .doc()
-          .set(art_being_submitted)
-          .then(function (docRef) {
-            console.log('Submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
-          })
-          .catch(function (error) {
-            console.error('Error adding document: ', error)
-          })
-      }
+
+    update_art_category_tags ({ getters }, payload) {
+      const db = firebase.firestore()
+      const uploadDate = parseInt(payload.upload_date, 10)
+      const categories = payload.categories
+      const collectionRef = db.collection('art').where("upload_date", "==", uploadDate)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc){
+          var docRef = db.collection('art').doc(doc.id)
+          return docRef.update(
+            {"categories": categories}
+            )
+        })
+      })
+      .then(function() {
+
+        console.log("successfully updated categories")
+      })
+      .catch(function(error) {
+        console.error("Error updating categories: ", error)
+      })
     },
-    submit_school_request ({ commit, getters, dispatch }, payload) {
+
+   submit_request ({ getters }) {
+     let businesses_being_submitted =  getters.businesses_being_submitted
+     for (let i = 0; i < businesses_being_submitted.length; i++) {
+      let art_being_submitted = getters.art_being_submitted
+      art_being_submitted.submitted_on = Date.now()
+      art_being_submitted.submitted_with_free_cerdit = false
+      console.log("art_being_submitted", art_being_submitted)
+      art_being_submitted.businessId = businesses_being_submitted[i]
+      console.log("art_being_submitted", art_being_submitted)
       const db = firebase.firestore()
       const collectionRef = db
         .collection('school_requests')
@@ -1694,32 +1882,33 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.error('Error adding document: ', error)
         })
-    },
-    submit_request_with_free_credits ({ getters }) {
-      let businesses_being_submitted = getters.businesses_being_submitted
-      for (let i = 0; i < businesses_being_submitted.length; i++) {
-        let art_being_submitted = getters.art_being_submitted
-        art_being_submitted.submitted_on = Date.now()
-        art_being_submitted.submitted_with_free_cerdit = true
-        console.log('art_being_submitted', art_being_submitted)
-        art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
-        const db = firebase.firestore()
-        const collectionRef = db
-          .collection('review_requests')
-          .doc()
-          .set(art_being_submitted)
-          .then(function (docRef) {
-            console.log('Submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
-          })
-          .catch(function (error) {
-            console.error('Error adding document: ', error)
-          })
       }
     },
+    submit_request_with_free_credits ({ getters }) {
+      let businesses_being_submitted =  getters.businesses_being_submitted
+      for (let i = 0; i < businesses_being_submitted.length; i++) {
+       let art_being_submitted = getters.art_being_submitted
+       art_being_submitted.submitted_on = Date.now()
+       art_being_submitted.submitted_with_free_cerdit = true
+       console.log("art_being_submitted", art_being_submitted)
+       art_being_submitted.businessId = businesses_being_submitted[i]
+       console.log("art_being_submitted", art_being_submitted)
+       const db = firebase.firestore()
+       const collectionRef = db
+         .collection('review_requests')
+         .doc()
+         .set(art_being_submitted)
+         .then(function (docRef) {
+           console.log('Submission written with ID: ', docRef.id)
+           // router.push({
+           //   name: 'submit_result'
+           // })
+         })
+         .catch(function (error) {
+           console.error('Error adding document: ', error)
+         })
+       }
+     },
 
     /*
     Sign up/Sign in flow
@@ -1800,10 +1989,13 @@ export const store = new Vuex.Store({
               .then(function () {
                 console.log('Document successfully written!')
                 router.push({
-                  name: 'sign_in'
+                name: 'sign_in'
+
                 })
                 // location.reload()
                 dispatch('signUserOut')
+
+
               })
 
               .catch(function (error) {
@@ -1826,7 +2018,7 @@ export const store = new Vuex.Store({
       let user = {
         instagram: payload.instagram,
         role: payload.role,
-        free_credits: payload.free_credits,
+        free_credits: 2,
         name: payload.name,
         email: payload.email,
         upload_date: payload.upload_date,
@@ -1884,45 +2076,43 @@ export const store = new Vuex.Store({
         let uploadTask = ref
           .child(response.user.uid + '/logo/' + payload.file_name)
           .put(payload.file)
-        uploadTask.on(
-          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function (snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            console.log('Upload is ' + progress + '% done')
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused')
-                break
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running')
-                break
-            }
-          },
-          function (error) {
-            // A full list of error codes is available at
-            switch (error.code) {
-              case 'storage/unauthorized':
-                alert(error.code)
-                // User doesn't have permission to access the object
-                break
+          uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+            function (snapshot) {
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+              var progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              console.log('Upload is ' + progress + '% done')
+              switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                  console.log('Upload is paused')
+                  break
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                  console.log('Upload is running')
+                  break
+              }
+            },
+            function (error) {
+              // A full list of error codes is available at
+              switch (error.code) {
+                case 'storage/unauthorized':
+                  alert(error.code)
+                  // User doesn't have permission to access the object
+                  break
 
-              case 'storage/canceled':
-                alert(error.code)
-                // User canceled the upload
-                break
-              case 'storage/unknown':
-                alert(error.code)
-                // Unknown error occurred, inspect error.serverResponse
-                break
-            }
-          },
-          function () {
-            // Upload completed successfully, now we can get the download URL
-            uploadTask.snapshot.ref
-              .getDownloadURL()
-              .then(function (downloadURL) {
+                case 'storage/canceled':
+                  alert(error.code)
+                  // User canceled the upload
+                  break
+                case 'storage/unknown':
+                  alert(error.code)
+                  // Unknown error occurred, inspect error.serverResponse
+                  break
+              }
+            },
+            function () {
+              // Upload completed successfully, now we can get the download URL
+              uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
                 console.log('Url captured' + downloadURL)
                 payload.url = downloadURL
                 payload.userId = response.user.uid
@@ -1951,7 +2141,7 @@ export const store = new Vuex.Store({
         console.log('Error!', e)
       }
 
-      // we have created a auth account and upladed the logo now we will
+      //we have created a auth account and upladed the logo now we will
       // create auser document
     },
     /*
@@ -1972,7 +2162,6 @@ export const store = new Vuex.Store({
           const newUser = {
             id: firebase.auth().currentUser.uid,
             email: firebase.auth().currentUser.email, // change this
-            arts: [],
             user_role: payload.user_role
           }
           // displayName updated to firebase
@@ -2085,7 +2274,8 @@ export const store = new Vuex.Store({
                           })
                         }
                         commit('setUserRole', doc.data().role)
-                        commit('setUrl', doc.data().url)
+                        commit('setUserRole', doc.data().role)
+                        commit('setUrl',doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
                         if (doc.data().role == 'artist') {
@@ -2196,92 +2386,103 @@ export const store = new Vuex.Store({
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
       newChatDatabaseRef.set(sendData)
     },
-    uploadProfileImage ({ commit, getters }) {
-      let ref = firebase.storage().ref()
-      let uploadTask = ref
-        .child(
-          getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
-        )
-        .put(getters.image_being_uploaded.file)
-      // Listen for state changes, errors, and completion of the upload.
-      uploadTask.on(
-        firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-        function (snapshot) {
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          var progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log('Upload is ' + progress + '% done')
-          switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log('Upload is paused')
-              break
-            case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log('Upload is running')
-              break
-          }
-        },
-        function (error) {
-          // A full list of error codes is available at
-          switch (error.code) {
-            case 'storage/unauthorized':
-              alert(error.code)
-              // User doesn't have permission to access the object
-              break
 
-            case 'storage/canceled':
-              alert(error.code)
-              // User canceled the upload
-              break
-            case 'storage/unknown':
-              alert(error.code)
-              // Unknown error occurred, inspect error.serverResponse
-              break
-          }
-        },
-        function () {
-          // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-            console.log('Url captured' + downloadURL)
-            commit('setUrl', downloadURL)
-            console.log('State url' + getters.url)
+      uploadProfileImage ({commit, getters}) {
+        let ref = firebase.storage().ref()
+        let uploadTask = ref
+          .child(
+            getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
+          )
+          .put(getters.image_being_uploaded.file)
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(
+          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function (snapshot) {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            console.log('Upload is ' + progress + '% done')
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused')
+                break
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running')
+                break
+            }
+          },
+          function (error) {
+            // A full list of error codes is available at
+            switch (error.code) {
+              case 'storage/unauthorized':
+                alert(error.code)
+                // User doesn't have permission to access the object
+                break
+
+              case 'storage/canceled':
+                alert(error.code)
+                // User canceled the upload
+                break
+              case 'storage/unknown':
+                alert(error.code)
+                // Unknown error occurred, inspect error.serverResponse
+                break
+            }
+          },
+          // Additional code to upload/update Profile Logo - Wan
+           // Additional code to upload/update Profile Logo - Wan
+          function () {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+              console.log('Url captured: ' + downloadURL)
+              commit('setUrl', downloadURL)
+              console.log('State url' + getters.url)
+
+              // Now that download URL is obtained, downloadURL is sent to Firebase
+              // to connect the user's ID to the updated profile picture
+              let updateData = {}
+              let db = getters.db
+              let userId = getters.user.id
+              let user = db
+              .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
+                let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+                  if (doc.exists) {
+                    commit('signed_in_user', doc.data())
+                    commit('setLoading', false)
+                  } else {
+                    // doc.data() will be undefined in this case
+                  }
+                }).catch(function (error) {
+                  console.log("Error getting document:", error);
+                });
+              })
+            })
+          })
+      },
+      async updateArtistProfileToFirebase ({commit, dispatch, getters}, payload) {
+        commit('setLoading', true)
+        let instagram = payload.instagram
+        let name = payload.name
+        let photoUrl = payload.photoUrlreport_aug
+        let updateData = {}
+        let db = getters.db
+        let userId = getters.user.id
+        if (name !== undefined && name !== '') {
+          updateData.name = name
+        }
+        if (photoUrl !== undefined && photoUrl !== '') {
+          dispatch('uploadProfileImage').then(() => {
+            updateData.photoUrl = getters.url
           })
         }
-      )
-    },
-    async updateArtistProfileToFirebase (
-      { commit, dispatch, getters },
-      payload
-    ) {
-      commit('setLoading', true)
-      let instagram = payload.instagram
-      let name = payload.name
-      let photoUrl = payload.photoUrlreport_aug
-      let updateData = {}
-      let db = getters.db
-      let userId = getters.user.id
-      if (name !== undefined && name !== '') {
-        updateData.name = name
-      }
-      if (photoUrl !== undefined && photoUrl !== '') {
-        dispatch('uploadProfileImage').then(() => {
-          updateData.photoUrl = getters.url
-        })
-      }
-      if (instagram !== undefined && instagram !== '') {
-        updateData.instagram = instagram
-      }
+        if (instagram !== undefined && instagram !== '') {
+          updateData.instagram = instagram
+        }
 
-      console.log(updateData)
-      let user = db
-        .collection('users')
-        .doc(userId)
-        .update(updateData)
-        .then(data => {
-          let updateData = db
-            .collection('users')
-            .doc(userId)
-            .get()
-            .then(function (doc) {
+        console.log(updateData)
+        let user = db
+          .collection('users').doc(userId).update(updateData).then((data) => {
+            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
               if (doc.exists) {
                 commit('signed_in_user', doc.data())
                 commit('setLoading', false)
@@ -2321,52 +2522,27 @@ export const store = new Vuex.Store({
       let worth_knowing = payload.worth_knowing
       let additional_notes = payload.additional_notes
 
-      updateData = setValidData({
-        updateData: updateData,
-        data: publication,
-        property: 'publication'
-      })
-      if (follower_count !== 0) {
-        updateData.follower_count = follower_count
-      }
-      updateData = setValidData({
-        updateData: updateData,
-        data: website,
-        property: 'website'
-      })
-      updateData = setValidData({
-        updateData: updateData,
-        data: about,
-        property: 'about'
-      })
-      updateData = setValidData({
-        updateData: updateData,
-        data: worth_knowing,
-        property: 'worth_knowing'
-      })
-      updateData = setValidData({
-        updateData: updateData,
-        data: additional_notes,
-        property: 'additional_notes'
-      })
+        updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
+        if (follower_count !== 0) {
+          updateData.follower_count = follower_count
+        }
+        updateData = setValidData({updateData: updateData, data: website, property: 'website'})
+        updateData = setValidData({updateData: updateData, data: about, property: 'about'})
+        updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
+        updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
+        updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
 
-      if (name !== undefined && name !== '') {
-        updateData.business_name = name
-      }
-      if (photoUrl !== undefined && photoUrl !== '') {
-        dispatch('uploadProfileImage').then(() => { })
-      }
-      console.log(updateData)
-      let user = db
-        .collection('users')
-        .doc(userId)
-        .update(updateData)
-        .then(data => {
-          let updateData = db
-            .collection('users')
-            .doc(userId)
-            .get()
-            .then(function (doc) {
+        if (name !== undefined && name !== '') {
+          updateData.business_name = name
+        }
+        if (photoUrl !== undefined && photoUrl !== '') {
+          dispatch('uploadProfileImage').then(() => {
+          })
+        }
+        console.log(updateData)
+        let user = db
+          .collection('users').doc(userId).update(updateData).then((data) => {
+            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
               if (doc.exists) {
                 commit('signed_in_user', doc.data())
                 commit('setLoading', false)
@@ -2381,12 +2557,30 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
-    artist_settings_artist () {
-      return state.artist_settings_artist
+    viewed_artist_data(state){
+      return state.viewed_artist_data
     },
-    businesses_being_submitted (state) {
+    commenting_mode(state){
+      return state.commenting_mode
+    },
+    viewed_arts (state) {
+      return state.viewed_arts
+    },
+    comments (state) {
+      return state.comments
+    },
+    top_12_recent_art(state){
+     return state.top_12_recent_art
+    },
+    businesses_being_submitted(state){
       return state.businesses_being_submitted
-    },
+    } ,
+    report_month(state) {
+      return state.report_month
+    } ,
+    businesses_being_submitted (state){
+      return state.businesses_being_submitted
+    } ,
     report_month (state) {
       return state.report_month
     },
@@ -2432,6 +2626,12 @@ export const store = new Vuex.Store({
     color (state) {
       return state.color
     },
+    categories (state) {
+      return state.categories
+    },
+    updatedCategories (state) {
+      return state.updatedCategories
+    },
     image_being_uploaded (state) {
       return state.image_being_uploaded
     },
@@ -2447,7 +2647,7 @@ export const store = new Vuex.Store({
         return artA.upload_date < artB.upload_date
       })
     },
-    // a getter that rturns a function that takes in an artId and...
+    // a getter that returns a function that takes in an artId and...
     uploadedArt (state) {
       return artId => {
         return state.uploadedArts.find(art => {
@@ -2455,7 +2655,7 @@ export const store = new Vuex.Store({
         })
       }
     },
-    // a getter function that tahes in an array that contains all of the arts and returns the first five of them as futured arts
+    // a getter function that takes in an array that contains all of the arts and returns the first five of them as futured arts
     featuredArts (state, getters) {
       return getters.uploadedArts.slice(0, 5)
     },
@@ -2496,6 +2696,7 @@ export const store = new Vuex.Store({
     signed_in_user (state) {
       return state.signed_in_user
     },
+
     signed_in_user_id (state) {
       return state.signed_in_user_id
     },
