@@ -2,7 +2,7 @@
   <v-container>
     <v-parallax class="hidden-sm-and-down"  src="/static/images/4.jpg" height="350"></v-parallax>
 
-    <h5 class="headline header mt-4">
+    <h5 class="headline header mt-4" style="color: black !important">
       Support / FAQs
       <span>
         <a class="ml-3" style="font-size:.6em" href="mailto:nick@shareyourselfartists.com?Subject=Support" target="_top">Send us an email</a>

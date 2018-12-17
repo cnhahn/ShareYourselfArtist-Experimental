@@ -41,7 +41,7 @@
         v-if="screen_breakpoint"
         class="title2"
       >
-        Welcome to Share Yourself Artists, the easiest way to have your work<br />seen by the largest blogs and magazines in the art community!
+        Welcome to Share Yourself Artists, the easiest way to share your<br />artwork to millions of art lovers around the world!
       </v-container>
 
       <v-container
@@ -53,7 +53,7 @@
         v-if="!screen_breakpoint"
         class="title2"
       >
-        Welcome to Share Yourself<br />Artists, the easiest way<br/>to have your work seen by<br/> the largest blogs and<br/>magazines in the art<br/>community!
+        Welcome to Share Yourself<br />Artists, the easiest way<br/>to share your artwork<br/> to millions of art lovers<br/>around the world!
       </v-container>
 
     </v-layout>
