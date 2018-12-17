@@ -30,14 +30,14 @@
           </v-list-tile-avatar>
           <v-list-tile-content flex style="font-size:14px;">
 
-           
+
             <!--Adds artist's name to sidebar-->
             <a v-bind:href="' mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
               <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
                <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
-              
+
             </div>
           </v-list-tile-content>
         </v-list-tile>
@@ -129,7 +129,7 @@
         <v-avatar>
           <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
         </v-avatar>
-      </router-link>  
+      </router-link>
       <router-link v-else to="/" tag="span" style= "cursor:pointer">
       <v-avatar>
         <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
@@ -145,11 +145,11 @@
         <v-btn flat small
           v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
           fullscreen="$vuetify.breakpoint.mdOnly"
-          @click= router to="/blogs" 
+          @click= router to="/blogs"
           >Blogs/Magazines
         </v-btn>
-      
-         <v-btn color="primary" flat v-if ="userIsAuthanticated" 
+
+         <v-btn color="primary" flat v-if ="userIsAuthanticated"
         to="/account">
         Freebie Credits: {{this.$store.state.free_credits}}
         </v-btn>
@@ -215,13 +215,13 @@
       <v-layout row>
       <v-flex v-if="userIsAuthanticated" xs9>
         <router-view ></router-view>
-      </v-flex>  
+      </v-flex>
       <v-flex v-else xs12>
         <router-view ></router-view>
       </v-flex>
        <v-flex v-if="userIsAuthanticated" xs3>
 
-        <v-card flat>
+        <v-card flat v-if="userIsAuthanticated">
           <v-list two-line>
 
                 <template v-for="index in 12">
@@ -370,6 +370,8 @@ artist_instagram() {
     const test = this.$store.getters.top_12_recent_art
     console.log('this.items[index] $#$#%#^#^', test[index])
     this.$store.commit('set_viewed_artist_data',this.items[index])
+    this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
+     })
     this.$router.push({
       name:'viewed_artist_dashboard'
     })
@@ -377,7 +379,7 @@ artist_instagram() {
     route_to(){
       if (!this.$store.state.art_being_submitted_is_selected && this.$store.state.business_being_submitted_is_selected){
         this.$router.push({
-              name: 'artist_dashboard'
+              path: 'artist_dashboard'
             })
       }
       if (this.$store.state.art_being_submitted_is_selected && !this.$store.state.business_being_submitted_is_selected){

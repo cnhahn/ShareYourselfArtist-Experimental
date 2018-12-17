@@ -159,10 +159,10 @@ export const store = new Vuex.Store({
     set_top_12_recent_art (state, payload) {
       state.top_12_recent_art.push(payload)
     },
-    set_commenting_mode(state, payload){
+    set_commenting_mode (state, payload) {
       state.commenting_mode = payload
     },
-    set_viewed_artist_data (state, payload){
+    set_viewed_artist_data (state, payload) {
       state.viewed_artist_data = payload
     },
     clear_top_12_recent_art (state) {
@@ -178,25 +178,25 @@ export const store = new Vuex.Store({
       }
 
     },
-    set_artists_email_list(state,payload){
+    set_artists_email_list (state, payload) {
       state.artists_email_list.push(payload)
     },
-    set_blog_for_report(state, payload){
+    set_blog_for_report (state, payload) {
       state.blog_for_report = payload
     },
-    set_categories(state, payload){
+    set_categories (state, payload) {
       state.categories = payload
     },
-    set_updatedCategories(state, payload){
+    set_updatedCategories (state, payload) {
       state.updatedCategories = payload
     },
-    set_businesses_being_submitted(state, payload){
+    set_businesses_being_submitted (state, payload) {
       state.businesses_being_submitted = payload
     },
-    set_art_being_submitted_is_selected(state, payload) {
-        state.art_being_submitted_is_selected = payload
+    set_art_being_submitted_is_selected (state, payload) {
+      state.art_being_submitted_is_selected = payload
     },
-    set_business_being_submitted_is_selected(state, payload) {
+    set_business_being_submitted_is_selected (state, payload) {
         state.business_being_submitted_is_selected = payload
     },
     set_art_being_replied (state, payload) {
@@ -1156,7 +1156,7 @@ signUserInGoogle({
         })
       })
       .then(function() {
-          
+
         console.log("successfully updated categories")
       })
       .catch(function(error) {
@@ -1690,7 +1690,7 @@ signUserInGoogle({
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
       newChatDatabaseRef.set(sendData)
     },
-      
+
       uploadProfileImage ({commit, getters}) {
         let ref = firebase.storage().ref()
         let uploadTask = ref
@@ -1735,13 +1735,13 @@ signUserInGoogle({
           },
           // Additional code to upload/update Profile Logo - Wan
            // Additional code to upload/update Profile Logo - Wan
-          function () { 
+          function () {
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured: ' + downloadURL)
               commit('setUrl', downloadURL)
               console.log('State url' + getters.url)
-              
+
               // Now that download URL is obtained, downloadURL is sent to Firebase
               // to connect the user's ID to the updated profile picture
               let updateData = {}
@@ -1782,7 +1782,7 @@ signUserInGoogle({
         if (instagram !== undefined && instagram !== '') {
           updateData.instagram = instagram
         }
-        
+
         console.log(updateData)
         let user = db
           .collection('users').doc(userId).update(updateData).then((data) => {
@@ -1880,7 +1880,7 @@ signUserInGoogle({
     } ,
     businesses_being_submitted (state){
       return state.businesses_being_submitted
-    } ,   
+    } ,
     report_month (state) {
       return state.report_month
     },
