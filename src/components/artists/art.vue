@@ -26,14 +26,13 @@
                           v-model='categories'
                           required
                           multiple
-                        ></v-select>
+                      ></v-select>
                     </v-layout>
                   </v-container>
                 </v-card>
 
         <div class="buttons">
           <v-btn depressed small dark color="black" @click="back">Back</v-btn>
-          <v-btn depressed small @click="toggleDiv()" id="updatebtn">Hide Categories</v-btn>
         </div>
         <v-btn depressed small color="primary" id="addbtn" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
       </v-flex>
