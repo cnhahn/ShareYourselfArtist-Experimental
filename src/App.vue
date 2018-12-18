@@ -163,6 +163,15 @@
 
         <p
           v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+          v-on:click="$router.push('/blogs')"
+          class="body-1 mr-5"
+          style="cursor: pointer"
+        >
+          Blogs/Magazines
+        </p>
+
+        <p
+          v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
 
           @click="route_to"
           class="body-1 mr-5"
