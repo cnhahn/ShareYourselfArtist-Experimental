@@ -54,7 +54,6 @@
                   </v-container>
                 </v-card>
             </v-flex>
-
           </v-layout>
     <v-layout row wrap mb-5>
       <v-flex v-if="def.length != 0" xs12 lg4 offset-lg1 mt-5 v-for="art in def" :key='art.id'>
@@ -169,7 +168,6 @@
            localStorage.setItem('url',arts[i].url)
            localStorage.setItem('categories', arts[i].categories)
            localStorage.setItem('upload_date', arts[i].upload_date)
-           //TODO: make this persistent on refresh
            this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))
            break
