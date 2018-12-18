@@ -48,14 +48,12 @@
                           v-model='categories'
                           required
                           multiple
+                          v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
                         ></v-select>
                     </v-layout>
                   </v-container>
                 </v-card>
-                <v-btn @click="updateCon(categories, def, arts, noneFound, snackbar)">Filter By Categories
-                </v-btn>
             </v-flex>
-            
           </v-layout>
     <v-layout row wrap mb-5>
       <v-flex v-if="def.length != 0" xs12 lg4 offset-lg1 mt-5 v-for="art in def" :key='art.id'>
@@ -66,15 +64,12 @@
             <div>
               <h3 class="headline mb-0">{{art.art_title}}</h3>
               <div>
-                <v-chip 
-                  v-for="(tag, index) in art.categories" 
-                  :key='tag.id' 
-                  v-model = 'art.categories[index]' 
-                  class="display_chips"
-                  close
-                  @input="removeChip(art.upload_date, art.categories)"
-                  
-                > 
+                <v-chip
+                  v-for="(tag, index) in art.categories"
+                  :key='tag.id'
+                  v-model = 'art.categories[index]'
+
+                >
                   {{art.categories[index]}} </v-chip>
               </div>
             </div>
@@ -83,7 +78,7 @@
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
-            @click="submit_art(art)" 
+            @click="submit_art(art)"
             >Submit this piece</v-btn>
           </v-card-actions>
         </v-card>
@@ -96,15 +91,15 @@
             <div>
               <h3 class="headline mb-0">{{art.art_title}}</h3>
               <div>
-                <v-chip 
-                  v-for="(tag, index) in art.categories" 
-                  :key='tag.id' 
-                  v-model = 'art.categories[index]' 
+                <v-chip
+                  v-for="(tag, index) in art.categories"
+                  :key='tag.id'
+                  v-model = 'art.categories[index]'
                   class="display_chips"
                   close
                   @input="removeChip(art.upload_date, art.categories)"
-                  
-                > 
+
+                >
                   {{art.categories[index]}} </v-chip>
               </div>
             </div>
@@ -113,7 +108,7 @@
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
-            @click="submit_art(art)" 
+            @click="submit_art(art)"
             >Submit this piece</v-btn>
           </v-card-actions>
         </v-card>
@@ -145,7 +140,7 @@
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
       }
     },
-  
+
     computed: {
       arts() {
         return this.$store.getters.allArts;
@@ -173,7 +168,6 @@
            localStorage.setItem('url',arts[i].url)
            localStorage.setItem('categories', arts[i].categories)
            localStorage.setItem('upload_date', arts[i].upload_date)
-           //TODO: make this persistent on refresh
            this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))
            break
@@ -190,19 +184,19 @@
           });
       },
 
-      updateCon(categories, def, arts, noneFound, snackbar){
+          updateCon(categories, def, arts, noneFound, snackbar){
           if(def.length != 0){
             def.splice(0, def.length);
           }
-        for(var i = 0; i<arts.length; i++){
-          categories.every(function(value){
-            if(arts[i].categories.indexOf(value) >= 0){
-              if(def.indexOf(arts[i]) < 0){
-                def.push(arts[i]);
-                console.log("made it here")
-              }
+        for(let i = 0; i<arts.length; i++){
+          for (let j = 0; j<categories.length; j++){
+            if (arts[i].categories != undefined) {
+              if (arts[i].categories.includes(categories[j]))
+            {
+              def.push(arts[i])
             }
-          });
+          }
+        }
         }
         this.noneFound = false
         if(def.length == 0){
@@ -225,7 +219,7 @@
         this.$store.commit('set_art_being_submitted_is_selected',true)
         if(this.$store.state.business_being_submitted_is_selected == true){
            this.$router.push({
-                        name: 'submit_result' 
+                        name: 'submit_result'
             })
         }else{
           this.$router.push({

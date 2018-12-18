@@ -26,14 +26,13 @@
                           v-model='categories'
                           required
                           multiple
-                        ></v-select>
+                      ></v-select>
                     </v-layout>
                   </v-container>
                 </v-card>
 
         <div class="buttons">
           <v-btn depressed small dark color="black" @click="back">Back</v-btn>
-          <v-btn depressed small @click="toggleDiv()" id="updatebtn">Hide Categories</v-btn>
         </div>
         <v-btn depressed small color="primary" id="addbtn" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
       </v-flex>
@@ -49,15 +48,26 @@
           art_title: localStorage.getItem('art_title'),
           description: localStorage.getItem('description'),
           upload_date: localStorage.getItem('upload_date'),
-          categories: this.$store.getters.categories.filter(function(category){
-          return category != false
-        }),
+          categories: [],
+          //this.$store.getters.categories.filter(function(category){
+        //   return category != false
+        // }),
 // TODO: update tags with actual values for production
           items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
           value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
     }
         },
 
+         mounted: function() {
+      if (this.$store.getters.categories == undefined){
+           this.categories = []
+         }else{
+           this.categories = this.$store.getters.categories.filter(function(category){
+              return category != false
+          })
+         }
+          console.log("this.categories",this.categories)
+    },
     methods:{
       printCategories(){
         console.log(localStorage.getItem('categories'))
@@ -104,11 +114,35 @@
         this.$store.commit('set_art_being_submitted_is_selected',true)
         if(this.$store.state.business_being_submitted_is_selected == true){
            this.$router.push({
-              name: 'submit_result' 
+              name: 'submit_result'
             })
         }
       }
     },
+    //  computed:{
+    //    get_categories() {
+    //      if (this.$store.getters.categories == undefined){
+    //        return []
+    //      }else{
+    //        this.$store.getters.categories.filter(function(category){
+    //           return category != false
+    //       })
+    //      }
+
+    //    }
+    //  }
+    /*
+    computed:{
+       categories() {
+         if (this.$store.getters.categories.length ===0){
+           return []
+         }
+         else {
+            this.$store.getters.categories.filter(function(category){
+              return category != false
+          }
+        }
+    */
 
   }
 </script>

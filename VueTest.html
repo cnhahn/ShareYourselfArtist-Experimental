@@ -1,0 +1,112 @@
+<!--
+Yasunori Iwayanagi
+* CS 115
+* 2018 Fall Quarter
+* Unit test for Query Date Picker
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Title of the document</title>
+</head>
+
+<body>
+The content of the document......
+</body>
+
+</html>
+
+<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBtJwHja_PXMh4xotZNbXrpt1ETmlYPHZE",
+    authDomain: "syavuetest.firebaseapp.com",
+    databaseURL: "https://syavuetest.firebaseio.com",
+    projectId: "syavuetest",
+    storageBucket: "syavuetest.appspot.com",
+    messagingSenderId: "227451014720"
+  };
+  firebase.initializeApp(config);
+  const firestore = firebase.firestore();
+  const settings = {/* your settings... */ timestampsInSnapshots: true};
+  firestore.settings(settings);
+  
+
+    // Testing for Date Picker Begins Here
+
+    // Variables start and end date will need to be used to determine date ranges.
+    var start_Date;
+    var end_Date;
+
+    // Testing for random date ranges (Dec - February)
+
+    let db = firebase.firestore();
+    let temp_report = db.collection("users");
+    start_Date = '1514678400000' // Dec 31, 2017
+    end_Date = '1517443200000' // February 01, 2018
+    let business_query_email = 'test@gmail.com'; 
+    let query = temp_report
+    .where("email", "==", business_query_email)
+    .where("replied_date", ">=", start_Date)
+    .where("replied_date", "<=", end_Date);
+    query.get().then(function (results) {
+    if (results.empty) {
+        console.log("No documents found!");
+    } else {
+        // go through all results
+        results.forEach(function (doc) {
+            console.log("Printing out results : ")
+            console.log(doc.data().about);
+        });
+    }
+    });
+    
+    // Testing for the same date ranges  
+
+    let db = firebase.firestore();
+    let temp_report = db.collection("users");
+    start_Date = '1514678400000' // Dec 31, 2017
+    end_Date = '1514678400000' // Dec 31, 2017
+    let business_query_email = 'test@gmail.com';
+    let query = temp_report
+    .where("businessId.business_email", "==", business_query_email)
+    .where("replied_date", ">=", start_Date)
+    .where("replied_date", "<=", end_Date);
+    query.get().then(function (results) {
+    if (results.empty) {
+        console.log("No documents found!");
+    } else {
+        // go through all results
+        results.forEach(function (doc) {
+            console.log("Printing out results : ")
+            console.log(doc.data().about);
+        });
+    }
+    });
+
+
+    // Testing for the whole year 
+    let db = firebase.firestore();
+    let temp_report = db.collection("users");
+    start_Date = '1514678400000' // Dec 31, 2017
+    end_Date = '1546214400000' // Dec 31, 2018
+    let business_query_email = state.query_business_email;
+    let query = temp_report
+    .where("businessId.business_email", "==", 'test@gmail.com')
+    .where("replied_date", ">=", start_Date)
+    .where("replied_date", "<=", end_Date);
+    query.get().then(function (results) {
+    if (results.empty) {
+        console.log("No documents found!");
+    } else {
+        // go through all results
+        results.forEach(function (doc) {
+            console.log("Printing out results; ")
+            console.log(doc.data().about)
+        });
+    }
+    });
+
+</script>

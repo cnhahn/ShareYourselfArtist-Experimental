@@ -36,9 +36,7 @@
      })
     },*/
     mounted: function () {
-     console.log("artist data " + this.$store.getters.viewed_artist_data.art.artist_id) 
      this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
-       console.log("Fetch Arts Here! " + this.$store.getters.viewed_arts)
      })
     },
     data() {
