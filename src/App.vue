@@ -117,8 +117,10 @@
       </v-list>
       </div>
     </v-navigation-drawer>
-    <v-toolbar flat style="background-color: #fff" class="">
 
+    <v-toolbar flat style="background-color: white; height: 100px; padding-top: 18px;" class="">
+
+      <v-spacer style="max-width:20px;"></v-spacer>
       <v-toolbar-side-icon @click="sideNav = !sideNav"  v-if ="userIsAuthanticated"></v-toolbar-side-icon>
       <router-link v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" to="/artist_dashboard" tag="span" style= "cursor:pointer">
         <v-avatar>
@@ -135,82 +137,114 @@
         <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
       </v-avatar>
       </router-link>
-      <v-toolbar-title class="large-logo hidden-sm-and-down">
+      <v-toolbar-title class="large-logo" v-if="screen_breakpoint_2">
         <p>Share Yourself Artists</p>
       </v-toolbar-title>
+
       <v-spacer></v-spacer>
-      <v-toolbar-items>
-         <v-btn color="primary" flat v-if ="userIsAuthanticated"
-        <!-- Added additional button to show Blogs/Magazines - WF -->
-        <v-btn flat small
+
+      <v-toolbar-items style="padding-top: 25px;">
+
+        <p
+          v-if="userIsAuthanticated"
+          style="color: #FF7D27; margin-right: 50px; cursor: pointer"
+          v-on:click="$router.push('/account')"
+        >
+          FREEBIE CREDITS: {{this.$store.state.free_credits}}
+        </p>
+
+        <p
+          v-if="userIsAuthanticated && this.$store.state.credits"
+          style="color: #FF7D27; margin-right: 50px; cursor: pointer"
+          v-on:click="$router.push('/account')"
+        >
+          PREMIUM CREDITS: {{this.$store.state.credits}}
+        </p>
+
+        <p
           v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
-          fullscreen="$vuetify.breakpoint.mdOnly"
-          @click= router to="/blogs"
-          >Blogs/Magazines
-        </v-btn>
+          v-on:click="$router.push('/blogs')"
+          class="body-1 mr-5"
+          style="cursor: pointer"
+        >
+          Blogs/Magazines
+        </p>
 
-         <v-btn color="primary" flat v-if ="userIsAuthanticated"
-        to="/account">
-        Freebie Credits: {{this.$store.state.free_credits}}
-        </v-btn>
-        <v-btn color="primary" flat v-if ="userIsAuthanticated && this.$store.state.credits"
-        to="/account">
-        Premium Credits: {{this.$store.state.credits}}
-        </v-btn>
-      <v-btn  flat small
-     v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
-      fullscreen="$vuetify.breakpoint.mdOnly"
-     @click="route_to"
-      >Submit Your Work
-      </v-btn>
+        <p
+          v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+
+          @click="route_to"
+          class="body-1 mr-5"
+          style="cursor: pointer"
+        >
+          Submit Your Work
+        </p>
 
 
-         <!-- <v-chip  v-if ="userIsAuthanticated" color="primary"><b>Credits: {{this.$store.state.credits}}</b> </v-chip> -->
-        <v-btn flat small
-        class="hidden-sm-and-down"
-        v-for ="item in navItems"
-        :key="item.title"
-        :to="item.link"
-        @click="">
-          {{item.title}}
-       </v-btn>
-       <v-btn flat small class="hidden-md-and-up"
-       v-if="!userIsAuthanticated"
-      :fullscreen="$vuetify.breakpoint.mdOnly"
-      to="/sign_in"
-      >Sign In
-      </v-btn>
-     <v-menu bottom left v-if ="userIsAuthanticated">
-              <v-btn slot="activator" icon>
-                <v-icon>more_vert</v-icon>
-              </v-btn>
-              <v-list>
-                <v-list-tile>
-                  <router-link to="/support" tag="span" style= "cursor:pointer">
-                    <v-list-tile-title>Support</v-list-tile-title>
-                  </router-link>
-                </v-list-tile>
-                <v-list-tile>
-                  <router-link to="/about_us" tag="span" style= "cursor:pointer">
-                    <v-list-tile-title>About Us</v-list-tile-title>
-                  </router-link>
-                </v-list-tile>
-                <v-list-tile>
-                  <router-link to="/profile" tag="span" style= "cursor:pointer">
-                    <v-list-tile-title>Profile</v-list-tile-title>
-                  </router-link>
-                </v-list-tile>
-                 <v-divider></v-divider>
-                <v-list-tile>
-                  <router-link to="/" tag="span" style= "cursor:pointer">
-                    <v-list-tile-title @click="onSignOut">Sign Out</v-list-tile-title>
-                  </router-link>
-                </v-list-tile>
+        <div
+          v-for="item in navItems"
+          v-bind:key="item.title"
+          class="body-1 mr-5"
+          style="cursor: pointer"
+          v-if="screen_breakpoint"
+          v-on:click="$router.push(item.link)"
+        >
+          <!-- Responsible for displaying 'Home', 'Blogs/Magazines', 'Support', and 'About Us' in the navbar -->
+          <p v-if="!item.spacing">{{item.title}}</p>
+
+          <!-- This creates the larger space between 'About Us' and 'Sign In | Sign Up' and only dispays it
+               when the user is not signed in -->
+          <p v-if="item.spacing && !userIsAuthanticated" style="margin-left:50px">{{item.title}}</p>
+        </div>
+
+        <p
+          class="mr-5"
+          v-if="!userIsAuthanticated && !screen_breakpoint"
+          v-on:click="$router.push('/sign_in')"
+          style="cursor: pointer"
+        >
+          Sign In | Sign Up
+        </p>
+
+        <v-menu style="margin-top: -10px; margin-left: -20px" v-if ="userIsAuthanticated">
+          <v-btn slot="activator" icon style="width: 40px; height: 40px;">
+            <v-icon>more_vert</v-icon>
+          </v-btn>
+          
+            <v-list>
+
+              <v-list-tile>
+                <router-link to="/support" tag="span" style= "cursor:pointer">
+                <v-list-tile-title>Support</v-list-tile-title>
+                </router-link>
+              </v-list-tile>
+
+              <v-list-tile>
+                <router-link to="/about_us" tag="span" style= "cursor:pointer">
+                <v-list-tile-title>About Us</v-list-tile-title>
+                </router-link>
+              </v-list-tile>
+
+              <v-list-tile>
+                <router-link to="/profile" tag="span" style= "cursor:pointer">
+                <v-list-tile-title>Profile</v-list-tile-title>
+                </router-link>
+              </v-list-tile>
+              
+              <v-divider></v-divider>
+
+              <v-list-tile>
+                <router-link to="/" tag="span" style= "cursor:pointer">
+                <v-list-tile-title @click="onSignOut">Sign Out</v-list-tile-title>
+                </router-link>
+              </v-list-tile>
 
               </v-list>
+
             </v-menu>
       </v-toolbar-items>
     </v-toolbar>
+
     <main>
       <v-layout row>
       <v-flex v-if="userIsAuthanticated" xs9>
@@ -222,6 +256,36 @@
        <v-flex v-if="userIsAuthanticated" xs3>
 
         <v-card flat v-if="userIsAuthanticated">
+
+          <p class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Art</p>
+
+          <v-layout row wrap>
+
+            <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
+
+              <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
+
+                <v-flex xs2>
+                  <v-avatar>
+                    <img :src="top_12_recent_art[index].art.url">
+                  </v-avatar>
+                </v-flex>
+
+                <v-flex xs10 ml-2>
+                  <p class="subheading mt-1">{{top_12_recent_art[index].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px">{{top_12_recent_art[index].art.artist_name}}</p>
+                </v-flex>
+
+              </v-layout>
+
+
+
+            </v-flex>
+
+          </v-layout>
+
+
+        <!--
           <v-list two-line>
 
                 <template v-for="index in 12">
@@ -241,6 +305,9 @@
                     </v-list-tile>
                   </template>
                 </v-list>
+
+            -->
+
               </v-card>
 
 
@@ -249,6 +316,53 @@
       </v-flex>
      </v-layout>
     </main>
+
+    <v-footer
+    height="auto"
+    style="background-color: #e5e5e5"
+  >
+    <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
+      <v-spacer></v-spacer>
+      <p
+          class="ml-3 mr-3"
+          v-on:click="$router.push('/about_us')"
+          style="cursor: pointer; color: #676d6a"
+        >
+          About
+        </p>
+        <p
+          class="ml-3 mr-3"
+          v-on:click="$router.push('/support')"
+          style="cursor: pointer; color: #676d6a"
+        >
+          Support / FAQs
+        </p>
+        <a
+          href="mailto:nick@shareyourselfartists.com?Subject=Support"
+          target="_top"
+          style="cursor: pointer; color: #676d6a"
+          class="ml-3 mr-3"
+        >
+          Contact
+        </a>
+
+        <v-flex
+        style="background-color: #e5e5e5; color: #676d6a"
+        text-xs-left
+        xs12
+      >
+        <v-avatar>
+          <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+        </v-avatar>
+        <p style="color: #676d6a" class="mt-2">
+          &copy; Copyright 2018 Share Yourself Artists
+        </p>
+      </v-flex>
+
+    </v-layout>
+  </v-footer>
+
+
   </v-app>
 </template>
 <script>
@@ -259,8 +373,21 @@ export default {
     this.$store.dispatch('fetch_top_12_recent_art')
     console.log('fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
   },
+  mounted() {
+      this.loading = false;
+      this.onResize()
+      window.addEventListener('resize', this.onResize, {passive: true})
+    },
+
+    beforeDestroy() {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', this.onResize, {passive: true})
+      }
+    },
   data(){
     return{
+      screen_breakpoint: false,
+      screen_breakpoint_2: false,
       sideNav: false,
       items: this.$store.getters.top_12_recent_art,
       top_12_recent_art: this.$store.getters.top_12_recent_art
@@ -357,6 +484,10 @@ artist_instagram() {
   }
   },
   methods: {
+  onResize() {
+    this.screen_breakpoint = window.innerWidth > 1200
+    this.screen_breakpoint_2 = window.innerWidth > 525
+  },
   go_to_viewed_artist_page(index){
     //const test = this.$store.getters.top_12_recent_art
     //console.log('this.items[index] $#$#%#^#^', test[index])

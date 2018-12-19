@@ -1,17 +1,15 @@
 <template>
-<v-parallax src="/static/images/15.jpg" height="100%"
-      jumbotron>
-     <center><div class = "card" style = "max-width: 700px;  padding-top:1%; padding-bottom:1%; margin-top:20%; margin-bottom:300px;" >
-     <div>
-       
-    </div>
-    <v-flex m5>
-        <v-stepper class="mb-5 ml-5 mr-5 " v-model="e1">
-           <h3 v-if = "this.e1 == 1" class="headline mb-5 ml-5 mr-5">Get Paid Today with Share Yourself Artists's easy to use platform.</h3>
-           <h3 v-if = "this.e1 == 2" class="headline mb-5 ml-5 mr-5">Artists will see these account details so answer with care.</h3>
-           <h3 v-if = "this.e1 == 3" class="headline mb-5 ml-5 mr-5">Copy and paste your social media URL below.</h3>
-           <h3 v-if = "this.e1 == 4" class="headline mb-5 ml-5 mr-5">Great, your are clicks away from meeting new artists. </h3>
-            <v-stepper-header>
+<v-parallax src="/static/images/15.jpg" height="100%">
+     <center>
+       <div class="card mt-5 mb-5 pt-4 pb-4" style="max-width: 700px;background-color: #f9f9fa" >
+ 
+        <v-stepper class="ml-4 mr-4 elevation-0" v-model="e1">
+           <h6 v-if = "this.e1 == 1" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Get Paid Today with Share Yourself Artists's easy to use platform.</h6>
+           <h6 v-if = "this.e1 == 2" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Artists will see these account details so answer with care.</h6>
+           <h6 v-if = "this.e1 == 3" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Copy and paste your social media URL below.</h6>
+           <h6 v-if = "this.e1 == 4" class="title mt-4 mb-4 ml-4 mr-4" style="color: #FF7D27;">Great, you're are clicks away from meeting new artists. </h6>
+        
+      <v-stepper-header class="elevation-0" style="margin-bottom: -20px;">
       <v-stepper-step dark :complete="e1 > 1" step="1"></v-stepper-step>
       <v-divider></v-divider>
       <v-stepper-step dark :complete="e1 > 2" step="2"></v-stepper-step>
@@ -19,6 +17,7 @@
       <v-stepper-step dark :complete="e1 > 3" step="3"></v-stepper-step>
       
     </v-stepper-header>
+
     <v-stepper-items >
       <v-stepper-content step="1" >
        <form class="form white--text">
@@ -44,7 +43,7 @@
        <v-text-field
                             name='password'
                             id='password'
-                            label= 'password'
+                            label= 'Password'
                             v-model='password'
                             :type="show1 ? 'text' : 'password'"
                             required
@@ -53,7 +52,7 @@
     <v-text-field
                             name='password_retype'
                             id='password_retype'
-                            label= 'Retype your password'
+                            label= 'Confirm Password'
                             v-model='password_retype'
                             :type="show2 ? 'text' : 'password'"
                             required
@@ -66,26 +65,39 @@
         ref="fileInput" 
         accept="image/*"
         @change ="onFilePicked">
-     <v-layout row> 
-       <v-flex> <v-btn depressed large color="primary" @click="onPickFile">Upload Your Logo</v-btn></v-flex>
-         </v-layout>
-        <v-layout row>
-       <v-flex 12> <v-btn 
-        v-if ="this.formIsValid"
-        large
+
+     <v-layout row wrap> 
+
+       <v-flex lg6 sm6 xs12> 
+         <v-btn 
+          depressed 
+          large 
+          color="primary" 
+          @click="onPickFile"
+          >
+            Upload Your Logo
+          </v-btn>
+        </v-flex>
+
+       <v-flex lg6 sm6 xs12> 
+         <v-btn 
+          v-if ="this.formIsValid"
+          large
           color="primary"
           @click="e1 = 2"
           @onclick ="validFalse"
-        >
-          Next
-        </v-btn>
+          >
+            Next
+          </v-btn>
+
          <v-btn
-        v-if ="!this.formIsValid"
+          v-if ="!this.formIsValid"
           disabled
           large
-        >
-          Next
-        </v-btn>
+          >
+            Next
+          </v-btn>
+
         </v-flex>
 
       </v-layout>
@@ -132,13 +144,18 @@
     <v-text-field multi-line
                 name='additional_notes'
                 id='additional_notes'
-                label= 'Additional Notes – Give an encouraging message that gets artists excited to submit their art to you '
+                label= 'Additional Notes – Give an encouraging message that gets artists excited '
                 :rules="[(v) => v.length <= 620 || 'Max 620 characters']"
                 :counter="620"
                 v-model='additional_notes'
                 >
   </v-text-field>
   </form>
+
+        <v-btn 
+        @click="e1 = 1"
+        flat>Previous</v-btn>
+
          <v-btn
         v-if ="this.form2IsValid"
           color="primary"
@@ -147,6 +164,7 @@
         >
           Next
         </v-btn>
+
          <v-btn
         v-if ="!this.form2IsValid"
           disabled
@@ -155,10 +173,8 @@
           Next
         </v-btn>
           
-        <v-btn 
-        @click="e1 = 1"
-        flat>Previous</v-btn>
       </v-stepper-content>
+
       <v-stepper-content step="3" >
         <v-text-field
                             prepend-icon="fab fa-facebook-f"
@@ -187,6 +203,11 @@
                             v-model= 'tumblr'
                             >
   </v-text-field>
+
+        <v-btn 
+        @click="e1 = 2"
+        flat>Previous</v-btn>
+
         <v-btn
           @click="onSubmit"
           color="primary"
@@ -194,9 +215,6 @@
           Submit
         </v-btn>
     
-        <v-btn 
-        @click="e1 = 2"
-        flat>Previous</v-btn>
         </v-stepper-content>
 
  <v-stepper-content step="4" >
@@ -210,7 +228,7 @@
 
     </v-stepper-items>
   </v-stepper>
-</v-flex>
+
   </div></center>
 </v-parallax>
 </template>
@@ -335,5 +353,3 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
     }
   }
 </script>
-
-

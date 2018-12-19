@@ -57,31 +57,46 @@ export const store = new Vuex.Store({
       }
     ],
     navItems: [
-      {
+
+      /*
+      { 
         title: 'Home',
         icon: 'home',
         link: '/',
-        method: ''
+        method: '',
+        spacing: false
       },
+      */
       {
         title: 'Blogs/Magazines',
         icon: 'chrome_reader_mode',
-        link: '/blogs'
+        link: '/blogs',
+        spacing: false
+
       },
       {
         title: 'Support',
         icon: 'help',
-        link: '/support'
+
+        link: '/support',
+        spacing: false
+
       },
       {
         title: 'About Us',
         icon: 'nature_people',
-        link: '/about_us'
+
+        link: '/about_us',
+        spacing: false
+
       },
       {
-        title: 'Sign In',
+        title: 'Sign In | Sign Up',
         icon: 'nature_people',
-        link: '/sign_in'
+
+        link: '/sign_in',
+        spacing: true
+
       }
     ],
     navItems_User: [],
