@@ -256,6 +256,36 @@
        <v-flex v-if="userIsAuthanticated" xs3>
 
         <v-card flat v-if="userIsAuthanticated">
+
+          <p class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Art</p>
+
+          <v-layout row wrap>
+
+            <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
+
+              <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
+
+                <v-flex xs2>
+                  <v-avatar>
+                    <img :src="top_12_recent_art[index].art.url">
+                  </v-avatar>
+                </v-flex>
+
+                <v-flex xs10 ml-2>
+                  <p class="subheading mt-1">{{top_12_recent_art[index].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px">{{top_12_recent_art[index].art.artist_name}}</p>
+                </v-flex>
+
+              </v-layout>
+
+
+
+            </v-flex>
+
+          </v-layout>
+
+
+        <!--
           <v-list two-line>
 
                 <template v-for="index in 12">
@@ -275,6 +305,9 @@
                     </v-list-tile>
                   </template>
                 </v-list>
+
+            -->
+
               </v-card>
 
 
