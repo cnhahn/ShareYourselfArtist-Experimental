@@ -9,13 +9,6 @@
                     <span style="font-size: 10em; color: white;">{{initial()}}</span>
                   </div>
                 </v-avatar>
-                <p
-                  class="subheading text"
-                  v-if="!onEdit"
-                  style="margin-top: 2vh; margin-left:3vw; font-weight: lighter;
-                  margin-right: 3vw; align-content: center;">
-                  Share Yourself Artists
-                </p>
                 <!--TODO: Code for Uploading image. Should modify.-->
                 <!-- From store to url -->
                 <v-btn
@@ -29,7 +22,7 @@
                     class="mx-0"
                     @click.native="onPickFile"
                   >
-                    Upload New Logo
+                    Upload Photo
                   </v-btn>
                   <input type="file"
                         style="display:none"
@@ -67,7 +60,7 @@
                   <p class="text" style="margin-top: 2vh">{{getPassedTime(fetchUserSignUpDate)}}</p>
                 </div>
                 <v-btn v-if="!onEdit" depressed block  flat color="black" @click.native="setEdit">
-                  Edit
+                  Edit Profile
                 </v-btn>
                 <v-btn v-if="!onEdit" depressed block  flat router to="/artist_dashboard" color="primary">
                   Go to Dashboard

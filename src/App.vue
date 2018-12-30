@@ -115,6 +115,28 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile>
+           <v-chip
+       v-if="userIsAuthanticated"
+       flat
+       style="width: 160px"
+       color="primary"
+       text-color="white"
+       v-on:click="$router.push('/account')">
+      Freebie Credits     :    {{this.$store.state.free_credits}}
+    </v-chip>
+        </v-list-tile>
+        <v-list-tile>
+          <v-chip
+       v-if="userIsAuthanticated"
+       flat
+       color="primary"
+       style="width: 160px"
+       text-color="white"
+       v-on:click="$router.push('/account')">
+      Premium Credits: {{this.$store.state.credits}}
+    </v-chip>
+        </v-list-tile>
       </v-list>
       </div>
     </v-navigation-drawer>
@@ -146,21 +168,8 @@
 
       <v-toolbar-items style="padding-top: 25px;">
 
-        <p
-          v-if="userIsAuthanticated"
-          style="color: #FF7D27; margin-right: 50px; cursor: pointer"
-          v-on:click="$router.push('/account')"
-        >
-          FREEBIE CREDITS: {{this.$store.state.free_credits}}
-        </p>
 
-        <p
-          v-if="userIsAuthanticated && this.$store.state.credits"
-          style="color: #FF7D27; margin-right: 50px; cursor: pointer"
-          v-on:click="$router.push('/account')"
-        >
-          PREMIUM CREDITS: {{this.$store.state.credits}}
-        </p>
+
 
         <p
           v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
