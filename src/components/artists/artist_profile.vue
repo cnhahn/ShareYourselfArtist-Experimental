@@ -1,23 +1,13 @@
 <template>
-  <v-container fluid class="profileBackground" style="padding-top: 20vh; height: 50vh;">
+  <v-container  >
     <center>
-      <v-card class="card">
-          <v-layout row wrap>
 
             <v-flex lg6 md6 sm12 xs12>
-              <v-avatar size="180px" class="avatarStyle" v-bind:color="artistInfo.color">
+              <v-avatar size="180px" class="avatarStyle" v-bind:cpriolor="black">
                   <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
                   <div v-else>
                     <span style="font-size: 10em; color: white;">{{initial()}}</span>
                   </div>
-                  <!-- TODO: Code for editing profile image. -->
-                  <!--<div v-else-if="!onEdit">-->
-                  <!--<span style="font-size: 20em; color: white;">{{initial()}}</span>-->
-                  <!--</div>-->
-                  <!--<div v-else-if="editInfo.selectedPhotoUrl === ''">-->
-                  <!--<span style="font-size: 5em; color: white;">EDIT</span>-->
-                  <!--</div>-->
-                  <!--<img v-else :src='editInfo.selectedPhotoUrl' alt="avatar">-->
                 </v-avatar>
                 <p
                   class="subheading text"
@@ -31,10 +21,9 @@
                 <v-btn
                     style="margin-top: 2vh; margin-left: 1vw;"
                     block
-                    outline
                     flat
                     depressed
-                    :color="artistInfo.color"
+                    :color="primary"
                     :loading="imageNotLoaded"
                     :disabled="imageNotLoaded"
                     class="mx-0"
@@ -47,7 +36,7 @@
                         ref="fileInput"
                         accept="image/*"
                         @change=onFilePicked
-                  >     
+                  >
             </v-flex>
 
             <v-flex lg6 md6 sm12 xs12>
@@ -77,21 +66,21 @@
                   <p class="text" style="margin-top: 2vh"><strong>Instagram:</strong> {{fetchUserInstagram}}</p>
                   <p class="text" style="margin-top: 2vh">{{getPassedTime(fetchUserSignUpDate)}}</p>
                 </div>
-                <v-btn v-if="!onEdit" depressed block outline flat :color="fetchUserColor" @click.native="setEdit">
+                <v-btn v-if="!onEdit" depressed block  flat color="black" @click.native="setEdit">
                   Edit
                 </v-btn>
-                <v-btn v-if="!onEdit" depressed block outline flat router to="/artist_dashboard" :color="fetchUserColor">
+                <v-btn v-if="!onEdit" depressed block  flat router to="/artist_dashboard" color="primary">
                   Go to Dashboard
                 </v-btn>
 
                 <v-flex v-else>
-                  <v-btn depressed block outline flat :color="fetchUserColor"
+                  <v-btn depressed block  flat color="black"
                          :loading="dataNotSent"
                          :disabled="dataNotSent"
                          @click.native="sendEditData">
                     Submit
                   </v-btn>
-                  <v-btn depressed block outline flat :color="fetchUserColor" @click.native="resetEdit">
+                  <v-btn depressed block flat color="black" @click.native="resetEdit">
                     Cancel
                   </v-btn>
                 </v-flex>
@@ -99,8 +88,8 @@
               </div>
             </v-flex>
 
-          </v-layout>
-        </v-card>
+
+
     </center>
   </v-container>
 </template>
@@ -150,7 +139,7 @@
       }
     },
     methods: {
-      
+
       emptyUserInfo () {
         this.artistInfo = {};
       },
@@ -164,7 +153,7 @@
           signUpDate: userInfo.upload_date,
           color: userInfo.color,
           credits: userInfo.credits
-          
+
         }
         if (typeof userInfo.photoUrl === 'string' && userInfo.photoUrl !== null) {
           newArtistInfo.photoUrl = userInfo.photoUrl
@@ -175,7 +164,6 @@
         } else{
 
         }
-        console.log('final url: ' + newArtistInfo.photoUrl + 'final color: ' + newArtistInfo.color)
         this.artistInfo = newArtistInfo
       },
       onPickFile () {
@@ -254,10 +242,6 @@
 
 <style>
   .profileBackground {
-    background-image: url('/static/images/404.jpg');
-    background-size: cover;
-    background-blend-mode: darken;
-    background-position: center;
     padding-left: auto;
     padding-right: auto;
   }
