@@ -1,7 +1,6 @@
 <template>
-    <v-layout row >
 
-  <v-app  >
+  <v-app>
     <v-navigation-drawer
       v-model="sideNav"
       temporary
@@ -140,7 +139,7 @@
       </v-avatar>
       </router-link>
       <v-toolbar-title class="large-logo" v-if="screen_breakpoint_2">
-        <p>Share Yourself Artists</p>
+        <p>SIYA</p>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -352,7 +351,6 @@
     </v-layout>
   </v-footer>
   </v-app>
-</v-layout>
 </template>
 <script>
 export default {
