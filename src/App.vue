@@ -256,7 +256,7 @@
         <router-view ></router-view>
       </v-flex>
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
-<!-- recently submitted artist -->
+<!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated">
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Artists</p>
           <v-layout row wrap>
