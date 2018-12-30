@@ -40,6 +40,7 @@
         <p class="body-1" style="font-size:.8em !important">{{ getPassedTime(blog.upload_date) }}</p>
         <p class="body-1 hidden-md-and-up" style="font-size:.8em !important; margin-top:-15px">Fans: {{ blog.follower_count }}</p>
 
+        <!--
         <v-btn 
           v-if="user_role === 'artist'"
           @click='clicked_business({
@@ -54,6 +55,7 @@
         >
           Select Blog
         </v-btn>
+        -->
 
       </v-flex>
 
@@ -98,6 +100,7 @@
         <p class="body-1" style="font-size:.8em !important">{{ getPassedTime(blog.upload_date) }}</p>
         <p class="body-1 hidden-md-and-up" style="font-size:.8em !important; margin-top:-15px">Fans: {{ blog.follower_count }}</p>
         
+        <!--
         <v-btn 
           v-if="user_role === 'artist'"
           @click='clicked_business({
@@ -112,7 +115,7 @@
         >
           Select Blog
         </v-btn>
-
+        -->
 
       </v-flex>
 

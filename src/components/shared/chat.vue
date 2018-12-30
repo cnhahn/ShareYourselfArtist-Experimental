@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <v-container
     id='chat-container'
     style='max-height: 70vh'
@@ -10,7 +10,7 @@
         style='height: 70vh'
       >
         <v-layout row>
-          <v-flex xs12 sm9 offset-sm3>
+          <v-flex xs12>
             <v-list three-line>
               <template v-for="(chat) in chat_items">
                 <v-list-tile
@@ -43,7 +43,7 @@
       </v-layout>
     </v-container>
     <v-layout row >
-      <v-flex xs12 sm8 offset-sm3>
+      <v-flex xs12>
         <v-list three-line>
           <template v-for="(item) in input">
             <v-list-tile

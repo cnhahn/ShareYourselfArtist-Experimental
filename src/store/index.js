@@ -30,11 +30,27 @@ export const store = new Vuex.Store({
         icon: 'dashboard',
         link: '/artist_dashboard'
       },
-      // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
+      /*
+      { 
+        title: 'Bio & Stats', 
+        icon: 'face', 
+        link: '/bio' 
+      },
+      */
       {
         title: 'My Account',
         icon: 'account_box',
         link: '/account'
+      },
+      {
+        title: 'Reviews',
+        icon: 'assessment',
+        link: '/report'
+      },
+      {
+        title: 'Chat',
+        icon: 'chat',
+        link: '/chat'
       }
     ],
     business_side_nav_items: [
