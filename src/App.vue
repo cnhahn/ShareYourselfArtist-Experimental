@@ -2,7 +2,7 @@
 
   <v-app>
 
-    <v-toolbar flat v-if="!userIsAuthanticed" class="toolbar2">
+    <v-toolbar flat v-if="!userIsAuthanticated" class="toolbar2">
 
       <v-spacer></v-spacer>
       
