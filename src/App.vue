@@ -33,10 +33,9 @@
 
 
             <!--Adds artist's name to sidebar-->
-            <a v-bind:href="' mailto:' + this.$store.state.signed_in_user.email">{{ this.$store.state.signed_in_user.email }}</a>
+
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
-              <a v-bind:href="this.artist_instagram" target="_blank">Visit My Instagram</a>
                <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
 
             </div>
