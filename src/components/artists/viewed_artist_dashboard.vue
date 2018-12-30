@@ -6,7 +6,7 @@
   </div>
   <v-container v-else>
     <v-layout row wrap mb-5>
-      <v-flex xs12 lg4 offset-lg1 mt-5 v-for="art in arts" :key='art.id'>
+      <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
         <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
           </v-card-media>

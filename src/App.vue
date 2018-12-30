@@ -1,5 +1,7 @@
 <template>
-  <v-app>
+    <v-layout row >
+
+  <v-app  >
     <v-navigation-drawer
       v-model="sideNav"
       temporary
@@ -211,7 +213,7 @@
             <v-icon>more_vert</v-icon>
           </v-btn>
 
-            <v-list>
+            <v-list style="width: 200px">
 
               <v-list-tile>
                 <router-link to="/support" tag="span" style= "cursor:pointer">
@@ -254,9 +256,8 @@
         <router-view ></router-view>
       </v-flex>
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
-
+<!-- recently submitted artist -->
         <v-card  flat v-if="userIsAuthanticated">
-
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
@@ -274,8 +275,6 @@
           </v-layout>
             </v-flex>
           </v-layout>
-
-
         <!--
           <v-list two-line>
 
@@ -352,9 +351,8 @@
 
     </v-layout>
   </v-footer>
-
-
   </v-app>
+</v-layout>
 </template>
 <script>
 export default {
