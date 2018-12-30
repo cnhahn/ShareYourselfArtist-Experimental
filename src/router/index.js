@@ -1,6 +1,7 @@
 import Vue from "vue"
 import Router from "vue-router"
 import Home from "@/components/Home"
+import Home2 from "@/components/Home2"
 
 import sign_in from "@/components/shared/sign_in"
 import support from "@/components/shared/support"
@@ -73,6 +74,11 @@ export default new Router({
       path: "/",
       name: "Home",
       component: Home
+    },
+    {
+      path: "/home2",
+      name: "home2",
+      component: Home2
     },
     {
       path: "/artist_signup",

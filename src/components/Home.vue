@@ -1,176 +1,89 @@
 <template>
 
-  <div v-if="loading" class="loading_holder">
-    <div class="spinner_holder">
-      <c-spinner></c-spinner>
-    </div>
-  </div>
+  <v-container class="home">
 
-  <v-content v-else>
+    <v-layout row>
 
-    <v-layout column align-center justify-center>
+      <v-flex xs4 ml-5 hidden-md-and-down class="left-row">
 
-      <v-container
-        grid-list-lrg
-        display-2
-        text-md-center
-        text-xs-center
-        v-if="screen_breakpoint"
-        class="title1"
-      >
-          Your Art, Your Way
-      </v-container>
+        <v-layout row>
+          <img src="/static/images/31007053_909050839267466_1346698884130275328_n.jpg" class="image left fadeImage3" style="height: 125px">
+          <img src="/static/images/12.jpg" class="image left fadeImage2" style="height: 90px; margin-top: 70px">
+          <img src="/static/images/9.jpg" class="image left fadeImage2" style="height: 70px; margin-top: 120px">
+          <img src="/static/images/4.jpg" class="image left fadeImage1" style="height: 50px; margin-top: 200px">
+        </v-layout>
 
-      <v-container
-        grid-list-lrg
-        display-2
-        text-md-center
-        text-xs-center
-        v-if="!screen_breakpoint"
-        class="title1"
+        <v-layout row>
+          <img src="/static/images/5.jpg" class="image left ml-5 fadeImage2" style="height: 115px; margin-top: -50px">
+          <img src="/static/images/8.jpg" class="image left ml-5 fadeImage3" style="height: 115px">
+        </v-layout>
+
+      </v-flex>
+
+      <v-flex lg4 xs12 text-xs-center class="center-row">
+
+          <h4 class="display-1 mt-2 mb-4">Share your art.</h4>
+
+          <img src="/static/images/mobile_app.png" height="60%">
+
+        <v-btn
+          flat
+          round
+          outline
+          large
+          color="primary"
+          class="mt-4 mb-4 signup_button "
+          v-on:click="$router.push('/artist_signup')"
         >
-          Your Art,<br>Your Way
-        </v-container>
-
-      <v-container
-        grid-list-lrg
-        font-wieght
-        headline
-        text-md-center
-        text-xs-center
-        v-if="screen_breakpoint"
-        class="title2"
-      >
-        Welcome to Share Yourself Artists, the easiest way to share your<br />artwork to millions of art lovers around the world!
-      </v-container>
-
-      <v-container
-        grid-list-lrg
-        font-wieght
-        headline
-        text-md-center
-        text-xs-center
-        v-if="!screen_breakpoint"
-        class="title2"
-      >
-        Welcome to Share Yourself<br />Artists, the easiest way<br/>to share your artwork<br/> to millions of art lovers<br/>around the world!
-      </v-container>
-
-    </v-layout>
-
-    <v-layout row wrap class="account-btns">
-
-      <v-flex xs12 sm6 pl-3 pr-3 class="text-xs-center text-sm-right">
-        <v-btn color="black" dark large depressed style="height:35px; width: 175px;" router to="/business_signup">
-          BUSINESS SIGN UP
+          <h5 class="headline">Sign Up Now</h5>
         </v-btn>
+
+          <h6 class="subheading mb-4 link" v-on:click="$router.push('/home2')"><strong>How does it work?</strong></h6>
+
+
+        <v-layout row>
+          <img src="/static/images/app-store-icon-300x100.png" height="35px" class="mr-3" style="margin-left: 40px">
+          <img src="/static/images/google-play.png" height="31px" style="margin-top: 2px">
+        </v-layout>
+
+
+
       </v-flex>
 
-      <v-flex xs12 sm6 pl-3 pr-3 class="text-xs-center text-sm-left">
-        <v-btn color="black" dark large depressed style="height:35px; width: 175px;" router to="/artist_signup">
-        ARTIST SIGN UP
-        </v-btn>
+      <v-flex xs4 mr-5 hidden-md-and-down class="right-row">
+
+        <v-layout row>
+          <img src="/static/images/7.jpg" class="image right fadeImage1" style="height: 50px; margin-top: 200px">
+          <img src="/static/images/14.jpg" class="image right fadeImage2" style="height: 70px; margin-top: 120px">
+          <img src="/static/images/10.jpg" class="image right fadeImage2" style="height: 90px; margin-top: 70px">
+          <img src="/static/images/13.jpg" class="image right fadeImage3" style="height: 125px">
+        </v-layout>
+
+        <v-layout row>
+          <img src="/static/images/3.jpg" class="image right fadeImage2" style="height: 100px; margin-left: 120px; margin-top: -30px">
+        </v-layout>
+
       </v-flex>
 
     </v-layout>
 
-    <img v-if="screen_breakpoint" src="/static/images/banner.png" style="width: 100vw">
+    <v-toolbar class="toolbar elevation-0">
+      <v-spacer></v-spacer>
+      <p class="body-1 link mr-5" v-on:click="$router.push('/support')">SUPPORT</p>
+      <p class="body-1 link mr-5" v-on:click="$router.push('/about_us')">ABOUT US</p>
+      <p class="body-1 link" v-on:click="$router.push('/business_signup')">APPLY FOR A BUSINESS ACCOUNT</p>
+      <v-spacer></v-spacer>
+    </v-toolbar>
 
-    <div class="panel1">
-      <v-container class="panel1">
+  </v-container>
 
-        <v-layout row wrap>
-
-          <v-flex xs12 sm12 class="text-xs-center" style="color:#FF7D27; font-size: 2.2em;">
-            <p><strong>Three easy steps</strong></p>
-          </v-flex>
-
-          <v-flex v-for="(icon, index) in icons" v-bind:key="icon.title" text-sm-left sm4 xs12 pl-4 pr-4 mt-3>
-            <center>
-            <div class="number-circles text-sm-center">
-              <h1 style="font-size: 40px;">{{index + 1}}</h1>
-            </div>
-            <p style="font-size: 2.2em"><strong>{{icon.title}}</strong></p>
-            <v-icon class="iconRow" color="orange darken-2">{{icon.icon}}</v-icon>
-            <p class="body-1 text-sm-left" style="font-size: 1.1em !important">{{icon.text}}</p>
-            </center>
-
-          </v-flex>
-
-        </v-layout>
-
-      </v-container>
-
-      <v-container grid-list-lg class="textRow">
-        <v-layout row wrap>
-          <v-flex lg6 xs12 pl-4 pr-4 v-for="text in texts" v-bind:key="text.title">
-            <p class="headline pl-2 pr-2"><strong>{{text.title}}</strong></p>
-            <p class="body-1 pl-2 pr-2" style="font-size: 1.1em !important">{{text.body}}</p>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-    </div>
-
-  </v-content>
 </template>
 
 <script>
   export default {
-
-    beforeCreate() {
-      this.loading = true;
-    },
-
-    mounted() {
-      this.loading = false;
-      this.onResize()
-      window.addEventListener('resize', this.onResize, {passive: true})
-    },
-
-    beforeDestroy() {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', this.onResize, {passive: true})
-      }
-    },
-
-    methods: {
-      onResize() {
-        this.screen_breakpoint = window.innerWidth > 745
-      }
-    },
-
     data() {
       return {
-        screen_breakpoint: false,
-        icons: [
-          {
-            title: "Upload Your Art",
-            icon: "cloud_upload",
-            text: "Upload your favorite original art pieces onto our user-friendly and life-changing platform."
-          },
-          {
-            title: "Choose A Blog",
-            icon: "person",
-            text: "Choose between some the internet’s largest art blogs, social media pages, and art magazines."
-          },
-          {
-            title: "Send!",
-            icon: "send",
-            text: "If accepted, you are on your way to becoming the next online art sensation!"
-          }
-        ],
-        texts: [
-          {
-            title: "Why people use it",
-            body: "Share Yourself Artists puts millions of followers at the tip of your fingers. The platform allows you the recognition you deserve, while saving your time and effort in the process. Share Yourself Artist also guarantees a response from each submission!"
-          },
-          {
-            title: "What you should expect",
-            body: "Using Share Yourself Artists has gained me over 10,000 followers and earned me many commission requests. Now everyday I wake up, check my email, and get straight to drawing. Even when my submission does not get accepted, I always get valuable feedback that takes my art to the whole next level!"
-          },
-        ],
-        loading: true
+
       }
     }
   }
@@ -178,72 +91,101 @@
 
 <style scoped>
 
-  .title1 {
-    margin-top: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 100;
-    font-size: 1.6em;
-  }
-
-  .title2 {
+  .home {
     margin-top: -10px;
-    margin-bottom: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 100;
-    font-size: 1.6em;
   }
 
-  v-btn {
-    width: 300px;
+  .signup_button {
+    height: 40px;
+    width: 250px;
   }
 
-  .iconRow {
-    font-size: 120px;
-    color: "primary";
-    margin-top: -25px;
+  .toolbar {
+    width: 100%;
+    background-color: white;
+    margin-bottom: -50px !important;
   }
 
-  .panel1 {
-    padding-top: 15px;
-    background-color: #f8fcfa !important;
+  .link {
+    cursor: pointer;
   }
 
-  .panel2 {
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+  .left-row {
+
   }
 
-  .account-btns {
-    margin-bottom: 10px;
+  .center-row {
+    height: 675px;
+
   }
 
-  .number-circles {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #FF7D27;
-    color: white;
-    margin-bottom: 5px;
+  .right-row {
+
   }
 
-  .loading_holder {
-    width: 100vw;
-    height: 100vh;
+  .image {
+    border-radius: 10px;
   }
 
-  .spinner_holder {
-    height: 82vh;
-    padding-top: 39vh;
-    margin-left: 47vw;
+  .left {
+    margin-left: 20px;
   }
 
-  .headline {
-    color: black;
+  .right {
+    margin-right: 20px;
+  }
+  
+  .fadeImage1 {
+    -webkit-animation: fadein 2s;
+       -moz-animation: fadein 2s;
+        -ms-animation: fadein 2s;
+         -o-animation: fadein 2s;
+            animation: fadein 2s;
   }
 
-  .textRow {
-    margin-bottom: 2px;
+  .fadeImage2 {
+    -webkit-animation: fadein 7s;
+       -moz-animation: fadein 7s;
+        -ms-animation: fadein 7s;
+         -o-animation: fadein 7s;
+            animation: fadein 7s;
+  }
+
+  .fadeImage3 {
+    -webkit-animation: fadein 10s;
+       -moz-animation: fadein 10s;
+        -ms-animation: fadein 10s;
+         -o-animation: fadein 10s;
+            animation: fadein 10s;
+  }
+
+  @keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Firefox < 16 */
+  @-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Safari, Chrome and Opera > 12.1 */
+  @-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Internet Explorer */
+  @-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Opera < 12.1 */
+  @-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
 </style>

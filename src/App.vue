@@ -2,7 +2,24 @@
 
   <v-app>
 
-    <v-toolbar flat class="toolbar">
+    <v-toolbar flat v-if="!userIsAuthanticed" class="toolbar2">
+
+      <v-spacer></v-spacer>
+      
+      <div class="toolbar-icon">
+        <v-avatar>
+          <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+        </v-avatar>
+        <h6 class="title ml-1 mt-2">SIYA</h6>
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <p class="body-1 mr-5 link" v-on:click="$router.push('/sign_in')">Sign In</p>
+
+    </v-toolbar>
+
+    <v-toolbar flat v-if="userIsAuthanticated" class="toolbar">
 
       <v-spacer class="sm-spacer"></v-spacer>
 
@@ -207,7 +224,7 @@
       </v-layout>
     </main>
 
-    <v-footer height="auto" class="footer">
+    <v-footer height="auto" class="footer" v-if="userIsAuthanticated">
       <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
         <v-spacer></v-spacer>
 
@@ -443,6 +460,12 @@ export default {
     padding-top: 18px;
   }
 
+  .toolbar2 {
+    background-color: white; 
+    height: 100px; 
+    padding-top: 25px;
+  }
+
   .main {
     background-color: white;
   }
@@ -487,6 +510,10 @@ export default {
 
   .footer-link {
     color: #676D6A;
+  }
+
+  .toolbar-icon {
+    margin-left: 75px;
   }
 
 
