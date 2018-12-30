@@ -30,7 +30,7 @@
     </div>
     <v-layout row>
             <v-flex lg9 offset-lg1 mt-5>
-              <v-card id="selectbox">
+              <v-card flat id="selectbox">
                   <v-container
                     fluid
                   >

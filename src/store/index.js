@@ -59,7 +59,7 @@ export const store = new Vuex.Store({
     navItems: [
 
       /*
-      { 
+      {
         title: 'Home',
         icon: 'home',
         link: '/',
@@ -551,16 +551,14 @@ export const store = new Vuex.Store({
     },
     // for report
     fetch_top_12_recent_art ({commit, getters}) {
-      //commit('clear_top_12_recent_art')
+      // commit('clear_top_12_recent_art')
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
                           .orderBy('submitted_on').limit(12)
       let report = temp_report.get()
           .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
-
               commit('set_top_12_recent_art', doc.data())
-              console.log('getters.top_12_recent_art', getters.top_12_recent_art)
             })
           })
           .catch(function (error) {
@@ -572,7 +570,6 @@ export const store = new Vuex.Store({
       var temp_report = db.collection('review_requests')
                           .where('replied', '==', true)
                           .where('businessId.userId', '==', getters.user.id)
-                          console.log("temp report", temp_report)
       let report = temp_report
           .get()
           .then(function (querySnapshot) {

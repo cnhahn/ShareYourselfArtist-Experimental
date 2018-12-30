@@ -210,7 +210,7 @@
           <v-btn slot="activator" icon style="width: 40px; height: 40px;">
             <v-icon>more_vert</v-icon>
           </v-btn>
-          
+
             <v-list>
 
               <v-list-tile>
@@ -230,7 +230,7 @@
                 <v-list-tile-title>Profile</v-list-tile-title>
                 </router-link>
               </v-list-tile>
-              
+
               <v-divider></v-divider>
 
               <v-list-tile>
@@ -253,18 +253,14 @@
       <v-flex v-else xs12>
         <router-view ></router-view>
       </v-flex>
-       <v-flex v-if="userIsAuthanticated" xs3>
+       <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
 
-        <v-card flat v-if="userIsAuthanticated">
+        <v-card  flat v-if="userIsAuthanticated">
 
-          <p class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Art</p>
-
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Artists</p>
           <v-layout row wrap>
-
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
-
               <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
-
                 <v-flex xs2>
                   <v-avatar>
                     <img :src="top_12_recent_art[index].art.url">
@@ -275,13 +271,8 @@
                   <p class="subheading mt-1">{{top_12_recent_art[index].art.art_title}}</p>
                   <p class="body-1" style="margin-top: -20px">{{top_12_recent_art[index].art.artist_name}}</p>
                 </v-flex>
-
-              </v-layout>
-
-
-
+          </v-layout>
             </v-flex>
-
           </v-layout>
 
 
@@ -386,6 +377,7 @@ export default {
     },
   data(){
     return{
+      url: window.location.hostname,
       screen_breakpoint: false,
       screen_breakpoint_2: false,
       sideNav: false,
@@ -419,6 +411,7 @@ computed:{
   //   return unreply
   num_submissions(){
     return this.$store.state.submissions_for_this_business.length
+    console.log(this.url)
   },
   num_reviews(){
     return this.$store.state.replied_submissions.length
