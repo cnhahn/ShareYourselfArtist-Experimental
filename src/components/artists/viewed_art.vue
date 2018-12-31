@@ -15,7 +15,6 @@
       <div mb-5 class="small-container">
       <v-btn v-if= "!this.comment.length"   disabled  large>Send</v-btn>
       <v-btn v-else depressed  dark large color="primary" @click="save_comment(art)">Send</v-btn>
-
       <v-btn  depressed dark large color="black" @click="back">Back</v-btn>
     </div>
     <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
