@@ -520,6 +520,27 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    update_art_comments ({commit}, payload) {
+      console.log('update_art: ', payload)
+      let db = firebase.firestore()
+      let id_of_art = db.collection('art').where('upload_date', '==', payload.upload_date)
+      // find the right business userId so we can edit the right collection
+      id_of_art.get().then(function (results) {
+        if (results.empty) {
+          console.log('No documents found! in query')
+        } else {
+          // go through all results
+          results.forEach(function (doc) {
+            let docId = doc.id
+            console.log('action doc id ', docId)
+            let artRef = db.collection('art').doc(docId)
+            artRef.update({
+              comments: payload.comments
+            })
+          })
+        }
+      })
+    },
     // yiwayana
     push_updated_business_info_to_firebase ({commit}, payload) {
       let db = firebase.firestore()

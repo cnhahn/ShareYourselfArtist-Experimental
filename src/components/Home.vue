@@ -137,6 +137,9 @@
     methods: {
       onResize() {
         this.screen_breakpoint = window.innerWidth > 745
+      },
+      add_comments(){
+
       }
     },
 

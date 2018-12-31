@@ -16,7 +16,7 @@
                 <v-list-tile
                   :key="chat.key"
                   avatar
-                  class="resize_list"               
+                  class="resize_list"
                 >
                   <v-list-tile-avatar :color="chat.color" >
                     <img :src="chat.avatar" :style="chat.displayAvatar">
@@ -47,11 +47,11 @@
         <v-list three-line>
           <template v-for="(item) in input">
             <v-list-tile
-              
+
               :key="item.name"
               avatar
               style="background-color:#e6fff7"
-              
+
             >
             <v-icon class="smiley" @click="toggleEmojiPanel">sentiment_satisfied_alt</v-icon>
               <v-list-tile-content class="input">
@@ -64,12 +64,12 @@
                   label="Text here"
                   type="text"
                   width="50px"
-                  
-                  ></v-text-field>       
+
+                  ></v-text-field>
                   <emoji-picker :show="emojiPanel" @clicking="addEmoji" @close="toggleEmojiPanel"  ></emoji-picker>
-             
+
               </v-list-tile-content>
-             
+
               <v-list-tile-action
               style="color:orange"
               id='send'
@@ -107,7 +107,7 @@ import EmojiPicker from './EmojiPicker.vue'
     },
     components: {
       'emoji-picker': EmojiPicker,
-     
+
     },
     data () {
       return {
@@ -137,10 +137,10 @@ import EmojiPicker from './EmojiPicker.vue'
         return String(this.$store.user.name).charAt(0)
       },
       loadChats() {
-        var firebase_db = this.$store.getters.chat_database;
-        var chat_items = this.chat_items;
+        let firebase_db = this.$store.getters.chat_database;
+        let chat_items = this.chat_items;
         const that = this
-        var chat_ref = firebase_db.ref('chat')
+        let chat_ref = firebase_db.ref('chat')
         chat_ref.on('value', function(snapshot, newMessage = true) {
           console.log(snapshot.length)
           chat_items.length = 0;
@@ -205,7 +205,7 @@ import EmojiPicker from './EmojiPicker.vue'
         }
         const copy_message = this.message;
         var total_timestamp = this.makeTimeStamp();
-        
+
       if(url){
         this.$store.dispatch('sendMessageToFirebase', {
           message: copy_message,
@@ -215,7 +215,7 @@ import EmojiPicker from './EmojiPicker.vue'
           url: url,
           color: color
         })
-       
+
       }else{
         this.$store.dispatch('sendMessageToFirebase', {
             message: copy_message,
@@ -224,10 +224,10 @@ import EmojiPicker from './EmojiPicker.vue'
             timestamp: total_timestamp.timestamp,
             url: '',
             color: color,
-            attach_url:''    
+            attach_url:''
           })
       }
-        this.clearInput();    
+        this.clearInput();
       },
       refreshContainer() {
         var container = document.getElementById("chat-container")
@@ -278,13 +278,13 @@ import EmojiPicker from './EmojiPicker.vue'
     font-size: 12pt;
     font-family: Arial, Helvetica, sans-serif;
     overflow: auto
-   
+
   }
   .a{
     opacity:0.5;
     font-size:small;
     margin-left:20%;
-    
+
   }
   .t{
     font-weight: bold
@@ -293,10 +293,10 @@ import EmojiPicker from './EmojiPicker.vue'
     margin-right: 65px;
   }
   .resize_list{
-    
+
   }
   .smiley{
     margin-right:10px
   }
- 
+
 </style>
