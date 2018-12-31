@@ -6,7 +6,7 @@
 
         <v-flex xs12 text-xs-center class="center-row">
 
-            <h4 class="display-1 ml-3 mt-2 mb-4" style="margin-left: 18px !important">Share your art.</h4>
+            <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
         
         </v-flex>
 
