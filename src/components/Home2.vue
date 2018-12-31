@@ -87,7 +87,8 @@
       <v-spacer></v-spacer>
       <p class="body-1 link mr-5" v-on:click="$router.push('/support')">SUPPORT</p>
       <p class="body-1 link mr-5" v-on:click="$router.push('/about_us')">ABOUT US</p>
-      <p class="body-1 link " v-on:click="$router.push('/business_signup')">APPLY FOR A BUSINESS ACCOUNT</p>
+      <p class="body-1 link hidden-md-and-up" v-on:click="$router.push('/business_signup')">APPLY</p>
+      <p class="body-1 link hidden-sm-and-down" v-on:click="$router.push('/business_signup')">APPLY FOR A BUSINESS ACCOUNT</p>
       <v-spacer></v-spacer>
     </v-toolbar>
 
