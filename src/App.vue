@@ -195,13 +195,9 @@
 
       <v-layout row>  
 
-
-
-
-
-
-
-
+        <v-flex sm1 v-if="userIsAuthanticated && sideNav == false">
+          
+        </v-flex>
 
 
         <v-flex xs2 v-if="userIsAuthanticated && sideNav == true" class="hidden-sm-and-down ml-2 mr-3">
@@ -268,16 +264,6 @@
             
           </v-list>
         </v-flex>
-
-
-
-
-
-
-
-
-
-
 
 
         <v-flex sm12 v-if="userIsAuthanticated" class="hidden-md-and-up">
