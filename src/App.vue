@@ -140,11 +140,11 @@
 
             </v-list-tile>
 
-            <v-btn depressed style="width: 160px; height: 30px; color: white; background-color: black">
+            <v-btn depressed to="upload_an_image1" style="width: 160px; height: 30px; color: white; background-color: black">
               <small>Upload Art</small>
             </v-btn>
 
-            <v-btn flat outline color="black" style="width: 160px; height: 30px">
+            <v-btn flat outline to="artist_dashboard" color="black" style="width: 160px; height: 30px">
               <small>Submit to a Blog</small>
             </v-btn>
 
@@ -179,11 +179,11 @@
 
             </v-list-tile>
 
-            <v-btn depressed style="width: 160px; height: 30px; color: white; background-color: black">
+            <v-btn depressed to="upload_an_image1" style="width: 160px; height: 30px; color: white; background-color: black">
               <small>Upload Art</small>
             </v-btn>
 
-            <v-btn flat outline color="black" style="width: 160px; height: 30px">
+            <v-btn flat outline to="artist_dashboard" color="black" style="width: 160px; height: 30px">
               <small>Submit to a Blog</small>
             </v-btn>
 
@@ -207,7 +207,32 @@
           <router-view></router-view>
         </v-flex>
 
-        <v-flex sm1 v-if="userIsAuthanticated" class="hidden-sm-and-down">
+        <v-flex 
+          sm4 mt-2 
+          v-if="userIsAuthanticated && 
+                ($route.name == 'upload_an_image1' || $route.name == 'support' || $route.name == 'artist_dashboard')" 
+          class="hidden-md-and-down ml-4 mr-4"
+        >
+
+          <v-card  flat v-if="userIsAuthanticated">
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Artists</p>
+          <v-layout row wrap>
+            <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
+              <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
+                <v-flex xs2 mr-2>
+                  <v-avatar>
+                    <img :src="top_12_recent_art[index].art.url">
+                  </v-avatar>
+                </v-flex>
+
+                <v-flex xs10 ml-2>
+                  <p class="subheading mt-1">{{top_12_recent_art[index].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px">{{top_12_recent_art[index].art.artist_name}}</p>
+                </v-flex>
+          </v-layout>
+            </v-flex>
+          </v-layout>
+              </v-card>
 
         </v-flex>
 
@@ -220,6 +245,8 @@
         <v-flex xs12 v-if="!userIsAuthanticated">
           <router-view></router-view>
         </v-flex>
+
+
 
       </v-layout>
     </main>

@@ -26,10 +26,10 @@
   
     <v-content class="body">
       <v-layout column class="titles">
-        <h2 class="title-1">Get More Credits</h2>
+        <h2 class="title-1 ml-2 mb-3">Get More Credits</h2>
       </v-layout>
       <v-layout row wrap>
-        <v-flex xs12 md6 lg3 class="plan">
+        <v-flex xs12 sm3 class="plan">
           <p mb2 class="text-1">{{plans[0].title}}: {{plans[0].price}}<br>{{plans[0].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -40,7 +40,7 @@
 
 
         </v-flex>
-        <v-flex xs12 md6 lg3 class="plan">
+        <v-flex xs12 sm3 class="plan">
           <p mb2 class="text-1">{{plans[1].title}}: {{plans[1].price}}<br>{{plans[1].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick">
@@ -52,7 +52,7 @@
           
         </v-flex>
 
-        <v-flex xs12 md6 lg3 class="plan">
+        <v-flex xs12 sm3 class="plan">
           <p mb2 class="text-1">{{plans[2].title}}: {{plans[2].price}}<br>{{plans[2].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -63,7 +63,7 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap>
-        <v-flex xs12 md6 lg3 class="plan">
+        <v-flex xs12 sm3 class="plan">
           <p mb2 class="text-1">{{plans[3].title}}: {{plans[3].price}}<br>{{plans[3].credit}}</p>
        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick">
@@ -78,7 +78,7 @@
 
       <v-layout>
 
-        <v-flex xs12 md6 lg3 class="plan">
+        <v-flex xs12 md12 lg12 mt-4 class="plan">
         
           <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=4DJJEZZSYCLJS">
 <img src="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif" BORDER="0">
@@ -94,7 +94,7 @@
           manner.<br>
           Here are some of their benefits:<br>
         </p>
-        <v-flex v-for="(text, index) in texts">
+        <v-flex v-for="(text, index) in texts" v-bind:key="index">
           <strong>{{index + 1}}.</strong> {{text}}<br>
         </v-flex>
       </v-layout>
