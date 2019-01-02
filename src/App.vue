@@ -129,23 +129,56 @@
       temporary
       style="width: 225px"
     >
-      <v-list class="mt-1 ml-4">
+      <v-list class="mt-1 ml-4" v-if ="userIsAuthanticated">
 
-            <v-list-tile avatar>
-              <v-list-tile-avatar>
+            <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'business'">
+
+              <v-list-tile-avatar v-if="signed_in_user_avatar != null">
                 <img :src="signed_in_user_avatar">
               </v-list-tile-avatar>
 
-                <p class="body-1 mt-3">John Leider</p>
+              <v-list-tile-avatar color="primary" v-if ="signed_in_user_avatar == null">
+                <span class="white--text headline">{{ this.initial }}</span>
+              </v-list-tile-avatar>
+
+              <v-list-tile-content >
+                <v-list-tile-title>{{this.signed_in_business}}</v-list-tile-title>
+              </v-list-tile-content>
 
             </v-list-tile>
 
-            <v-btn depressed to="upload_an_image1" style="width: 160px; height: 30px; color: white; background-color: black">
+            <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'artist'">
+
+              <v-list-tile-avatar v-if ="signed_in_user_avatar != null" :size="avatarSize">
+                <img :src="signed_in_user_avatar">
+              </v-list-tile-avatar>
+
+              <v-list-tile-avatar color="primary" v-if ="signed_in_user_avatar == null">
+                <span class="white--text headline">{{ this.artist_initial }}</span>
+              </v-list-tile-avatar>
+
+              <p class="body-1 mt-3">{{this.artist_name}}</p>
+
+            </v-list-tile>
+
+            <v-btn depressed to="upload_an_image1" v-if ="userIsAuthanticated && user_role == 'artist'" style="width: 160px; height: 30px; color: white; background-color: black">
               <small>Upload Art</small>
             </v-btn>
 
-            <v-btn flat outline to="artist_dashboard" color="black" style="width: 160px; height: 30px">
-              <small>Submit to a Blog</small>
+            <v-btn depressed to="submissions" v-if ="userIsAuthanticated && user_role == 'business'" style="width: 160px; height: 30px; color: white; background-color: black">
+              <small>Submissions</small>
+            </v-btn>
+
+            <v-btn flat outline to="artist_dashboard" v-if ="userIsAuthanticated && user_role == 'artist'" color="black" style="width: 160px; height: 30px">
+              <small>Dashboard</small>
+            </v-btn>
+
+            <v-btn flat outline to="business_dashboard" v-if ="userIsAuthanticated && user_role == 'business'" color="black" style="width: 160px; height: 30px">
+              <small>Dashboard</small>
+            </v-btn>
+
+            <v-btn flat outline color="black" to="dashboard" v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'" style="width: 160px; height: 30px">
+              <small>Administrator</small>
             </v-btn>
 
             <v-btn v-for="item in sideNavItems" v-bind:key="item.link" depressed color="white" style="width: 160px;" :to="item.link">
@@ -162,10 +195,19 @@
 
       <v-layout row>  
 
+
+
+
+
+
+
+
+
+
         <v-flex xs2 v-if="userIsAuthanticated && sideNav == true" class="hidden-sm-and-down ml-2 mr-3">
           <v-list class=" ml-3 pa-0">
 
-            <v-list-tile avatar>
+            <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'business'">
 
               <v-list-tile-avatar v-if="signed_in_user_avatar != null">
                 <img :src="signed_in_user_avatar">
@@ -175,16 +217,44 @@
                 <span class="white--text headline">{{ this.initial }}</span>
               </v-list-tile-avatar>
 
-                <p class="body-1 mt-3">John Leider</p>
+              <v-list-tile-content >
+                <v-list-tile-title>{{this.signed_in_business}}</v-list-tile-title>
+              </v-list-tile-content>
 
             </v-list-tile>
 
-            <v-btn depressed to="upload_an_image1" style="width: 160px; height: 30px; color: white; background-color: black">
+            <v-list-tile avatar v-if ="userIsAuthanticated && user_role == 'artist'">
+
+              <v-list-tile-avatar v-if ="signed_in_user_avatar != null" :size="avatarSize">
+                <img :src="signed_in_user_avatar">
+              </v-list-tile-avatar>
+
+              <v-list-tile-avatar color="primary" v-if ="signed_in_user_avatar == null">
+                <span class="white--text headline">{{ this.artist_initial }}</span>
+              </v-list-tile-avatar>
+
+              <p class="body-1 mt-3">{{this.artist_name}}</p>
+
+            </v-list-tile>
+
+            <v-btn depressed to="upload_an_image1" v-if ="userIsAuthanticated && user_role == 'artist'" style="width: 160px; height: 30px; color: white; background-color: black">
               <small>Upload Art</small>
             </v-btn>
 
-            <v-btn flat outline to="artist_dashboard" color="black" style="width: 160px; height: 30px">
-              <small>Submit to a Blog</small>
+            <v-btn depressed to="submissions" v-if ="userIsAuthanticated && user_role == 'business'" style="width: 160px; height: 30px; color: white; background-color: black">
+              <small>Submissions</small>
+            </v-btn>
+
+            <v-btn flat outline v-if="user_role == 'artist'" to="artist_dashboard" color="black" style="width: 160px; height: 30px">
+              <small>Dashboard</small>
+            </v-btn>
+
+            <v-btn flat outline v-if="user_role == 'business'" to="business_dashboard" color="black" style="width: 160px; height: 30px">
+              <small>Dashboard</small>
+            </v-btn>
+
+            <v-btn flat outline color="black" to="dashboard" v-if="this.$store.getters.user.id == 'H2kEJMbkyxUhcAfKH1jcMeDOn442' || this.$store.getters.user.id == 'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'" style="width: 160px; height: 30px">
+              <small>Administrator</small>
             </v-btn>
 
             <v-btn v-for="item in sideNavItems" v-bind:key="item.link" depressed color="white" style="width: 160px;" :to="item.link">
@@ -198,6 +268,17 @@
             
           </v-list>
         </v-flex>
+
+
+
+
+
+
+
+
+
+
+
 
         <v-flex sm12 v-if="userIsAuthanticated" class="hidden-md-and-up">
           <router-view></router-view>
@@ -236,11 +317,13 @@
 
         </v-flex>
 
-
-
-
-
-        <!-- Main Screen (not logged in) -->
+        <v-flex 
+          sm1 mt-2 
+          v-if="userIsAuthanticated && 
+                ($route.name != 'upload_an_image1' && $route.name != 'support' && $route.name != 'artist_dashboard')" 
+          class="hidden-md-and-down ml-2 mr-2"
+        >
+        </v-flex>
 
         <v-flex xs12 v-if="!userIsAuthanticated">
           <router-view></router-view>

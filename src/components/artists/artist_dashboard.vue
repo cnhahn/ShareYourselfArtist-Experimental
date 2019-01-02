@@ -29,7 +29,7 @@
       </v-card>
     </div>
     <v-layout row>
-            <v-flex lg9 offset-lg1 mt-5>
+            <v-flex xs12 mt-5 ml-2 mr-2>
               <v-card id="selectbox">
                   <v-container
                     fluid
@@ -56,9 +56,9 @@
             </v-flex>
           </v-layout>
     <v-layout row wrap mb-5>
-      <v-flex v-if="def.length != 0" xs12 lg4 offset-lg1 mt-5 v-for="art in def" :key='art.id'>
+      <v-flex xs12 sm6 mr-2 ml-2 v-if="def.length != 0" mt-5 v-for="art in def" :key='art.id'>
             <v-card mt-3>
-          <v-card-media img :src="art.url" height="450px">
+          <v-card-media img :src="art.url" height="275px">
           </v-card-media>
           <v-card-title primary-title>
             <div>
@@ -83,9 +83,9 @@
           </v-card-actions>
         </v-card>
       </v-flex>
-        <v-flex v-if="def.length == 0" xs12 lg4 offset-lg1 mt-5 v-for="art in arts" :key='art.id'>
+        <v-flex v-if="def.length == 0" xs12 sm6 pl-2 pr-2 mt-5 v-for="art in arts" :key='art.id'>
           <v-card mt-3>
-          <v-card-media img :src="art.url" height="450px">
+          <v-card-media img :src="art.url" height="275px">
           </v-card-media>
           <v-card-title primary-title>
             <div>

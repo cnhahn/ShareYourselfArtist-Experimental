@@ -25,12 +25,13 @@ export const store = new Vuex.Store({
     comments: [],
     commenting_mode: false,
     sideNavItems: [
+      /*
       {
         title: 'Dashboard',
         icon: 'dashboard',
         link: '/artist_dashboard'
       },
-      /*
+      
       { 
         title: 'Bio & Stats', 
         icon: 'face', 
@@ -54,11 +55,13 @@ export const store = new Vuex.Store({
       }
     ],
     business_side_nav_items: [
+      /*
       {
         title: 'Dashboard',
         icon: 'dashboard',
         link: '/business_dashboard'
       },
+      */
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       // { title: 'My Account', icon: 'account_box', link: '/account' },
       {
