@@ -195,7 +195,7 @@
 
       <v-layout row>  
 
-        <v-flex sm1 v-if="userIsAuthanticated && sideNav == false">
+        <v-flex sm1 v-if="userIsAuthanticated && sideNav == false" class="hidden-md-and-down">
           
         </v-flex>
 
@@ -276,8 +276,14 @@
 
         <v-flex 
           sm4 mt-2 
-          v-if="userIsAuthanticated && 
-                ($route.name == 'upload_an_image1' || $route.name == 'support' || $route.name == 'artist_dashboard')" 
+          v-if="userIsAuthanticated && ( 
+            ($route.name != 'chat') && 
+            ($route.name != 'blogs') && 
+            ($route.name != 'blogs2') &&
+            ($route.name != 'account') &&
+            ($route.name != 'dashboard') &&
+            ($route.name != 'report')
+          )" 
           class="hidden-md-and-down ml-4 mr-4"
         >
 
@@ -306,7 +312,7 @@
         <v-flex 
           sm1 mt-2 
           v-if="userIsAuthanticated && 
-                ($route.name != 'upload_an_image1' && $route.name != 'support' && $route.name != 'artist_dashboard')" 
+                ($route.name != 'upload_an_image1' && $route.name != 'support' && $route.name != 'artist_dashboard' )" 
           class="hidden-md-and-down ml-2 mr-2"
         >
         </v-flex>

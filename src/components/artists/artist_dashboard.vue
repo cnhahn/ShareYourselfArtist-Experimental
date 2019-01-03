@@ -44,7 +44,7 @@
                           chips
                           name='categories'
                           id='categories'
-                          label='categories'
+                          label='Categories'
                           v-model='categories'
                           required
                           multiple
@@ -136,7 +136,7 @@
         categories: '',
         def: [],
         noneFound: false,
-        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        items: ['Drawing', 'Painting', 'Sculpting', 'Design', '3D', 'Multimedia', 'Black & White', 'Psychedelic', 'Portrait', 'Realism', 'Abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
       }
     },

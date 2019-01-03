@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="mr-2">
 <div>
     <v-alert
       v-model="alert"

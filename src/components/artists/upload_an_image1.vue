@@ -1,6 +1,6 @@
 <template>
-  <!--Styled by Jin. No modification on code.-->
-  <v-container fill-height>
+  <v-container>
+
     <v-layout align-center>
       <v-flex>
         <h3 class="display-3">Great, let's get started. </h3>
