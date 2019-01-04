@@ -52,14 +52,6 @@
 
       <v-toolbar-items class="link toolbar-links">
 
-        <p v-if="userIsAuthanticated" v-on:click="$router.push('/account')" class="credit-link">
-          FREEBIE CREDITS: {{this.$store.state.free_credits}}
-        </p>
-
-        <p v-if="userIsAuthanticated && this.$store.state.credits" v-on:click="$router.push('/account')" class="credit-link">
-          PREMIUM CREDITS: {{this.$store.state.credits}}
-        </p>
-
         <p v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" v-on:click="$router.push('/blogs')" class="body-1 mr-5">
           Blogs/Magazines
         </p>
@@ -276,7 +268,7 @@
 
         <v-flex 
           sm4 mt-2 
-          v-if="userIsAuthanticated && (($route.name == 'artist_dashboard') || ($route.name == 'business_dashboard') || ($route.name == 'upload_an_image1'))" 
+          v-if="userIsAuthanticated && (($route.name == 'artist_dashboard') || ($route.name == 'business_dashboard') || ($route.name == 'upload_an_image1') || ($route.name == 'upload_an_image'))" 
           class="hidden-md-and-down ml-4 mr-4"
         >
 

@@ -25,9 +25,11 @@
 
   
     <v-content class="body">
+
       <v-layout column class="titles">
         <h2 class="title-1 ml-2 mb-3">Get More Credits</h2>
       </v-layout>
+
       <v-layout row wrap>
         <v-flex xs12 sm3 class="plan">
           <p mb2 class="text-1">{{plans[0].title}}: {{plans[0].price}}<br>{{plans[0].credit}}</p>
@@ -88,7 +90,8 @@
 
       
       <v-layout column class="text-2">
-        <h2 class="title-2"><strong>Why use premium credits?</strong></h2>
+        <h2 class="title-2"><strong>Your currently have <span style="color:red">{{this.$store.state.credits}}</span> premium credit(s) and <span style="color:red">{{this.$store.state.free_credits}}</span> freebie credit(s).</strong></h2>
+        <h2 class="title-2"><strong>Why buy premium credits?</strong></h2>
         <p class="text-1">
           Premium credits help to ensure that blogs actually listen to and respond to submissions in a timely
           manner.<br>
