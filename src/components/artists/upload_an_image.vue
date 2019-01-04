@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <div class="text-xs-center" offset-sm4 id="tour">
+
+    <!--
+    <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
             <transition name="fade">
@@ -32,8 +34,10 @@
           </template>
         </v-tour>
       </div>
+      -->
+
     <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12>
         <h2 class="title">
           Art Info
         </h2>
@@ -43,7 +47,7 @@
       <v-flex xs12>
         <form>
           <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <v-text-field
                 name='artistName'
                 label='Artist Name'
@@ -55,7 +59,7 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
               <v-text-field
                 name='artTitle'
                 label='Art Title'
@@ -66,8 +70,38 @@
               </v-text-field>
             </v-flex>
           </v-layout>
+
+          <!-- Associated tags for uploads -->
+
           <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
+              <v-card class="elevation-0">
+ 
+                    <v-layout
+                      align-center
+                      wrap
+                    >
+                        <v-select
+                          :items="items"
+                          attach
+                          chips
+                          name='categories'
+                          id='categories'
+                          label='Select Categories'
+                          v-model='categories'
+                          class="elevation-0"
+                          required
+                          multiple
+                        ></v-select>
+                    </v-layout>
+   
+                </v-card>
+            </v-flex>
+          </v-layout>
+
+
+          <v-layout row>
+            <v-flex xs12>
               <v-text-field multi-line
                             name='description'
                             id='art-description'
@@ -81,46 +115,16 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs12>
             </v-flex>
           </v-layout>
 
-<!-- Associated tags for uploads -->
-
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-card id="selectbox">
-                  <v-container
-                    fluid
-                  >
-                    <v-layout
-                      align-center
-                      wrap
-                    >
-                        <v-select
-                          :items="items"
-                          attach
-                          chips
-                          name='categories'
-                          id='categories'
-                          label='categories'
-                          v-model='categories'
-                          required
-                          multiple
-                        ></v-select>
-                    </v-layout>
-                  </v-container>
-                </v-card>
-            </v-flex>
-          </v-layout>
-
-
-
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
+          <div style="float:right">
+              <v-btn depressed dark color="primary" @click="goBack">Back</v-btn>
               <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
-              <v-layout>
+          </div>
+
+                <!--
       <div class="text-xs-center" offset-sm4 id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
@@ -153,10 +157,9 @@
           </template>
         </v-tour>
       </div>
+      -->
 
-    </v-layout>
-            </v-flex>
-          </v-layout>
+
         </form>
       </v-flex>
     </v-layout>
@@ -177,7 +180,7 @@
         artUrl: '',
         description: '',
         categories: '',
-        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        items: ['Drawing', 'Painting', 'Sculpting', 'Design', '3D', 'Multimedia', 'Black & White', 'Psychedelic', 'Portrait', 'Realism', 'Abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         steps: [
           {

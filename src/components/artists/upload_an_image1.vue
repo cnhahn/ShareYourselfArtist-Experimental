@@ -1,39 +1,43 @@
 <template>
   <v-container>
 
-    <v-layout align-center>
+    <v-layout class="upload-box text-xs-center" router to="/upload_an_image1" @click="onPickFile">
       <v-flex>
-        <h3 class="display-3">Great, let's get started. </h3>
-        <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
-        <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it. You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
-        <v-divider class="my-3"></v-divider>
-        <div class="title mb-3">Let's Upload your art piece!</div>
-        <v-btn
-          class="mx-0"
-          color="primary"
-          depressed
-          large
-          router to="/upload_an_image1"
-          @click="onPickFile"
+
+        <p
+          class="subheading mb-1"
+          style="font-weight: bold; color: black !important"
         >
-          Upload your art
-        </v-btn>
-        <input type="file"
+        Click Here to Upload Your Art
+      </p>
+
+      <v-icon color="black" style="font-size: 2.75em">vertical_align_top</v-icon>
+
+      </v-flex>
+
+    </v-layout>
+
+
+          <input type="file"
                style="display:none"
                ref="fileInput"
                accept="image/*"
                @change="onFilePicked">
         <v-btn
           class="mx-0"
+          style="float:right"
           depressed
           large
           color="primary"
           router to="/upload_an_image"
           :disabled="image_is_not_loaded"
-          @click="getUserId">Next
-
+          @click="getUserId"
+        >
+          Next
         </v-btn>
-        <v-layout>
+
+        
+        <!--
       <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
@@ -74,10 +78,13 @@
           </template>
         </v-tour>
       </div>
+      -->
 
-    </v-layout>
-      </v-flex>
-    </v-layout>
+ 
+
+
+
+
   </v-container>
 </template>
 
@@ -94,6 +101,7 @@
         file_name: null,
         file: {},
         image_is_not_loaded: true,
+
         steps: [
           {
             target: '#v-step-0', 
@@ -107,7 +115,8 @@
             target: '#v-step-2', 
             content: 'Once you have finished uploading your image, you will be sent to your dashboard. At your dashboard, you can view your uploads and even submit your work to various art sharing platforms'
           }
-        ], myCallbacks: {
+        ], 
+        myCallbacks: {
           onPreviousStep: this.previousStepCallback,
           onNextStep: this.nextStepCallback
         }
@@ -157,6 +166,14 @@
 
 
 <style>
+  .upload-box {
+    border: 1px solid rgb(147, 147, 147); 
+    border-radius: 2px;
+    margin-top: 45px;
+    padding-top: 110px;
+    padding-bottom: 110px;
+    cursor: pointer;
+  }
   .iconRow {
     font-size: 200px;
     color: #FF7D27;
