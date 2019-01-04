@@ -30,7 +30,7 @@
     </div>
     <v-layout row>
             <v-flex xs12 mt-5 ml-2 mr-2>
-              <v-card id="selectbox">
+              <v-card class="elevation-0 select-box">
                   <v-container
                     fluid
                   >
@@ -62,7 +62,7 @@
           </v-card-media>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <h6 class="headline mb-1" style="font-weight: bold; color: black !important">{{art.art_title}}</h6>
               <div>
                 <v-chip
                   v-for="(tag, index) in art.categories"
@@ -89,7 +89,7 @@
           </v-card-media>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <h6 class="headline mb-1" style="font-weight: bold; color: black !important">{{art.art_title}}</h6>
               <div>
                 <v-chip
                   v-for="(tag, index) in art.categories"
@@ -104,13 +104,36 @@
               </div>
             </div>
           </v-card-title>
+
           <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn flat  color="primary"
-            @click="submit_art(art)"
-            >Submit this piece</v-btn>
+
+            <v-btn 
+              thin 
+              depressed
+              small
+              dark
+              @click="clicked_art(art.upload_date)" 
+              class="elevation-0" 
+              color="primary" 
+              router to='/art'
+            >
+              View
+            </v-btn>
+
+            <v-btn
+              thin 
+              depressed
+              small
+              dark
+              class="elevation-0"
+              color="primary"
+              @click="submit_art(art)"
+            >
+              Submit this piece
+            </v-btn>
+
           </v-card-actions>
+
         </v-card>
       </v-flex>
     </v-layout>
@@ -244,5 +267,9 @@
     float: left;
     margin-right: 5px;
     background-color: lightgray;
+  }
+  .select-box {
+    border: 1px solid rgb(147, 147, 147); 
+    border-radius: 2px;
   }
 </style>
