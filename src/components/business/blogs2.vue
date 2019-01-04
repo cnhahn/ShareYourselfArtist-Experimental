@@ -1,5 +1,208 @@
 
 <template>
+
+
+<v-container>
+
+    <h6 class="headline mb-4" style="font-weight: bold; color: black !important">Submit to Blogs</h6>
+
+    <!-- MOBILE SCREEN -->
+
+    <v-layout row wrap style="margin-bottom:-10px" v-if="screen_breakpoint">
+      <v-flex lg4 md4 sm5> <p class="body-2 ml-2"> Name </p> </v-flex>
+      <v-flex lg1 md1 hidden-sm-and-down> <p class="body-2"> Fans </p> </v-flex>
+      <v-flex lg6 md6 sm6> <p class="body-2"> Notes </p> </v-flex>
+    </v-layout>
+
+    <v-layout row wrap v-for="(blog, index) in user_info" v-bind:key="blog.url" v-if="!screen_breakpoint">
+
+      <v-flex xs12 mb-3>
+        <v-divider class="mt-1 mb-1"></v-divider>
+      </v-flex>
+
+      <v-flex xs1 mr-5>
+        <v-avatar>
+          <img :src="`${blog.url}`">
+        </v-avatar>
+      </v-flex>
+
+      <v-flex>
+
+        <h6 
+          v-if="userIsAuthanticated"
+          v-on:click="selectBusinessBlog(blog.business_name), $router.push('/business')"
+          class="headline" 
+          style="color:#FF7D27; margin-top: -5px; cursor: pointer;"
+          > 
+            {{blog.business_name}} 
+          </h6>
+
+        <h6 v-else class="headline" style="color:#FF7D27; margin-top: -5px"> {{blog.business_name}} </h6>
+
+        <p class="body-1" style="font-size:.8em !important">{{ getPassedTime(blog.upload_date) }}</p>
+        <p class="body-1 hidden-md-and-up" style="font-size:.8em !important; margin-top:-15px">Fans: {{ blog.follower_count }}</p>
+
+        <v-btn
+            v-if="user_role === 'artist' && !blog.selected"
+            color="primary"
+            thin
+            class="white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='add_a_business({
+            userId: blog.userId,
+            business_email: blog.email,
+            business_name: blog.business_name
+            },index)'>SELECT BLOG
+          </v-btn>
+          
+           <v-btn
+            v-if="user_role === 'artist' && blog.selected"
+            color="red"
+            thin
+            class="white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='remove_a_business(blog.email, index)'>UNSELECT BLOG
+          </v-btn>
+
+      </v-flex>
+
+      <v-flex xs12>
+            <p class="body-1" style="font-size: .85em !important; margin-top: 0px"><strong>About: </strong> <span>{{ blog.about }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>The Good: </strong> <span>{{ blog.the_good }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>Worth Knowing: </strong> <span>{{ blog.worth_knowing }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>Additional Notes: </strong> <span>{{ blog.additional_notes }} </span> </p>
+          </v-flex>
+
+    </v-layout>
+
+    <!-- END OF MOBILE SCREEN -->
+
+    <!-- ALL OTHER SCREENS -->
+
+    <v-layout row wrap v-for="(blog, index) in user_info" v-bind:key="blog.url" v-if="screen_breakpoint">
+
+      <v-flex lg12 xs12 mb-3>
+        <v-divider class="mt-1 mb-1"></v-divider>
+      </v-flex>
+
+      <v-flex lg1 md1 sm1 mb-3>
+        <v-avatar>
+          <img :src="`${blog.url}`">
+        </v-avatar>
+      </v-flex>
+
+      <v-flex lg3 md3 sm4>
+
+        <h6 
+          v-if="userIsAuthanticated"
+          v-on:click="selectBusinessBlog(blog.business_name), $router.push('/business')"
+          class="headline" 
+          style="color:#FF7D27; margin-top: -5px; cursor: pointer;"
+          > 
+            {{blog.business_name}} 
+          </h6>
+
+        <h6 v-else class="headline" style="color:#FF7D27; margin-top: -5px"> {{blog.business_name}} </h6>
+
+        <p class="body-1" style="font-size:.8em !important">{{ getPassedTime(blog.upload_date) }}</p>
+
+
+
+        <v-btn
+            v-if="user_role === 'artist' && !blog.selected"
+            color="primary"
+            thin
+            class="hidden-sm-and-down white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='add_a_business({
+            userId: blog.userId,
+            business_email: blog.email,
+            business_name: blog.business_name
+            },index)'>SELECT BLOG
+          </v-btn>
+          
+           <v-btn
+            v-if="user_role === 'artist' && blog.selected"
+            color="red"
+            thin
+            class="hidden-sm-and-down white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='remove_a_business(blog.email, index)'>UNSELECT BLOG
+          </v-btn>
+
+
+        <p class="body-1 hidden-md-and-up" style="font-size:.8em !important; margin-top:-15px">Fans: {{ blog.follower_count }}</p>
+        <v-btn
+            v-if="user_role === 'artist' && !blog.selected"
+            color="primary"
+            thin
+            class="hidden-md-and-up white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='add_a_business({
+            userId: blog.userId,
+            business_email: blog.email,
+            business_name: blog.business_name
+            },index)'>SELECT BLOG
+          </v-btn>
+          
+           <v-btn
+            v-if="user_role === 'artist' && blog.selected"
+            color="red"
+            thin
+            class="hidden-md-and-up white--text elevation-0"
+            style="margin-top: -10px; margin-left: 0px"
+            @click='remove_a_business(blog.email, index)'>UNSELECT BLOG
+          </v-btn>
+        
+      </v-flex>
+
+      <v-flex lg1 md1 hidden-sm-and-down>
+        <p class="body-2"> {{ blog.follower_count }} </p>
+      </v-flex>
+
+      <v-flex lg6 md6 sm6>
+
+        <v-layout row wrap>
+
+          <v-flex lg12>
+            <p class="body-1" style="font-size: .85em !important; margin-top: 0px"><strong>About: </strong> <span>{{ blog.about }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>The Good: </strong> <span>{{ blog.the_good }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>Worth Knowing: </strong> <span>{{ blog.worth_knowing }} </span> </p>
+            <p class="body-1" style="font-size: .85em !important; margin-top: -10px"><strong>Additional Notes: </strong> <span>{{ blog.additional_notes }} </span> </p>
+          </v-flex>
+
+        </v-layout>
+
+      </v-flex>
+
+    </v-layout>
+
+    <!-- END OF ALL OTHER SCREENS -->
+
+    <div v-if="$store.getters.businesses_being_submitted.length != 0">
+      <h6 class="headline mb-1" style="font-weight: bold; color: black !important">Selected Blogs:</h6>
+      <p class="body-1" style="margin-bottom: 5px" v-for="blog in this.$store.getters.businesses_being_submitted" v-bind:key="blog.business_name">
+        <span>{{blog.business_name}}</span>
+      </p>
+      <v-btn
+          lg12 text-lg-right mb-5  
+          color="red"
+          class="elevation-0 white--text" 
+          style="margin-left: 0px"
+          dark 
+          @click="route_to"
+          large
+      >
+        Submit Your Work
+      </v-btn>
+
+    </div>
+
+  </v-container>
+
+
+
+<!--
   <v-container>
 
 
@@ -100,12 +303,15 @@
  @click="route_to"
  large>Submit Your Work</v-btn>
   </v-container>
+
+  -->
 </template>
 
 <script>
   export default {
     data() {
       return {
+        screen_breakpoint: false,
           isActive: false,
           companies:[{name:"test"},{name: "test2"}],
         dialog: false,
@@ -122,7 +328,7 @@
         ],
         business_name:'',
         select_business:[],
-        business_list_to_submit:[]
+        business_list_to_submit: this.$store.getters.businesses_being_submitted
       }
     },
     computed: {
@@ -144,7 +350,14 @@
             this.user_info[i].selected = false
           }
 }
+    this.onResize()
+      window.addEventListener('resize', this.onResize, {passive: true})
   
+    },
+    beforeDestroy() {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', this.onResize, {passive: true})
+      }
     },
     created:function(){
        function filter_test(business) {
@@ -159,6 +372,9 @@
          
     },
     methods:{
+      onResize() {
+        this.screen_breakpoint = window.innerWidth > 700
+      },
       route_to(){
       if (!this.$store.state.art_being_submitted_is_selected && this.$store.state.business_being_submitted_is_selected){
         this.$router.push({
@@ -180,6 +396,7 @@
               name: 'submit_result'
             })
       }
+      
     },
       remove_a_business(email,index){
           this.isActive = !this.isActive;
@@ -296,30 +513,5 @@
   }
 </script>
 <style scoped>
-  .container {
-    height: 100vh;
-  }
-  .divbottomline {
-    border-bottom: 1px solid #e0e0e0;
-  }
-  .table {
-    padding-top: 0px;
-    margin-bottom: 200px;
-  }
-  .businessName {
-    margin-top: 1vh;
-    margin-bottom: 0.25vh;
-  }
-  .businessUser {
-    margin-top: 1vh;
-  }
-  .businessNameHolder {
-    margin-left: 1vw;
-  }
-  .noteHolder {
-    margin-top: 1vh;
-  }
-  a{
-    text-decoration: none
-  }
+ 
 </style>
