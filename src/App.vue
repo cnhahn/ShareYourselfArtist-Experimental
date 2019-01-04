@@ -276,14 +276,7 @@
 
         <v-flex 
           sm4 mt-2 
-          v-if="userIsAuthanticated && ( 
-            ($route.name != 'chat') && 
-            ($route.name != 'blogs') && 
-            ($route.name != 'blogs2') &&
-            ($route.name != 'account') &&
-            ($route.name != 'dashboard') &&
-            ($route.name != 'report')
-          )" 
+          v-if="userIsAuthanticated && (($route.name == 'artist_dashboard') || ($route.name == 'business_dashboard') || ($route.name == 'upload_an_image1'))" 
           class="hidden-md-and-down ml-4 mr-4"
         >
 
