@@ -175,10 +175,12 @@
 
             <v-btn v-for="item in sideNavItems" v-bind:key="item.link" depressed color="white" style="width: 160px;" :to="item.link">
               <v-layout>
-                <v-flex sm2 style="margin-top: 14px">
+                <v-flex xs2 style="margin-top: 14px">
                   <v-icon>{{ item.icon }}</v-icon>
               </v-flex>
+              <v-flex xs2>
               <span><p class="ml-2 mt-3 body-2"><small>{{ item.title }}</small></p></span>
+              </v-flex>
               </v-layout>
             </v-btn>
             

@@ -90,7 +90,7 @@
 
       
       <v-layout column class="text-2">
-        <h2 class="title-2"><strong>Your currently have <span style="color:red">{{this.$store.state.credits}}</span> premium credit(s) and <span style="color:red">{{this.$store.state.free_credits}}</span> freebie credit(s).</strong></h2>
+        <h2 class="title-2"><strong>You currently have <span style="color:red">{{this.$store.state.credits}}</span> premium credit(s) and <span style="color:red">{{this.$store.state.free_credits}}</span> freebie credit(s).</strong></h2>
         <h2 class="title-2"><strong>Why buy premium credits?</strong></h2>
         <p class="text-1">
           Premium credits help to ensure that blogs actually listen to and respond to submissions in a timely
