@@ -44,7 +44,7 @@
                           chips
                           name='categories'
                           id='categories'
-                          label='Search Your Artwork By Category'
+                          label='Search Your Artwork'
                           v-model='categories'
                           required
                           multiple

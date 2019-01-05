@@ -2,7 +2,17 @@
 
   <v-container class="home">
 
-    <v-layout row>
+    <v-layout row style="height:70px">
+
+      <v-flex xs12 text-xs-center class="center-row">
+
+            <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
+        
+        </v-flex>
+
+      </v-layout>
+
+      <v-layout row>
 
       <v-flex xs4 ml-5 hidden-md-and-down class="left-row">
 
@@ -20,11 +30,9 @@
 
       </v-flex>
 
-      <v-flex lg4 text-xs-center class="center-row hidden-md-and-down">
+      <v-flex lg4 text-xs-center class="center-row hidden-md-and-down" style="margin-bottom: -70px; margin-left:3px">
 
-          <h4 class="display-1 mt-2 mb-4">Share your art.</h4>
-
-          <img src="/static/images/mobile_app.png" class="mr-1" height="60%">
+          <img src="/static/images/mobile_app.png" height="60%">
 
         <v-btn
           flat

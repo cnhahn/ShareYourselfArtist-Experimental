@@ -313,7 +313,7 @@
       </v-layout>
     </main>
 
-    <v-footer height="auto" class="footer" v-if="userIsAuthanticated">
+    <v-footer height="auto" class="footer" v-if="$route.name != 'Home' && $route.name != 'home2'">
       <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
         <v-spacer></v-spacer>
 
