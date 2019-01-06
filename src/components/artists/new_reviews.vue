@@ -6,11 +6,12 @@
       </div>
     </div>
     <v-icon @click="fetchRepliedSubmissions" color="black" class="topIcon" large>refresh</v-icon>
-    <v-icon @click="reviewList__unread_reviews" color="grey" class="topIcon" large>mail</v-icon>
-    <v-icon @click="reviewList__read_reviews" color="green" class="topIcon" large>drafts</v-icon>
-    <v-data-table :items="reviewList" hide-actions class="elevation-1">
+        <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
+        <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
+
+    <v-data-table flat :items="reviewList" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
-      <td> 
+      <td>
         <v-layout row wrap>
           <v-flex lg1 md1 sm1 xs12>
             <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
@@ -23,8 +24,7 @@
               <p>Feedback by: {{ props.item.businessId.business_name }}</p>
             </div>
             <div class="hidden-md-and-up">
-              <v-icon color="green" v-if =(props.item.read_byartist) large>drafts</v-icon>
-              <v-icon color="grey" v-if =(!props.item.read_byartist) large>mail</v-icon>
+
               <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
             </div>
           </v-flex>
@@ -39,10 +39,7 @@
           </v-flex>
           <v-flex lg2 md2 sm2 xs12 class="hidden-sm-and-down">
             <v-layout row wrap style="margin-top: 1vh">
-              <v-flex lg3 md2 sm2 xs12>
-                <v-icon color="green" v-if =(props.item.read_byartist) large>drafts</v-icon>
-                <v-icon color="grey" v-if =(!props.item.read_byartist) large>mail</v-icon>
-              </v-flex>
+
               <v-flex lg3 md2 sm2 xs12>
                 <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
               </v-flex>
@@ -105,7 +102,7 @@
           break
           }
         }
-        
+
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
