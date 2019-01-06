@@ -181,11 +181,11 @@
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         steps: [
           {
-            target: '#v-step-0', 
+            target: '#v-step-0',
             content: 'Would you like help with uploading?'
           },
           {
-            target: '#v-step-1', 
+            target: '#v-step-1',
             content: 'Enter the name, title, description and categories you would like viewers to see on your upload. When finished, hit submit and you will be directed to your dashboard'
           }
         ], myCallbacks: {
@@ -221,11 +221,17 @@
           categories: this.categories,
           folder: this.folder,
           upload_date: Date.now()
-        }).then(response => {
-          this.$router.push('/artist_dashboard')
+        }).then(res => {
+           this.$router.push({
+              path: 'artist_dashboard'
+            })
         })
+
+
+
+
       },
-        previousStepCallback(currentStep) {
+      previousStepCallback(currentStep) {
         console.log("Previous")
       },
         nextStepCallback(currentStep) {

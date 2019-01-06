@@ -143,7 +143,23 @@
 
     computed: {
       arts() {
-        return this.$store.getters.allArts;
+        const arts = this.$store.getters.allArts;
+
+        function compare(a, b) {
+        const upload_date1 = a.upload_date
+        const upload_date2 = b.upload_date
+
+  let comparison = 0;
+  if (upload_date1 > upload_date2) {
+    comparison = -1;
+  } else if (upload_date1 < upload_date2) {
+    comparison = 1;
+  }
+  return comparison;
+}
+
+console.log(arts.sort(compare));
+        return arts;
       },
       loading() {
         return this.$store.getters.loading;

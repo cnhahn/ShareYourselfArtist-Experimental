@@ -722,7 +722,7 @@ export const store = new Vuex.Store({
           // console.log(doc.data().userId)
           const userRef = db.collection('users').doc(doc.data().userId)
           return userRef.update({
-            free_credits: currentCredits + numCredits
+            free_credits: numCredits
           })
         })
       })
@@ -1660,17 +1660,13 @@ export const store = new Vuex.Store({
           querySnapshot.forEach(function (doc) {
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data()
-            console.log('doc.data: ' + docData)
-            console.log('doc.id: ' + doc.id)
             docData.docId = doc.id
 
             console.log('doc.data: ' + docData.docId)
             commit('set_submissions_for_this_business', docData)
-            console.log(doc.id, ' => ', doc.data())
           })
         })
         .catch(function (error) {
-          console.log('Error getting submissions: ', error)
         })
     },
     async fetch_all_Submissions ({ commit, getters }) {
@@ -1690,7 +1686,6 @@ export const store = new Vuex.Store({
 
             console.log('doc.data: ' + docData.docId)
             commit('set_submissions_for_this_business', docData)
-            console.log(doc.id, ' => ', doc.data())
           })
         })
         .catch(function (error) {
@@ -1764,10 +1759,8 @@ export const store = new Vuex.Store({
                   .add(art)
                   .then(function (docRef) {
                     commit('setArts', art);
-                    console.log('Document written with ID: ', docRef.id)
                   })
                   .catch(function (error) {
-                    console.error('Error adding document: ', error)
                   })
               }
             })
@@ -1828,6 +1821,7 @@ export const store = new Vuex.Store({
                 .then(function (docRef) {
                   commit('setArts', art)
                   console.log('Document written with ID: ', docRef.id)
+                  router.push({name: 'artist_dashboard'})
                 })
                 .catch(function (error) {
                   console.error('Error adding document: ', error)
