@@ -5,7 +5,7 @@
     <v-toolbar flat v-if="!userIsAuthanticated" class="toolbar2">
 
       <v-spacer></v-spacer>
-      
+
       <div class="toolbar-icon">
         <v-avatar>
           <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
@@ -43,9 +43,8 @@
           <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
         </v-avatar>
       </router-link>
-
-      <v-toolbar-title v-if="screen_breakpoint_2" class="large-logo">
-        <p>Share Yourself Artists</p>
+      <v-toolbar-title class="large-logo" v-if="screen_breakpoint_2">
+        <p>SIYA</p>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -76,7 +75,7 @@
           <v-btn slot="activator" icon class="drop-menu-icon">
             <v-icon>more_vert</v-icon>
           </v-btn>
-          
+
           <v-list>
 
             <v-list-tile>
@@ -96,7 +95,7 @@
                 <v-list-tile-title>Profile</v-list-tile-title>
               </router-link>
             </v-list-tile>
-              
+
             <v-divider></v-divider>
 
             <v-list-tile>
@@ -183,14 +182,14 @@
               </v-flex>
               </v-layout>
             </v-btn>
-            
+
           </v-list>
     </v-navigation-drawer>
 
-      <v-layout row>  
+      <v-layout row>
 
         <v-flex sm1 v-if="userIsAuthanticated && sideNav == false" class="hidden-md-and-down">
-          
+
         </v-flex>
 
 
@@ -255,7 +254,7 @@
               <span><p class="ml-2 mt-3 body-2"><small>{{ item.title }}</small></p></span>
               </v-layout>
             </v-btn>
-            
+
           </v-list>
         </v-flex>
 
@@ -268,9 +267,9 @@
           <router-view></router-view>
         </v-flex>
 
-        <v-flex 
-          sm4 mt-2 
-          v-if="userIsAuthanticated && (($route.name == 'artist_dashboard') || ($route.name == 'business_dashboard') || ($route.name == 'upload_an_image1') || ($route.name == 'upload_an_image'))" 
+        <v-flex
+          sm4 mt-2
+          v-if="userIsAuthanticated && (($route.name == 'artist_dashboard') || ($route.name == 'business_dashboard') || ($route.name == 'upload_an_image1') || ($route.name == 'upload_an_image'))"
           class="hidden-md-and-down ml-4 mr-4"
         >
 
@@ -296,10 +295,10 @@
 
         </v-flex>
 
-        <v-flex 
-          sm1 mt-2 
-          v-if="userIsAuthanticated && 
-                ($route.name != 'upload_an_image1' && $route.name != 'support' && $route.name != 'artist_dashboard' )" 
+        <v-flex
+          sm1 mt-2
+          v-if="userIsAuthanticated &&
+                ($route.name != 'upload_an_image1' && $route.name != 'support' && $route.name != 'artist_dashboard' )"
           class="hidden-md-and-down ml-2 mr-2"
         >
         </v-flex>
@@ -375,6 +374,7 @@ export default {
 
   data(){
     return{
+      url: window.location.hostname,
       screen_breakpoint: false,
       screen_breakpoint_2: false,
       sideNav: true,
@@ -427,7 +427,7 @@ export default {
       return this.$store.state.signed_in_user.business_name
       } else {return ''}
     },
-    initial () { 
+    initial () {
       if (this.$store.state.signed_in_user.name != 'undefined' && this.$store.state.signed_in_user.name != null ){
       return String(this.$store.state.signed_in_user.email).charAt(0)
       } else {return ''}
@@ -542,16 +542,16 @@ export default {
 <style scoped>
 
    @import url('https://fonts.googleapis.com/css?family=Covered+By+Your+Grace|Over+the+Rainbow" rel="stylesheet');
-    
+
   .toolbar {
-    background-color: white; 
-    height: 100px; 
+    background-color: white;
+    height: 100px;
     padding-top: 18px;
   }
 
   .toolbar2 {
-    background-color: white; 
-    height: 100px; 
+    background-color: white;
+    height: 100px;
     padding-top: 25px;
   }
 
@@ -589,7 +589,7 @@ export default {
   }
 
   .drop-menu-icon {
-    width: 40px; 
+    width: 40px;
     height: 40px;
   }
 

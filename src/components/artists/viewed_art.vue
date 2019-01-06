@@ -1,50 +1,59 @@
 <template>
-  <v-container mt-3>
-    <v-layout row wrap>
-      <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
-        <img :src="this.art.url" alt="" width="100%">
-      </v-flex>
-      <v-flex lg4 md6 sm12 xs12 ml-2 mr-2>
-        <h2>{{this.art.art_title}}</h2>
-        <p>{{this.art.description}}</p>
-        <div class="buttons">
-          <v-btn depressed dark large color="black" @click="back">Back</v-btn>
-          <!-- <v-btn depressed large color="primary" style="width:120px" @click="submit_art(this.art)" router to="/blogs">Submit</v-btn> -->
-
-<!--           <div v-if="this.$store.getters.commenting_mode == false">
-            <v-btn flat  color="primary"
-            @click="comment_art()"
-            >Comment on this piece</v-btn>
-          </div>
-          <div v-if="this.$store.getters.commenting_mode == true">
-            <textarea style="border: 2px solid black" v-model="art.newComment" placeholder="Enter your comment here..."></textarea>
-            <v-btn flat  color="primary"
-            @click="save_comment(art.upload_date)"
-            >Post Comment</v-btn>
-            <v-btn flat  color="primary"
-            @click="comment_art()"
-            >Cancel</v-btn>
-          </div>
-
-          <div v-if="true" class = "commentSection">
-              <div v-for="comment in this.$store.getters.comments" class = "commentBox">
-                <h4><b>{{comment.author}}</b></h4>
-                <div class = "commentBody">
-                  <h3>{{comment.body}}</h3>
-                </div>
-              </div>
-            </div> -->
-
-        </div>
-      </v-flex>
-    </v-layout>
+  <v-container ml-3>
+  <v-layout class = "main-container" wrap>
+    <div class = "main-container">
+    <h2>{{this.art.art_title}}</h2>
+    <p>{{this.art.description}}</p>
+    </div>
+    <div class = "small-container">
+      <v-text-field
+          label="Comment"
+          single-line
+          v-model="comment"
+      ></v-text-field>
+    </div>
+      <div mb-5 class="small-container">
+      <v-btn v-if= "!this.comment.length"   disabled  large>Send</v-btn>
+      <v-btn v-else depressed  dark large color="primary" @click="save_comment(art)">Send</v-btn>
+      <v-btn  depressed dark large color="black" @click="back">Back</v-btn>
+    </div>
+    <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
+  </v-layout>
+  <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snack_bar_button"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 
 </template>
- <script>
+
+<script>
+import * as firebase from 'firebase'
   export default {
         data() {
       return {
+        snackbar: false,
+        y: 'top',
+        x: null,
+        mode: '',
+        timeout: 13000,
+        text: 'Thanks! Your comment has been submitted.',
+        comment:'',
         art:{
           url: localStorage.getItem('url'),
           art_title: localStorage.getItem('art_title'),
@@ -55,76 +64,41 @@
     }
         },
     methods:{
+      snack_bar_button(){
+        this.snackbar = false;
+        this.$router.push({
+      path:'/artist_dashboard'
+    })
+
+      },
       back(){
         window.history.back();
       },
-      comment_art(){
-        this.$store.commit('set_commenting_mode',!this.$store.getters.commenting_mode)
-      },
-       save_comment(upload_date){
-        console.log("upload_date " + upload_date)
-        this.$store.commit('set_commenting_mode',!this.$store.getters.commenting_mode)
-        const db = this.$store.getters.db
-        var artRef = db.collection("art")
-                        .where('upload_date', '==', upload_date)
-                        .get()
-                        .then(function (querySnapshot){
-                  querySnapshot.forEach(function(doc){
-                    var docRef = db.collection("art").doc(doc.id).collection("comments").doc("scott").add({comments: this.art.newComment})
-
-          })
-        }) //5gWmUSOeEZX49S5cJtIW  this.art.upload_date*/
-        // console.log(artRef)
-        // var newComment = {
-        //   author: this.$store.getters.signed_in_user.name,
-        //   id: this.$store.getters.signed_in_user.id,
-        //   body: this.art.newComment,
-        // }
-        // this.$store.commit('set_comments', newComment)
-        // //console.log("artRef: ",artRef);
-        
-        // return artRef.update({
-        //   comments: this.$store.getters.comments
-        // })
-        // console.log("uploading was a success!")
-        // .then(function() {
-        //     console.log("Document successfully updated!");
-        // })
-        // .catch(function(error) {
-        //     // The document probably doesn't exist.
-        //     console.error("Error updating document: ", error);
-        // });
-        // //console.log(this.$store.getters.comments)
-      },
-      submit_art(art){
-        this.$store.commit('set_user_email')
-        this.$store.commit('set_art_being_submitted',art)
-        this.$store.commit('set_art_being_submitted_is_selected',true)
-        if(this.$store.state.business_being_submitted_is_selected == true){
-           this.$router.push({
-              name: 'submit_result' 
-            })
+       save_comment(art){
+        const artists_arts =  this.$store.getters.viewed_arts
+        const commented_art = artists_arts.filter(function (the_art) {
+          return the_art.upload_date == art.upload_date
+        } )
+        let new_comments_field = []
+        let commentor =  this.$store.getters.signed_in_user.email
+        if (commented_art[0].comments ===  undefined){
+          new_comments_field.push({from: commentor, comment:this.comment})
+        } else {
+          new_comments_field = [...commented_art[0].comments,{from: commentor, comment:this.comment} ]
         }
-      }
+        let upload_date = parseInt(this.art.upload_date)
+        this.$store.dispatch('update_art_comments', {upload_date:upload_date,comments:new_comments_field}).then(this.snackbar = true)
+      },
     }
   }
 </script>
-
-<style>
-  /* Don't know why I need this. */
-  .buttons{
-    margin-left: -8px;
-  }
-  .commentBody {
-    margin-left: 10px;
-  }
-  .commentSection {
-    /*background-color: lightgray;*/
-  }
-  .commentBox {
-    margin-top: 10px;
-    /*
-    border: 1px solid black;
-    */
-  }
+<style scoped>
+ .main-container {
+   width: 100%;
+ }
+ .small-container {
+   width: 80%;
+ }
 </style>
+
+
