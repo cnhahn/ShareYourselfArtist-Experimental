@@ -2,7 +2,7 @@
 
   <v-container class="home">
 
-    <v-layout row style="height:70px">
+    <v-layout row class="hidden-md-and-down" style="height:70px">
 
       <v-flex xs12 text-xs-center class="center-row">
 
@@ -85,11 +85,23 @@
 
       </v-flex>
 
+      
       <v-layout row wrap text-xs-center v-if="isMobile">
 
-        <v-flex xs12>
-          <h4 class="display-1 mt-2 mb-4">Share your art.</h4>
+        <v-flex xs12 text-xs-center>
+          <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
         </v-flex>
+      
+
+      <!--
+      <v-layout row wrap text-xs-center v-if="isMobile" style="height:70px">
+
+        <v-flex xs12 text-xs-center class="center-row">
+
+            <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
+        
+        </v-flex>
+        -->
 
         <v-flex xs12>
           <img src="/static/images/mobile_app.png" class="mr-1" height="70%">
@@ -120,6 +132,7 @@
       <img src="/static/images/app-store-icon-300x100.png" height="35px" class="mr-3">
       <img src="/static/images/google-play.png" height="31px" style="margin-top: 2px">
     </v-layout>
+
     </center>
 
         </v-flex>

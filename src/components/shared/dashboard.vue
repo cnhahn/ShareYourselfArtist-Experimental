@@ -8,75 +8,51 @@
         this.$store.getters.user.id == 'QBRXqktYi0QigFboM92crKAONKn1'
     "
   >
-    <v-layout row>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ businesses.length }}</h3>
-              <div>Businesses</div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <h3 class="headline mb-0">{{ artists_email_list.length }}</h3>
-              <div>Artists</div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
+
+    <v-divider style="margin-top: 45px"></v-divider>
+
+    <v-layout row wrap mt-4>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Businesses</strong></p>
+        <p class="body-2">{{ businesses.length }}</p>
       </v-flex>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <div v-on:click="yearly_submissions">
-                <h3 class="headline mb-0">{{ submissions_for_month.length }}</h3>
-                <div>Submissions</div>
-              </div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <div v-on:click="yearly_replied">
-                <h3 class="headline mb-0">{{ replied_for_month }}</h3>
-                <div>Replied</div>
-              </div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Artists</strong></p>
+        <p class="body-2">{{ artists_email_list.length }}</p>
       </v-flex>
-      <v-flex class="ml-3" xs12 sm6>
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex class="sm-6">
-              <div v-on:click="yearly_free">
-                <h3 class="headline mb-0">{{ free_submissions_for_month }}</h3>
-                <div>Free</div>
-              </div>
-            </v-flex>
-            <v-flex class="sm-6">
-              <div v-on:click="yearly_paid">
-                <h3 class="headline mb-0">{{ paid_submissions_for_month }}</h3>
-                <div>Paid</div>
-              </div>
-            </v-flex>
-          </v-card-title>
-        </v-card>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Submissions</strong></p>
+        <p class="body-2">{{ submissions_for_month.length }}</p>
       </v-flex>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Replied</strong></p>
+        <p class="body-2">{{ replied_for_month }}</p>
+      </v-flex>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Free</strong></p>
+        <p class="body-2">{{ free_submissions_for_month }}</p>
+      </v-flex>
+
+      <v-flex xs3 sm2 mb-2 text-xs-center>
+        <p class="subheading mb-1"><strong>Paid</strong></p>
+        <p class="body-2">{{ paid_submissions_for_month }}</p>
+      </v-flex>
+
     </v-layout>
 
-    <v-card>
-      <v-card-title>Graph</v-card-title>
-      <GChart type="LineChart" :data="chartData" :options="chartOptions"/>
-    </v-card>
+    <v-divider></v-divider>
 
-    <v-card>
-      <v-card-title>Blogs
-        <v-spacer></v-spacer>
+    <v-card class="ml-5 mr-5 mt-4 elevation-0">
+      <p class="subheading"><strong>Database of Registered Businesses</strong></p>
+      <v-text-field class="search-box" v-model="search" append-icon="search" label="Search" single-line hide-details style="margin-top: -20px"></v-text-field>
 
-        <!-- Input to search for a blog -->
-        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-      </v-card-title>
+      <v-data-table :rows-per-page-items="[10, 15, 20]" :headers="headers" :items="businesses" :search="search" hide-headers>
 
-      <!-- Headers -->
-      <v-data-table :headers="headers" :items="businesses" :search="search" hide-headers>
-        <!-- Display business data table and make it clickable. -->
         <template slot="items" slot-scope="props">
           <tr @click="goto_dashboard2(props.item.email);">
             <td>{{ props.item.business_name }}</td>
@@ -92,40 +68,25 @@
         >Your search for "{{ search }}" found no results.</v-alert>
       </v-data-table>
     </v-card>
-    <v-layout row>
-      <v-card-actions>
-        <router-link to="/monthly_report">
-          <v-btn router to dark color="primary">Monthly Report</v-btn>
-        </router-link>
-      </v-card-actions>
-    </v-layout>
 
-    <v-layout fill-height>
-      <v-flex xs12 align-end flexbox>
-        <span class="headline">Search for Artists</span>
+    <v-divider></v-divider>
+
+      <v-layout row class="ml-5 mr-5 mt-4">
+
+        <v-flex xs6>
+
+        <p class="subheading"><strong>Database of Registered Artists</strong></p>
         <v-text-field
+          single-line hide-details style="margin-top: -20px"
           v-model="artist_email"
-          label="email"
+          label="Search"
+          append-icon="search"
           :rules="emailRules"
           v-on:keyup.enter="searchArtistEmail()"
         ></v-text-field>
-        <v-btn color="primary" @click="searchArtistEmail()">Submit</v-btn>
-        <v-alert type="error" :value="alert">Your search for "{{ artist_email }}" found no results.</v-alert>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <span class="headline">Distribute Campaign Credits</span>
-      <v-spacer></v-spacer>
-      <v-text-field v-model="freeCredits" label="# of credits" :rules="giveCreditsRules" solo></v-text-field>
-      <!-- :disabled="isCreditBtnDisabled" -->
-      <v-btn color="primary" @click="giveCredits()">Submit</v-btn>
-    </v-layout>
-    <v-card-title>Artists Email List
-      <v-spacer></v-spacer>
-    </v-card-title>
-    <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
+        <v-data-table :headers="headers" :items="artists_email_list" :search="search" hide-headers>
       <template slot="items" slot-scope="props">
-        <td class="text-xs-right">{{ props.item.artist_name }}</td>
+        <td class="text-xs-left">{{ props.item.artist_name }}</td>
         <td class="text-xs-right">{{ props.item.artist_email }}</td>
       </template>
       <v-alert
@@ -135,6 +96,45 @@
         icon="warning"
       >Your search for "{{ search }}" found no results.</v-alert>
     </v-data-table>
+
+    </v-flex>
+
+    <v-flex xs4 style="margin-left: 100px">
+
+    <p class="subheading"><strong>Distribute Credits</strong></p>
+    <v-text-field solo class="mb-4" v-model="freeCredits" label="# of credits" :rules="giveCreditsRules"></v-text-field>
+    <v-btn depressed block class="mb-4" color="primary" @click="giveCredits()">Submit Above Credits</v-btn>
+
+    <v-btn depressed block class="mb-4" router to="/monthly_report" color="primary">View Monthly Reports</v-btn>
+
+    <p class="subheading"><strong>View Graphs</strong></p>
+
+    <v-layout row wrap style="margin-left: -8px">
+      <v-flex xs6>
+        <v-btn depressed v-on:click="yearly_submissions" color="primary" style="width:150px">Submitted</v-btn>
+      </v-flex>
+      <v-flex xs6>
+        <v-btn depressed v-on:click="yearly_replied" color="primary" style="width:150px">Replied</v-btn>
+      </v-flex>
+      <v-flex xs6>
+        <v-btn depressed v-on:click="yearly_free" color="primary" style="width:150px">Free</v-btn>
+      </v-flex>
+      <v-flex xs6>
+        <v-btn depressed v-on:click="yearly_paid" color="primary" style="width:150px">Paid</v-btn>
+      </v-flex>
+    </v-layout>
+
+    </v-flex>
+    
+  </v-layout>
+
+  <v-divider></v-divider>
+
+  <v-layout>
+    <GChart type="LineChart" :data="chartData" :options="chartOptions"/>
+  </v-layout>
+
+
   </v-container>
   <h1 v-else>You are not authorized to view this page</h1>
 </template>
@@ -191,6 +191,10 @@ export default {
     },
     yearly_submissions() {
       this.chartData = this.$store.getters.yearly_chart_array;
+      this.chartOptions = {
+        width: 1100,
+        height: 300
+      };
     },
     yearly_replied() {
       this.chartData = this.$store.getters.yearly_chart_replied;
@@ -275,6 +279,9 @@ export default {
       return this.$store.getters.submissions_for_year;
     }
   },
+  mounted () {
+    this.yearly_submissions()
+  },
 
   data() {
     return {
@@ -283,13 +290,14 @@ export default {
         title: "Annual Submission Report",
         vAxis: { title: "Number of Submissions" },
         hAxis: { title: "Months" },
-        width: 1100,
+        width: 900,
         height: 300
       },
       name: "",
       business_email: "",
       count: "",
       search: "",
+      graph: false,
       artist_email: "",
       alert: false,
       freeCredits: 0,
@@ -297,34 +305,6 @@ export default {
         v => v > 0 || "Number of credits must be more than zero"
       ],
       emailRules: [v => /.+@.+/.test(v) || "E-mail must be valid"],
-      headers: [
-        {
-          text: "Dessert (100g serving)",
-          align: "left",
-          sortable: false,
-          value: "name"
-        },
-        {
-          text: "Calories",
-          value: "calories"
-        },
-        {
-          text: "Fat (g)",
-          value: "fat"
-        },
-        {
-          text: "Carbs (g)",
-          value: "carbs"
-        },
-        {
-          text: "Protein (g)",
-          value: "protein"
-        },
-        {
-          text: "Iron (%)",
-          value: "iron"
-        }
-      ]
     };
   }
 };
