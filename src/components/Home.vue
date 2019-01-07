@@ -6,17 +6,23 @@
 
       <v-flex xs12 text-xs-center class="center-row">
 
-            <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
+            <h4 class="display-1 mt-2 mb-4">Share Your Art</h4>
+        
         </v-flex>
+
       </v-layout>
+
       <v-layout row>
+
       <v-flex xs4 ml-5 hidden-md-and-down class="left-row">
+
         <v-layout row>
           <img src="/static/images/31007053_909050839267466_1346698884130275328_n.jpg" class="image left fadeImage3" style="height: 125px">
           <img src="/static/images/12.jpg" class="image left fadeImage2" style="height: 90px; margin-top: 70px">
           <img src="/static/images/9.jpg" class="image left fadeImage2" style="height: 70px; margin-top: 120px">
           <img src="/static/images/4.jpg" class="image left fadeImage1" style="height: 50px; margin-top: 200px">
         </v-layout>
+
         <v-layout row>
           <img src="/static/images/5.jpg" class="image left ml-5 fadeImage2" style="height: 115px; margin-top: -50px">
           <img src="/static/images/8.jpg" class="image left ml-5 fadeImage3" style="height: 115px">
@@ -24,7 +30,7 @@
 
       </v-flex>
 
-      <v-flex lg4 text-xs-center class="center-row hidden-md-and-down" style="margin-bottom: -70px; margin-left:3px">
+      <v-flex lg4 text-xs-center class="center-row hidden-md-and-down" style="margin-bottom: -70px;">
 
           <img src="/static/images/mobile_app.png" height="60%">
 
@@ -52,16 +58,16 @@
 
       <v-flex xs4 text-xs-center class="hidden-lg-and-up" v-if="!isMobile" style="height: 450px; margin-bottom: 120px; margin-left: 0px">
 
-          <h4 class="display-1 mt-2 mb-4 ml-3">Share your art.</h4>
+          <h4 class="display-1 mt-2 mb-4">Share Your Art</h4>
 
-          <img src="/static/images/mobile_app.png" class="mr-1" height="90%">
+          <img src="/static/images/mobile_app.png"  height="90%">
 
       </v-flex>
 
       <v-flex xs8 class="hidden-lg-and-up" v-if="!isMobile" style="margin-left: -10px">
 
         <img src="/static/images/banner.png" width="100%" style="margin-top: 90px !important;">
-
+          
         <v-btn
           flat
           round
@@ -89,7 +95,7 @@
       <v-layout row wrap text-xs-center v-if="isMobile">
 
         <v-flex xs12 text-xs-center>
-          <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
+          <h4 class="display-1 mt-2 mb-4">Share Your Art</h4>
         </v-flex>
       
 
@@ -104,7 +110,7 @@
         -->
 
         <v-flex xs12>
-          <img src="/static/images/mobile_app.png" class="mr-1" height="70%">
+          <img src="/static/images/mobile_app.png" height="70%">
         </v-flex>
 
         <v-flex xs12 style="margin-top: -150px">
@@ -202,7 +208,6 @@
 
   .signup_button {
     height: 40px;
-    width: 250px;
   }
 
   .toolbar {
@@ -239,7 +244,7 @@
   .right {
     margin-right: 20px;
   }
-
+  
   .fadeImage1 {
     -webkit-animation: fadein 2s;
        -moz-animation: fadein 2s;

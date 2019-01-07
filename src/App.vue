@@ -602,7 +602,7 @@ export default {
   }
 
   .toolbar-icon {
-    margin-left: 75px;
+    margin-left: 70px;
   }
 
 
