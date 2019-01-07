@@ -7,22 +7,16 @@
       <v-flex xs12 text-xs-center class="center-row">
 
             <h4 class="display-1 ml-3 mt-2 mb-4">Share your art.</h4>
-        
         </v-flex>
-
       </v-layout>
-
       <v-layout row>
-
       <v-flex xs4 ml-5 hidden-md-and-down class="left-row">
-
         <v-layout row>
           <img src="/static/images/31007053_909050839267466_1346698884130275328_n.jpg" class="image left fadeImage3" style="height: 125px">
           <img src="/static/images/12.jpg" class="image left fadeImage2" style="height: 90px; margin-top: 70px">
           <img src="/static/images/9.jpg" class="image left fadeImage2" style="height: 70px; margin-top: 120px">
           <img src="/static/images/4.jpg" class="image left fadeImage1" style="height: 50px; margin-top: 200px">
         </v-layout>
-
         <v-layout row>
           <img src="/static/images/5.jpg" class="image left ml-5 fadeImage2" style="height: 115px; margin-top: -50px">
           <img src="/static/images/8.jpg" class="image left ml-5 fadeImage3" style="height: 115px">
@@ -67,7 +61,7 @@
       <v-flex xs8 class="hidden-lg-and-up" v-if="!isMobile" style="margin-left: -10px">
 
         <img src="/static/images/banner.png" width="100%" style="margin-top: 90px !important;">
-          
+
         <v-btn
           flat
           round
@@ -245,7 +239,7 @@
   .right {
     margin-right: 20px;
   }
-  
+
   .fadeImage1 {
     -webkit-animation: fadein 2s;
        -moz-animation: fadein 2s;

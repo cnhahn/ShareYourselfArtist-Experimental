@@ -34,7 +34,7 @@
                   <v-container
                     fluid
                   >
-                    <v-layout
+                    <v-layout xs12 lg10 offset-lg3 ml-5
                       align-center
                       wrap
                     >
@@ -107,21 +107,21 @@
 
           <v-card-actions>
 
-            <v-btn 
-              thin 
+            <v-btn
+              thin
               depressed
               small
               dark
-              @click="clicked_art(art.upload_date)" 
-              class="elevation-0" 
-              color="primary" 
+              @click="clicked_art(art.upload_date)"
+              class="elevation-0"
+              color="primary"
               router to='/art'
             >
               View
             </v-btn>
 
             <v-btn
-              thin 
+              thin
               depressed
               small
               dark
@@ -269,7 +269,7 @@
     background-color: lightgray;
   }
   .select-box {
-    border: 1px solid rgb(147, 147, 147); 
+    border: 1px solid rgb(147, 147, 147);
     border-radius: 2px;
   }
 </style>

@@ -98,12 +98,9 @@
         //this.$store.commit('mutationName', payload)
         this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
         .then(response => {
-          console.log("tagss updated")
           let arts = this.$store.getters.allArts
           let indexOfUpdatedArt = arts.findIndex(art => art.upload_date == upload_date)
-          console.log('indexOfUpdatedArt', indexOfUpdatedArt)
           this.$store.commit('setArtCategory', {indexOfUpdatedArt: indexOfUpdatedArt, categories: categories })
-
         this.$router.push('/artist_dashboard')
       })
       },
