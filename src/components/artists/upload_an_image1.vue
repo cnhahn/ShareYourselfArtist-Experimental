@@ -33,6 +33,17 @@
           @click="getUserId">Next
 
         </v-btn>
+
+        <!--<v-container>-->
+          <v-layout row="">
+            <!--<v-flex xs12="" sm6="" offset-sm3="">-->
+            <v-flex xs12="" sm6="" class="display-4">
+              <img :src="image_url" height="150"></img>
+              <!--<h4>Test Preview</h4>-->
+            </v-flex>
+          </v-layout>
+        <!--</v-container>-->  
+          
         <v-layout>
       <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
@@ -74,7 +85,6 @@
           </template>
         </v-tour>
       </div>
-
     </v-layout>
       </v-flex>
     </v-layout>
@@ -133,7 +143,7 @@
         this.file = file // Jin: Why this variable is needed?
         this.image_is_not_loaded = false
         let filename = files[0].name
-        this.file_name = filename // Jin: Why this variable is needed?
+        //this.file_name = filename // Jin: Why this variable is needed?
         if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
         }
@@ -171,6 +181,11 @@
     margin-top: 10px;
   }
   #tour {
-    margin-top: 50px;
+    /*margin-top: 50px;*/
+    margin-top: 20px;
+  }
+
+  .display-4 {
+    margin-top: 20px;
   }
 </style>

@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\components"
+    "\\src\\components",
+    "\\src\\components\\artists",
+    "\\src\\store"
   ],
-  "SelectedNode": "\\src\\components\\Home.vue",
+  "SelectedNode": "\\src\\components\\artists\\upload_an_image1.vue",
   "PreviewInSolutionExplorer": false
 }
