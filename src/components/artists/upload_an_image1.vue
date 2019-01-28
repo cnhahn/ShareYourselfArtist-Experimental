@@ -32,18 +32,12 @@
           :disabled="image_is_not_loaded"
           @click="getUserId">Next
 
-        </v-btn>
-
-        <!--<v-container>-->
+        </v-btn>          
           <v-layout row="">
-            <!--<v-flex xs12="" sm6="" offset-sm3="">-->
-            <v-flex xs12="" sm6="" class="display-4">
+            <v-flex xs12="" sm6="">
               <img :src="image_url" height="150"></img>
-              <!--<h4>Test Preview</h4>-->
             </v-flex>
-          </v-layout>
-        <!--</v-container>-->  
-          
+          </v-layout>          
         <v-layout>
       <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
@@ -140,10 +134,9 @@
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
-        this.file = file // Jin: Why this variable is needed?
+        this.file = file 
         this.image_is_not_loaded = false
         let filename = files[0].name
-        //this.file_name = filename // Jin: Why this variable is needed?
         if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
         }
@@ -181,11 +174,6 @@
     margin-top: 10px;
   }
   #tour {
-    /*margin-top: 50px;*/
-    margin-top: 20px;
-  }
-
-  .display-4 {
-    margin-top: 20px;
+    margin-top: 50px;
   }
 </style>
