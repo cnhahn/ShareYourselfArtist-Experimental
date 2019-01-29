@@ -4,8 +4,9 @@
     "\\src",
     "\\src\\components",
     "\\src\\components\\artists",
+    "\\src\\components\\shared",
     "\\src\\store"
   ],
-  "SelectedNode": "\\src\\components\\artists\\upload_an_image1.vue",
+  "SelectedNode": "\\src\\main.js",
   "PreviewInSolutionExplorer": false
 }
