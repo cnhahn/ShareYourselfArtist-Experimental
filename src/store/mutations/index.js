@@ -2,6 +2,7 @@
 // store/index.js is afile that contains the global state of the application
 // as well as provides some getter functions
 
+import * as firebase from 'firebase'
 
 export default{
   mutations: {
@@ -173,13 +174,13 @@ export default{
     setArts (state, payload) {
       state.arts.push(payload)
     },
-    set_comments(state, payload){
+    set_comments (state, payload) {
       state.comments.push(payload)
     },
     clear_viewed_arts_array (state) {
       state.viewed_arts = []
     },
-    clear_comments_array(state){
+    clear_comments_array (state) {
       state.comments = []
     },
     set_viewed_arts (state, payload) {

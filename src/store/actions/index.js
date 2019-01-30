@@ -3,7 +3,8 @@
 // as well as provides some getter functions
 
 import router from '../../router/index'
-
+import * as firebase from 'firebase'
+import config from '../../config'
 
 export default{
   actions: {

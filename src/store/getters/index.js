@@ -4,10 +4,10 @@
 
 export default{
   getters: {
-    viewed_artist_data(state){
+    viewed_artist_data (state) {
       return state.viewed_artist_data
     },
-    commenting_mode(state){
+    commenting_mode (state) {
       return state.commenting_mode
     },
     viewed_arts (state) {
