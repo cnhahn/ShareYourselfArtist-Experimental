@@ -28,11 +28,19 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+/*
+plan:
+going to use a testing account to test the if credits are working.
+code will be written as if we want to change every users free credits but for testing we will target the test account.
+*/
+
 // this is a test function
+// This is Yas's ID: QBRXqktYi0QigFboM92crKAONKn1
 exports.weekly_free_credits = functions.https.onRequest((req, res) => {
-  // to-do update function & compare time to limit document searches talk to Karl if you have questions
-  let db = admin.firestore()
-      db.collection('users').get().then(function (users) {
+    // to-do update function & compare time to limit document searches talk to Karl if you have questions 
+    let db = admin.firestore()
+      db.collection('users').get()
+      .then(function (users) {
         users.forEach(function (doc) {
           let currentCredits
           if (doc.data().free_credits !== undefined) {
@@ -41,15 +49,53 @@ exports.weekly_free_credits = functions.https.onRequest((req, res) => {
             currentCredits = 0
           }
           console.log(currentCredits)
-          // console.log(doc.data().userId)
-          const userRef = db.collection('users').doc(doc.data().userId)
+          console.log(doc.data().userId)
+          //const userRef = db.collection('users').doc(doc.data().userId)
+          const userRef = db.collection('users').doc('QBRXqktYi0QigFboM92crKAONKn1') 
           return userRef.update({
             free_credits: 2
           })
         })
         res.send('distributed')
       })
+      .catch (error => {
+          console.log(error)
+          res.status(500).send(error)
+      })
 })
+
+/*Lets outline our work right here
+
+Timing: 
+- If an artists uses credits, we mark that exact date. Then check the lastspentcreditdate and compare it to the current day the users next login.
+Recognizing when User Signs In
+If user already has maximum credits - run function, still update lastRanTime
+
+*/
+
+
+// Will only update credits when user signs in
+// exports.updateCreditsWeekly = functions.https.onRequest((request, response) => {
+//     let userId = request.body
+//     let freeCredits, creditsUpdatedOn, newCreditsUpdateDate
+//     let user = admin.firestore().collection('users').doc(userId).get()
+//         .then(userObject =>{
+//             if(userObject.exists && userObject.free_credits !== undefined && userObject.free_credits == 2){
+//                 freeCredits = 2
+//             }
+//             if(userObject.exists && userObject.lastUpdated !== undefined){
+
+//             }
+//         })
+//         .catch(error => {
+//             console.log(error)
+//             res.status(500).send(error)
+//         })
+// })
+
+
+
+
 // Triggers an email once someone signs up
 exports.payEmail = functions.firestore
     .document('users/F9AxT9EpPFcBBCk5PtaPasAYS6s2') //any write to this node will trigger email
