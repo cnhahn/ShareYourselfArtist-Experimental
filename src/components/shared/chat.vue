@@ -34,7 +34,7 @@
                   v-html="chat.time"
                   name='time'
                   ></v-list-tile-text>
-                  <!-- <v-list-tile-text class="date" v-html="chat.daystamp" name='date'></v-list-tile-text> -->
+                  <v-list-tile-text class="date" v-html="chat.daystamp" name='date'></v-list-tile-text>
                 </v-list-tile>
               </template>
             </v-list>
@@ -168,7 +168,7 @@ import EmojiPicker from './EmojiPicker.vue'
                 name: childData.user.name,
                 message: childData.message,
                 time: childData.timestamp,
-                daystamp: childData.timestamp,
+                daystamp: childData.daystamp,
                 initial: '',
                 url:childData.url,
                 displayAvatar: 'display:block'
@@ -243,8 +243,13 @@ import EmojiPicker from './EmojiPicker.vue'
         var curr_year = d.getFullYear();
         var curr_hour = d.getHours();
         var curr_min = d.getMinutes();
+        var curr_min_formatted = curr_min;
+        if (curr_min < 10)
+        {
+          curr_min_formated = "0" + curr_min;
+        }
         var daystamp = curr_month + "/" + curr_date + "/" + curr_year;
-        var timestamp = curr_hour + ":" + curr_min;
+        var timestamp = curr_hour + ":" + curr_min_formatted;
         var total_timestamp = {daystamp: daystamp, timestamp: timestamp}
         return total_timestamp
       },
