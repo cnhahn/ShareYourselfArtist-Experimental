@@ -243,13 +243,23 @@ import EmojiPicker from './EmojiPicker.vue'
         var curr_year = d.getFullYear();
         var curr_hour = d.getHours();
         var curr_min = d.getMinutes();
-        var curr_min_formatted = curr_min;
+        var curr_min = curr_min;
         if (curr_min < 10)
         {
-          curr_min_formatted = "0" + curr_min;
+          curr_min = "0" + curr_min;
+        }
+        var AMPM = "A.M.";
+        if (curr_hour >= 12)
+        {
+          curr_hour = curr_hour - 12;
+          AMPM = "P.M.";
+        }
+        if (curr_hour == 0)
+        {
+          curr_hour = 12;
         }
         var daystamp = curr_month + "/" + curr_date + "/" + curr_year;
-        var timestamp = curr_hour + ":" + curr_min_formatted;
+        var timestamp = curr_hour + ":" + curr_min + " " + AMPM;
         var total_timestamp = {daystamp: daystamp, timestamp: timestamp}
         return total_timestamp
       },
