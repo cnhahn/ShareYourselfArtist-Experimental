@@ -24,7 +24,7 @@
                   >
                     <v-list-tile-avatar :color="chat.color" >
                       <img :src="chat.avatar" :style="chat.displayAvatar">
-                      <span class="date-chat-item" v-html="chat.initial">
+                      <span class="t" v-html="chat.initial">
                       </span>
                     </v-list-tile-avatar>
 
@@ -34,7 +34,7 @@
                     </v-list-tile-content>
 
                     <v-list-tile-text
-                    class="a"
+                    class="date"
                     v-html="chat.time"
                     name='time'
                     ></v-list-tile-text>
@@ -135,7 +135,6 @@ import EmojiPicker from './EmojiPicker.vue'
         this.emojiPanel = !this.emojiPanel
       },
       addEmoji: function(value){
-        console.log(value)
         this.message+=value
       },
       initial() {
@@ -170,7 +169,7 @@ import EmojiPicker from './EmojiPicker.vue'
               if(maxDate < indexDate){
                 maxDate = indexDate;
                 var dateItem = {
-                   date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                   date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
                 };
                 chat_items.push(dateItem);
               }
@@ -206,8 +205,7 @@ import EmojiPicker from './EmojiPicker.vue'
             chat_items.push(chat);
             itemProcessed++;
           });
-          console.log(maxDate);
-          console.log(indexDate);
+
           if (!newMessage) {
           } else {
             console.log("now is")
@@ -220,7 +218,7 @@ import EmojiPicker from './EmojiPicker.vue'
           return;
         }
         var user = this.$store.getters.signed_in_user
-        console.log(user)
+
         var role = user.role
         var sender = null
         if (role == 'business') {
@@ -229,7 +227,7 @@ import EmojiPicker from './EmojiPicker.vue'
           sender = user.name
         }
         var color = this.$store.getters.color
-        console.log('color: ' + color)
+
         var url = this.$store.getters.url
         if (user == null) {
           return;
@@ -308,20 +306,23 @@ import EmojiPicker from './EmojiPicker.vue'
         querySnapshot.forEach(function(doc) {
             messages.push(doc.data().message);
         })
-        console.log("Current cities in CA: ", messages.join(", "));
     })
   }
   }
 </script>
 <style scoped>
   .date{
-    font-size: 1ch;
+    font-size: 1.5ch;
+    color:#FF7D26;
     opacity: 0.5;
-    margin-left: 5px;
+    text-align:right;
   }
   .date-chat-item{
-    color:black;
-    font-size: 2.5ch;
+    color:#FF7D26;
+    font-size: 2ch;
+    margin-left:40%;
+    margin-top:5px;
+    margin-bottom:5px;
     font-family: Arial, Helvetica, sans-serif;
     font-weight:bold;
   }
@@ -331,7 +332,8 @@ import EmojiPicker from './EmojiPicker.vue'
     font-weight: normal;
     font-size: 12pt;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: auto
+    overflow: auto;
+    height:65px;
 
   }
   .a{
@@ -346,11 +348,7 @@ import EmojiPicker from './EmojiPicker.vue'
   .input{
     margin-right: 65px;
   }
-  .resize_list{
-
-  }
   .smiley{
     margin-right:10px
   }
-
 </style>
