@@ -54,7 +54,8 @@
                 </v-flex>
                 <v-divider></v-divider>
                 <div style="text-align: left">
-                  <p class="text" style="margin-top: 2vh"><strong>Credits:</strong> {{fetchUserCredits}}</p>
+                  <p class="text" style="margin-top: 2vh"><strong>Freebie Credits:</strong> {{fetchUserFreeCredits}}</p>
+                  <p class="text" style="margin-top: 2vh"><strong>Premium Credits:</strong> {{fetchUserCredits}}</p>
                   <p class="text" style="margin-top: 2vh"><strong>Email:</strong> {{fetchUserEmail}}</p>
                   <p class="text" style="margin-top: 2vh"><strong>Instagram:</strong> {{fetchUserInstagram}}</p>
                   <p class="text" style="margin-top: 2vh">{{getPassedTime(fetchUserSignUpDate)}}</p>
@@ -123,6 +124,9 @@
       },
       fetchUserColor () {
         return this.$store.getters.signed_in_user.color
+      },
+      fetchUserFreeCredits () {
+        return this.$store.getters.signed_in_user.free_credits
       },
       fetchUserCredits () {
         return this.$store.getters.signed_in_user.credits

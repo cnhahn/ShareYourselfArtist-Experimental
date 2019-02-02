@@ -5,7 +5,7 @@
     <h5 class="headline header mt-4" style="color: black !important">
       Support / FAQs
       <span>
-        <a class="ml-3" style="font-size:.6em" href="mailto:nick@shareyourselfartists.com?Subject=Support" target="_top">Send us an email</a>
+        <a class="ml-3" style="font-size:.6em" href="mailto:nick@shareyourselfartists.com?Subject=Support" target="_top">Email us nick@shareyourselfartists.com</a>
       </span>
     </h5>
 
