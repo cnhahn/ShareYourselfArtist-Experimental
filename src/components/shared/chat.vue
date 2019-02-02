@@ -275,6 +275,7 @@ import EmojiPicker from './EmojiPicker.vue'
         var curr_hour = d.getHours();
         var curr_min = d.getMinutes();
         var curr_min = curr_min;
+        // format minutes
         if (curr_min < 10)
         {
           curr_min = "0" + curr_min;
@@ -285,6 +286,7 @@ import EmojiPicker from './EmojiPicker.vue'
           curr_hour = curr_hour - 12;
           AMPM = "PM";
         }
+        // fix hour 0
         if (curr_hour == 0)
         {
           curr_hour = 12;
