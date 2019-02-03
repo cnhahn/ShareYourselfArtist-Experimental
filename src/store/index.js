@@ -520,6 +520,48 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    verify_free_credits_field () {
+      // Get all artists from Firebase
+      let db = firebase.firestore()
+      let artists = db.collection('users').where('role', '==', 'artist')
+      .get()
+      .then(function (results) {
+        results.forEach(function (doc) {
+          if (doc.data().free_credits === undefined) {
+            let userId = doc.data().userId
+            db.collection('users').doc(userId).update({
+              'free_credits': '2'
+            })
+            .then(function () {
+              console.log('Document Succesfully updated!')
+            })
+          }
+        })
+      })
+      .catch(function (error) {
+        console.log('error getting documents yas: ', error)
+      })
+    },
+    set_all_free_credits (){
+      //update all artists free credits to 2
+      let db = firebase.firestore()
+      let artists = db.collection('users').where('role', '==', 'artist')
+      .get()
+      .then(function (results) {
+        results.forEach(function (doc) {
+          let userId = doc.data().userId
+          db.collection('users').doc(userId).update({
+            'free_credits': '2'
+          })
+          .then(function () {
+            console.log('Document Succesfully updated!')
+          })
+        })
+      })
+      .catch(function (error) {
+        console.log('error getting documents yas: ', error)
+      })
+    },      
     update_art_comments ({commit}, payload) {
       console.log('update_art: ', payload)
       let db = firebase.firestore()
@@ -1645,7 +1687,7 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log('Error getting documents: ', error)
         })
-    },
+     },
 
     // this function gets the submissions for a business and
     async fetchSubmissions ({ commit, getters }) {
@@ -1771,7 +1813,7 @@ export const store = new Vuex.Store({
       // .put(getters.image_being_uploaded.file)
       // Listen for state changes, errors, and completion of the upload.
 
-      let art = {
+        let art = {
         art_title: payload.art_title,
         artist_name: payload.artist_name,
         url: getters.url,
@@ -1781,7 +1823,7 @@ export const store = new Vuex.Store({
       }
 
       // upload the artist data and the url
-    },
+      },
     submit_submission_response ({ getters }) {
       const db = firebase.firestore()
       const collectionRef = db
@@ -1826,16 +1868,16 @@ export const store = new Vuex.Store({
     },
 
     submit_request ({ getters }) {
-      let businesses_being_submitted = getters.businesses_being_submitted
-      for (let i = 0; i < businesses_being_submitted.length; i++) {
-        let art_being_submitted = getters.art_being_submitted
-        art_being_submitted.submitted_on = Date.now()
-        art_being_submitted.submitted_with_free_cerdit = false
-        console.log('art_being_submitted', art_being_submitted)
-        art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
-        const db = firebase.firestore()
-        const collectionRef = db
+     let businesses_being_submitted = getters.businesses_being_submitted
+     for (let i = 0; i < businesses_being_submitted.length; i++) {
+       let art_being_submitted = getters.art_being_submitted
+       art_being_submitted.submitted_on = Date.now()
+       art_being_submitted.submitted_with_free_cerdit = false
+       console.log('art_being_submitted', art_being_submitted)
+       art_being_submitted.businessId = businesses_being_submitted[i]
+       console.log('art_being_submitted', art_being_submitted)
+       const db = firebase.firestore()
+       const collectionRef = db
         .collection('school_requests')
         .doc()
         .set(payload)
@@ -1848,8 +1890,8 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.error('Error adding document: ', error)
         })
-      }
-    },
+     }
+   },
     submit_request_with_free_credits ({ getters }) {
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
