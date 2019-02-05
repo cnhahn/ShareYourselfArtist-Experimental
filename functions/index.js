@@ -28,6 +28,10 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+
+export const helloWorld = functions.https.onRequest((request,response) => {
+    response.send("Hello from Firebase!");
+});
 // this is a test function
 exports.weekly_free_credits = functions.https.onRequest((req, res) => {
   // to-do update function & compare time to limit document searches talk to Karl if you have questions
