@@ -16,5 +16,3 @@ const config = {
   storageBucket: 'sya-app.appspot.com'
 }
 export default config
-
-

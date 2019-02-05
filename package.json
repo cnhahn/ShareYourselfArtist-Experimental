@@ -17,6 +17,7 @@
     "babel-polyfill": "^6.26.0",
     "firebase": "^5.8.0",
     "generate-function": "^2.3.1",
+    "npm": "^6.7.0",
     "vue": "^2.5.2",
     "vue-agile": "^0.3.7",
     "vue-analytics": "^5.16.0",

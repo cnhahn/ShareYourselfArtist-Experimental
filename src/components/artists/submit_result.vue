@@ -33,7 +33,7 @@
 
 <script>
  export default {
-     methods:{
+   methods:{
        //submission of an artpiece
        submit_art(){
           const costOfBusiness = this.$store.getters.businesses_being_submitted.length
