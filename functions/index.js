@@ -137,6 +137,14 @@ If user already has maximum credits - run function, still update lastRanTime
 // })
 
 
+/*
+  This function will update each artists free credit amount to 2 each week. It is hooked up
+  to a AWS CloudWatch CRON job so that it runs weekly
+
+  FUTURE TODO: The batch update used here can only do a maximum of 500 writes. As of writing
+  this function there are only 432 artists so everything is fine. Later on we will have to do 
+  multiple batch writes if there are greater than 500 artists.
+*/
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let batch = db.batch()
@@ -173,7 +181,7 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
     })
     .then(function(reply){
 
-      return response.send(reply)
+      return response.send('All artists updated with 2 free credits')
     })
     .catch(function (error){
       response.send(error)
