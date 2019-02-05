@@ -13,29 +13,34 @@
           <v-flex xs12 sm9 offset-sm3>
             <v-list three-line>
               <template v-for="(chat) in chat_items">
-                <v-list-tile
-                  :key="chat.key"
-                  avatar
-                  class="resize_list"
-                >
-                  <v-list-tile-avatar :color="chat.color" >
-                    <img :src="chat.avatar" :style="chat.displayAvatar">
-                    <span class="white--text headline" v-html="chat.initial">
-                    </span>
-                  </v-list-tile-avatar>
+                <div v-if="chat.date != undefined">
+                  <span class="date-chat-item" v-html="chat.date"></span>
+                </div>
+                <div v-else>
+                  <v-list-tile
+                    :key="chat.key"
+                    avatar
+                    class="resize_list"
+                  >
+                    <v-list-tile-avatar :color="chat.color" >
+                      <img :src="chat.avatar" :style="chat.displayAvatar">
+                      <span class="t" v-html="chat.initial">
+                      </span>
+                    </v-list-tile-avatar>
 
-                  <v-list-tile-content >
-                    <v-list-tile-title class="t" v-html="chat.name"></v-list-tile-title>
-                    <v-list-tile-sub-title class="b" v-html="chat.message"></v-list-tile-sub-title>
-                  </v-list-tile-content>
+                    <v-list-tile-content >
+                      <v-list-tile-title class="t" v-html="chat.name"></v-list-tile-title>
+                      <v-list-tile-sub-title class="b" v-html="chat.message"></v-list-tile-sub-title>
+                    </v-list-tile-content>
 
-                  <v-list-tile-text
-                  class="a"
-                  v-html="chat.time"
-                  name='time'
-                  ></v-list-tile-text>
-                  <!-- <v-list-tile-text class="date" v-html="chat.daystamp" name='date'></v-list-tile-text> -->
-                </v-list-tile>
+                    <v-list-tile-text
+                    class="date"
+                    v-html="chat.time"
+                    name='time'
+                    ></v-list-tile-text>
+                    <!-- <v-list-tile-text class="date" v-html="chat.daystamp" name='date'></v-list-tile-text> -->
+                  </v-list-tile>
+                </div>
               </template>
             </v-list>
           </v-flex>
@@ -130,7 +135,6 @@ import EmojiPicker from './EmojiPicker.vue'
         this.emojiPanel = !this.emojiPanel
       },
       addEmoji: function(value){
-        console.log(value)
         this.message+=value
       },
       initial() {
@@ -141,14 +145,37 @@ import EmojiPicker from './EmojiPicker.vue'
         let chat_items = this.chat_items;
         const that = this
         let chat_ref = firebase_db.ref('chat')
+        
         chat_ref.on('value', function(snapshot, newMessage = true) {
-          console.log(snapshot.length)
+          let firstDate = false;
+          let maxDate = new Date();
+          let indexDate = new Date();
+
           chat_items.length = 0;
-          var itemProcessed = 0;
+          let itemProcessed = 0;
           snapshot.forEach(function(childSnapshot) {
-            var childKey = childSnapshot.key;
-            var childData = childSnapshot.val();
-            var chat = null
+           
+            
+            let childKey = childSnapshot.key;
+            let childData = childSnapshot.val();
+            let chat = null
+
+             if (!firstDate) {
+              maxDate = new Date(childData.daystamp);
+              firstDate = true;
+            } else {
+              indexDate = new Date(childData.daystamp);
+
+              if(maxDate < indexDate){
+                maxDate = indexDate;
+                let dateItem = {
+                   date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                };
+                chat_items.push(dateItem);
+              }
+            }
+
+            
             if (childData.url == "") {
               chat = {
                 key: childKey,
@@ -161,22 +188,24 @@ import EmojiPicker from './EmojiPicker.vue'
                 displayAvatar: 'display:none'
               }
             } else {
-              var chat = {
+              chat = {
                 key: childKey,
                 color: childData.color,
                 avatar: childData.url,
                 name: childData.user.name,
                 message: childData.message,
                 time: childData.timestamp,
-                daystamp: childData.timestamp,
+                daystamp: childData.daystamp,
                 initial: '',
                 url:childData.url,
                 displayAvatar: 'display:block'
               }
             }
+
             chat_items.push(chat);
             itemProcessed++;
           });
+
           if (!newMessage) {
           } else {
             console.log("now is")
@@ -189,7 +218,7 @@ import EmojiPicker from './EmojiPicker.vue'
           return;
         }
         var user = this.$store.getters.signed_in_user
-        console.log(user)
+
         var role = user.role
         var sender = null
         if (role == 'business') {
@@ -198,7 +227,7 @@ import EmojiPicker from './EmojiPicker.vue'
           sender = user.name
         }
         var color = this.$store.getters.color
-        console.log('color: ' + color)
+
         var url = this.$store.getters.url
         if (user == null) {
           return;
@@ -243,8 +272,25 @@ import EmojiPicker from './EmojiPicker.vue'
         var curr_year = d.getFullYear();
         var curr_hour = d.getHours();
         var curr_min = d.getMinutes();
+        var curr_min = curr_min;
+        // format minutes
+        if (curr_min < 10)
+        {
+          curr_min = "0" + curr_min;
+        }
+        var AMPM = "AM";
+        if (curr_hour >= 12)
+        {
+          curr_hour = curr_hour - 12;
+          AMPM = "PM";
+        }
+        // fix hour 0
+        if (curr_hour == 0)
+        {
+          curr_hour = 12;
+        }
         var daystamp = curr_month + "/" + curr_date + "/" + curr_year;
-        var timestamp = curr_hour + ":" + curr_min;
+        var timestamp = curr_hour + ":" + curr_min + " " + AMPM;
         var total_timestamp = {daystamp: daystamp, timestamp: timestamp}
         return total_timestamp
       },
@@ -260,16 +306,25 @@ import EmojiPicker from './EmojiPicker.vue'
         querySnapshot.forEach(function(doc) {
             messages.push(doc.data().message);
         })
-        console.log("Current cities in CA: ", messages.join(", "));
     })
   }
   }
 </script>
 <style scoped>
   .date{
-    font-size: 1ch;
+    font-size: 1.5ch;
+    color:#FF7D26;
     opacity: 0.5;
-    margin-left: 5px;
+    text-align:right;
+  }
+  .date-chat-item{
+    color:#FF7D26;
+    font-size: 2ch;
+    margin-left:40%;
+    margin-top:5px;
+    margin-bottom:5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:bold;
   }
   .b{
     color:black;
@@ -277,7 +332,8 @@ import EmojiPicker from './EmojiPicker.vue'
     font-weight: normal;
     font-size: 12pt;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: auto
+    overflow: auto;
+    height:65px;
 
   }
   .a{
@@ -292,11 +348,7 @@ import EmojiPicker from './EmojiPicker.vue'
   .input{
     margin-right: 65px;
   }
-  .resize_list{
-
-  }
   .smiley{
     margin-right:10px
   }
-
 </style>

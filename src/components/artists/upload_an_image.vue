@@ -207,11 +207,13 @@
     },
     methods: {
       goBack () {
+        console.log("Testing backb by Yas")
         window.history.length > 1
           ? this.$router.go(-1)
           : this.$router.push('/')
       },
       onSubmit () {
+        console.log("Testing Submit, Yas")
         this.$store.commit('set_image_folder', '/')
         this.$store.dispatch('uploadImage', {
           operation: this.operation,
@@ -222,13 +224,13 @@
           folder: this.folder,
           upload_date: Date.now()
         }).then(res => {
+          console.log("Inside .then in onSubmit Yas")
            this.$router.push({
               path: 'artist_dashboard'
             })
+        }, error =>{
+          console.log("Error in .then Yas")
         })
-
-
-
 
       },
       previousStepCallback(currentStep) {
