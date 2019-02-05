@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\artists",
+    "\\src\\components\\shared",
+    "\\src\\store"
+  ],
+  "SelectedNode": "\\src\\components\\shared\\chat.vue",
+  "PreviewInSolutionExplorer": false
+}
