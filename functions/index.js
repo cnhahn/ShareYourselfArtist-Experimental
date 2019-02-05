@@ -139,6 +139,7 @@ If user already has maximum credits - run function, still update lastRanTime
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
+  let batch = db.batch()
   const users = db.collection('users').where('role', '==', 'artist').get()
     .then(function (querySnapshot) {
       //const users = querySnapshot.data()
@@ -157,18 +158,21 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
       return results
     })
     .then(function (ids){
+      console.log("arrays length:" + ids.length)
       for(var i = 0; i<ids.length; i++){
-        console.log(ids[i])
-        var artistsRef = db.collection('users').doc(ids[i]);
-
-        artistsRef.update({
-          'free_credits': '2'
-        })
+        //console.log(ids[i])
+        let artistsRef = db.collection('users').doc(ids[i])
+        batch.update(artistsRef, {free_credits: '2'})
+        // artistsRef.update({
+        //   'free_credits': '2'
+        // })
       }
-      return 'finished'
+      return batch.commit()
+      //return 'credits?'
       //return response.send('Documents updated')
     })
     .then(function(reply){
+
       return response.send(reply)
     })
     .catch(function (error){
