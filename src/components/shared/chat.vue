@@ -147,18 +147,18 @@ import EmojiPicker from './EmojiPicker.vue'
         let chat_ref = firebase_db.ref('chat')
         
         chat_ref.on('value', function(snapshot, newMessage = true) {
-          var firstDate = false;
-          var maxDate = new Date();
-          var indexDate = new Date();
+          let firstDate = false;
+          let maxDate = new Date();
+          let indexDate = new Date();
 
           chat_items.length = 0;
-          var itemProcessed = 0;
+          let itemProcessed = 0;
           snapshot.forEach(function(childSnapshot) {
            
             
-            var childKey = childSnapshot.key;
-            var childData = childSnapshot.val();
-            var chat = null
+            let childKey = childSnapshot.key;
+            let childData = childSnapshot.val();
+            let chat = null
 
              if (!firstDate) {
               maxDate = new Date(childData.daystamp);
@@ -168,7 +168,7 @@ import EmojiPicker from './EmojiPicker.vue'
 
               if(maxDate < indexDate){
                 maxDate = indexDate;
-                var dateItem = {
+                let dateItem = {
                    date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
                 };
                 chat_items.push(dateItem);
@@ -188,7 +188,7 @@ import EmojiPicker from './EmojiPicker.vue'
                 displayAvatar: 'display:none'
               }
             } else {
-              var chat = {
+              chat = {
                 key: childKey,
                 color: childData.color,
                 avatar: childData.url,
