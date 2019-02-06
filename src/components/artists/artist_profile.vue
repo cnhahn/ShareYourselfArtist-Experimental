@@ -1,267 +1,294 @@
 <template>
-  <v-container  >
-    <center>
-
-            <v-flex lg6 md6 sm12 xs12>
-              <v-avatar size="180px" class="avatarStyle" v-bind:cpriolor="black">
-                  <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
-                  <div v-else>
-                    <span style="font-size: 10em; color: white;">{{initial()}}</span>
+  <v-container>
+    <div class="text-xs-center" offset-sm4 id="tour">
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+              <template v-if="tour.currentStep === 2">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
                   </div>
-                </v-avatar>
-                <!--TODO: Code for Uploading image. Should modify.-->
-                <!-- From store to url -->
-                <v-btn
-                    style="margin-top: 2vh; margin-left: 1vw;"
-                    block
-                    flat
-                    depressed
-                    :color="primary"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
-                    class="mx-0"
-                    @click.native="onPickFile"
-                  >
-                    Upload Photo
-                  </v-btn>
-                  <input type="file"
-                        style="display:none"
-                        ref="fileInput"
-                        accept="image/*"
-                        @change=onFilePicked
-                  >
+                </template>
+                <template v-if="tour.currentStep === 3">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
+      </div>
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <h2 class="title">
+          Art Info
+        </h2>
+      </v-flex>
+    </v-layout>
+    <v-layout row>
+      <v-flex xs12>
+        <form>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-text-field
+                name='artistName'
+                label='Artist Name'
+                id='artist-name'
+                v-model='artistName'
+                required
+              >
+              </v-text-field>
             </v-flex>
-
-            <v-flex lg6 md6 sm12 xs12>
-              <div class="infoContainer">
-                <h1
-                  v-if="!onEdit"
-                  v-bind="artistInfo.name"
-                  class="display-2 text"
-                  style="margin-bottom: 2vh; font-weight: lighter"
-                >
-                  {{fetchUserName}}
-                </h1>
-                <v-flex v-else xs12>
-                  <v-text-field
-                    v-model="editInfo.name"
-                    label="Name"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="editInfo.instagram"
-                    label="Instagram"
-                  ></v-text-field>
-                </v-flex>
-                <v-divider></v-divider>
-                <div style="text-align: left">
-                  <p class="text" style="margin-top: 2vh"><strong>Freebie Credits:</strong> {{fetchUserFreeCredits}}</p>
-                  <p class="text" style="margin-top: 2vh"><strong>Premium Credits:</strong> {{fetchUserCredits}}</p>
-                  <p class="text" style="margin-top: 2vh"><strong>Email:</strong> {{fetchUserEmail}}</p>
-                  <p class="text" style="margin-top: 2vh"><strong>Instagram:</strong> {{fetchUserInstagram}}</p>
-                  <p class="text" style="margin-top: 2vh">{{getPassedTime(fetchUserSignUpDate)}}</p>
-                </div>
-                <v-btn v-if="!onEdit" depressed block  flat color="black" @click.native="setEdit">
-                  Edit Profile
-                </v-btn>
-                <v-btn v-if="!onEdit" depressed block  flat router to="/artist_dashboard" color="primary">
-                  Go to Dashboard
-                </v-btn>
-
-                <v-flex v-else>
-                  <v-btn depressed block  flat color="black"
-                         :loading="dataNotSent"
-                         :disabled="dataNotSent"
-                         @click.native="sendEditData">
-                    Submit
-                  </v-btn>
-                  <v-btn depressed block flat color="black" @click.native="resetEdit">
-                    Cancel
-                  </v-btn>
-                </v-flex>
-
-              </div>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-text-field
+                name='artTitle'
+                label='Art Title'
+                id='art-title'
+                v-model='artTitle'
+                required
+              >
+              </v-text-field>
             </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-text-field multi-line
+                            name='description'
+                            id='art-description'
+                            label='Please provide a description about the piece '
+                            :rules="[(v) => v.length <= 120 || 'Max 120 characters']"
+                            :counter="120"
+                            v-model='description'
+                            required
+              >
+              </v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+            </v-flex>
+          </v-layout>
+
+<!-- Associated tags for uploads -->
+
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-card id="selectbox">
+                  <v-container
+                    fluid
+                  >
+                    <v-layout
+                      align-center
+                      wrap
+                    >
+                        <v-select
+                          :items="items"
+                          attach
+                          chips
+                          name='categories'
+                          id='categories'
+                          label='categories'
+                          v-model='categories'
+                          required
+                          multiple
+                        ></v-select>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+            </v-flex>
+          </v-layout>
 
 
 
-    </center>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
+              <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
+              <v-layout>
+
+    
+
+
+      <div v-if="submitted">
+        <!-- Toast message for upload image succes / failure -->
+ 
+          <!-- Success message for when image uploads to the database -->
+          <v-alert
+            :value="alert"
+            type="success"
+            transition="scale-transition"
+          >
+            Image Uploaded!
+          </v-alert>
+          <!-- Error emssage when image does not upload to the database -->
+          <v-alert
+            :value="!alert"
+            type="error"
+            transition="scale-transition"
+          >
+            Failed to Upload Image
+          </v-alert>
+      </div>
+
+
+      <div class="text-xs-center" offset-sm4 id="tour">
+        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+          <template slot-scope="tour">
+            <transition name="fade">
+              <v-step
+                v-if="tour.currentStep === index"
+                v-for="(step, index) of tour.steps"
+                :key="index"
+                :step="step"
+                :previous-step="tour.previousStep"
+                :next-step="tour.nextStep"
+                :stop="tour.stop"
+                :is-first="tour.isFirst"
+                :is-last="tour.isLast"
+                :labels="tour.labels"
+              >
+              <template v-if="tour.currentStep === 0">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                  </div>
+                </template>
+                <template v-if="tour.currentStep === 1">
+                  <div slot="actions">
+                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                  </div>
+                </template>
+              </v-step>
+            </transition>
+          </template>
+        </v-tour>
+      </div>
+
+    </v-layout>
+            </v-flex>
+          </v-layout>
+        </form>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
+
+
+
 <script>
   export default {
-    name: 'artist_profile',
-    data () {
+    name: 'myTour',
+    data() {
       return {
-        urlProfilepic: this.$store.getters.url,
-        file: null,
-        onEdit: false,
-        dataNotSent: false,
-        imageNotLoaded: false,
-        editInfo: {
-          name: '',
-          instagram:'',
-          selectedPhotoUrl: ''
+        operation: 'art_upload',
+        artistName: '',
+        artTitle: '',
+        artUrl: '',
+        description: '',
+        categories: '',
+        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        steps: [
+          {
+            target: '#v-step-0',
+            content: 'Would you like help with uploading?'
+          },
+          {
+            target: '#v-step-1',
+            content: 'Enter the name, title, description and categories you would like viewers to see on your upload. When finished, hit submit and you will be directed to your dashboard'
+          }
+        ], myCallbacks: {
+          onPreviousStep: this.previousStepCallback,
+          onNextStep: this.nextStepCallback
         },
-        artistInfo: {}
+        // If alert is true, then image was uploaded. If false, image was not uploaded to the database.
+        alert: true,
+        // If submitted is true, submit button was pressed, else it wasn't.
+        submitted : false
       }
-    },
-    beforeMount () {
-      this.setUserInfo()
     },
     computed: {
-      fetchUserProfilePicture () {
-        return this.$store.getters.signed_in_user.profileUrl
+      // Styled by Jin. No modification on code.
+      formIsValid () {
+        return this.artistName !== '' && this.artTitle !== '' && this.description !== '' && this.categories !== ''
       },
-      fetchUserName () {
-        return this.$store.getters.signed_in_user.name
-      },
-      fetchUserEmail () {
-        return this.$store.getters.signed_in_user.email
-      },
-      fetchUserSignUpDate () {
-        return this.$store.getters.signed_in_user.upload_date
-      },
-      fetchUserColor () {
-        return this.$store.getters.signed_in_user.color
-      },
-      fetchUserFreeCredits () {
-        return this.$store.getters.signed_in_user.free_credits
-      },
-      fetchUserCredits () {
-        return this.$store.getters.signed_in_user.credits
-      },
-      fetchUserInstagram () {
-        return this.$store.getters.signed_in_user.instagram
-      }
+
+    },
+
+    mounted: function(){
+      this.$tours['myTour'].start()
     },
     methods: {
-
-      emptyUserInfo () {
-        this.artistInfo = {};
+      goBack () {
+        window.history.length > 1
+          ? this.$router.go(-1)
+          : this.$router.push('/')
       },
-      setUserInfo () {
-        this.urlProfilepic = this.$store.getters.signed_in_user.profileUrl
-        let userInfo = this.$store.getters.signed_in_user
-        console.log(userInfo.name)
-        let newArtistInfo = {
-          name: userInfo.name,
-          email: userInfo.email,
-          signUpDate: userInfo.upload_date,
-          color: userInfo.color,
-          credits: userInfo.credits
-
-        }
-        if (typeof userInfo.photoUrl === 'string' && userInfo.photoUrl !== null) {
-          newArtistInfo.photoUrl = userInfo.photoUrl
-        } else if (typeof userInfo.photoUrl === "object" && userInfo.photoUrl !== null) {
-          if(typeof userInfo.photoUrl.data.url === 'string') {
-            newArtistInfo.photoUrl = userInfo.photoUrl.data.url
-          }
-        } else{
-
-        }
-        this.artistInfo = newArtistInfo
-      },
-      onPickFile () {
-        this.$refs.fileInput.click()
-        this.imageNotLoaded = true
-      },
-      onFilePicked (event) {
-        const files = event.target.files
-        let file = files[0]
-        console.log('file: ' + file)
-        this.file = file
-        let filename = files[0].name
-        if (filename.lastIndexOf('.') <= 0) {
-          return alert('Please add a valid image file')
-        }
-        const fileReader = new FileReader()
-        fileReader.addEventListener('load', () => {
-          this.editInfo.selectedPhotoUrl = fileReader.result
-          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.editInfo.selectedPhotoUrl})
-            .then(() => {
-              /* Extra code here to call function UploadProfileImage in index.js
-                 store->index.js
-              */
-              this.imageNotLoaded = false
-              this.$store.dispatch('uploadProfileImage')
+      onSubmit () {
+        this.$store.commit('set_image_folder', '/')
+        this.$store.dispatch('uploadImage', {
+          operation: this.operation,
+          artist_name: this.artistName,
+          description: this.description,
+          art_title: this.artTitle,
+          categories: this.categories,
+          folder: this.folder,
+          upload_date: Date.now()
+        }).then(res => {
+          console.log("Inside .then in onSubmit Yas")
+          this.submitted = true
+           this.$router.push({
+              path: 'artist_dashboard'
             })
+        }, error =>{
         })
-        fileReader.readAsDataURL(files[0])
+
       },
-      resetEdit () {
-        this.onEdit = false
-        this.editInfo.name = ''
-        this.editInfo.selectedPhotoUrl = ''
+      previousStepCallback(currentStep) {
+        console.log("Previous")
       },
-      sendEditData () {
-        this.dataNotSent = true
-        const that = this
-        // TODO: should return when item to DB is done
-        let editData = {
-          instagram:this.editInfo.instagram,
-          name: this.editInfo.name,
-          photoUrl: this.editInfo.selectedPhotoUrl
-        }
-        this.$store.dispatch('updateArtistProfileToFirebase', editData).then(() => {
-          setTimeout(function () {
-            that.dataNotSent = false
-            that.resetEdit()
-          }, 2000)
-          this.setUserInfo()
-        })
-      },
-      setEdit () {
-        this.onEdit = true
-        // TODO: set Edit functions
-      },
-      initial () {
-        return String(this.$store.getters.signed_in_user.name).charAt(0)
-      },
-      getPassedTime (time) {
-        var today = new Date()
-        var thatDay = new Date(time)
-        var passedTime = today - thatDay
-        var passedDay = new Date(passedTime)
-        if (passedDay.getFullYear() > 1970) {
-          return 'Joined ' + passedDay.getFullYear() + ' years ago'
-        } else if (passedDay.getMonth() > 0) {
-          return 'Joined ' + passedDay.getUTCMonth() + ' months ago'
-        } else {
-          var date = passedDay.getDate() - 1
-          return 'Joined ' + date + ' days ago'
-        }
+        nextStepCallback(currentStep) {
+        console.log("Next")
       }
     }
+
   }
 </script>
 
-<style>
-  .profileBackground {
-    padding-left: auto;
-    padding-right: auto;
-  }
-  .card {
-    max-width: 700px;
-    margin-bottom: 100px;
-    padding: 15px;
-  }
-  .avatarStyle {
-    margin-top: 5vh;
-  }
-
-  .infoContainer {
-    padding: 5px;
-  }
-
-  @-moz-keyframes loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+<style type="text/css">
+  #selectbox{
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
