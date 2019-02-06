@@ -3,7 +3,6 @@ import { store } from '../store'
 import { firebase } from '@firebase/app';
 import { isNullOrUndefined } from 'util';
 
-
 console.log('userId: ' + localStorage.getItem('userId'))
 export default (to, from, next) => {  
     console.log("why")

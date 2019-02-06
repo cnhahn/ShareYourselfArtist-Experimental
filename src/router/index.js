@@ -45,7 +45,7 @@ import transaction_completed from "@/components/artists/transaction_completed"
 import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
 import auth_guard from "./auth_guard"
-import artist_guard from "./artist_guard.js"
+import business_guard from "./business_guard.js"
 
 Vue.use(Router)
 
@@ -215,7 +215,7 @@ export default new Router({
       path: "/business_dashboard",
       name: "business_dashboard",
       component: business_dashboard,
-      beforeEnter: artist_guard,
+      beforeEnter: business_guard,
       meta: {
         requiresAuth: true
       }
@@ -248,6 +248,10 @@ export default new Router({
       path: "/report",
       name: "report",
       component: report,
+      beforeEnter: business_guard,
+      meta: {
+        requiresAuth: true
+      }
       // beforeEnter: auth_guard -> Are this leaved for debug session?
       // TODO: leave beforeEnter or not?
     },
@@ -255,13 +259,19 @@ export default new Router({
       path: "/new_reviews",
       name: 'new_reviews',
       component: new_reviews,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/reviews/empty',
       name: 'reviews_empty',
       component: reviewsEmpty,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/profile',
@@ -289,7 +299,7 @@ export default new Router({
       path: '/profile/business',
       name: 'business_profile',
       component: businessProfile,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
       // TODO: this is only for debug. Recover this after profile page is linked.
       // beforeEnter: auth_guard
     },

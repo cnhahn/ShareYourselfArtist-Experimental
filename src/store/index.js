@@ -1260,6 +1260,8 @@ export const store = new Vuex.Store({
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(user => {
           localStorage.setItem('userId', 1000)
+
+          localStorage.setItem('role', 'artist')
           commit('setLoading', false)
           const newUser = {
             upload_date: Date.now(),
@@ -1348,6 +1350,7 @@ export const store = new Vuex.Store({
         .then(user => {
           commit('setLoading', false)
           localStorage.setItem('userId', 1000)
+          localStorage.setItem('role', 'artist')
           const newUser = {
             upload_date: Date.now(),
             userId: firebase.auth().currentUser.uid,
@@ -2018,6 +2021,8 @@ export const store = new Vuex.Store({
     */
     create_a_new_artist ({ commit, getters }, payload) {
       localStorage.setItem('userId', 1000)
+      localStorage.setItem('role', payload.role)
+
       router.push({
         name: 'artist_dashboard'
       })
@@ -2254,6 +2259,7 @@ export const store = new Vuex.Store({
                     arts: []
                   }
                   commit('setUser', newUser)
+                  console.log('userId is this')
                   localStorage.setItem('userId', 1000)
                   let db = firebase.firestore()
                   let user = db
@@ -2284,6 +2290,11 @@ export const store = new Vuex.Store({
                         commit('setUrl', doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
+
+                        // check current user's role to see if they're allowed to enter
+                        console.log('current role at this instance: ' + doc.data().role)
+                        localStorage.setItem('role', doc.data().role)
+                        
                         if (doc.data().role == 'artist') {
                           router.push({
                             name: 'artist_dashboard'
