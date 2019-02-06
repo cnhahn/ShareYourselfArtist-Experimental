@@ -44,7 +44,8 @@ import reviewsEmpty from '@/components/artists/review_empty'
 import transaction_completed from "@/components/artists/transaction_completed"
 import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
-import auth_guard from "./auth_guard";
+import auth_guard from "./auth_guard"
+import artist_guard from "./artist_guard.js"
 
 Vue.use(Router)
 
@@ -214,7 +215,10 @@ export default new Router({
       path: "/business_dashboard",
       name: "business_dashboard",
       component: business_dashboard,
-      beforeEnter: auth_guard
+      beforeEnter: artist_guard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/upload_an_image",
