@@ -219,7 +219,7 @@
           onNextStep: this.nextStepCallback
         },
         // If alert is true, then image was uploaded. If false, image was not uploaded to the database.
-        alert: false,
+        alert: null,
         // If submitted is true, submit button was pressed, else it wasn't.
         submitted : false
       }
@@ -264,13 +264,18 @@
           let art_uploaded = this.$store.getters.get_art_uploaded
           console.log('artuploaded is ' , art_uploaded)
           if(art_uploaded == true){
-            console.log("yay it works")
+            console.log("It's true!")
+            this.alert = true;
+            setTimeout( () =>
+            this.$router.push({
+
+              path: 'artist_dashboard'
+            }),
+            1500);
           }else{
-            console.log("no it doesn't work")
+            console.log("It's false!")
+            this.alert = false;
           }
-          //  this.$router.push({
-          //     path: 'artist_dashboard'
-          //   })
         }, error => {
           console.log
         })

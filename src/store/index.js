@@ -1259,9 +1259,13 @@ export const store = new Vuex.Store({
     signUserInGoogle ({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
+      let provider = new firebase.auth.GoogleAuthProvider()
+      provider.setCustomParameters({
+        'prompt': 'select_account'
+     })
       firebase
         .auth()
-        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .signInWithPopup(provider)
         .then(user => {
           localStorage.setItem('userId', 1000)
           commit('setLoading', false)
@@ -1741,6 +1745,8 @@ export const store = new Vuex.Store({
 
       // Styled by Jin. No modification on code.
     uploadImage ({commit, getters}, payload) {
+
+      return new Promise((resolve,reject) => {
         // first put the image in the storage
         // Create a root reference
       let ref = firebase.storage().ref()
@@ -1811,15 +1817,20 @@ export const store = new Vuex.Store({
                     // If art is uploaded, set variable to true
                     commit('set_art_uploaded', true)
                   })
+                  .then(function () {
+                    console.log("resolving upload image here")
+                    resolve()
+                  })
                   .catch(function (error) {
                     // If art was not uploaded, set it to false
                     commit('set_art_uploaded', false)
+                    reject(error)
                   })
               }
             })
           }
         )
-        console.log("IN here too ")
+        console.log("Near end of uploadImage")
       // Line commented out by Yas as this line gave the error: "uploadTask.on(...).put is not a function"
       // .put(getters.image_being_uploaded.file)
       // Listen for state changes, errors, and completion of the upload.
@@ -1832,6 +1843,7 @@ export const store = new Vuex.Store({
         upload_date: payload.upload_date,
         artist_id: getters.user.id
       }
+    })
 
       // upload the artist data and the url
       },
@@ -2234,6 +2246,7 @@ export const store = new Vuex.Store({
     Sign user in and load information from Firestore
     */
     signUserIn ({ commit, dispatch, getters }, payload) {
+      commit('signUserOut', commit)
       commit('setLoading', true)
       commit('clearError')
       const promise = firebase
