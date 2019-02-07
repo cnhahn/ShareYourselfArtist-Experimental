@@ -195,7 +195,7 @@ export const store = new Vuex.Store({
     monthly_report_submissions: [],
     // store email of artist that was just clicked (worked on by Yas)
     query_business_email: '',
-    // yiwayana
+
     info_of_business_for_dashboard2: {},
 
     // yiwayana and aortiz
