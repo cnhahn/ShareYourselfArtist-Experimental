@@ -1255,9 +1255,13 @@ export const store = new Vuex.Store({
     signUserInGoogle ({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
+      let provider = new firebase.auth.GoogleAuthProvider()
+      provider.setCustomParameters({
+        'prompt': 'select_account'
+      })
       firebase
         .auth()
-        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .signInWithPopup(provider)
         .then(user => {
           localStorage.setItem('userId', 1000)
           commit('setLoading', false)
