@@ -236,13 +236,13 @@ export default new Router({
       path: "/submissions",
       name: "submissions",
       component: submissions,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
     },
     {
       path: '/submissions/empty',
       name: 'submissions_empty',
       component: submissionsEmpty,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
     },
     {
       path: "/report",
@@ -259,19 +259,13 @@ export default new Router({
       path: "/new_reviews",
       name: 'new_reviews',
       component: new_reviews,
-      beforeEnter: business_guard,
-      meta: {
-        requiresAuth: true
-      }
+      beforeEnter: business_guard
     },
     {
       path: '/reviews/empty',
       name: 'reviews_empty',
       component: reviewsEmpty,
-      beforeEnter: business_guard,
-      meta: {
-        requiresAuth: true
-      }
+      beforeEnter: business_guard
     },
     {
       path: '/profile',
