@@ -121,6 +121,32 @@
               <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
               <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
               <v-layout>
+
+    
+
+
+      <div v-if="submitted">
+        <!-- Toast message for upload image succes / failure -->
+  
+          <!-- Success message for when image uploads to the database -->
+          <v-alert
+            :value="alert"
+            type="success"
+            transition="scale-transition"
+          >
+            Image Uploaded!
+          </v-alert>
+          <!-- Error emssage when image does not upload to the database -->
+          <v-alert
+            :value="!alert"
+            type="error"
+            transition="scale-transition"
+          >
+            Failed to Upload Image
+          </v-alert>
+      </div>
+
+
       <div class="text-xs-center" offset-sm4 id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
@@ -191,7 +217,11 @@
         ], myCallbacks: {
           onPreviousStep: this.previousStepCallback,
           onNextStep: this.nextStepCallback
-        }
+        },
+        // If alert is true, then image was uploaded. If false, image was not uploaded to the database.
+        alert: false,
+        // If submitted is true, submit button was pressed, else it wasn't.
+        submitted : false
       }
     },
     computed: {
@@ -199,6 +229,12 @@
       formIsValid () {
         return this.artistName !== '' && this.artTitle !== '' && this.description !== '' && this.categories !== ''
       },
+      art_submission_progress(){
+        console.log("Enetered computed art submission progress")
+        console.log("This is the art uploaded progress: ")
+        console.log(this.$store.getters.get_art_uploaded)
+        return this.$store.getters.get_art_uploaded
+      }
 
     },
 
@@ -207,13 +243,11 @@
     },
     methods: {
       goBack () {
-        console.log("Testing backb by Yas")
         window.history.length > 1
           ? this.$router.go(-1)
           : this.$router.push('/')
       },
       onSubmit () {
-        console.log("Testing Submit, Yas")
         this.$store.commit('set_image_folder', '/')
         this.$store.dispatch('uploadImage', {
           operation: this.operation,
@@ -223,15 +257,23 @@
           categories: this.categories,
           folder: this.folder,
           upload_date: Date.now()
-        }).then(res => {
-          console.log("Inside .then in onSubmit Yas")
-           this.$router.push({
-              path: 'artist_dashboard'
-            })
-        }, error =>{
-          console.log("Error in .then Yas")
         })
-
+        .then(response => {
+          console.log("Got same data now lets show something" )
+          this.submitted = true  
+          let art_uploaded = this.$store.getters.get_art_uploaded
+          console.log('artuploaded is ' , art_uploaded)
+          if(art_uploaded == true){
+            console.log("yay it works")
+          }else{
+            console.log("no it doesn't work")
+          }
+          //  this.$router.push({
+          //     path: 'artist_dashboard'
+          //   })
+        }, error => {
+          console.log
+        })
       },
       previousStepCallback(currentStep) {
         console.log("Previous")
