@@ -13,7 +13,12 @@ const key = localStorage.getItem('userId')
     if (!(key>=0)) {
         console.log("why")
         next('sign_in')
-    }else {
+    }
+    else if (key >= 0 && to.name == 'Home')
+    {
+        next('artist_dashboard')
+    }
+    else {
         // if we have a user signed in continu with what you want to do
         next()
     } 

@@ -72,7 +72,8 @@ export default new Router({
     {
       path: "/",
       name: "Home",
-      component: Home
+      component: Home,
+      beforeEnter: auth_guard
     },
     {
       path: "/artist_signup",
