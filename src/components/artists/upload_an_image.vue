@@ -120,34 +120,42 @@
             <v-flex xs12 sm6 offset-sm3>
               <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
               <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
+
+              <v-progress-circular
+                v-if="submission_in_progress"
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+
+              <div> </div> <!-- For Spacing -->
+
+              <div id="uploadsuccess" v-if="submitted">
+              <!-- Toast message for upload image succes / failure -->
+              <!-- Success message for when image uploads to the database -->
+                <v-alert
+                  :value="alert"
+                  type="success"
+                  transition="scale-transition"
+                  id="uploadsuccess"
+                >
+                  Image Uploaded!
+                </v-alert>
+                <!-- Error emssage when image does not upload to the database -->
+                <v-alert
+                  :value="!alert"
+                  type="error"
+                  transition="scale-transition"
+                  id="uploadsuccess"
+                >
+                  Failed to Upload Image
+                </v-alert>
+              </div>
+
               <v-layout>
-
-    
-
-
-      <div v-if="submitted">
-        <!-- Toast message for upload image succes / failure -->
-  
-          <!-- Success message for when image uploads to the database -->
-          <v-alert
-            :value="alert"
-            type="success"
-            transition="scale-transition"
-          >
-            Image Uploaded!
-          </v-alert>
-          <!-- Error emssage when image does not upload to the database -->
-          <v-alert
-            :value="!alert"
-            type="error"
-            transition="scale-transition"
-          >
-            Failed to Upload Image
-          </v-alert>
-      </div>
 
 
       <div class="text-xs-center" offset-sm4 id="tour">
+
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
           <template slot-scope="tour">
             <transition name="fade">
@@ -221,7 +229,8 @@
         // If alert is true, then image was uploaded. If false, image was not uploaded to the database.
         alert: null,
         // If submitted is true, submit button was pressed, else it wasn't.
-        submitted : false
+        submitted : false,
+        submission_in_progress : false
       }
     },
     computed: {
@@ -249,6 +258,7 @@
       },
       onSubmit () {
         this.$store.commit('set_image_folder', '/')
+        this.submission_in_progress = true;
         this.$store.dispatch('uploadImage', {
           operation: this.operation,
           artist_name: this.artistName,
@@ -263,7 +273,9 @@
           this.submitted = true  
           let art_uploaded = this.$store.getters.get_art_uploaded
           console.log('artuploaded is ' , art_uploaded)
+          this.submission_in_progress = false
           if(art_uploaded == true){
+           
             console.log("It's true!")
             this.alert = true;
             setTimeout( () =>
@@ -295,6 +307,10 @@
   #selectbox{
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  #uploadsuccess{
+    /* display: inline-block;  */
+    width: 100%
   }
 
 </style>
