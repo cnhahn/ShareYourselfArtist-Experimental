@@ -45,6 +45,7 @@ import transaction_completed from "@/components/artists/transaction_completed"
 import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
 import auth_guard from "./auth_guard";
+import not_dash_guard from "./not_dash_guard";
 
 Vue.use(Router)
 
@@ -73,7 +74,7 @@ export default new Router({
       path: "/",
       name: "Home",
       component: Home,
-      beforeEnter: auth_guard
+      beforeEnter: not_dash_guard
     },
     {
       path: "/artist_signup",
@@ -123,7 +124,8 @@ export default new Router({
     {
       path: "/sign_in",
       name: "sign_in",
-      component: sign_in
+      component: sign_in,
+      beforeEnter: not_dash_guard
     },
     {
       path: "/blogs",
