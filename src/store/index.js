@@ -135,6 +135,7 @@ export const store = new Vuex.Store({
     uploadedArts: [],
     viewed_arts: [],
     user: null,
+    stored_user_email: null,
     color: 'primary',
     loading: false,
     error: null,
@@ -152,6 +153,7 @@ export const store = new Vuex.Store({
     business_being_submitted_is_selected: false,
     businesses_being_submitted: [],
     test: 4,
+    signed_in_user_email: null,
     signed_in_user: {},
     art_being_submitted: {
       refunded: 0
@@ -426,6 +428,16 @@ export const store = new Vuex.Store({
     },
     setError (state, payload) {
       state.error = payload
+    },
+    set_stored_user_email (state){
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          state.stored_user_email = user.email
+        } else {
+          // No user is signed in.
+          console.error('No user signed in');
+        }
+      });
     },
     set_user_email (state) {
       state.signed_in_user_email = firebase.auth().currentUser.email
@@ -1528,19 +1540,7 @@ export const store = new Vuex.Store({
           console.log('Error getting document:', error)
         })
     },
-    get_user_email ({ commit }, payload) {
-      let auth = firebase.auth()
-      admin
-        .auth()
-        .getUserByEmail(email)
-        .then(function (userRecord) {
-          // See the UserRecord reference doc for the contents of userRecord.
-          console.log('Successfully fetched user data:', userRecord.toJSON())
-        })
-        .catch(function (error) {
-          console.log('Error fetching user data:', error)
-        })
-    },
+
 
     reset_password ({ commit }, payload) {
       console.log(payload)
@@ -2563,6 +2563,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    stored_user_email(state){
+      return state.stored_user_email;
+    },
     viewed_artist_data (state) {
       return state.viewed_artist_data
     },
