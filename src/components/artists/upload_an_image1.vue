@@ -138,6 +138,7 @@
         this.image_is_not_loaded = false
         let filename = files[0].name
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
+          this.image_is_not_loaded = true
           return alert('Please add a valid image file')
         }
         const fileReader = new FileReader()
