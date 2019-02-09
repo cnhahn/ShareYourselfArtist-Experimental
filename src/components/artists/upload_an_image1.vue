@@ -1,5 +1,4 @@
 <template>
-  <!--Styled by Jin. No modification on code.-->
   <v-container fill-height>
     <v-layout align-center>
       <v-flex>
