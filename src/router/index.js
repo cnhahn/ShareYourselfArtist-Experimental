@@ -259,7 +259,7 @@ export default new Router({
       path: "/new_reviews",
       name: 'new_reviews',
       component: new_reviews,
-      beforeEnter: business_guard
+      beforeEnter: auth_guard
     },
     {
       path: '/reviews/empty',
