@@ -142,10 +142,11 @@ import EmojiPicker from './EmojiPicker.vue'
       },
       loadChats() {
         let firebase_db = this.$store.getters.chat_database;
+        let db  = this.$store.state.db;
         let chat_items = this.chat_items;
         const that = this
         let chat_ref = firebase_db.ref('chat')
-        
+        this.$store
         chat_ref.on('value', function(snapshot, newMessage = true) {
           let firstDate = false;
           let maxDate = new Date();
@@ -153,7 +154,7 @@ import EmojiPicker from './EmojiPicker.vue'
 
           chat_items.length = 0;
           let itemProcessed = 0;
-          snapshot.forEach(function(childSnapshot) {
+          snapshot.forEach(function(childSnapshot){
            
             
             let childKey = childSnapshot.key;
@@ -174,8 +175,21 @@ import EmojiPicker from './EmojiPicker.vue'
                 chat_items.push(dateItem);
               }
             }
+            let avatar;
+            if(childData.userId != undefined){
+              db.collection('users').doc(childData.userId).get()
+              .then(doc => {
+                avatar = doc.data().profileUrl
+                //response.send("Here is the user email: " + email)
+              })
+              .catch(error => {
+                console.log(error)
+                //response.send(error)
+              })
+            } else {
+              avatar = childData.url;
+            }
 
-            
             if (childData.url == "") {
               chat = {
                 key: childKey,
@@ -191,13 +205,13 @@ import EmojiPicker from './EmojiPicker.vue'
               chat = {
                 key: childKey,
                 color: childData.color,
-                avatar: childData.url,
+                avatar:avatar,
                 name: childData.user.name,
                 message: childData.message,
                 time: childData.timestamp,
                 daystamp: childData.daystamp,
                 initial: '',
-                url:childData.url,
+                url:avatar,
                 displayAvatar: 'display:block'
               }
             }
@@ -218,7 +232,7 @@ import EmojiPicker from './EmojiPicker.vue'
           return;
         }
         var user = this.$store.getters.signed_in_user
-
+        console.log(this.$store.state.user.id);
         var role = user.role
         var sender = null
         if (role == 'business') {
@@ -242,7 +256,8 @@ import EmojiPicker from './EmojiPicker.vue'
           daystamp: total_timestamp.daystamp,
           timestamp: total_timestamp.timestamp,
           url: url,
-          color: color
+          color: color,
+          userId: this.$store.state.user.id
         })
 
       }else{
@@ -253,7 +268,8 @@ import EmojiPicker from './EmojiPicker.vue'
             timestamp: total_timestamp.timestamp,
             url: '',
             color: color,
-            attach_url:''
+            attach_url:'',
+            userId: this.$store.state.user.id
           })
       }
         this.clearInput();

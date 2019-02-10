@@ -185,7 +185,6 @@
           'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1'];
         let userID = this.$store.state.user.id;
    
-
         function filter_test(business) {
           return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
         }

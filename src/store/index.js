@@ -1264,6 +1264,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
+
     signUserInGoogle ({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
@@ -2376,6 +2377,7 @@ export const store = new Vuex.Store({
       var user = {
         name: payload.user
       }
+      var userId = payload.userId;
       var daystamp = getters.sendChatDataDaystamp
       var timestamp = getters.sendChatDataTimestamp
 
@@ -2386,7 +2388,8 @@ export const store = new Vuex.Store({
         timestamp: timestamp,
         role: role,
         url: url,
-        color: color
+        color: color,
+        userId: userId
       }
       var chatDatabase = getters.chat_database
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
