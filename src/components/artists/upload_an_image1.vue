@@ -3,6 +3,27 @@
   <v-container fill-height>
     <v-layout align-center>
       <v-flex>
+
+      <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+      >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+      </v-snackbar>
+
         <h3 class="display-3">Great, let's get started. </h3>
         <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
         <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it. You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
@@ -91,6 +112,14 @@
     name: 'myTour',
     data () {
       return {
+
+        snackbar: false,
+        y: 'top',
+        x: null,
+        mode: '',
+        timeout: 6000,
+        text: 'Please add a valid image file',
+
         checkbox: true,
         radioGroup: 0,
         switch1: true,
@@ -139,7 +168,10 @@
         let filename = files[0].name
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
           this.image_is_not_loaded = true
-          return alert('Please add a valid image file')
+          this.snackbar = true
+          this.file = null
+          this.image_url = ''
+          return
         }
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
