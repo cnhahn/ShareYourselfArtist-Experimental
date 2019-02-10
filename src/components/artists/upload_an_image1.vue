@@ -142,6 +142,11 @@
         this.file = file 
         this.image_is_not_loaded = false
         let filename = files[0].name
+
+        // Able to restrict the file upload size if necessary
+        console.log('file size: ' + files[0].size)
+        console.log('file type: ' + files[0].type)
+        
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
           return alert('Please add a valid image file')
         }
