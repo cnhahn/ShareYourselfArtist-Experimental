@@ -528,6 +528,8 @@ artist_instagram() {
     },
   onSignOut(){
       this.$store.dispatch('signUserOut')
+      this.$store.commit('set_user_to_null')
+      //this.$store.getters.user !== null && this.$store.getters.user !== undefined
       console.log('signed out')
     },
 }

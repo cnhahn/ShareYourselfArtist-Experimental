@@ -7,17 +7,18 @@ export default (to, from, next) => {
     
 console.log('userId: ' + localStorage.getItem('userId'))
 const key = localStorage.getItem('userId')
+/*console.log('user:')
+console.log(store.getters.user)*/
  
     if (!(key>=0)) {
-        if (from.name != 'Home' && from.name != 'sign_in' && from.name != null && to.name == 'sign_in')
+        /*console.log('pages, not signed in')
+        console.log(from.name)
+        console.log(to.name)*/
+        if (from.name != 'Home' && from.name != null && to.name == 'sign_in')
         {
-            console.log('need to refresh page')
+            //console.log('need to refresh page')
             // force refresh, or else signin page has dash components
-            // not great temp
-            //to.push('/sign_in')
-            //to.go(0)
-            //to.reload()
-            //next('sign_in')
+            location.reload()
             next()
         }
         else

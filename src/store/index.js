@@ -206,6 +206,12 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    // Sign user out by setting user element to null
+    set_user_to_null(state){
+      state.user = null 
+      state.user_role = ''
+      //console.log('set user to null')
+    },
     set_info_of_business_for_dashboard2 (state, payload) {
       state.info_of_business_for_dashboard2 = payload
     },
