@@ -150,13 +150,42 @@
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
           return alert('Please add a valid image file')
         }
+
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.
           this.image_url = fileReader.result
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
         })
-        fileReader.readAsDataURL(files[0])
+
+        // Create new image object to check if the file's dimensions are valid
+        var img = new Image()
+        img.src = window.URL.createObjectURL(files[0])
+        img.onload = function(){
+            var width = img.naturalWidth,
+            height = img.naturalHeight;
+
+            window.URL.revokeObjectURL(img.src)
+
+            // the image resolutions of facebook is listed here: https://www.facebook.com/help/266520536764594?helpref=related
+            // functions\index.js has a function called resizeImage
+
+            // restrictions currently set are 960 x 960
+            if(width <= 960 && height <= 960) {
+              console.log("The image dimensions are within the limit. Continue.")
+              
+              // This fileReader allows the image to be able to be previewed
+              fileReader.readAsDataURL(files[0])
+            }
+            else{
+              console.log("The image dimensions are too large, notify and alert the user")
+              return alert('The image dimensions are too large, please reupload an image with smaller dimensions.')
+            }
+            
+            console.log("width is: " + width)
+            console.log("height is: " + height)
+        }
+
       },
         previousStepCallback(currentStep) {
         console.log("Previous")
