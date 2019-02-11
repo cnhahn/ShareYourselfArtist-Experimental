@@ -189,6 +189,20 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
 
 })
 
+exports.getUserAvatar = functions.https.onRequest((request, response) => {
+  let userId = request.body.userId
+  const db = admin.firestore()
+  const user = db.collection('users').doc('XpIQwNnOayXqjdlbh6jDDL5xaaz2').get()
+    .then(doc => {
+      let avatar = doc.data().profileUrl
+      //response.send("Here is the user email: " + userEmail)
+    })
+    .catch(error => {
+      //response.send(error)
+      console.log(error)
+    })
+})
+
 // Triggers an email once someone signs up
 exports.payEmail = functions.firestore
   .document('users/F9AxT9EpPFcBBCk5PtaPasAYS6s2') //any write to this node will trigger email
@@ -461,3 +475,5 @@ exports.daily_job = functions.https.onRequest((req, res) => {
     res.send('error');
   })
 });
+
+
