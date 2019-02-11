@@ -520,6 +520,51 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    delete_art_piece({commit, dispatch}, payload) {
+      console.log("Entered delete art piece")
+      // Got the url so we can find the art piece to delete
+      console.log(payload)
+      let db = firebase.firestore()
+      let art = db.collection("art").where("url", "==", payload.url)
+      .get()
+      .then(function (results){
+        results.forEach(function (doc) {
+          console.log(doc.id)
+          db.collection("art").doc(doc.id).update({
+            delete: 'true'
+          }).then( res => {
+            dispatch('fetchArts')
+          })
+        })
+      })
+
+      // .where("url", "==", "https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/QBRXqktYi0QigFboM92crKAONKn1%2Fburnupchart1.jpg?alt=media&token=ed28f585-9f0c-48de-84f0-2851aed5a798")
+      // .get()
+      // .then(function (results) {
+      //   console.log(results.data().art_title)
+      // })
+      // .catch(function (error) {
+      //   console.log('error getting documents yas: ', error)
+      // })
+
+    },
+    add_delete_field_to_art () {
+      console.log('Entered add_delete_field_to_art')
+      // Get all artists from Firebase
+      let db = firebase.firestore()
+      let art_piece = db.collection('art')
+      .get()
+      .then(function (results) {
+        results.forEach(function (doc) {
+          let user = doc.id 
+
+            console.log("doc data is now ", doc.data())
+        })
+      })
+      .catch(function (error) {
+        console.log('error getting documents yas: ', error)
+      })
+    },
     verify_free_credits_field () {
       // Get all artists from Firebase
       let db = firebase.firestore()
@@ -1450,11 +1495,6 @@ export const store = new Vuex.Store({
           })
         })
     },
-
-    delete_review_read_byUser_status ({ commit }, payload) {
-
-    },
-
     update_user_credit ({ getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
