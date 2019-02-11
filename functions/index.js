@@ -191,11 +191,13 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
 
 exports.getUserAvatar = functions.https.onRequest((request, response) => {
   let userId = request.body.userId
+  // for testing purposes, here is a specific userId: XpIQwNnOayXqjdlbh6jDDL5xaaz2
+
   const db = admin.firestore()
   const user = db.collection('users').doc('XpIQwNnOayXqjdlbh6jDDL5xaaz2').get()
     .then(doc => {
       let avatar = doc.data().profileUrl
-      //response.send("Here is the user email: " + userEmail)
+      response.send("Here is the user's avatar: " + avatar)
     })
     .catch(error => {
       //response.send(error)

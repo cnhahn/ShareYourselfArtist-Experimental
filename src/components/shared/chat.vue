@@ -142,9 +142,15 @@ import EmojiPicker from './EmojiPicker.vue'
       },
       loadChats() {
         let firebase_db = this.$store.getters.chat_database;
+
+        //handle for users database so that we can query users in the chat
+        // and get their up-to-date avatar
+        let db = this.$store.getters.db  
+
         let chat_items = this.chat_items;
         const that = this
         let chat_ref = firebase_db.ref('chat')
+        let user_ID = null
         
         chat_ref.on('value', function(snapshot, newMessage = true) {
           let firstDate = false;
@@ -158,6 +164,7 @@ import EmojiPicker from './EmojiPicker.vue'
             
             let childKey = childSnapshot.key;
             let childData = childSnapshot.val();
+
             let chat = null
 
              if (!firstDate) {
@@ -175,20 +182,33 @@ import EmojiPicker from './EmojiPicker.vue'
               }
             }
 
-            
-            if (childData.url == "") {
-              chat = {
-                key: childKey,
-                color: childData.color,
-                name: childData.user.name,
-                message: childData.message,
-                time: childData.timestamp,
-                daystamp: childData.daystamp,
-                initial: String(childData.user.name).charAt(0),
-                displayAvatar: 'display:none'
-              }
-            } else {
-              chat = {
+            //
+            // if (childData.url == "") {
+            //   chat = {
+            //     key: childKey,
+            //     color: childData.color,
+            //     name: childData.user.name,
+            //     message: childData.message,
+            //     time: childData.timestamp,
+            //     daystamp: childData.daystamp,
+            //     initial: String(childData.user.name).charAt(0),
+            //     displayAvatar: 'display:none'
+            //   }
+            // } else {
+            //   chat = {
+            //     key: childKey,
+            //     color: childData.color,
+            //     avatar: childData.url,
+            //     name: childData.user.name,
+            //     message: childData.message,
+            //     time: childData.timestamp,
+            //     daystamp: childData.daystamp,
+            //     initial: '',
+            //     url:childData.url,      
+            //     displayAvatar: 'display:block'
+            //   }
+            // }
+            chat = {
                 key: childKey,
                 color: childData.color,
                 avatar: childData.url,
@@ -197,15 +217,15 @@ import EmojiPicker from './EmojiPicker.vue'
                 time: childData.timestamp,
                 daystamp: childData.daystamp,
                 initial: '',
-                url:childData.url,
-                displayAvatar: 'display:block'
+                //url:childData.url, 
+                userID: childData.userID,     
+                displayAvatar: 'display:block'  // This is how avatars are displayed
               }
-            }
 
             chat_items.push(chat);
             itemProcessed++;
           });
-
+          
           if (!newMessage) {
           } else {
             console.log("now is")
@@ -228,6 +248,10 @@ import EmojiPicker from './EmojiPicker.vue'
         }
         var color = this.$store.getters.color
 
+        //assuming this returns the current user's userID and NOT their name...
+        const user_ID = this.$store.getters.user
+
+
         var url = this.$store.getters.url
         if (user == null) {
           return;
@@ -241,7 +265,8 @@ import EmojiPicker from './EmojiPicker.vue'
           user: sender,
           daystamp: total_timestamp.daystamp,
           timestamp: total_timestamp.timestamp,
-          url: url,
+          userID: user_ID,
+          //url: '',   //made url case equivalent to 'no avatar'
           color: color
         })
 
@@ -251,7 +276,8 @@ import EmojiPicker from './EmojiPicker.vue'
             user: sender,
             daystamp: total_timestamp.daystamp,
             timestamp: total_timestamp.timestamp,
-            url: '',
+            //url: '',
+            userID: user_ID,
             color: color,
             attach_url:''
           })

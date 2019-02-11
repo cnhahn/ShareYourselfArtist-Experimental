@@ -2367,11 +2367,14 @@ export const store = new Vuex.Store({
       commit(clearError)
     },
     // should change this function!
+
+    // KS - the comment above is old and not from me, but I absolutely agree
+    // This function no longer sends the user's avatar along with the message
     async sendMessageToFirebase ({ commit, getters }, payload) {
       commit('set_send_chat_data', payload)
       var message = getters.sendChatDataMessage
       var role = getters.user_role
-      var url = payload.url
+      //var url = payload.url
       var color = payload.color
       var user = {
         name: payload.user
@@ -2385,7 +2388,8 @@ export const store = new Vuex.Store({
         daystamp: daystamp,
         timestamp: timestamp,
         role: role,
-        url: url,
+        userID: payload.userID,  //should be the userID of the user submitting the chat message
+        //url: url,
         color: color
       }
       var chatDatabase = getters.chat_database
