@@ -1899,6 +1899,10 @@ export const store = new Vuex.Store({
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = true
+
+        //this next field will be used to track replies and refunds
+        art_being_submitted.replied = false
+        
         console.log('art_being_submitted', art_being_submitted)
         art_being_submitted.businessId = businesses_being_submitted[i]
         console.log('art_being_submitted', art_being_submitted)
