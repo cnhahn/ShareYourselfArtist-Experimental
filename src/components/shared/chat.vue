@@ -175,54 +175,59 @@ import EmojiPicker from './EmojiPicker.vue'
                 chat_items.push(dateItem);
               }
             }
-            let avatar;
-            if(childData.userId != undefined){
+            let newAvatar;
+           
+            
+
+            
               db.collection('users').doc(childData.userId).get()
               .then(doc => {
-                avatar = doc.data().profileUrl
-                //response.send("Here is the user email: " + email)
+                console.log(doc.data().profileUrl);
+                newAvatar = doc.data().profileUrl;
+                if(newAvatar == undefined){
+                  chat = {
+                      key: childKey,
+                      color: childData.color,
+                      name: childData.user.name,
+                      message: childData.message,
+                      time: childData.timestamp,
+                      daystamp: childData.daystamp,
+                      initial: String(childData.user.name).charAt(0),
+                      displayAvatar: 'display:none'
+                    }
+                } else {
+                  chat = {
+                    key: childKey,
+                    color: childData.color,
+                    avatar:newAvatar,
+                    name: childData.user.name,
+                    message: childData.message,
+                    time: childData.timestamp,
+                    daystamp: childData.daystamp,
+                    initial: '',
+                    url:newAvatar,
+                    displayAvatar: 'display:block'
+                  }
+                }
+                
+                chat_items.push(chat);
               })
               .catch(error => {
                 console.log(error)
                 //response.send(error)
               })
-            } else {
-              avatar = childData.url;
-            }
+              console.log(newAvatar);
+            
+            
+            
 
-            if (childData.url == "") {
-              chat = {
-                key: childKey,
-                color: childData.color,
-                name: childData.user.name,
-                message: childData.message,
-                time: childData.timestamp,
-                daystamp: childData.daystamp,
-                initial: String(childData.user.name).charAt(0),
-                displayAvatar: 'display:none'
-              }
-            } else {
-              chat = {
-                key: childKey,
-                color: childData.color,
-                avatar:avatar,
-                name: childData.user.name,
-                message: childData.message,
-                time: childData.timestamp,
-                daystamp: childData.daystamp,
-                initial: '',
-                url:avatar,
-                displayAvatar: 'display:block'
-              }
-            }
-
-            chat_items.push(chat);
+            
             itemProcessed++;
           });
 
           if (!newMessage) {
           } else {
-            console.log("now is")
+            
             that.canRefresh = true;
           }
         })
@@ -232,7 +237,7 @@ import EmojiPicker from './EmojiPicker.vue'
           return;
         }
         var user = this.$store.getters.signed_in_user
-        console.log(this.$store.state.user.id);
+   
         var role = user.role
         var sender = null
         if (role == 'business') {
