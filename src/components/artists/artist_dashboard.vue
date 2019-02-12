@@ -138,11 +138,12 @@
         let arti = 0
         var removed_deleted_art = [];
         for (arti = 0 ; arti < arts.length; arti++){
-          console.log('this should all say false', )
-          if(arts[arti].delete == 'false'){
+          if(arts[arti].delete == false){
             removed_deleted_art.push(arts[arti])
           }
         }
+
+        console.log('revmoed delteed art', removed_deleted_art)
 
         return removed_deleted_art;
       },
@@ -180,18 +181,6 @@
         console.log("We are here")
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
       },
-/*      
-      selected_art(art_unique_timestamp) {
-        this.$store.commit('set_user_email')
-        this.$store.commit('set_art_being_submitted',art)
-        this.$store.commit('set_art_being_submitted_is_selected',true)
-        if(this.$store.state.business_being_submitted_is_selected == true){
-           this.$router.push({
-              name: 'submit_result'
-            })
-        var deleteDoc = db.collection('cities').doc('DC').delete();
-      },
-*/
 
       filterCategories(filterCategories, artCategories, def, art) {
           return filterCategories.every(function (value) {

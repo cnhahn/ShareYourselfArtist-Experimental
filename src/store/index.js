@@ -553,7 +553,7 @@ export const store = new Vuex.Store({
         results.forEach(function (doc) {
           console.log(doc.id)
           db.collection("art").doc(doc.id).update({
-            delete: 'true'
+            delete: true
           }).then( res => {
             dispatch('fetchArts')
           })
@@ -579,7 +579,6 @@ export const store = new Vuex.Store({
       .then(function (results) {
         results.forEach(function (doc) {
           let user = doc.id 
-
             console.log("doc data is now ", doc.data())
         })
       })
@@ -1798,6 +1797,7 @@ export const store = new Vuex.Store({
     uploadImage ({commit, getters}, payload) {
 
       return new Promise((resolve,reject) => {
+        console.log("image-_being uploaded is ", getters.image_being_uploaded.file)
         // first put the image in the storage
         // Create a root reference
       let ref = firebase.storage().ref()
@@ -1855,6 +1855,7 @@ export const store = new Vuex.Store({
                   url: getters.url,
                   description: payload.description,
                   upload_date: payload.upload_date,
+                  delete: false,
                   artist_id: firebase.auth().currentUser.uid
                 }
                 const db = firebase.firestore()
