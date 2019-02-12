@@ -40,6 +40,13 @@
           <v-layout row="">
             <div class="preview-image">
             <v-flex xs12="" sm6="">
+              <v-alert
+                v-if="image_size_accepted == false"
+                :value="true"
+                type="error"
+              >
+                Image size is too large! Please reduce the image size
+              </v-alert>
               <img :src="image_url" height="150"></img>
             </v-flex>
           </div>
@@ -98,6 +105,7 @@
     name: 'myTour',
     data () {
       return {
+        image_size_accepted : true,
         checkbox: true,
         radioGroup: 0,
         switch1: true,
@@ -135,18 +143,29 @@
         console.log(userId)
       },
       onPickFile () {
+        this.image_size_accepted = true
         this.$refs.fileInput.click()
       },
       onFilePicked (event) {
         const files = event.target.files
         let file = files[0]
-        console.log('file: ' + file)
+        console.log('Entered on FilePicked')
+        if(file.size > 4000000){
+          this.image_size_accepted = false
+          var input = document.getElementsByTagName('input')[0];
+          input.value = null
+          this.image_url = ''
+          this.image_is_not_loaded = true
+          return
+        } 
+        console.log('file: ', file)
         this.file = file 
         this.image_is_not_loaded = false
         let filename = files[0].name
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
           return alert('Please add a valid image file')
         }
+
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.

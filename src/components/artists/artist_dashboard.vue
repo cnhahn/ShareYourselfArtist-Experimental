@@ -56,35 +56,6 @@
             </v-flex>
           </v-layout>
     <v-layout row wrap mb-5>
-      <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in def" :key='art.id'>
-        <v-card mt-3>
-          <v-card-media img :src="art.url" >
-          </v-card-media>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">{{art.art_title}}</h3>
-              <div>
-                <v-chip
-                  v-for="(tag, index) in art.categories"
-                  :key='tag.id'
-                  v-model = 'art.categories[index]'
-
-                >
-                  {{art.categories[index]}} </v-chip>
-              </div>
-            </div>
-          </v-card-title>
-          <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn flat @click="selected_art(art.upload_date)" color="primary" router to='/artist_dashboard'>Delete</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn flat  color="primary"
-            @click="submit_art(art)"
-            >Submit this piece</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
         <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
           <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
@@ -100,7 +71,6 @@
                   class="display_chips"
                   close
                   @input="removeChip(art.upload_date, art.categories)"
-
                 >
                   {{art.categories[index]}} </v-chip>
               </div>
@@ -109,7 +79,7 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
-            <v-btn flat @click="selected_art(art.upload_date)" color="primary" router to='/artist_dashboard'>Delete</v-btn>
+            <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
@@ -152,20 +122,29 @@
         const arts = this.$store.getters.allArts;
 
         function compare(a, b) {
-        const upload_date1 = a.upload_date
-        const upload_date2 = b.upload_date
+          const upload_date1 = a.upload_date
+          const upload_date2 = b.upload_date
+          let comparison = 0;
+          if (upload_date1 > upload_date2) {
+            comparison = -1;
+          } else if (upload_date1 < upload_date2) {
+            comparison = 1;
+          }
+          return comparison;
+        }
+       
+        // create an array that removes all the "deleted" art pieces
+        console.log(arts.sort(compare));
+        let arti = 0
+        var removed_deleted_art = [];
+        for (arti = 0 ; arti < arts.length; arti++){
+          console.log('this should all say false', )
+          if(arts[arti].delete == 'false'){
+            removed_deleted_art.push(arts[arti])
+          }
+        }
 
-  let comparison = 0;
-  if (upload_date1 > upload_date2) {
-    comparison = -1;
-  } else if (upload_date1 < upload_date2) {
-    comparison = 1;
-  }
-  return comparison;
-}
-
-console.log(arts.sort(compare));
-        return arts;
+        return removed_deleted_art;
       },
       loading() {
         return this.$store.getters.loading;
@@ -197,6 +176,10 @@ console.log(arts.sort(compare));
         }
       },
       
+      delete_art(art_to_be_deleted){
+        console.log("We are here")
+        this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+      },
 /*      
       selected_art(art_unique_timestamp) {
         this.$store.commit('set_user_email')
