@@ -5,7 +5,8 @@
       <v-flex>
         <h3 class="display-3">Great, let's get started. </h3>
         <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
-        <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it. You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
+        <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it.</span><br>
+        <span class="subheading">You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
         <v-divider class="my-3"></v-divider>
         <div class="display-1">Let's Upload your art piece!</div>
         <div class="buttons-123">
