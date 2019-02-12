@@ -1457,6 +1457,10 @@ export const store = new Vuex.Store({
         })
     },
 
+    delete_review_read_byUser_status ({ commit }, payload) {
+
+    },
+
     update_user_credit ({ getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db

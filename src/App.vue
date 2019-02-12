@@ -45,8 +45,9 @@
       <div class="buttons" >
          <router-link
          to="/upload_an_image1">
-         <v-btn  v-if ="userIsAuthanticated && user_role == 'artist'" color="black" dark large depressed >
-           Upload Art</v-btn>
+
+         <div class = "Art-Button" ><v-btn  v-if ="userIsAuthanticated && user_role == 'artist'" color="black" dark large depressed >
+           Upload Art</v-btn></div>
            </router-link>
       </div>
        <v-container v-if="this.$store.getters.user != null">
@@ -85,6 +86,7 @@
                   <v-icon>forum</v-icon>
                 <!-- </v-badge> -->
           </v-list-tile-action>
+          
           <v-list-tile-content light>
             <router-link to="/submissions">
             <v-list-tile-title>Your submissions</v-list-tile-title>
@@ -114,23 +116,24 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile>
-           <v-chip
-       v-if="userIsAuthanticated"
-       flat
-       style="width: 160px"
-       color="primary"
-       text-color="white"
-       v-on:click="$router.push('/account')">
-      Freebie Credits     :    {{this.$store.state.free_credits}}
-    </v-chip>
-        </v-list-tile>
+        
         <v-list-tile>
           <v-chip
        v-if="userIsAuthanticated"
        flat
+       style="width: 165px;"
        color="primary"
-       style="width: 160px"
+       text-color="white"
+       v-on:click="$router.push('/account')">
+         &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
+    </v-chip>
+        </v-list-tile>
+        <v-list-tile>
+         <v-chip
+       v-if="userIsAuthanticated"
+       flat
+       color="primary"
+       style="width: 165px"
        text-color="white"
        v-on:click="$router.push('/account')">
       Premium Credits: {{this.$store.state.credits}}
@@ -265,19 +268,19 @@
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
 <!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated">
-          <p  class="subheading mb-1" style="font-weight: bold; color: black !important">Recently Submitted Artists</p>
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 250px;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
                 <v-flex xs2>
                   <v-avatar>
-                    <img :src="top_12_recent_art[index].art.url">
+                    <img style="position:absolute; left:250px;" :src="top_12_recent_art[index].art.url" >
                   </v-avatar>
                 </v-flex>
 
                 <v-flex xs10 ml-2>
-                  <p class="subheading mt-1">{{top_12_recent_art[index].art.art_title}}</p>
-                  <p class="body-1" style="margin-top: -20px">{{top_12_recent_art[index].art.artist_name}}</p>
+                  <p class="subheading mt-1" style=" margin-left: 225px;">{{top_12_recent_art[index].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px; margin-left: 225px;" >{{top_12_recent_art[index].art.artist_name}}</p>
                 </v-flex>
           </v-layout>
             </v-flex>
@@ -563,8 +566,12 @@ artist_instagram() {
     margin-left: 30px;
   }
   main{
-    background-color: #fff;
+    background-color: #fff;   
   }
+  .Art-Button{
+    margin-left: 25px;
+  }
+
   a {
     text-decoration: none;
     }
