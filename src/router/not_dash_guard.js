@@ -6,6 +6,8 @@ import { isNullOrUndefined } from 'util';
 export default (to, from, next) => {
     
 //console.log('userId: ' + localStorage.getItem('userId'))
+/*console.log('user:')
+console.log(store.getters.user)*/
 const key = localStorage.getItem('userId')
     if (!(key>=0)) {
 
