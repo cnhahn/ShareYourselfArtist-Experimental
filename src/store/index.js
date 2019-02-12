@@ -16,6 +16,7 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    art_uploaded: null,
     top_12_recent_art: [],
     viewed_artist_data: {},
     localStorage,
@@ -211,6 +212,9 @@ export const store = new Vuex.Store({
       state.user = null 
       state.user_role = ''
       //console.log('set user to null')
+    },
+    set_art_uploaded (state, payload) {
+      state.art_uploaded = payload
     },
     set_info_of_business_for_dashboard2 (state, payload) {
       state.info_of_business_for_dashboard2 = payload
@@ -1261,9 +1265,13 @@ export const store = new Vuex.Store({
     signUserInGoogle ({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
+      let provider = new firebase.auth.GoogleAuthProvider()
+      provider.setCustomParameters({
+        'prompt': 'select_account'
+     })
       firebase
         .auth()
-        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .signInWithPopup(provider)
         .then(user => {
           localStorage.setItem('userId', 1000)
           commit('setLoading', false)
@@ -1747,6 +1755,8 @@ export const store = new Vuex.Store({
 
       // Styled by Jin. No modification on code.
     uploadImage ({commit, getters}, payload) {
+
+      return new Promise((resolve,reject) => {
         // first put the image in the storage
         // Create a root reference
       let ref = firebase.storage().ref()
@@ -1759,7 +1769,7 @@ export const store = new Vuex.Store({
           )
           .put(getters.image_being_uploaded.file)
         // Listen for state changes, errors, and completion of the upload.
-      uploadTask.on(
+          uploadTask.on(
           firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
           function (snapshot) {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -1770,7 +1780,7 @@ export const store = new Vuex.Store({
                 console.log('Upload is paused')
                 break
               case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running')
+                console.log('Upload is running in uploadImage')
                 break
             }
           },
@@ -1792,9 +1802,9 @@ export const store = new Vuex.Store({
                 break
             }
           },
-          function () {
+           function () {
             // Upload completed successfully, now we can get the download URL
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               commit('setUrl', downloadURL) // Jin: this led to profile url change.
               if (payload.operation === 'art_upload') {
                 let art = {
@@ -1812,13 +1822,25 @@ export const store = new Vuex.Store({
                   .add(art)
                   .then(function (docRef) {
                     commit('setArts', art)
+                    console.log('art is: ')
+                    console.log(art)
+                    // If art is uploaded, set variable to true
+                    commit('set_art_uploaded', true)
+                  })
+                  .then(function () {
+                    console.log("resolving upload image here")
+                    resolve()
                   })
                   .catch(function (error) {
+                    // If art was not uploaded, set it to false
+                    commit('set_art_uploaded', false)
+                    reject(error)
                   })
               }
             })
           }
         )
+        console.log("Near end of uploadImage")
       // Line commented out by Yas as this line gave the error: "uploadTask.on(...).put is not a function"
       // .put(getters.image_being_uploaded.file)
       // Listen for state changes, errors, and completion of the upload.
@@ -1831,6 +1853,7 @@ export const store = new Vuex.Store({
         upload_date: payload.upload_date,
         artist_id: getters.user.id
       }
+    })
 
       // upload the artist data and the url
       },
@@ -2233,6 +2256,7 @@ export const store = new Vuex.Store({
     Sign user in and load information from Firestore
     */
     signUserIn ({ commit, dispatch, getters }, payload) {
+      commit('signUserOut', commit)
       commit('setLoading', true)
       commit('clearError')
       const promise = firebase
@@ -2764,6 +2788,10 @@ export const store = new Vuex.Store({
     },
     info_of_business_for_dashboard2 (state) {
       return state.info_of_business_for_dashboard2
+    },
+    //returns whether or not the art was updated
+    get_art_uploaded (state) {
+      return state.art_uploaded
     }
   }
 })
