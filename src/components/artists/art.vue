@@ -1,5 +1,6 @@
 <template>
   <v-container mt-3>
+    <div class="user-img">
     <v-layout row wrap>
       <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
         <img :src="this.url" alt="" width="100%">
@@ -37,6 +38,7 @@
         <v-btn depressed small color="primary" id="addbtn" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
       </v-flex>
     </v-layout>
+    </div>
   </v-container>
 
 </template>
@@ -149,9 +151,12 @@
   .buttons{
     margin-left: -8px;
   }
+  .user-img{
+    margin-left:300px;
+  }
   #selectbox{
     margin-top: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 125px;
   }
   #addbtn {
     margin-left: 0;

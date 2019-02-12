@@ -77,6 +77,8 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
+            <v-btn flat @click="selected_art(art.upload_date)" color="primary" router to='/artist_dashboard'>Delete</v-btn>
+            <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
             >Submit this piece</v-btn>
@@ -107,6 +109,8 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
+            <v-btn flat @click="selected_art(art.upload_date)" color="primary" router to='/artist_dashboard'>Delete</v-btn>
+            <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
             >Submit this piece</v-btn>
@@ -117,7 +121,9 @@
   </v-container>
 </template>
 
+
 <script>
+/*  buttons for delete can be found on lines 80 and 112*/
   export default {
     /*
     Real-time data(art) fetching from the firestore database.
@@ -190,29 +196,42 @@ console.log(arts.sort(compare));
           }
         }
       },
+      
+/*      
+      selected_art(art_unique_timestamp) {
+        this.$store.commit('set_user_email')
+        this.$store.commit('set_art_being_submitted',art)
+        this.$store.commit('set_art_being_submitted_is_selected',true)
+        if(this.$store.state.business_being_submitted_is_selected == true){
+           this.$router.push({
+              name: 'submit_result'
+            })
+        var deleteDoc = db.collection('cities').doc('DC').delete();
+      },
+*/
 
       filterCategories(filterCategories, artCategories, def, art) {
           return filterCategories.every(function (value) {
             if(artCategories.indexOf(value) >= 0){
               return true
             }
-            return false
+              return false
           });
       },
 
-          updateCon(categories, def, arts, noneFound, snackbar){
-          if(def.length != 0){
-            def.splice(0, def.length);
-          }
+      updateCon(categories, def, arts, noneFound, snackbar){
+        if(def.length != 0){
+          def.splice(0, def.length);
+        }
         for(let i = 0; i<arts.length; i++){
           for (let j = 0; j<categories.length; j++){
             if (arts[i].categories != undefined) {
               if (arts[i].categories.includes(categories[j]))
-            {
-              def.push(arts[i])
+              {
+                def.push(arts[i])
+              }
             }
           }
-        }
         }
         this.noneFound = false
         if(def.length == 0){
@@ -235,14 +254,14 @@ console.log(arts.sort(compare));
         this.$store.commit('set_art_being_submitted_is_selected',true)
         if(this.$store.state.business_being_submitted_is_selected == true){
            this.$router.push({
-                        name: 'submit_result'
+              name: 'submit_result'
             })
         }else{
           this.$router.push({
               name: 'blogs2'
             })
         }
-       },
+      },
     }
 }
 </script>
@@ -260,5 +279,11 @@ console.log(arts.sort(compare));
     float: left;
     margin-right: 5px;
     background-color: lightgray;
+  }
+  #selectbox{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /*margin-left: 80px;*/
+    margin-left: 280px;
   }
 </style>
