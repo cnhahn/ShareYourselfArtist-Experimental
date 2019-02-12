@@ -150,7 +150,15 @@
        function filter_test(business) {
           return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
         }
-         this.user_info =  this.$store.state.businesses.filter(filter_test)
+         let developerEmails = ['1TGyTLJa9ZXjl0vqEeS97uNDV8O2','XpIQwNnOayXqjdlbh6jDDL5xaaz2','QBRXqktYi0QigFboM92crKAONKn1',
+          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1'];
+        let userID = this.$store.state.user.id;
+        if( developerEmails.includes(userID)){
+          this.user_info = this.$store.state.businesses;
+        } else {
+          this.user_info = this.$store.state.businesses.filter(filter_test);
+        }
+        
          for (let i = 0; i < this.user_info.length; i++) { 
           if (this.user_info[i].selected === true){
             this.user_info[i].selected = false

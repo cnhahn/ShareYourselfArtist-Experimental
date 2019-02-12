@@ -56,33 +56,6 @@
             </v-flex>
           </v-layout>
     <v-layout row wrap mb-5>
-      <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in def" :key='art.id'>
-        <v-card mt-3>
-          <v-card-media img :src="art.url" >
-          </v-card-media>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">{{art.art_title}}</h3>
-              <div>
-                <v-chip
-                  v-for="(tag, index) in art.categories"
-                  :key='tag.id'
-                  v-model = 'art.categories[index]'
-
-                >
-                  {{art.categories[index]}} </v-chip>
-              </div>
-            </div>
-          </v-card-title>
-          <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn flat  color="primary"
-            @click="submit_art(art)"
-            >Submit this piece</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
         <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
           <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
@@ -98,7 +71,6 @@
                   class="display_chips"
                   close
                   @input="removeChip(art.upload_date, art.categories)"
-
                 >
                   {{art.categories[index]}} </v-chip>
               </div>
@@ -106,6 +78,8 @@
           </v-card-title>
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
@@ -117,7 +91,9 @@
   </v-container>
 </template>
 
+
 <script>
+/*  buttons for delete can be found on lines 80 and 112*/
   export default {
     /*
     Real-time data(art) fetching from the firestore database.
@@ -146,20 +122,30 @@
         const arts = this.$store.getters.allArts;
 
         function compare(a, b) {
-        const upload_date1 = a.upload_date
-        const upload_date2 = b.upload_date
+          const upload_date1 = a.upload_date
+          const upload_date2 = b.upload_date
+          let comparison = 0;
+          if (upload_date1 > upload_date2) {
+            comparison = -1;
+          } else if (upload_date1 < upload_date2) {
+            comparison = 1;
+          }
+          return comparison;
+        }
+       
+        // create an array that removes all the "deleted" art pieces
+        console.log(arts.sort(compare));
+        let arti = 0
+        var removed_deleted_art = [];
+        for (arti = 0 ; arti < arts.length; arti++){
+          if(arts[arti].delete == false){
+            removed_deleted_art.push(arts[arti])
+          }
+        }
 
-  let comparison = 0;
-  if (upload_date1 > upload_date2) {
-    comparison = -1;
-  } else if (upload_date1 < upload_date2) {
-    comparison = 1;
-  }
-  return comparison;
-}
+        console.log('revmoed delteed art', removed_deleted_art)
 
-console.log(arts.sort(compare));
-        return arts;
+        return removed_deleted_art;
       },
       loading() {
         return this.$store.getters.loading;
@@ -190,29 +176,34 @@ console.log(arts.sort(compare));
           }
         }
       },
+      
+      delete_art(art_to_be_deleted){
+        console.log("We are here")
+        this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+      },
 
       filterCategories(filterCategories, artCategories, def, art) {
           return filterCategories.every(function (value) {
             if(artCategories.indexOf(value) >= 0){
               return true
             }
-            return false
+              return false
           });
       },
 
-          updateCon(categories, def, arts, noneFound, snackbar){
-          if(def.length != 0){
-            def.splice(0, def.length);
-          }
+      updateCon(categories, def, arts, noneFound, snackbar){
+        if(def.length != 0){
+          def.splice(0, def.length);
+        }
         for(let i = 0; i<arts.length; i++){
           for (let j = 0; j<categories.length; j++){
             if (arts[i].categories != undefined) {
               if (arts[i].categories.includes(categories[j]))
-            {
-              def.push(arts[i])
+              {
+                def.push(arts[i])
+              }
             }
           }
-        }
         }
         this.noneFound = false
         if(def.length == 0){
@@ -235,14 +226,14 @@ console.log(arts.sort(compare));
         this.$store.commit('set_art_being_submitted_is_selected',true)
         if(this.$store.state.business_being_submitted_is_selected == true){
            this.$router.push({
-                        name: 'submit_result'
+              name: 'submit_result'
             })
         }else{
           this.$router.push({
               name: 'blogs2'
             })
         }
-       },
+      },
     }
 }
 </script>
@@ -260,5 +251,11 @@ console.log(arts.sort(compare));
     float: left;
     margin-right: 5px;
     background-color: lightgray;
+  }
+  #selectbox{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /*margin-left: 80px;*/
+    margin-left: 280px;
   }
 </style>

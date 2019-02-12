@@ -42,20 +42,20 @@
 </template>
  <script>
   export default {
-    data () {
-          return {
-        url: localStorage.getItem('url'),
-        art_title: localStorage.getItem('art_title'),
-        description: localStorage.getItem('description'),
-        upload_date: localStorage.getItem('upload_date'),
-        categories: [],
-          //  this.$store.getters.categories.filter(function(category){
+        data() {
+      return {
+          url: localStorage.getItem('url'),
+          art_title: localStorage.getItem('art_title'),
+          description: localStorage.getItem('description'),
+          upload_date: localStorage.getItem('upload_date'),
+          categories: [],
+          //this.$store.getters.categories.filter(function(category){
         //   return category != false
         // }),
 // TODO: update tags with actual values for production
-        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
-        value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract']
-      }
+          items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+          value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+    }
         },
 
          mounted: function() {
@@ -161,4 +161,3 @@
     padding-right: 2.5px;
   }
 </style>
-

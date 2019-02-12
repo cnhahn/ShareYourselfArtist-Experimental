@@ -141,75 +141,7 @@
 
   </v-container>
 
-  <!--
-  <h5 class="headline ml-3" style="font-weight: bold; color: black !important">Blogs</h5>
-
-    <v-data-table
-    :items="user_info"
-    hide-headers
-    hide-actions
-    class="mt-4 mb-5"
-  >
-    <template slot="items" slot-scope="props">
-      <td> 
-        <v-layout row wrap mt-2>
-          <v-flex lg1 md1 sm1 xs12>
-            <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
-              <img :src="`${props.item.url}`">
-            </v-avatar>
-          </v-flex>
-          <v-flex lg3 md3 sm3 xs12>
-            <div class="businessNameHolder">
-              <router-link to="/business">
-                <a v-if="userIsAuthanticated" @click='selectBusinessBlog(props.item.business_name)' class="headline businessName" style="text-decoration:none;" >{{ props.item.business_name }}</a>
-              </router-link>
-              <p style="color:orange" v-if="!userIsAuthanticated" class="headline businessName">{{props.item.business_name}}</p>
-            COMMENT <p>{{ getPassedTime(props.item.upload_date) }}</p> END_COMMENT
-            </div>
-            <v-btn
-              v-if="user_role === 'artist'"
-              color="primary"
-              flat
-              outline
-              class="hidden-md-and-up"
-              @click='clicked_business({
-              userId:props.item.userId,
-              business_email: props.item.email,
-              business_name:props.item.business_name
-              })'>Select Blog
-            </v-btn>
-          </v-flex>
-          <v-flex lg6 md6 sm6 xs12>
-            <div class="text-xs-left">
-              <div style="margin-top: 1vh">
-                <p><span style="font-weight: bold;">About: </span>{{ props.item.about }}</p>
-                <p><span style="font-weight: bold;">The good: </span>{{ props.item.the_good }}</p>
-                <p><span style="font-weight: bold;">Worth knowing: </span>{{ props.item.worth_knowing }}</p>
-                <p><span style="font-weight: bold;">Additional notes: </span>{{ props.item.additional_notes }}</p>
-              </div>
-            </div>
-          </v-flex>
-
-          <v-flex lg2 md2 sm2 xs12 class="hidden-sm-and-down">
-            <v-btn
-            v-if="user_role === 'artist'"
-            color="primary"
-            flat
-            outline
-            style="margin-top:25px"
-            @click='clicked_business({
-            userId:props.item.userId,
-            business_email: props.item.email,
-            business_name:props.item.business_name
-            })'>Select Blog
-          </v-btn>
-          </v-flex>
-
-        </v-layout>
-      </td>
-    </template>
-    </v-data-table>
-    -->
+  
 
 </template>
 
@@ -235,6 +167,7 @@
     },
     mounted() {
       this.onResize()
+      
       window.addEventListener('resize', this.onResize, {passive: true})
     },
 
@@ -248,11 +181,22 @@
         return this.$store.getters.user_role
       },
       user_info() {
+        let developerEmails = ['1TGyTLJa9ZXjl0vqEeS97uNDV8O2','XpIQwNnOayXqjdlbh6jDDL5xaaz2','QBRXqktYi0QigFboM92crKAONKn1',
+          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1'];
+        let userID = this.$store.state.user.id;
+   
         function filter_test(business) {
           return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
         }
-        return this.$store.state.businesses.filter(filter_test)
+
+        if( developerEmails.includes(userID)){
+          return this.$store.state.businesses;
+        } else {
+          return this.$store.state.businesses.filter(filter_test);
+        }
+        
       },
+
       userIsAuthanticated () {
         if(this.$store.getters.user !== null && this.$store.getters.user !== undefined){
           return true
@@ -333,7 +277,3 @@
     },
   }
 </script>
-
-<style scoped>
-
-</style>
