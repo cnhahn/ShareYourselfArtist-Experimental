@@ -26,7 +26,7 @@
   
     <v-content class="body">
       <v-layout column class="titles">
-        <h2 class="title-1">Get More Credits</h2>
+        <h2 class="title-1">Get More Credits<br><br></h2>
       </v-layout>
       <v-layout row wrap>
         <v-flex xs12 md6 lg3 class="plan">
@@ -52,7 +52,11 @@
           
         </v-flex>
 
-        <v-flex xs12 md6 lg3 class="plan">
+      </v-layout>
+<br><br>
+      <v-layout row wrap>
+
+                <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[2].title}}: {{plans[2].price}}<br>{{plans[2].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -60,9 +64,8 @@
             <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
         </form>
+
         </v-flex>
-      </v-layout>
-      <v-layout row wrap>
         <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[3].title}}: {{plans[3].price}}<br>{{plans[3].credit}}</p>
        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
@@ -88,9 +91,9 @@
 
       
       <v-layout column class="text-2">
-        <h2 class="title-2"><strong>Why use premium credits?</strong></h2>
+        <h2 class="title-2"><strong><br>Why use premium credits?</strong></h2>
         <p class="text-1">
-          Premium credits help to ensure that blogs actually listen to and respond to submissions in a timely
+          Premium credits help to ensure that blogs actually view and respond to submissions in a timely
           manner.<br>
           Here are some of their benefits:<br>
         </p>
@@ -101,10 +104,10 @@
       <v-layout column class="text-2">
         <v-flex>
           <p class="text-1">
+            <br>
             * If the above conditions are not met after 48 hours, you get your credit back!<br>
-            ** Premium credits are roughly US$1 each, with discounts if you buy more. For example, you can use five
-            credits to send
-            one song to five bloggers.<br>
+            ** Premium credits are roughly 1 USD each, with discounts if you buy more. For example, you can use five
+            credits to send one submission to five different bloggers.<br>
           </p>
         </v-flex>
       </v-layout>
@@ -133,8 +136,8 @@
           {title: "One-Time Purchase", credit: "8 Credits", price: "$5"}
         ],
         texts: ["Guaranteed response within 48 hours",
-          "Your submission filters to the top",
-          "Bloggers must listen for 20 seconds before making a decision",
+          "Your submissions filters to the top",
+          "Bloggers are required to view your submission for 20 seconds before making a decision",
           "You'll get at least 10 words of feedback if your submission is declined"
         ],
         //for credentials: go to myApps&credentials>SYA>and get Client Id
@@ -201,6 +204,7 @@
     margin: 25px;
   }
   .title-1 {
+    margin-left: 300px;
     font-family: 'Raleway', sans-serif;
     font-size: 1.3em;
   }
@@ -213,10 +217,11 @@
     margin: 0px;
   }
   .text-2 {
-    margin: 10px;
+    margin-left: 300px;
   }
   .plan {
-    margin: 10px;
+    margin-left: 300px;
+    
   }
   .headline {
     color: #000;

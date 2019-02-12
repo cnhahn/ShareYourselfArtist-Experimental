@@ -7,37 +7,50 @@
         <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
         <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it. You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
         <v-divider class="my-3"></v-divider>
-        <div class="title mb-3">Let's Upload your art piece!</div>
-        <v-btn
-          class="mx-0"
-          color="primary"
-          depressed
-          large
-          router to="/upload_an_image1"
-          @click="onPickFile"
-        >
-          Upload your art
-        </v-btn>
-        <input type="file"
-               style="display:none"
-               ref="fileInput"
-               accept="image/*"
-               @change="onFilePicked">
-        <v-btn
-          class="mx-0"
-          depressed
-          large
-          color="primary"
-          router to="/upload_an_image"
-          :disabled="image_is_not_loaded"
-          @click="getUserId">Next
+        <div class="display-1">Let's Upload your art piece!</div>
+        <div class="buttons-123">
+          <v-btn
+            class="mx-0"
+            color="primary"
+            depressed
+            large
+            router to="/upload_an_image1"
+            @click="onPickFile"
+          >
+            Upload your art
+          </v-btn>
+          <input type="file"
+                style="display:none"
+                ref="fileInput"
+                accept="image/*"
+                @change="onFilePicked">
+          <v-btn
+            class="mx-0"
+            depressed
+            large
+            color="primary"
+            router to="/upload_an_image"
+            :disabled="image_is_not_loaded"
+            @click="getUserId">Next
 
-        </v-btn>          
+          </v-btn>
+        </div> 
+                 
           <v-layout row="">
+            <div class="preview-image">
             <v-flex xs12="" sm6="">
+              <v-alert
+                v-if="image_size_accepted == false"
+                :value="true"
+                type="error"
+              >
+                Image size is too large! Please reduce the image size
+              </v-alert>
               <img :src="image_url" height="150"></img>
             </v-flex>
-          </v-layout>          
+          </div>
+          </v-layout> 
+                   
         <v-layout>
       <div class="text-xs-center" id="tour">
         <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
@@ -91,6 +104,7 @@
     name: 'myTour',
     data () {
       return {
+        image_size_accepted : true,
         checkbox: true,
         radioGroup: 0,
         switch1: true,
@@ -128,18 +142,29 @@
         console.log(userId)
       },
       onPickFile () {
+        this.image_size_accepted = true
         this.$refs.fileInput.click()
       },
       onFilePicked (event) {
         const files = event.target.files
         let file = files[0]
-        console.log('file: ' + file)
+        console.log('Entered on FilePicked')
+        if(file.size > 4000000){
+          this.image_size_accepted = false
+          var input = document.getElementsByTagName('input')[0];
+          input.value = null
+          this.image_url = ''
+          this.image_is_not_loaded = true
+          return
+        } 
+        console.log('file: ', file)
         this.file = file 
         this.image_is_not_loaded = false
         let filename = files[0].name
         if ( filename.lastIndexOf('.') <= 0 || !file.type.match('image.*') ) {
           return alert('Please add a valid image file')
         }
+
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.
@@ -168,12 +193,32 @@
   .display-1 {
     margin-top: 5px;
     margin-bottom: 10px;
+    margin-left: 300px;
   }
 
   .display-2 {
     margin-top: 10px;
+    margin-left: 300px;
   }
+
+  .display-3{
+    margin-left: 300px;
+  }
+
+  .subheading{
+    margin-left: 300px;
+  }
+
+  .buttons-123{
+    margin-left: 300px;
+  }
+
+  .preview-image{
+    margin-left: 300px;
+  }
+
   #tour {
     margin-top: 50px;
+    margin-left: 300px;
   }
 </style>
