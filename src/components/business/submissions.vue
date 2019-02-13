@@ -134,9 +134,7 @@
     methods:{
 
       download: function(art_link) {
-        
         console.log(art_link)
-
       },
       
       /* Retrieves all review requests from the server */
