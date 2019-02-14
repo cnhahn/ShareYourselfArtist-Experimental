@@ -5,8 +5,10 @@
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
     <v-layout row justify-center>
-      <v-layout row wrap mb-5>
+      <v-layout row wrap mb-5 v-if="submissions">
+        <!-- <div v-if="submissions"> -->
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
+          <!-- <div v-if="submission"> -->
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -15,9 +17,9 @@
                 <v-flex>
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
                   <v-layout row >
-                    <div class="text-xs-center" v-for="(c, index) in 3">
+                    <!-- <div class="text-xs-center" v-for="(c, index) in 3">
                       <v-chip>{{ submission.art.categories[index] }}</v-chip>
-                    </div>
+                    </div> -->
                   </v-layout>
                   <v-spacer></v-spacer>
                   <div v-if="submission.instagram"><h3 class="mb-0">{{submission.instagram}}</h3></div>
@@ -40,7 +42,7 @@
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
           </v-btn>
             </v-card-actions>
-            <v-slide-y-transition>
+        <v-slide-y-transition>
           <v-card-text v-show="show">
             <div><h4> Description: </h4>{{submission.art.description}}</div>
             <div  v-if="submission.submission_response == undefined"> <h4>Response: </h4>You have not responded to this submission yet.</div>
@@ -48,7 +50,10 @@
           </v-card-text>
         </v-slide-y-transition>
           </v-card>
+        <!-- </div> -->
         </v-flex>
+        <!-- </div> -->
+
       </v-layout>
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
@@ -140,8 +145,22 @@
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
         this.$store.dispatch('fetch_all_Submissions').then(response => {
+          console.log('here are submissions: ' + this.submissions)
+          console.log('here are master submissions: ' + this.master_submissions)
           this.submissions = this.$store.getters.submissions_for_this_business
           this.master_submissions = this.$store.getters.submissions_for_this_business
+
+          console.log('now here is submissions: ' + this.submissions)
+          console.log('and here is master submissions: ', this.master_submissions[0].businessId)
+
+        if (this.submissions === null) {
+          console.log("submission numbero uno is null")
+          this.$router.push('/submissions/empty')
+        }
+        if (this.master_submissions === null) {
+          console.log("submission numbero dos is null")
+          this.$router.push('/submissions/empty')
+        }
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
         })
@@ -194,7 +213,7 @@
             console.log(sub_date)
             let date_converted = function(sub_date){
               let date = new Date(sub_date);
-              console.log('DATE' ,date)
+              console.log('DATE IS: ' ,date)
               return date
             }
             this.submitted_on = date_converted(sub_date)
@@ -254,6 +273,9 @@
           console.error("Got nothing from server. Prompt user to check internet connection and try again")
         })
         if (this.submissions === null) {
+          this.$router.push('/submissions/empty')
+        }
+        if (this.master_submissions === null) {
           this.$router.push('/submissions/empty')
         }
       }
