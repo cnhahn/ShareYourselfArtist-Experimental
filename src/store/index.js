@@ -673,10 +673,13 @@ export const store = new Vuex.Store({
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
                           .orderBy('submitted_on').limit(12)
+                          console.log("enter into fetch_top_12_recent_art")
       let report = temp_report.get()
           .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
               commit('set_top_12_recent_art', doc.data())
+              console.log("enter into fetch_top_12_recent_art", doc.data())
+              console.log(" artist_id  ", doc.data().art.artist_id)
             })
           })
           .catch(function (error) {
@@ -686,25 +689,37 @@ export const store = new Vuex.Store({
     get_replied ({commit, getters}) {
       let db = firebase.firestore()
       var temp_report = db.collection('review_requests')
-                          .where('replied', '==', true)
-                          .where('businessId.userId', '==', getters.user.id)
+      .where('replied', '==', true)
+      .where('businessId.userId', '==', getters.user.id)
       let report = temp_report
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              var month = getters.report_month
-              const today = Date.now()
-              const timeDiff = today - (1000 * 60 * 60 * 24 * 30 * month)
-              if (doc.data().submitted_on >= timeDiff) {
-                if (doc.data().submitted_on <= today) {
-                  commit('set_replied_for_report', doc.data())
-                }
-              }
-            })
-          })
-          .catch(function (error) {
-            console.log('Error getting report: ', error)
-          })
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+          var count = 0
+          var counter = 12
+          if ( count < counter ) {
+            submitted_artists_id [count] = doc.data().art.artist_id
+            if ( submitted_artists_id[count - 1] != doc.data().art.artist_id ){
+              commit('set_replied_for_report', doc.data())
+              count ++
+            }            
+          }
+          /*
+          var month = getters.report_month
+          const today = Date.now()
+          const timeDiff = today - (1000 * 60 * 60 * 24 * 30 * month)
+
+          if (doc.data().submitted_on >= timeDiff) {
+            if (doc.data().submitted_on <= today) {
+              commit('set_replied_for_report', doc.data())
+            }
+          }
+          */
+        })
+      })
+      .catch(function (error) {
+      console.log('Error getting report: ', error)
+      })
     },
 
     // yiwayana

@@ -100,45 +100,56 @@
             <v-icon>mail</v-icon>
             <!-- </v-badge> -->
           </v-list-tile-action>
+
           <v-list-tile-content light>
             <router-link to="/new_reviews">
-              <v-list-tile-tile @click="" >Reviews </v-list-tile-tile>
+              <v-list-tile-tile @click="" >
+                Reviews
+              </v-list-tile-tile>
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
+
         <v-list-tile v-if="userIsAuthanticated && user_role == 'artist'">
           <v-list-tile-action>
-            <v-icon>chat</v-icon>
+            <v-icon>
+              chat
+            </v-icon>
           </v-list-tile-action>
+
           <v-list-tile-content light>
             <router-link to="/chat">
-            <v-list-tile-tile @click="" >Chat </v-list-tile-tile>
+              <v-list-tile-tile @click="" >
+                Chat
+              </v-list-tile-tile>
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
         
         <v-list-tile>
           <v-chip
-       v-if="userIsAuthanticated"
-       flat
-       style="width: 165px;"
-       color="primary"
-       text-color="white"
-       v-on:click="$router.push('/account')">
-         &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
-    </v-chip>
+            v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+            flat
+            style="width: 165px;"
+            color="primary"
+            text-color="white"
+            v-on:click="$router.push('/account')">
+            &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
+          </v-chip>
         </v-list-tile>
+
         <v-list-tile>
-         <v-chip
-       v-if="userIsAuthanticated"
-       flat
-       color="primary"
-       style="width: 165px"
-       text-color="white"
-       v-on:click="$router.push('/account')">
-      Premium Credits: {{this.$store.state.credits}}
-    </v-chip>
+          <v-chip
+            v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+            flat
+            color="primary"
+            style="width: 165px"
+            text-color="white"
+            v-on:click="$router.push('/account')">
+            Premium Credits: {{this.$store.state.credits}}
+          </v-chip>
         </v-list-tile>
+
       </v-list>
       </div>
     </v-navigation-drawer>
@@ -278,13 +289,16 @@
                   </v-avatar>
                 </v-flex>
 
+
                 <v-flex xs10 ml-2>
                   <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index].art.art_title}}</p>
                   <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index].art.artist_name}}</p>
                 </v-flex>
+
           </v-layout>
             </v-flex>
           </v-layout>
+
         <!--
           <v-list two-line>
 
@@ -369,7 +383,7 @@ export default {
   //you also need to add this func in main.vues
   beforeMount(){
     this.$store.dispatch('fetch_top_12_recent_art')
-    console.log('fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
+    console.log('APP.vue Page ----- fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
   },
   mounted() {
       this.loading = false;
