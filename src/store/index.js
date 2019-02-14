@@ -224,6 +224,9 @@ export const store = new Vuex.Store({
     clear_info_of_business_for_dashboard2 (state) {
       state.info_of_business_for_dashboard2 = {}
     },
+    clear_businesses_being_submitted(state){
+      state.businesses_being_submitted = []
+    },
     set_epoch_month_times (state, payload) {
       state.epoch_month_time = payload
     },
@@ -314,6 +317,7 @@ export const store = new Vuex.Store({
       state.updatedCategories = payload
     },
     set_businesses_being_submitted (state, payload) {
+      console.log("payload for business beings ubmitted is ", payload)
       state.businesses_being_submitted = payload
     },
     set_art_being_submitted_is_selected (state, payload) {
@@ -404,7 +408,6 @@ export const store = new Vuex.Store({
       state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
     clearBusinesses (state) {
-      state.businesses = []
     },
     setBusinesses (state, payload) {
       state.businesses.push(payload)
@@ -2656,6 +2659,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    get_art_being_submitted_is_selected(state){
+      return state.art_being_submitted_is_selected
+    },
     stored_user_email(state){
       return state.stored_user_email;
     },
