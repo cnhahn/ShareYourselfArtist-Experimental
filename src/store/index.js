@@ -1655,25 +1655,6 @@ export const store = new Vuex.Store({
         })
     },
 
-    fetch_replied_submissions ({ commit, getters }) {
-      commit('clear_submissions_for_this_business_array')
-      let db = firebase.firestore()
-      let role = db
-        .collection('review_requests')
-        .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            // doc.data() is never undefined for query doc snapshots
-            commit('set_replied_submissions', doc.data())
-          })
-        })
-        .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
-    },
-
     fetch_clicked_business ({ commit, getters }) {
       let db = firebase.firestore()
       let role = db
@@ -1773,14 +1754,18 @@ export const store = new Vuex.Store({
         })
     },
     async fetch_all_Submissions ({ commit, getters }) {
+      console.log("Entered fetch all submissions")
       commit('clear_submissions_for_this_business_array')
       const db = firebase.firestore()
-      const collectionRef = await db
+      console.log("Do we get here? IF we do the  user id is :  " , (null == getters.user))
+
+        const collectionRef =  await db
         .collection('review_requests')
         .where('businessId.userId', '==', getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
+
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data()
             console.log('doc.data: ' + docData)
@@ -1792,7 +1777,31 @@ export const store = new Vuex.Store({
           })
         })
         .catch(function (error) {
+          console.log("Error of fetch all submissions")
           console.log('Error getting submissions: ', error)
+
+        })
+
+    },
+    
+    fetch_replied_submissions ({ commit, getters }) {
+      console.log("Entered fetch replied submissions here")
+      console.log("fetch replied submissions user.id is " , getters.user.id)
+      commit('clear_submissions_for_this_business_array')
+      let db = firebase.firestore()
+      let role = db
+        .collection('review_requests')
+        .where('replied', '==', true)
+        .where('art.artist_id', '==', getters.user.id)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            commit('set_replied_submissions', doc.data())
+          })
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
         })
     },
 
