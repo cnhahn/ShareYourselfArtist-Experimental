@@ -5,6 +5,13 @@
         <c-spinner></c-spinner>
       </div>
     </div>
+
+    <v-progress-circular
+    v-if="updating_responses"
+    indeterminate
+    color="primary"
+    ></v-progress-circular>
+
     <v-icon @click="fetchRepliedSubmissions" color="black" class="topIcon" large>refresh</v-icon>
         <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
         <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
@@ -65,6 +72,8 @@
             text: 'Art'
           },
         ],
+
+        updating_responses: false
       }
     },
     // fetch submissions on create to be used later for display
@@ -103,6 +112,9 @@
           }
         }
 
+        /*updating_responses = true
+        this.fetchRepliedSubmissions()
+        updating_responses = false*/
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
