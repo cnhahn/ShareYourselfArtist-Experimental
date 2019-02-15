@@ -692,7 +692,7 @@ export const store = new Vuex.Store({
               ordered_top_12_list.push(doc.data())
             })
             let i;
-            for( i = 11 ; i >= 0 ; i--){
+            for( i = 0; i < ordered_top_12_list.length; i++){
               commit('set_top_12_recent_art',ordered_top_12_list[i])
             }
               

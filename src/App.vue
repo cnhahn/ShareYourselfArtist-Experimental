@@ -282,20 +282,21 @@
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 150px;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
+              
               <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
                 <v-flex xs2>
                   <v-avatar>
-                    <img style="position:absolute; left:150px;" :src="top_12_recent_art[index].art.url" >
+                    <img style="position:absolute; left:150px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
 
-                <v-flex xs10 ml-2>
-                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index].art.art_title}}</p>
-                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index].art.artist_name}}</p>
-                </v-flex>
+               <v-flex xs10 ml-2>
+                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
+                </v-flex> 
 
-          </v-layout>
+            </v-layout>
             </v-flex>
           </v-layout>
 
