@@ -1,4 +1,3 @@
-
 /*
 If you have any questions regarding the firestore functions
 You can reach me @ kagawong@ucsc.edu
@@ -187,6 +186,20 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
       response.send(error)
     })
 
+})
+
+exports.getUserAvatar = functions.https.onRequest((request, response) => {
+  let userId = request.body.userId
+  const db = admin.firestore()
+  const user = db.collection('users').doc('XpIQwNnOayXqjdlbh6jDDL5xaaz2').get()
+    .then(doc => {
+      let avatar = doc.data().profileUrl
+      //response.send("Here is the user email: " + email)
+    })
+    .catch(error => {
+      console.log(error)
+      //response.send(error)
+    })
 })
 
 // Triggers an email once someone signs up

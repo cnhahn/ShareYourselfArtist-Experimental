@@ -136,6 +136,7 @@ export const store = new Vuex.Store({
     uploadedArts: [],
     viewed_arts: [],
     user: null,
+    stored_user_email: null,
     color: 'primary',
     loading: false,
     error: null,
@@ -153,6 +154,7 @@ export const store = new Vuex.Store({
     business_being_submitted_is_selected: false,
     businesses_being_submitted: [],
     test: 4,
+    signed_in_user_email: null,
     signed_in_user: {},
     art_being_submitted: {
       refunded: 0
@@ -436,6 +438,16 @@ export const store = new Vuex.Store({
     },
     setError (state, payload) {
       state.error = payload
+    },
+    set_stored_user_email (state){
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          state.stored_user_email = user.email
+        } else {
+          // No user is signed in.
+          console.error('No user signed in');
+        }
+      });
     },
     set_user_email (state) {
       state.signed_in_user_email = firebase.auth().currentUser.email
@@ -1313,6 +1325,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
+
     signUserInGoogle ({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
@@ -1325,6 +1338,8 @@ export const store = new Vuex.Store({
         .signInWithPopup(provider)
         .then(user => {
           localStorage.setItem('userId', 1000)
+
+          localStorage.setItem('role', 'artist')
           commit('setLoading', false)
           const newUser = {
             upload_date: Date.now(),
@@ -1413,6 +1428,7 @@ export const store = new Vuex.Store({
         .then(user => {
           commit('setLoading', false)
           localStorage.setItem('userId', 1000)
+          localStorage.setItem('role', 'artist')
           const newUser = {
             upload_date: Date.now(),
             userId: firebase.auth().currentUser.uid,
@@ -1592,19 +1608,7 @@ export const store = new Vuex.Store({
           console.log('Error getting document:', error)
         })
     },
-    get_user_email ({ commit }, payload) {
-      let auth = firebase.auth()
-      admin
-        .auth()
-        .getUserByEmail(email)
-        .then(function (userRecord) {
-          // See the UserRecord reference doc for the contents of userRecord.
-          console.log('Successfully fetched user data:', userRecord.toJSON())
-        })
-        .catch(function (error) {
-          console.log('Error fetching user data:', error)
-        })
-    },
+
 
     reset_password ({ commit }, payload) {
       console.log(payload)
@@ -1979,6 +1983,10 @@ export const store = new Vuex.Store({
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = true
+
+        //this next field will be used to track replies and refunds
+        art_being_submitted.replied = false
+        
         console.log('art_being_submitted', art_being_submitted)
         art_being_submitted.businessId = businesses_being_submitted[i]
         console.log('art_being_submitted', art_being_submitted)
@@ -2099,6 +2107,8 @@ export const store = new Vuex.Store({
     */
     create_a_new_artist ({ commit, getters }, payload) {
       localStorage.setItem('userId', 1000)
+      localStorage.setItem('role', payload.role)
+
       router.push({
         name: 'artist_dashboard'
       })
@@ -2336,6 +2346,7 @@ export const store = new Vuex.Store({
                     arts: []
                   }
                   commit('setUser', newUser)
+                  console.log('userId is this')
                   localStorage.setItem('userId', 1000)
                   let db = firebase.firestore()
                   let user = db
@@ -2366,6 +2377,11 @@ export const store = new Vuex.Store({
                         commit('setUrl', doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
+
+                        // check current user's role to see if they're allowed to enter
+                        console.log('current role at this instance: ' + doc.data().role)
+                        localStorage.setItem('role', doc.data().role)
+                        
                         if (doc.data().role == 'artist') {
                           router.push({
                             name: 'artist_dashboard'
@@ -2458,6 +2474,7 @@ export const store = new Vuex.Store({
       var user = {
         name: payload.user
       }
+      var userId = payload.userId;
       var daystamp = getters.sendChatDataDaystamp
       var timestamp = getters.sendChatDataTimestamp
 
@@ -2468,7 +2485,8 @@ export const store = new Vuex.Store({
         timestamp: timestamp,
         role: role,
         url: url,
-        color: color
+        color: color,
+        userId: userId
       }
       var chatDatabase = getters.chat_database
       var newChatDatabaseRef = chatDatabase.ref('chat').push()
@@ -2645,6 +2663,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    stored_user_email(state){
+      return state.stored_user_email;
+    },
     viewed_artist_data (state) {
       return state.viewed_artist_data
     },

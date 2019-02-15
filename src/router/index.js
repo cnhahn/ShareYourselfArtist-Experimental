@@ -44,7 +44,8 @@ import reviewsEmpty from '@/components/artists/review_empty'
 import transaction_completed from "@/components/artists/transaction_completed"
 import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
-import auth_guard from "./auth_guard";
+import auth_guard from "./auth_guard"
+import business_guard from "./business_guard.js"
 import not_dash_guard from "./not_dash_guard";
 
 Vue.use(Router)
@@ -217,7 +218,10 @@ export default new Router({
       path: "/business_dashboard",
       name: "business_dashboard",
       component: business_dashboard,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/upload_an_image",
@@ -235,18 +239,22 @@ export default new Router({
       path: "/submissions",
       name: "submissions",
       component: submissions,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
     },
     {
       path: '/submissions/empty',
       name: 'submissions_empty',
       component: submissionsEmpty,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
     },
     {
       path: "/report",
       name: "report",
       component: report,
+      beforeEnter: business_guard,
+      meta: {
+        requiresAuth: true
+      }
       // beforeEnter: auth_guard -> Are this leaved for debug session?
       // TODO: leave beforeEnter or not?
     },
@@ -260,7 +268,7 @@ export default new Router({
       path: '/reviews/empty',
       name: 'reviews_empty',
       component: reviewsEmpty,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
     },
     {
       path: '/profile',
@@ -288,7 +296,7 @@ export default new Router({
       path: '/profile/business',
       name: 'business_profile',
       component: businessProfile,
-      beforeEnter: auth_guard
+      beforeEnter: business_guard
       // TODO: this is only for debug. Recover this after profile page is linked.
       // beforeEnter: auth_guard
     },

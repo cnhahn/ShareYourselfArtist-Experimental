@@ -495,7 +495,7 @@ artist_instagram() {
     return this.$store.getters.user_role
   },
   signed_in_user_avatar(){
-    return this.$store.getters.url
+    return this.$store.getters.signed_in_user.profileUrl
   }
   },
   methods: {
