@@ -277,7 +277,7 @@
         <router-view ></router-view>
       </v-flex>
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
-<!-- recently submitted -->
+  <!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated">
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 150px;">Recently Submitted Artists</p>
           <v-layout row wrap>
@@ -384,6 +384,7 @@ export default {
   beforeMount(){
     this.$store.dispatch('fetch_top_12_recent_art')
     console.log('APP.vue Page ----- fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
+    
   },
   mounted() {
       this.loading = false;
