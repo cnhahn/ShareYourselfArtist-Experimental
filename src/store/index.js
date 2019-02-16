@@ -1948,12 +1948,12 @@ export const store = new Vuex.Store({
        let art_being_submitted = getters.art_being_submitted
        art_being_submitted.submitted_on = Date.now()
        art_being_submitted.submitted_with_free_cerdit = false
-       console.log('art_being_submitted', art_being_submitted)
        art_being_submitted.businessId = businesses_being_submitted[i]
-       console.log('art_being_submitted', art_being_submitted)
+       art_being_submitted.replied = false
+       art_being_submitted.refunded = 0;
        const db = firebase.firestore()
        const collectionRef = db
-        .collection('school_requests')
+        .collection('review_requests')
         .doc()
         .set(art_being_submitted)
         .then(function (docRef) {
@@ -1973,13 +1973,10 @@ export const store = new Vuex.Store({
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = true
-
+        art_being_submitted.refunded = 0;
         //this next field will be used to track replies and refunds
         art_being_submitted.replied = false
-        
-        console.log('art_being_submitted', art_being_submitted)
         art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
         const db = firebase.firestore()
         const collectionRef = db
          .collection('review_requests')
