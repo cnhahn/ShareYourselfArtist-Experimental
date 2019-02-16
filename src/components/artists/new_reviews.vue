@@ -5,48 +5,56 @@
         <c-spinner></c-spinner>
       </div>
     </div>
-    <v-icon @click="fetchRepliedSubmissions" color="black" class="topIcon" large>refresh</v-icon>
+
+    <v-progress-circular
+    v-if="updating_responses"
+    indeterminate
+    color="primary"
+    ></v-progress-circular>
+
+    <v-btn @click="fetchRepliedSubmissions" flat color="primary"> All </v-btn>
         <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
         <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
 
     <v-data-table flat :items="reviewList" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
-      <td>
-        <v-layout row wrap>
-          <v-flex lg1 md1 sm1 xs12>
-            <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
-              <img :src="`${props.item.art.url}`">
-            </v-avatar>
-          </v-flex>
-          <v-flex lg3 md3 sm3 xs12>
-            <div class="artNameHolder">
-              <p class="headline artName">{{ props.item.art.art_title }}</p>
-              <p>Feedback by: {{ props.item.businessId.business_name }}</p>
-            </div>
-            <div class="hidden-md-and-up">
+        <td>
+            <v-layout row wrap>
+                <v-flex lg1 md1 sm1 xs12>
+                  <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
+                    <img :src="`${props.item.art.url}`">
+                  </v-avatar>
+                </v-flex>
+                <v-flex lg3 md3 sm3 xs12>
+                  <div class="artNameHolder">
+                    <p class="headline artName">{{ props.item.art.art_title }}</p>
+                    <p>Feedback by: {{ props.item.businessId.business_name }}</p>
+                  </div>
+                  <div class="hidden-md-and-up">
 
-              <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
-            </div>
-          </v-flex>
-          <v-flex lg6 md6 sm6 xs12>
-            <div class="text-xs-left">
-              <div style="margin-top: 1vh">
-                <p v-if="props.item.submission_response.radios=='accepted'" class="title">{{  props.item.businessId.business_name }} has accepted to publish {{ props.item.art.art_title }}. </p>
-                <p>Response: {{ props.item.submission_response.response }}</p>
+                    <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
+                  </div>
+                </v-flex>
+                <v-flex lg6 md6 sm6 xs12>
+                  <div class="text-xs-left">
+                    <div style="margin-top: 1vh">
+                      <p v-if="props.item.submission_response.radios=='accepted'" class="title">{{  props.item.businessId.business_name }} has accepted to publish {{ props.item.art.art_title }}. </p>
+                      <p>Response: {{ props.item.submission_response.response }}</p>
 
-              </div>
-            </div>
-          </v-flex>
-          <v-flex lg2 md2 sm2 xs12 class="hidden-sm-and-down">
-            <v-layout row wrap style="margin-top: 1vh">
+                    </div>
+                  </div>
+                </v-flex>
+                <v-flex lg2 md2 sm2 xs12 class="hidden-sm-and-down">
+                  <v-layout row wrap style="margin-top: 1vh">
 
-              <v-flex lg3 md2 sm2 xs12>
-                <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
-              </v-flex>
+                    <v-flex lg3 md2 sm2 xs12>
+                      <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
             </v-layout>
-          </v-flex>
-        </v-layout>
-      </td>
+        </td>
+
     </template>
     </v-data-table>
   </v-container>
@@ -58,6 +66,7 @@
     data() {
       return {
         dialog: false,
+        mark_as_read_btn_clicked: false,
         reviewList: [],
         masterList: [],
         headers: [
@@ -65,6 +74,14 @@
             text: 'Art'
           },
         ],
+
+        updating_responses: false
+      }
+    },
+    watch: {
+      mark_as_read_btn_clicked: function(val) {
+        console.log("watching mark as read btn clicked changed", val);
+        this.reviewList__unread_reviews()
       }
     },
     // fetch submissions on create to be used later for display
@@ -78,7 +95,7 @@
       },
       loading() {
         return this.$store.getters.loading;
-      }
+      },
     },
     methods: {
       // filters the unread reviews by checking the field read_byartist is false against the array
@@ -95,6 +112,7 @@
       },
       // button uses prop to identify and change the field read_byartist as true which can be found in read_reviews
       markAsRead: function (upload_date) {
+        this.mark_as_read_btn_clicked = !this.mark_as_read_btn_clicked
         for ( var i in this.reviewList ) {
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].read_byartist = true
@@ -103,6 +121,9 @@
           }
         }
 
+        /*updating_responses = true
+        this.fetchRepliedSubmissions()
+        updating_responses = false*/
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
@@ -121,6 +142,7 @@
             res => {
               that.masterList = res
               that.reviewList = res
+              console.log("Entered here to create masterList")
               if ( res == null ) {
                 that.$router.push ({
                   name: 'reviews_empty'
