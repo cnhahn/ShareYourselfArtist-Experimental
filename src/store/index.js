@@ -224,6 +224,9 @@ export const store = new Vuex.Store({
     clear_info_of_business_for_dashboard2 (state) {
       state.info_of_business_for_dashboard2 = {}
     },
+    clear_businesses_being_submitted(state){
+      state.businesses_being_submitted = []
+    },
     set_epoch_month_times (state, payload) {
       state.epoch_month_time = payload
     },
@@ -314,6 +317,7 @@ export const store = new Vuex.Store({
       state.updatedCategories = payload
     },
     set_businesses_being_submitted (state, payload) {
+      console.log("payload for business beings ubmitted is ", payload)
       state.businesses_being_submitted = payload
     },
     set_art_being_submitted_is_selected (state, payload) {
@@ -404,7 +408,6 @@ export const store = new Vuex.Store({
       state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
     clearBusinesses (state) {
-      state.businesses = []
     },
     setBusinesses (state, payload) {
       state.businesses.push(payload)
@@ -683,12 +686,19 @@ export const store = new Vuex.Store({
       // commit('clear_top_12_recent_art')
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
-                          .orderBy('submitted_on').limit(12)
+                          .orderBy('submitted_on', 'desc').limit(12)
+      let ordered_top_12_list = [];
       let report = temp_report.get()
           .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
-              commit('set_top_12_recent_art', doc.data())
+              console.log('art title for navigation panel ' , doc.data().art.art_title)
+              ordered_top_12_list.push(doc.data())
             })
+            let i;
+            for( i = 0; i < ordered_top_12_list.length; i++){
+              commit('set_top_12_recent_art',ordered_top_12_list[i])
+            }
+              
           })
           .catch(function (error) {
             console.log('Error getting report: ', error)
@@ -1331,6 +1341,8 @@ export const store = new Vuex.Store({
         .signInWithPopup(provider)
         .then(user => {
           localStorage.setItem('userId', 1000)
+
+          localStorage.setItem('role', 'artist')
           commit('setLoading', false)
           const newUser = {
             upload_date: Date.now(),
@@ -1419,6 +1431,7 @@ export const store = new Vuex.Store({
         .then(user => {
           commit('setLoading', false)
           localStorage.setItem('userId', 1000)
+          localStorage.setItem('role', 'artist')
           const newUser = {
             upload_date: Date.now(),
             userId: firebase.auth().currentUser.uid,
@@ -1652,25 +1665,6 @@ export const store = new Vuex.Store({
         })
     },
 
-    fetch_replied_submissions ({ commit, getters }) {
-      commit('clear_submissions_for_this_business_array')
-      let db = firebase.firestore()
-      let role = db
-        .collection('review_requests')
-        .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            // doc.data() is never undefined for query doc snapshots
-            commit('set_replied_submissions', doc.data())
-          })
-        })
-        .catch(function (error) {
-          console.log('Error getting documents: ', error)
-        })
-    },
-
     fetch_clicked_business ({ commit, getters }) {
       let db = firebase.firestore()
       let role = db
@@ -1770,14 +1764,18 @@ export const store = new Vuex.Store({
         })
     },
     async fetch_all_Submissions ({ commit, getters }) {
+      console.log("Entered fetch all submissions")
       commit('clear_submissions_for_this_business_array')
       const db = firebase.firestore()
-      const collectionRef = await db
+      console.log("Do we get here? IF we do the  user id is :  " , (null == getters.user))
+
+        const collectionRef =  await db
         .collection('review_requests')
         .where('businessId.userId', '==', getters.user.id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
+
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data()
             console.log('doc.data: ' + docData)
@@ -1789,7 +1787,31 @@ export const store = new Vuex.Store({
           })
         })
         .catch(function (error) {
+          console.log("Error of fetch all submissions")
           console.log('Error getting submissions: ', error)
+
+        })
+
+    },
+    
+    fetch_replied_submissions ({ commit, getters }) {
+      console.log("Entered fetch replied submissions here")
+      console.log("fetch replied submissions user.id is " , getters.user.id)
+      commit('clear_submissions_for_this_business_array')
+      let db = firebase.firestore()
+      let role = db
+        .collection('review_requests')
+        .where('replied', '==', true)
+        .where('art.artist_id', '==', getters.user.id)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            // doc.data() is never undefined for query doc snapshots
+            commit('set_replied_submissions', doc.data())
+          })
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
         })
     },
 
@@ -1948,14 +1970,14 @@ export const store = new Vuex.Store({
        let art_being_submitted = getters.art_being_submitted
        art_being_submitted.submitted_on = Date.now()
        art_being_submitted.submitted_with_free_cerdit = false
-       console.log('art_being_submitted', art_being_submitted)
        art_being_submitted.businessId = businesses_being_submitted[i]
-       console.log('art_being_submitted', art_being_submitted)
+       art_being_submitted.replied = false
+       art_being_submitted.refunded = 0;
        const db = firebase.firestore()
        const collectionRef = db
-        .collection('school_requests')
+        .collection('review_requests')
         .doc()
-        .set(payload)
+        .set(art_being_submitted)
         .then(function (docRef) {
           console.log('School submission written with ID: ', docRef.id)
           // router.push({
@@ -1973,13 +1995,10 @@ export const store = new Vuex.Store({
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = true
-
+        art_being_submitted.refunded = 0;
         //this next field will be used to track replies and refunds
         art_being_submitted.replied = false
-        
-        console.log('art_being_submitted', art_being_submitted)
         art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
         const db = firebase.firestore()
         const collectionRef = db
          .collection('review_requests')
@@ -2097,6 +2116,8 @@ export const store = new Vuex.Store({
     */
     create_a_new_artist ({ commit, getters }, payload) {
       localStorage.setItem('userId', 1000)
+      localStorage.setItem('role', payload.role)
+
       router.push({
         name: 'artist_dashboard'
       })
@@ -2334,6 +2355,7 @@ export const store = new Vuex.Store({
                     arts: []
                   }
                   commit('setUser', newUser)
+                  console.log('userId is this')
                   localStorage.setItem('userId', 1000)
                   let db = firebase.firestore()
                   let user = db
@@ -2364,6 +2386,11 @@ export const store = new Vuex.Store({
                         commit('setUrl', doc.data().url)
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
+
+                        // check current user's role to see if they're allowed to enter
+                        console.log('current role at this instance: ' + doc.data().role)
+                        localStorage.setItem('role', doc.data().role)
+                        
                         if (doc.data().role == 'artist') {
                           router.push({
                             name: 'artist_dashboard'
@@ -2645,6 +2672,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    get_art_being_submitted_is_selected(state){
+      return state.art_being_submitted_is_selected
+    },
     stored_user_email(state){
       return state.stored_user_email;
     },

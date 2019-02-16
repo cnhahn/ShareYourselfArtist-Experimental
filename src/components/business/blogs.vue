@@ -212,12 +212,16 @@
       clicked_business(userId){
         const costOfBusiness = 1
         //this.$store.commit('set_art_being_submitted_is_selected', true)
+        this.$store.commit('clear_businesses_being_submitted')
         this.$store.commit('set_business_being_submitted',{businessId:userId, date: Date.now()})
         this.$store.commit('set_business_being_submitted_is_selected',true)
+        this.$store.commit('set_businesses_being_submitted', [userId])
         console.log("art being submitted " + this.$store.state.art_being_submitted_is_selected )
-        if(this.$store.state.art_being_submitted_is_selected === true){
+        this.$store.commit('set_art_being_submitted_is_selected', true)
+        console.log("art being submitted should be true " , this.$store.getters.get_art_being_submitted_is_selected)
+        if(this.$store.getters.get_art_being_submitted_is_selected === true){
            this.$router.push({
-                        name: 'submit_result' 
+                        name: 'artist_dashboard' 
                 })
           // if(this.$store.getters.current_credits > costOfBusiness) {
           //   console.log("credits: " + this.$store.getters.current_credits)
