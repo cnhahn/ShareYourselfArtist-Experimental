@@ -126,10 +126,10 @@
         return this.$store.getters.signed_in_user.color
       },
       fetchUserFreeCredits () {
-        return this.$store.getters.signed_in_user.free_credits
+        return this.$store.state.free_credits
       },
       fetchUserCredits () {
-        return this.$store.getters.signed_in_user.credits
+        return  this.$store.state.credits
       },
       fetchUserInstagram () {
         return this.$store.getters.signed_in_user.instagram

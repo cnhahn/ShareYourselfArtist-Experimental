@@ -1,4 +1,3 @@
-
 /*
 If you have any questions regarding the firestore functions
 You can reach me @ kagawong@ucsc.edu
