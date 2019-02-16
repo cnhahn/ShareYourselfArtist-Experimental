@@ -236,6 +236,7 @@
 
 
             this.docId = myArray[i].docId
+            console.log("SHIT ",this.docId);
             this.$store.commit('set_art_being_replied', {
               art_title: myArray[i].art.art_title,
               artist_name: myArray[i].art.artist_name,

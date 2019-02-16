@@ -610,26 +610,6 @@ export const store = new Vuex.Store({
       .catch(function (error) {
         console.log('error getting documents yas: ', error)
       })
-    },
-    set_all_free_credits (){
-      //update all artists free credits to 2
-      let db = firebase.firestore()
-      let artists = db.collection('users').where('role', '==', 'artist')
-      .get()
-      .then(function (results) {
-        results.forEach(function (doc) {
-          let userId = doc.data().userId
-          db.collection('users').doc(userId).update({
-            'free_credits': '2'
-          })
-          .then(function () {
-            console.log('Document Succesfully updated!')
-          })
-        })
-      })
-      .catch(function (error) {
-        console.log('error getting documents yas: ', error)
-      })
     },      
     update_art_comments ({commit}, payload) {
       console.log('update_art: ', payload)
@@ -1808,50 +1788,18 @@ export const store = new Vuex.Store({
         .collection('review_requests')
         .where('businessId.userId', '==', getters.user.id)
         .get()
-        // .then(function (querySnapshot) {
-        //   querySnapshot.forEach(function (doc) {
-        //     // doc.data() is never undefined for query doc snapshots
-        //     const promises = []
-        //     let docData = doc.data()
-        //     console.log('doc.data: ' + docData)
-        //     console.log('doc.id: ' + doc.id)
-        //     docData.docId = doc.id
-        //     console.log('doc.data: ' + docData.docId)
-        //     promises.push(doc.docData.docId)
-        //     // commit('set_submissions_for_this_business', docData)
-        //   })
-        //   commit('set_submissions_for_this_business', promises)
-        //   return Promise.all(promises)
-        // })
         .then(function (querySnapshot) {
-          const promises = []
-          querySnapshot.forEach(function (doc){
-            console.log('docdoc: ', doc)
-            promises.push(doc)
-          })
-          return Promise.all(promises) //returning promises sends the resolved results to 
-        })                             //to the next .then()
-        .then(function (data){
-          console.log(data)
-          let results = []
-          data.forEach(function(dataSnap){
-            console.log('data: ', dataSnap.data())
-            results.push(dataSnap.data())
-          })
-          return results
-        })
-        .then(function (ids){
-          console.log("arrays length:" + ids.length)
-          for(var i = 0; i<ids.length; i++){
-            // console.log('inside ids: ', ids[i])
-            
-            commit('set_submissions_for_this_business', ids[i])
-          }          
-        })
-        .then(function(reply){
+          querySnapshot.forEach(function (doc) {
 
-          // return response.send('Testing this with all submissions')
-          console.log('end of fetch_all_Submissions function')
+            // doc.data() is never undefined for query doc snapshots
+            let docData = doc.data()
+            console.log('doc.data: ' + docData)
+            console.log('doc.id: ' + doc.id)
+            docData.docId = doc.id
+
+            console.log('doc.data: ' + docData.docId)
+            commit('set_submissions_for_this_business', docData)
+          })
         })
         .catch(function (error) {
           console.log("Error of fetch all submissions")
