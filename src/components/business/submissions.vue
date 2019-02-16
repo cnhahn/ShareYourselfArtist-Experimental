@@ -16,7 +16,7 @@
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
                   <v-layout row >
                     <div class="text-xs-center" v-for="(c, index) in 3">
-                      <v-chip>{{ submission.art.categories[index] }}</v-chip>
+                      <!-- <v-chip>{{ submission.art.categories[index] }}</v-chip> -->
                     </div>
                   </v-layout>
                   <v-spacer></v-spacer>
@@ -32,7 +32,8 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined "><v-icon>reply</v-icon></v-btn>
+              <!--<v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.submission_response == undefined"><v-icon>reply</v-icon></v-btn>-->
+              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
@@ -41,12 +42,12 @@
           </v-btn>
             </v-card-actions>
             <v-slide-y-transition>
-          <v-card-text v-show="show">
-            <div><h4> Description: </h4>{{submission.art.description}}</div>
-            <div  v-if="submission.submission_response == undefined"> <h4>Response: </h4>You have not responded to this submission yet.</div>
-            <div  v-else> <h4>Response: </h4>{{submission.submission_response.response}}</div>
-          </v-card-text>
-        </v-slide-y-transition>
+              <v-card-text v-show="show">
+                <div><h4> Description: </h4>{{submission.art.description}}</div>
+                <div  v-if="submission.submission_response == undefined"> <h4>Response: </h4>You have not responded to this submission yet.</div>
+                <div  v-else> <h4>Response: </h4>{{submission.submission_response.response}}</div>
+              </v-card-text>
+            </v-slide-y-transition>
           </v-card>
         </v-flex>
       </v-layout>
@@ -130,9 +131,24 @@
         rules: [v => v.length > 50 || 'Min 50 characters']
       }
     },
+    mounted(){
+      this.initialImageLoad();
+    },
 
     methods:{
-
+        initialImageLoad() {
+          this.$store.dispatch('fetch_all_Submissions').then(response => {
+          this.submissions = this.$store.getters.submissions_for_this_business
+          console.log("Submissions is ", this.submissions)
+          this.master_submissions = this.$store.getters.submissions_for_this_business
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
+          if (this.submissions === null) {
+            console.log("Got here in sbumissions empty ")
+            this.$router.push('/submissions/empty')
+          }
+      }, 
       download: function(art_link) {
         
         console.log(art_link)
@@ -152,7 +168,7 @@
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
         this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == undefined
+          return review.replied == undefined || review.replied == false
         })
       },
 
@@ -245,20 +261,7 @@
         }
       }
     },
-    mounted:
 
-      /* This component just got created, fetch some data here using an action */
-      function() {
-        this.$store.dispatch('fetch_all_Submissions').then(response => {
-        this.submissions = this.$store.getters.submissions_for_this_business
-        this.master_submissions = this.$store.getters.submissions_for_this_business
-        }, error => {
-          console.error("Got nothing from server. Prompt user to check internet connection and try again")
-        })
-        if (this.submissions === null) {
-          this.$router.push('/submissions/empty')
-        }
-      }
 }
 </script>
 <style scoped>
