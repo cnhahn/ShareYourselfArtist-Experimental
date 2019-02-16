@@ -59,7 +59,7 @@
             this.$store.commit('set_credits', creditAfterSubmit) 
             this.$store.commit('set_art_being_submitted_is_selected',false)
             this.$store.commit('set_business_being_submitted_is_selected',false)
-            alert('Success')
+            alert('Success! You have submitted your art using your premium credits!')
             this.$router.push({
               name: 'artist_dashboard' 
             })

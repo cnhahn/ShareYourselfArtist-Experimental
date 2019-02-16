@@ -1955,7 +1955,7 @@ export const store = new Vuex.Store({
        const collectionRef = db
         .collection('school_requests')
         .doc()
-        .set(payload)
+        .set(art_being_submitted)
         .then(function (docRef) {
           console.log('School submission written with ID: ', docRef.id)
           // router.push({
