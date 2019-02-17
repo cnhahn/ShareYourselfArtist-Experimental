@@ -88,6 +88,37 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    <v-layout row wrap mb-5>
+      <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in def" :key='art.id'>
+        <v-card mt-3>
+          <v-card-media img :src="art.url" >
+          </v-card-media>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <div>
+                <v-chip
+                  v-for="(tag, index) in art.categories"
+                  :key='tag.id'
+                  v-model = 'art.categories[index]'
+
+                >
+                  {{art.categories[index]}} </v-chip>
+              </div>
+            </div>
+          </v-card-title>
+          <v-card-actions>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn flat  color="primary"
+            @click="submit_art(art)"
+            >Submit this piece</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
   </v-container>
 </template>
 
