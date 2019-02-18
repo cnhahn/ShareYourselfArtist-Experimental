@@ -229,7 +229,7 @@
         for(let i = 0; i<arts.length; i++){
           for (let j = 0; j<categories.length; j++){
             if (arts[i].categories != undefined) {
-              if (arts[i].categories.includes(categories[j]))
+              if (arts[i].categories.includes(categories[j]) && !def.includes(arts[i]))
               {
                 def.push(arts[i])
               }
