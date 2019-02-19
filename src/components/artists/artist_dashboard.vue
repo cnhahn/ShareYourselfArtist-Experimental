@@ -92,7 +92,7 @@
     <v-layout row wrap mb-5>
       <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in def" :key='art.id'>
         <v-card mt-3>
-          <v-card-media img :src="art.url" >
+          <v-card-media img :src="art.url" height="450px">
           </v-card-media>
           <v-card-title primary-title>
             <div>
