@@ -54,6 +54,11 @@
 <script>
 import * as firebase from 'firebase'
   export default {
+
+    mounted: function() {
+      this.load_comments(art)
+    },
+
         data() {
       return {
         snackbar: false,
@@ -94,12 +99,24 @@ import * as firebase from 'firebase'
         let commentor =  this.$store.getters.signed_in_user.email
         if (commented_art[0].comments ===  undefined){
           this.new_comments_field.push({from: commentor, comment:this.comment})
+          //console.log('1st comment')
         } else {
           this.new_comments_field = [...commented_art[0].comments,{from: commentor, comment:this.comment} ]
+          //console.log('every other comment')
         }
         let upload_date = parseInt(this.art.upload_date)
         this.$store.dispatch('update_art_comments', {upload_date:upload_date,comments: this.new_comments_field}).then(this.snackbar = true)
       },
+
+      load_comments(art)
+      {
+        const artists_arts =  this.$store.getters.viewed_arts
+        const commented_art = artists_arts.filter(function (the_art) {
+          return the_art.upload_date == art.upload_date
+        } )
+        
+        let upload_date = parseInt(this.art.upload_date)
+      }
     }
   }
 </script>
