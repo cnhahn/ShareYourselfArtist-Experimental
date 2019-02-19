@@ -80,9 +80,24 @@
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
             <!-- <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn> -->
-            <!-- <v-dialog v-model="dialog" width="500">
-            <v-btn flat slot="activation" color="primary">Delete</v-btn>
-            </v-dialog> -->
+            <v-dialog v-model="dialog" width="500">
+            <v-btn flat slot="activator" color="primary">Delete</v-btn>
+                <v-card>
+                  <v-card-title class="headline grey lighten-2" primary-title>
+                    Delete Message
+                  </v-card-title>
+                  <v-card-text>
+                    Are you sure you want to delete this art piece?
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green" flat @click="delete_art(art)"> Yes</v-btn>
+                    <v-btn color="red" flat @click="dialog = false"> No</v-btn>
+                  </v-card-actions>
+                </v-card>
+            </v-dialog>
+
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
@@ -113,6 +128,7 @@
         artList: [],
         chip1:true,
         categories: '',
+        dialog: false,
         def: [],
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
@@ -182,7 +198,9 @@
       
       delete_art(art_to_be_deleted){
         console.log("We are currently here")
+        console.log("art deleting: ", art_to_be_deleted)
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+        this.dialog = false
       },
 
       filterCategories(filterCategories, artCategories, def, art) {
