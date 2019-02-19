@@ -100,45 +100,56 @@
             <v-icon>mail</v-icon>
             <!-- </v-badge> -->
           </v-list-tile-action>
+
           <v-list-tile-content light>
             <router-link to="/new_reviews">
-              <v-list-tile-tile @click="" >Reviews </v-list-tile-tile>
+              <v-list-tile-tile @click="" >
+                Reviews
+              </v-list-tile-tile>
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
+
         <v-list-tile v-if="userIsAuthanticated && user_role == 'artist'">
           <v-list-tile-action>
-            <v-icon>chat</v-icon>
+            <v-icon>
+              chat
+            </v-icon>
           </v-list-tile-action>
+
           <v-list-tile-content light>
             <router-link to="/chat">
-            <v-list-tile-tile @click="" >Chat </v-list-tile-tile>
+              <v-list-tile-tile @click="" >
+                Chat
+              </v-list-tile-tile>
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
         
         <v-list-tile>
           <v-chip
-       v-if="userIsAuthanticated"
-       flat
-       style="width: 165px;"
-       color="primary"
-       text-color="white"
-       v-on:click="$router.push('/account')">
-         &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
-    </v-chip>
+            v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+            flat
+            style="width: 165px;"
+            color="primary"
+            text-color="white"
+            v-on:click="$router.push('/account')">
+            &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
+          </v-chip>
         </v-list-tile>
+
         <v-list-tile>
-         <v-chip
-       v-if="userIsAuthanticated"
-       flat
-       color="primary"
-       style="width: 165px"
-       text-color="white"
-       v-on:click="$router.push('/account')">
-      Premium Credits: {{this.$store.state.credits}}
-    </v-chip>
+          <v-chip
+            v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
+            flat
+            color="primary"
+            style="width: 165px"
+            text-color="white"
+            v-on:click="$router.push('/account')">
+            Premium Credits: {{this.$store.state.credits}}
+          </v-chip>
         </v-list-tile>
+
       </v-list>
       </div>
     </v-navigation-drawer>
@@ -266,25 +277,29 @@
         <router-view ></router-view>
       </v-flex>
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
-<!-- recently submitted -->
+  <!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated">
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 150px;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
+              
               <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
                 <v-flex xs2>
                   <v-avatar>
-                    <img style="position:absolute; left:150px;" :src="top_12_recent_art[index].art.url" >
+                    <img style="position:absolute; left:150px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
-                <v-flex xs10 ml-2>
-                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index].art.art_title}}</p>
-                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index].art.artist_name}}</p>
-                </v-flex>
-          </v-layout>
+
+               <v-flex xs10 ml-2>
+                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
+                </v-flex> 
+
+            </v-layout>
             </v-flex>
           </v-layout>
+
         <!--
           <v-list two-line>
 
@@ -369,7 +384,8 @@ export default {
   //you also need to add this func in main.vues
   beforeMount(){
     this.$store.dispatch('fetch_top_12_recent_art')
-    console.log('fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
+    console.log('APP.vue Page ----- fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
+    
   },
   mounted() {
       this.loading = false;

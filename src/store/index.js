@@ -224,6 +224,9 @@ export const store = new Vuex.Store({
     clear_info_of_business_for_dashboard2 (state) {
       state.info_of_business_for_dashboard2 = {}
     },
+    clear_businesses_being_submitted(state){
+      state.businesses_being_submitted = []
+    },
     set_epoch_month_times (state, payload) {
       state.epoch_month_time = payload
     },
@@ -314,6 +317,7 @@ export const store = new Vuex.Store({
       state.updatedCategories = payload
     },
     set_businesses_being_submitted (state, payload) {
+      console.log("payload for business beings ubmitted is ", payload)
       state.businesses_being_submitted = payload
     },
     set_art_being_submitted_is_selected (state, payload) {
@@ -404,7 +408,6 @@ export const store = new Vuex.Store({
       state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
     clearBusinesses (state) {
-      state.businesses = []
     },
     setBusinesses (state, payload) {
       state.businesses.push(payload)
@@ -607,26 +610,6 @@ export const store = new Vuex.Store({
       .catch(function (error) {
         console.log('error getting documents yas: ', error)
       })
-    },
-    set_all_free_credits (){
-      //update all artists free credits to 2
-      let db = firebase.firestore()
-      let artists = db.collection('users').where('role', '==', 'artist')
-      .get()
-      .then(function (results) {
-        results.forEach(function (doc) {
-          let userId = doc.data().userId
-          db.collection('users').doc(userId).update({
-            'free_credits': '2'
-          })
-          .then(function () {
-            console.log('Document Succesfully updated!')
-          })
-        })
-      })
-      .catch(function (error) {
-        console.log('error getting documents yas: ', error)
-      })
     },      
     update_art_comments ({commit}, payload) {
       console.log('update_art: ', payload)
@@ -683,12 +666,19 @@ export const store = new Vuex.Store({
       // commit('clear_top_12_recent_art')
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
-                          .orderBy('submitted_on').limit(12)
+                          .orderBy('submitted_on', 'desc').limit(12)
+      let ordered_top_12_list = [];
       let report = temp_report.get()
           .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
-              commit('set_top_12_recent_art', doc.data())
+              console.log('art title for navigation panel ' , doc.data().art.art_title)
+              ordered_top_12_list.push(doc.data())
             })
+            let i;
+            for( i = 0; i < ordered_top_12_list.length; i++){
+              commit('set_top_12_recent_art',ordered_top_12_list[i])
+            }
+              
           })
           .catch(function (error) {
             console.log('Error getting report: ', error)
@@ -1740,17 +1730,52 @@ export const store = new Vuex.Store({
         .where('businessId.userId', '==', getters.user.id)
         .where('replied', '==', false)
         .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            // doc.data() is never undefined for query doc snapshots
-            let docData = doc.data()
-            docData.docId = doc.id
+        // .then(function (querySnapshot) {
+        //   querySnapshot.forEach(function (doc) {
+        //     // doc.data() is never undefined for query doc snapshots
+        //     const promises = []
+        //     let docData = doc.data()
+        //     docData.docId = doc.id
 
-            console.log('doc.data: ' + docData.docId)
-            commit('set_submissions_for_this_business', docData)
+        //     console.log('doc.data: ' + docData.docId)
+        //     promises.push(doc.docData.docId)
+        //     // commit('set_submissions_for_this_business', docData)
+        //   })
+        //   commit('set_submissions_for_this_business', promises)
+        //   return Promise.all(promises)
+        // })
+        .then(function (querySnapshot) {
+          const promises = []
+          querySnapshot.forEach(function (doc){
+            console.log('docdoc: ', doc)
+            promises.push(doc)
           })
+          return Promise.all(promises) //returning promises sends the resolved results to 
+        })                             //to the next .then()
+        .then(function (data){
+          console.log(data)
+          let results = []
+          data.forEach(function(dataSnap){
+            console.log('data: ', dataSnap.data())
+            results.push(dataSnap.data())
+          })
+          return results
+        })
+        .then(function (ids){
+          console.log("arrays length:" + ids.length)
+          for(var i = 0; i<ids.length; i++){
+            // console.log('inside ids: ', ids[i])
+            
+            commit('set_submissions_for_this_business', ids[i])
+          }          
+        })
+        .then(function(reply){
+
+          // return response.send('Testing this with all submissions')
+          console.log('end of fetchSubmissions function')
         })
         .catch(function (error) {
+          console.log('Error with submissions: ', error)
         })
     },
     async fetch_all_Submissions ({ commit, getters }) {
@@ -1960,14 +1985,14 @@ export const store = new Vuex.Store({
        let art_being_submitted = getters.art_being_submitted
        art_being_submitted.submitted_on = Date.now()
        art_being_submitted.submitted_with_free_cerdit = false
-       console.log('art_being_submitted', art_being_submitted)
        art_being_submitted.businessId = businesses_being_submitted[i]
-       console.log('art_being_submitted', art_being_submitted)
+       art_being_submitted.replied = false
+       art_being_submitted.refunded = 0;
        const db = firebase.firestore()
        const collectionRef = db
-        .collection('school_requests')
+        .collection('review_requests')
         .doc()
-        .set(payload)
+        .set(art_being_submitted)
         .then(function (docRef) {
           console.log('School submission written with ID: ', docRef.id)
           // router.push({
@@ -1985,13 +2010,10 @@ export const store = new Vuex.Store({
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = true
-
+        art_being_submitted.refunded = 0;
         //this next field will be used to track replies and refunds
         art_being_submitted.replied = false
-        
-        console.log('art_being_submitted', art_being_submitted)
         art_being_submitted.businessId = businesses_being_submitted[i]
-        console.log('art_being_submitted', art_being_submitted)
         const db = firebase.firestore()
         const collectionRef = db
          .collection('review_requests')
@@ -2665,6 +2687,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    get_art_being_submitted_is_selected(state){
+      return state.art_being_submitted_is_selected
+    },
     stored_user_email(state){
       return state.stored_user_email;
     },
