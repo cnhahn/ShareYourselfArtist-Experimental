@@ -80,9 +80,9 @@
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
             <!-- <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn> -->
-            <v-dialog v-model="dialog" width="500">
+            <!-- <v-dialog v-model="dialog" width="500">
             <v-btn flat slot="activation" color="primary">Delete</v-btn>
-            </v-dialog>
+            </v-dialog> -->
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
