@@ -12,6 +12,15 @@
           v-model="comment"
       ></v-text-field>
     </div>
+
+    <p v-for="comment_field in new_comments_field"
+    :key="comment_field.from">
+    <pre>
+    {{comment_field.from}} says: {{comment_field.comment}}
+    </pre> 
+    </p>
+    <v-spacer></v-spacer>
+
       <div mb-5 class="small-container">
       <v-btn v-if= "!this.comment.length"   disabled  large>Send</v-btn>
       <v-btn v-else depressed  dark large color="primary" @click="save_comment(art)">Send</v-btn>
@@ -60,7 +69,9 @@ import * as firebase from 'firebase'
           description: localStorage.getItem('description'),
           upload_date: localStorage.getItem('upload_date'),
           newComment:''
-        }
+        },
+
+        new_comments_field: []
     }
         },
     methods:{
@@ -79,15 +90,15 @@ import * as firebase from 'firebase'
         const commented_art = artists_arts.filter(function (the_art) {
           return the_art.upload_date == art.upload_date
         } )
-        let new_comments_field = []
+        //let new_comments_field = []
         let commentor =  this.$store.getters.signed_in_user.email
         if (commented_art[0].comments ===  undefined){
-          new_comments_field.push({from: commentor, comment:this.comment})
+          this.new_comments_field.push({from: commentor, comment:this.comment})
         } else {
-          new_comments_field = [...commented_art[0].comments,{from: commentor, comment:this.comment} ]
+          this.new_comments_field = [...commented_art[0].comments,{from: commentor, comment:this.comment} ]
         }
         let upload_date = parseInt(this.art.upload_date)
-        this.$store.dispatch('update_art_comments', {upload_date:upload_date,comments:new_comments_field}).then(this.snackbar = true)
+        this.$store.dispatch('update_art_comments', {upload_date:upload_date,comments: this.new_comments_field}).then(this.snackbar = true)
       },
     }
   }
