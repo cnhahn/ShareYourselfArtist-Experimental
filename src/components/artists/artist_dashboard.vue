@@ -178,7 +178,7 @@
       },
       
       delete_art(art_to_be_deleted){
-        console.log("We are here")
+        console.log("We are currently here")
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
       },
 
