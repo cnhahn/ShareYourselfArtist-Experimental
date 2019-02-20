@@ -104,10 +104,10 @@ import * as firebase from 'firebase'
 
       },
       back(){
-        window.history.back();
-        /*this.$router.push({
+        //window.history.back();
+        this.$router.push({
         path:'/artist_dashboard'
-        })*/
+        })
       },
        save_comment(art){
         const artists_arts =  this.$store.getters.viewed_arts
