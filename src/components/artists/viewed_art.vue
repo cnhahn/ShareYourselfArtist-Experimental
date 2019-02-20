@@ -56,8 +56,41 @@ import * as firebase from 'firebase'
   export default {
 
     mounted: function() {
-      this.load_comments(art)
+      this.load_comments(this.art)
     },
+
+    /*watch: {
+      load_comments(art)
+      {
+        const artists_arts =  this.$store.getters.viewed_arts
+        const commented_art = artists_arts.filter(function (the_art) {
+          return the_art.upload_date == art.upload_date
+        } )
+        
+        let upload_date = parseInt(this.art.upload_date)
+        let db = firebase.firestore()
+        let id_of_art = db.collection('art').where('upload_date', '==', upload_date)
+
+        id_of_art.get().then(function (results) {
+        if (results.empty) {
+          console.log('No documents found! in query')
+        } else {
+          // go through all results
+          results.forEach(function (doc) {
+            let data = doc.data()
+            let comments = data.comments
+            for (var i = 0; i < comments.length; i++)
+            {
+              //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
+              this.new_comments_field.push(comments[i])
+            }
+          })
+        }
+
+      })
+
+      }
+    },*/
 
         data() {
       return {
@@ -116,8 +149,67 @@ import * as firebase from 'firebase'
         } )
         
         let upload_date = parseInt(this.art.upload_date)
+        //console.log('loading comments')
+        let db = firebase.firestore()
+        let id_of_art = db.collection('art').where('upload_date', '==', upload_date)
+
+        id_of_art.get().then(function (results) {
+        if (results.empty) {
+          console.log('No documents found! in query')
+        } else {
+          // go through all results
+          results.forEach(function (doc) {
+            //let docId = doc.id
+            //console.log('loading action doc id ', docId)
+            let data = doc.data()
+            let comments = data.comments
+            for (var i = 0; i < comments.length; i++)
+            {
+              console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
+              this.new_comments_field.push(comments[i])
+            }
+
+          })
+        }
+
+      })
+
       }
+    },
+
+    computed: {
+      /*load_comments(art)
+      {
+        const artists_arts =  this.$store.getters.viewed_arts
+        const commented_art = artists_arts.filter(function (the_art) {
+          return the_art.upload_date == art.upload_date
+        } )
+        
+        let upload_date = parseInt(this.art.upload_date)
+        let db = firebase.firestore()
+        let id_of_art = db.collection('art').where('upload_date', '==', upload_date)
+
+        id_of_art.get().then(function (results) {
+        if (results.empty) {
+          console.log('No documents found! in query')
+        } else {
+          // go through all results
+          results.forEach(function (doc) {
+            let data = doc.data()
+            let comments = data.comments
+            for (var i = 0; i < comments.length; i++)
+            {
+              //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
+              this.new_comments_field.push(comments[i])
+            }
+          })
+        }
+
+      })
+
+      }*/
     }
+
   }
 </script>
 <style scoped>
