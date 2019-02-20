@@ -6,12 +6,28 @@
     <p>{{this.art.description}}</p>
     </div>
 
-    <p v-for="comment_field in new_comments_field"
+    <!--<p v-for="comment_field in new_comments_field"
     :key="comment_field.comment">
     <pre>
     {{comment_field.from}} says: {{comment_field.comment}}
     </pre> 
     </p>
+    <v-spacer></v-spacer>-->
+
+    <v-list two-line>
+    <template v-for="comment_field in new_comments_field">
+    <v-list-tile
+    :key="comment_field.comment"
+    class="resize_list"
+    >
+      <v-list-tile-content >
+        <v-list-tile-title class="t" v-html="comment_field.from"></v-list-tile-title>
+        <v-list-tile-sub-title class="b" v-html="comment_field.comment"></v-list-tile-sub-title>
+      </v-list-tile-content>
+    </v-list-tile>
+    </template>
+    </v-list>
+    
     <v-spacer></v-spacer>
 
     <div class = "small-container">
@@ -59,40 +75,6 @@ import * as firebase from 'firebase'
     mounted: function() {
       this.load_comments(this.art)
     },
-
-    /*watch: {
-      load_comments(art)
-      {
-        const artists_arts =  this.$store.getters.viewed_arts
-        const commented_art = artists_arts.filter(function (the_art) {
-          return the_art.upload_date == art.upload_date
-        } )
-        
-        let upload_date = parseInt(this.art.upload_date)
-        let db = firebase.firestore()
-        let id_of_art = db.collection('art').where('upload_date', '==', upload_date)
-
-        id_of_art.get().then(function (results) {
-        if (results.empty) {
-          console.log('No documents found! in query')
-        } else {
-          // go through all results
-          results.forEach(function (doc) {
-            let data = doc.data()
-            let comments = data.comments
-            for (var i = 0; i < comments.length; i++)
-            {
-              //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
-              this.new_comments_field.push(comments[i])
-            }
-          })
-        }
-
-      })
-
-      }
-    },*/
-
         data() {
       return {
         snackbar: false,
@@ -187,38 +169,6 @@ import * as firebase from 'firebase'
       }
     },
 
-    computed: {
-      /*load_comments(art)
-      {
-        const artists_arts =  this.$store.getters.viewed_arts
-        const commented_art = artists_arts.filter(function (the_art) {
-          return the_art.upload_date == art.upload_date
-        } )
-        
-        let upload_date = parseInt(this.art.upload_date)
-        let db = firebase.firestore()
-        let id_of_art = db.collection('art').where('upload_date', '==', upload_date)
-
-        id_of_art.get().then(function (results) {
-        if (results.empty) {
-          console.log('No documents found! in query')
-        } else {
-          // go through all results
-          results.forEach(function (doc) {
-            let data = doc.data()
-            let comments = data.comments
-            for (var i = 0; i < comments.length; i++)
-            {
-              //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
-              this.new_comments_field.push(comments[i])
-            }
-          })
-        }
-
-      })
-
-      }*/
-    }
 
   }
 </script>
@@ -229,6 +179,20 @@ import * as firebase from 'firebase'
  .small-container {
    width: 80%;
  }
+
+ .t{
+    font-weight: bold
+  }
+  .b{
+    color:black;
+    word-wrap:break-word;
+    font-weight: normal;
+    font-size: 12pt;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: auto;
+    height:65px;
+
+  }
 </style>
 
 
