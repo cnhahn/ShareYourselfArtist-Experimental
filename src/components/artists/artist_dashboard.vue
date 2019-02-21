@@ -28,6 +28,22 @@
         </v-snackbar>
       </v-card>
     </div>
+
+    <v-tabs fixed-tabs>
+      <v-tab @click="display_my_art"
+      >
+        My Art
+      </v-tab>
+      <v-tab
+      >
+        Recommended
+      </v-tab>
+      <v-tab
+      >
+        Recently Responded
+      </v-tab>
+    </v-tabs>
+
     <v-layout row>
             <v-flex lg9 offset-lg1 mt-5>
               <v-card flat id="selectbox">
@@ -237,6 +253,11 @@
             })
         }
       },
+
+      display_my_art()
+      {
+        //console.log('my arts tab was selected')
+      }
     }
 }
 </script>
