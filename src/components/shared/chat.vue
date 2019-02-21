@@ -24,7 +24,6 @@
                   >
                     <v-list-tile-avatar :color="chat.color" >
                       <img :src="chat.avatar" :style="chat.displayAvatar">
-                      <span class="t" v-html="chat.initial">
                       </span>
                     </v-list-tile-avatar>
 
@@ -176,39 +175,38 @@ import EmojiPicker from './EmojiPicker.vue'
               }
             }
             let newAvatar;
-           
-            
+            let name;
 
-            
-              db.collection('users').doc(childData.userId).get()
-              .then(doc => {
-                console.log(doc.data().profileUrl);
-                newAvatar = doc.data().profileUrl;
-                if(newAvatar == undefined){
-                  chat = {
-                      key: childKey,
-                      color: childData.color,
-                      name: childData.user.name,
-                      message: childData.message,
-                      time: childData.timestamp,
-                      daystamp: childData.daystamp,
-                      initial: String(childData.user.name).charAt(0),
-                      displayAvatar: 'display:none'
-                    }
-                } else {
-                  chat = {
+            db.collection('users').doc(childData.userId).get()
+            .then(doc => {
+
+              newAvatar = doc.data().profileUrl;
+              name = doc.data().name;
+              if(newAvatar == undefined){
+                chat = {
                     key: childKey,
                     color: childData.color,
-                    avatar:newAvatar,
-                    name: childData.user.name,
+                    name: name,
                     message: childData.message,
                     time: childData.timestamp,
                     daystamp: childData.daystamp,
-                    initial: '',
-                    url:newAvatar,
-                    displayAvatar: 'display:block'
+                    initial: String(name).charAt(0),
+                    displayAvatar: 'display:none'
                   }
+              } else {
+                chat = {
+                  key: childKey,
+                  color: childData.color,
+                  avatar:newAvatar,
+                  name: name,
+                  message: childData.message,
+                  time: childData.timestamp,
+                  daystamp: childData.daystamp,
+                  initial: String(name).charAt(0),
+                  url:newAvatar,
+                  displayAvatar: 'display:block'
                 }
+              }
                 
                 chat_items.push(chat);
               })

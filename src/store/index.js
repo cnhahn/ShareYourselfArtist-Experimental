@@ -1804,9 +1804,7 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log("Error of fetch all submissions")
           console.log('Error getting submissions: ', error)
-
         })
-
     },
     
     fetch_replied_submissions ({ commit, getters }) {
