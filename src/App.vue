@@ -283,15 +283,17 @@
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
-              <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
-                <v-flex xs2>
-                  <v-avatar>
+              <v-layout  style="cursor: pointer">
+
+                <!-- Profile Picture Icon -->
+                <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
+                  <v-avatar >
                     <img style="position:absolute; left:150px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
-
-               <v-flex xs10 ml-2>
+                <!-- Title and Artist Name  -->
+               <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index-1)">
                   <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
                   <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
                 </v-flex> 
@@ -405,8 +407,16 @@ export default {
       screen_breakpoint_2: false,
       sideNav: false,
       items: this.$store.getters.top_12_recent_art,
-      top_12_recent_art: this.$store.getters.top_12_recent_art
+      top_12_recent_art: this.$store.getters.top_12_recent_art,
+      art_selected_url: null
 /////////////////THIS IS FOR TESTING ONLY
+    }
+  },
+  watch: {
+    art_selected_url: function(val) {
+      console.log("watching art_selected_url change", val);
+      window.location.reload()
+      // this.reviewList__unread_reviews()
     }
   },
 computed:{
@@ -500,6 +510,33 @@ artist_instagram() {
   }
   },
   methods: {
+    clicked_art(art_piece) {
+      console.log("The art piece being passed in is ", art_piece)
+      let art_unique_timestamp = art_piece.upload_date
+      this.$store.commit('set_clicked_art', art_unique_timestamp)
+      localStorage.setItem('clicked_art', art_unique_timestamp)
+      const arts= this.top_12_recent_art
+      console.log('art_unique_timestamp', art_unique_timestamp)
+      for (var i=0; i < arts.length; i++) {
+        if (arts[i].art.url === art_piece.url) {
+          console.log('art in loop',arts[i])
+          localStorage.setItem('art_title',arts[i].art.art_title)
+          localStorage.setItem('artist_name',arts[i].art.artist_name)
+          localStorage.setItem('description',arts[i].art.description)
+          this.$store.state.signed_in_user.instagram
+          localStorage.setItem('url',arts[i].art.url)
+          localStorage.setItem('categories', arts[i].art.categories)
+          localStorage.setItem('upload_date', arts[i].art.upload_date)
+          this.$store.commit('set_categories', arts[i].art.categories)
+          console.log('art_title',localStorage.getItem('art_title'))
+          break
+        }
+      }
+      this.art_selected_url = localStorage.getItem('url')
+      this.$router.push({
+        name: 'art'
+      })
+    },
   onResize() {
     this.screen_breakpoint = window.innerWidth > 1200
     this.screen_breakpoint_2 = window.innerWidth > 525
