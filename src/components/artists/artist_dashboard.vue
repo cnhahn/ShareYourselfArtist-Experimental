@@ -56,7 +56,7 @@
             </v-flex>
           </v-layout>
     <v-layout row wrap mb-5>
-        <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,idx in arts" :key='art.id'>
+        <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in arts" :key='art.id'>
           <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
           </v-card-media>
@@ -80,7 +80,7 @@
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
 
-            <v-btn flat @click="dialog = true" color="primary">Delete</v-btn>
+            <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
 
             <div class="text-xs-center">
               <v-dialog
@@ -104,7 +104,7 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="primary" @click="delete_art(idx,art)"> Delete </v-btn>
+                  <v-btn color="primary" @click="delete_art()"> Delete </v-btn>
                   <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
                 </v-card-actions>
 
@@ -135,6 +135,8 @@
       return {
         snackbar: true,
         dialog: false,
+        currentArtToDelete : null,
+        currentArtIndex : null,
         y: 'top',
         x: null,
         mode: '',
@@ -171,7 +173,7 @@
         let arti = 0
         var removed_deleted_art = [];
         for (arti = 0 ; arti < arts.length; arti++){
-          if(arts[arti].delete == false){
+          if(!arts[arti].delete){
             removed_deleted_art.push(arts[arti])
           }
         }
@@ -209,8 +211,12 @@
           }
         }
       },
-      
-      delete_art(idx,art_passed_in){
+      set_art_to_delete(delete_art,idx){
+        this.dialog = true
+        this.currentArtToDelete = delete_art
+        this.currentArtIndex = idx
+      },
+      delete_art(){
         // Summary of this function
         // The way the list appears is opposite of the way it's stored in the array
         // Aka lowest image on the list is stored at index 0.
@@ -218,7 +224,10 @@
         // So, we get index of picture we want to delete, substract it from the length of the array, and find the element 
         // in the array and delete it. 
         // Also had to implement vuetify components v-card, v-card-actions and v-dialogue
-        let art_to_be_deleted = this.arts[this.arts.length-idx-1]
+        // let art_to_be_deleted = this.arts[this.arts.length-idx-1]
+        console.log("art is  : " , this.currentArtToDelete, "idx is ", this.currentArtIndex, " length of array is " , this.arts.length)
+        let art_to_be_deleted = this.arts[this.currentArtIndex]
+        console.log("art to be deleted is " , art_to_be_deleted)
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
         this.dialog=false
       },
