@@ -17,6 +17,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     art_uploaded: null,
+    viewed_art_image_info : [],
     top_12_recent_art: [],
     viewed_artist_data: {},
     localStorage,
@@ -209,6 +210,10 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_viewed_art_image_info(state,payload){
+      state.viewed_art_image_info = [],
+      state.viewed_art_image_info = payload
+    },
     // Sign user out by setting user element to null
     set_user_to_null(state){
       state.user = null 

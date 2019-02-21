@@ -2,11 +2,11 @@
   <v-container mt-3>
     <v-layout row wrap>
       <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
-        <img :src="this.url" alt="" width="100%">
+        <img :src="this.$store.state.viewed_art_image_info.url" alt="" width="100%">
       </v-flex>
       <v-flex lg4 md6 sm12 xs12 ml-2 mr-2>
-        <h2>{{this.art_title}}</h2>
-        <p>{{this.description}}</p>
+        <h2>{{this.$store.state.viewed_art_image_info.art_title}}</h2>
+        <p>{{this.$store.state.viewed_art_image_info.description}}</p>
         <!-- v-select for new categories to be added -->
           <v-card id="selectbox" style="display: block;">
                   <v-container
@@ -34,7 +34,7 @@
         <div class="buttons">
           <v-btn depressed small dark color="black" @click="back">Back</v-btn>
         </div>
-        <v-btn depressed small color="primary" id="addbtn" @click="updateTags(upload_date, categories)">Add Categories</v-btn>
+        <v-btn depressed small color="primary" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">Add Categories</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -42,32 +42,45 @@
 </template>
  <script>
   export default {
-        data() {
+    data() {
       return {
-          url: localStorage.getItem('url'),
-          art_title: localStorage.getItem('art_title'),
-          description: localStorage.getItem('description'),
-          upload_date: localStorage.getItem('upload_date'),
-          categories: [],
+        categories: [],
+        art_title: '',
+        art_url: '',
+        art_description: '',
           //this.$store.getters.categories.filter(function(category){
         //   return category != false
         // }),
-// TODO: update tags with actual values for production
-          items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
-          value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
-    }
-        },
-
-         mounted: function() {
-      if (this.$store.getters.categories == undefined){
-           this.categories = []
-         }else{
-           this.categories = this.$store.getters.categories.filter(function(category){
-              return category != false
-          })
-         }
-          console.log("this.categories",this.categories)
+        // TODO: update tags with actual values for production
+        items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        }
     },
+
+    mounted: function() {
+      console.log("Entered mounted")
+      if (this.$store.getters.categories == undefined){
+            this.categories = []
+      }else{
+        this.categories = this.$store.getters.categories.filter(function(category){
+          return category != false
+        })
+      }
+      // this.art_title = this.$store.state.viewed_art_image_info.art.art_title,
+      // this.art_url = this.$store.state.viewed_art_image_info.art.url,
+      // this.art_description = this.$store.state.viewed_art_image_info.art.description
+      this.art_title = this.$store.state.viewed_art_image_info.art_title,
+      this.art_url = this.$store.state.viewed_art_image_info.url,
+      this.art_description = this.$store.state.viewed_art_image_info.description
+      
+    },
+  watch: {
+    art_title: function(val) {
+      console.log("watching art title change", val);
+      // this.reviewList__unread_reviews()
+    }
+  },
+
     methods:{
       printCategories(){
         console.log(localStorage.getItem('categories'))

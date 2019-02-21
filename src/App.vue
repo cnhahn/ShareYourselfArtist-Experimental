@@ -415,7 +415,6 @@ export default {
   watch: {
     art_selected_url: function(val) {
       console.log("watching art_selected_url change", val);
-      window.location.reload()
       // this.reviewList__unread_reviews()
     }
   },
@@ -519,19 +518,19 @@ artist_instagram() {
       console.log('art_unique_timestamp', art_unique_timestamp)
       for (var i=0; i < arts.length; i++) {
         if (arts[i].art.url === art_piece.url) {
-          console.log('art in loop',arts[i])
-          localStorage.setItem('art_title',arts[i].art.art_title)
-          localStorage.setItem('artist_name',arts[i].art.artist_name)
-          localStorage.setItem('description',arts[i].art.description)
-          this.$store.state.signed_in_user.instagram
-          localStorage.setItem('url',arts[i].art.url)
-          localStorage.setItem('categories', arts[i].art.categories)
-          localStorage.setItem('upload_date', arts[i].art.upload_date)
-          this.$store.commit('set_categories', arts[i].art.categories)
-          console.log('art_title',localStorage.getItem('art_title'))
-          break
+           console.log('art in loop',arts[i])
+           localStorage.setItem('art_title',arts[i].art_title)
+           localStorage.setItem('description',arts[i].description)
+           this.$store.state.signed_in_user.instagram
+           localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('upload_date', arts[i].upload_date)
+           console.log("About to commit art info array " , arts[i].art)
+           this.$store.commit('set_viewed_art_image_info' , arts[i].art)
+           this.$store.commit('set_categories', arts[i].categories)
+           break
         }
       }
+      console.log("Error before this line")
       this.art_selected_url = localStorage.getItem('url')
       this.$router.push({
         name: 'art'

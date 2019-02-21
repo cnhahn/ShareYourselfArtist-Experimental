@@ -77,7 +77,7 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
             <v-spacer></v-spacer>
 
             <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
@@ -178,7 +178,7 @@
           }
         }
 
-        console.log('revmoed delteed art', removed_deleted_art)
+        console.log('remove deleted art', removed_deleted_art)
 
         return removed_deleted_art;
       },
@@ -199,17 +199,19 @@
            art = arts[i]
            console.log('art in loop',arts[i].art_title)
            localStorage.setItem('art_title',arts[i].art_title)
-           localStorage.setItem('artist_name',arts[i].artist_name)
            localStorage.setItem('description',arts[i].description)
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
-           localStorage.setItem('categories', arts[i].categories)
            localStorage.setItem('upload_date', arts[i].upload_date)
+           this.$store.commit('set_viewed_art_image_info' , arts[i] )
            this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))
            break
           }
         }
+        this.$router.push({
+          name: 'art'
+        })
       },
       set_art_to_delete(delete_art,idx){
         this.dialog = true
