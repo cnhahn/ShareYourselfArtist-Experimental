@@ -56,7 +56,7 @@
             </v-flex>
           </v-layout>
     <v-layout row wrap mb-5>
-        <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
+        <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,idx in arts" :key='art.id'>
           <v-card mt-3>
           <v-card-media img :src="art.url" height="450px">
           </v-card-media>
@@ -79,14 +79,43 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
-            <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
-            <!-- <v-dialog v-model="dialog" width="500">
-            <v-btn flat slot="activation" color="primary">Delete</v-btn>
-            </v-dialog> -->
+
+            <v-btn flat @click="dialog = true" color="primary">Delete</v-btn>
+
+            <div class="text-xs-center">
+              <v-dialog
+                v-model="dialog"
+                width="500"
+              >
+
+              <v-card>
+                <v-card-title
+                  class="headline grey lighten-2"
+                  primary-title
+                >
+                  Deleting Message
+                </v-card-title>
+
+                <v-card-text>
+                  Are you sure you want to delete?
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click="delete_art(idx,art)"> Delete </v-btn>
+                  <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
+                </v-card-actions>
+
+              </v-card>
+
+              </v-dialog>
+            </div>
+
             <v-spacer></v-spacer>
-            <v-btn flat  color="primary"
-            @click="submit_art(art)"
-            >Submit this piece</v-btn>
+            <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
+
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -105,6 +134,7 @@
     data() {
       return {
         snackbar: true,
+        dialog: false,
         y: 'top',
         x: null,
         mode: '',
@@ -122,7 +152,7 @@
 
     computed: {
       arts() {
-        const arts = this.$store.getters.allArts;
+        let arts = this.$store.getters.allArts;
 
         function compare(a, b) {
           const upload_date1 = a.upload_date
@@ -180,9 +210,17 @@
         }
       },
       
-      delete_art(art_to_be_deleted){
-        console.log("We are here")
+      delete_art(idx,art_passed_in){
+        // Summary of this function
+        // The way the list appears is opposite of the way it's stored in the array
+        // Aka lowest image on the list is stored at index 0.
+        // Thus, clicking delete on lowest image at index 0 deletes object at index 0, which is the top image on the dashboard.
+        // So, we get index of picture we want to delete, substract it from the length of the array, and find the element 
+        // in the array and delete it. 
+        // Also had to implement vuetify components v-card, v-card-actions and v-dialogue
+        let art_to_be_deleted = this.arts[this.arts.length-idx-1]
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+        this.dialog=false
       },
 
       filterCategories(filterCategories, artCategories, def, art) {
