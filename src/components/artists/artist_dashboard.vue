@@ -29,20 +29,45 @@
       </v-card>
     </div>
 
-    <v-tabs fixed-tabs>
+    <v-tabs fixed-tabs
+      v-model="tabs"
+    >
       <v-tab @click="display_my_art"
       >
         My Art
       </v-tab>
-      <v-tab
+      <v-tab @click="display_recommended"
       >
         Recommended
       </v-tab>
-      <v-tab
+      <v-tab @click="display_all_responded"
       >
         Recently Responded
       </v-tab>
     </v-tabs>
+
+    <v-tabs-items v-model="tabs">
+        <v-tab-item
+          v-for="n in 3"
+          :key="n"
+        >
+          
+
+
+          <v-card>
+            <v-card-text v-if="display_rec">
+              Recommended Placeholder
+            </v-card-text>
+          </v-card>
+          <v-card>
+            <v-card-text v-if="display_all_resp">
+              All Responded Placeholder
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+
+    <div v-if="display_art">
 
     <v-layout row>
             <v-flex lg9 offset-lg1 mt-5>
@@ -107,6 +132,9 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    </div>
+
   </v-container>
 </template>
 
@@ -117,6 +145,10 @@
     /*
     Real-time data(art) fetching from the firestore database.
      */
+
+    mounted: function () {
+      this.display_my_art()
+    },
 
     data() {
       return {
@@ -133,6 +165,11 @@
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+
+        tabs: null,
+        display_art: false,
+        display_rec: false,
+        display_all_resp: false
       }
     },
 
@@ -257,7 +294,24 @@
       display_my_art()
       {
         //console.log('my arts tab was selected')
+        //console.log(this.tabs)
+        this.display_art = true
+        this.display_rec = false
+        this.display_all_resp = false
+      },
+      display_recommended()
+      {
+        this.display_art = false
+        this.display_rec = true
+        this.display_all_resp = false
+      },
+      display_all_responded()
+      {
+        this.display_art = false
+        this.display_rec = false
+        this.display_all_resp = true
       }
+
     }
 }
 </script>
