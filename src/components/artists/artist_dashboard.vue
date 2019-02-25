@@ -32,44 +32,107 @@
     <v-tabs fixed-tabs
       v-model="tabs"
     >
-      <v-tab @click="display_my_art"
+      <v-tab
       >
         My Art
       </v-tab>
-      <v-tab @click="display_recommended"
+      <v-tab
       >
         Recommended
       </v-tab>
-      <v-tab @click="display_all_responded"
+      <v-tab
       >
         Recently Responded
       </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tabs">
-        <v-tab-item
-          v-for="n in 3"
-          :key="n"
-        >
-          
 
+        <v-tab-item>
+          <div>
 
+          <v-layout row>
+            <v-flex lg9 offset-lg1 mt-5>
+              <v-card flat id="selectbox">
+                  <v-container
+                    fluid
+                  >
+                    <v-layout xs12 lg10 offset-lg3 ml-5
+                      align-center
+                      wrap
+                    >
+                        <v-select
+                          :items="items"
+                          attach
+                          chips
+                          name='categories'
+                          id='categories'
+                          label='categories'
+                          v-model='categories'
+                          required
+                          multiple
+                          v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
+                        ></v-select>
+                    </v-layout>
+                  </v-container>
+                </v-card>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap mb-5>
+              <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
+                <v-card mt-3>
+                <v-card-media img :src="art.url" height="450px">
+                </v-card-media>
+                <v-card-title primary-title>
+                  <div>
+                    <h3 class="headline mb-0">{{art.art_title}}</h3>
+                    <div>
+                      <v-chip
+                        v-for="(tag, index) in art.categories"
+                        :key='tag.id'
+                        v-model = 'art.categories[index]'
+                        class="display_chips"
+                        close
+                        @input="removeChip(art.upload_date, art.categories)"
+                      >
+                        {{art.categories[index]}} </v-chip>
+                    </div>
+                  </div>
+                </v-card-title>
+                <v-card-actions>
+                  <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat  color="primary"
+                  @click="submit_art(art)"
+                  >Submit this piece</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-flex>
+          </v-layout>
+
+          </div>
+        </v-tab-item>
+
+          <v-tab-item>
           <v-card>
-            <v-card-text v-if="display_rec">
+            <v-card-text>
               Recommended Placeholder
             </v-card-text>
           </v-card>
+          </v-tab-item>
+
+          <v-tab-item>
           <v-card>
-            <v-card-text v-if="display_all_resp">
+            <v-card-text>
               All Responded Placeholder
             </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
 
-    <div v-if="display_art">
-
-    <v-layout row>
+    <!--<v-layout row>
             <v-flex lg9 offset-lg1 mt-5>
               <v-card flat id="selectbox">
                   <v-container
@@ -120,10 +183,7 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
             <v-spacer></v-spacer>
-            <!-- <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn> -->
-            <!-- <v-dialog v-model="dialog" width="500">
-            <v-btn flat slot="activation" color="primary">Delete</v-btn>
-            </v-dialog> -->
+            <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn flat  color="primary"
             @click="submit_art(art)"
@@ -131,9 +191,7 @@
           </v-card-actions>
         </v-card>
       </v-flex>
-    </v-layout>
-
-    </div>
+    </v-layout>-->
 
   </v-container>
 </template>
