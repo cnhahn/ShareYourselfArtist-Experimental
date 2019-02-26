@@ -32,11 +32,11 @@
           <v-list-tile-content flex style="font-size:14px;">
 
 
-            <!--Adds artist's name to sidebar-->
+     
 
             <!--Adds link to artist's instagram to sidebar-->
             <div v-if = "check_if_artist_has_entered_instagram">
-               <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
+               <v-list-tile-title style="margin-left: 10px;">{{this.$store.getters.signed_in_user.name}}</v-list-tile-title>
 
             </div>
           </v-list-tile-content>
