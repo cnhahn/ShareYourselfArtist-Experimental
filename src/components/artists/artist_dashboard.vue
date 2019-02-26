@@ -28,111 +28,7 @@
         </v-snackbar>
       </v-card>
     </div>
-
-    <v-tabs fixed-tabs
-      v-model="tabs"
-    >
-      <v-tab
-      >
-        My Art
-      </v-tab>
-      <v-tab
-      >
-        Recommended
-      </v-tab>
-      <v-tab
-      >
-        Recently Responded
-      </v-tab>
-    </v-tabs>
-
-    <v-tabs-items v-model="tabs">
-
-        <v-tab-item>
-          <div>
-
-          <v-layout row>
-            <v-flex lg9 offset-lg1 mt-5>
-              <v-card flat id="selectbox">
-                  <v-container
-                    fluid
-                  >
-                    <v-layout xs12 lg10 offset-lg3 ml-5
-                      align-center
-                      wrap
-                    >
-                        <v-select
-                          :items="items"
-                          attach
-                          chips
-                          name='categories'
-                          id='categories'
-                          label='categories'
-                          v-model='categories'
-                          required
-                          multiple
-                          v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
-                        ></v-select>
-                    </v-layout>
-                  </v-container>
-                </v-card>
-            </v-flex>
-          </v-layout>
-          <v-layout row wrap mb-5>
-              <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in arts" :key='art.id'>
-                <v-card mt-3>
-                <v-card-media img :src="art.url" height="450px">
-                </v-card-media>
-                <v-card-title primary-title>
-                  <div>
-                    <h3 class="headline mb-0">{{art.art_title}}</h3>
-                    <div>
-                      <v-chip
-                        v-for="(tag, index) in art.categories"
-                        :key='tag.id'
-                        v-model = 'art.categories[index]'
-                        class="display_chips"
-                        close
-                        @input="removeChip(art.upload_date, art.categories)"
-                      >
-                        {{art.categories[index]}} </v-chip>
-                    </div>
-                  </div>
-                </v-card-title>
-                <v-card-actions>
-                  <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn flat  color="primary"
-                  @click="submit_art(art)"
-                  >Submit this piece</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </v-layout>
-
-          </div>
-        </v-tab-item>
-
-          <v-tab-item>
-          <v-card>
-            <v-card-text>
-              Recommended Placeholder
-            </v-card-text>
-          </v-card>
-          </v-tab-item>
-
-          <v-tab-item>
-          <v-card>
-            <v-card-text>
-              All Responded Placeholder
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-
-    <!--<v-layout row>
+    <v-layout row>
             <v-flex lg9 offset-lg1 mt-5>
               <v-card flat id="selectbox">
                   <v-container
@@ -183,9 +79,6 @@
           <v-card-actions>
             <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
             <v-spacer></v-spacer>
-<<<<<<< HEAD
-            <v-btn flat @click="delete_art(art)" color="primary">Delete</v-btn>
-=======
 
             <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
 
@@ -220,14 +113,43 @@
               </v-dialog>
             </div>
 
->>>>>>> sya-dev-branch
             <v-spacer></v-spacer>
             <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
 
           </v-card-actions>
         </v-card>
       </v-flex>
-    </v-layout>-->
+    </v-layout>
+
+    <v-layout row wrap mb-5>
+      <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art in def" :key='art.id'>
+        <v-card mt-3>
+          <v-card-media img :src="art.url" height="450px">
+          </v-card-media>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline mb-0">{{art.art_title}}</h3>
+              <div>
+                <v-chip
+                  v-for="(tag, index) in art.categories"
+                  :key='tag.id'
+                  v-model = 'art.categories[index]'
+
+                >
+                  {{art.categories[index]}} </v-chip>
+              </div>
+            </div>
+          </v-card-title>
+          <v-card-actions>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn flat  color="primary"
+            @click="submit_art(art)"
+            >Submit this piece</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
   </v-container>
 </template>
@@ -239,10 +161,6 @@
     /*
     Real-time data(art) fetching from the firestore database.
      */
-
-    mounted: function () {
-      this.display_my_art()
-    },
 
     data() {
       return {
@@ -262,11 +180,6 @@
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
-
-        tabs: null,
-        display_art: false,
-        display_rec: false,
-        display_all_resp: false
       }
     },
 
@@ -368,7 +281,7 @@
         for(let i = 0; i<arts.length; i++){
           for (let j = 0; j<categories.length; j++){
             if (arts[i].categories != undefined) {
-              if (arts[i].categories.includes(categories[j]))
+              if (arts[i].categories.includes(categories[j]) && !def.includes(arts[i]))
               {
                 def.push(arts[i])
               }
@@ -404,28 +317,6 @@
             })
         }
       },
-
-      display_my_art()
-      {
-        //console.log('my arts tab was selected')
-        //console.log(this.tabs)
-        this.display_art = true
-        this.display_rec = false
-        this.display_all_resp = false
-      },
-      display_recommended()
-      {
-        this.display_art = false
-        this.display_rec = true
-        this.display_all_resp = false
-      },
-      display_all_responded()
-      {
-        this.display_art = false
-        this.display_rec = false
-        this.display_all_resp = true
-      }
-
     }
 }
 </script>
