@@ -17,6 +17,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     art_uploaded: null,
+    viewed_art_image_info : [],
     top_12_recent_art: [],
     viewed_artist_data: {},
     localStorage,
@@ -209,6 +210,10 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_viewed_art_image_info(state,payload){
+      state.viewed_art_image_info = [],
+      state.viewed_art_image_info = payload
+    },
     // Sign user out by setting user element to null
     set_user_to_null(state){
       state.user = null 
@@ -605,26 +610,6 @@ export const store = new Vuex.Store({
               console.log('Document Succesfully updated!')
             })
           }
-        })
-      })
-      .catch(function (error) {
-        console.log('error getting documents yas: ', error)
-      })
-    },
-    set_all_free_credits (){
-      //update all artists free credits to 2
-      let db = firebase.firestore()
-      let artists = db.collection('users').where('role', '==', 'artist')
-      .get()
-      .then(function (results) {
-        results.forEach(function (doc) {
-          let userId = doc.data().userId
-          db.collection('users').doc(userId).update({
-            'free_credits': '2'
-          })
-          .then(function () {
-            console.log('Document Succesfully updated!')
-          })
         })
       })
       .catch(function (error) {
@@ -1750,17 +1735,52 @@ export const store = new Vuex.Store({
         .where('businessId.userId', '==', getters.user.id)
         .where('replied', '==', false)
         .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            // doc.data() is never undefined for query doc snapshots
-            let docData = doc.data()
-            docData.docId = doc.id
+        // .then(function (querySnapshot) {
+        //   querySnapshot.forEach(function (doc) {
+        //     // doc.data() is never undefined for query doc snapshots
+        //     const promises = []
+        //     let docData = doc.data()
+        //     docData.docId = doc.id
 
-            console.log('doc.data: ' + docData.docId)
-            commit('set_submissions_for_this_business', docData)
+        //     console.log('doc.data: ' + docData.docId)
+        //     promises.push(doc.docData.docId)
+        //     // commit('set_submissions_for_this_business', docData)
+        //   })
+        //   commit('set_submissions_for_this_business', promises)
+        //   return Promise.all(promises)
+        // })
+        .then(function (querySnapshot) {
+          const promises = []
+          querySnapshot.forEach(function (doc){
+            console.log('docdoc: ', doc)
+            promises.push(doc)
           })
+          return Promise.all(promises) //returning promises sends the resolved results to 
+        })                             //to the next .then()
+        .then(function (data){
+          console.log(data)
+          let results = []
+          data.forEach(function(dataSnap){
+            console.log('data: ', dataSnap.data())
+            results.push(dataSnap.data())
+          })
+          return results
+        })
+        .then(function (ids){
+          console.log("arrays length:" + ids.length)
+          for(var i = 0; i<ids.length; i++){
+            // console.log('inside ids: ', ids[i])
+            
+            commit('set_submissions_for_this_business', ids[i])
+          }          
+        })
+        .then(function(reply){
+
+          // return response.send('Testing this with all submissions')
+          console.log('end of fetchSubmissions function')
         })
         .catch(function (error) {
+          console.log('Error with submissions: ', error)
         })
     },
     async fetch_all_Submissions ({ commit, getters }) {
@@ -1789,9 +1809,7 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log("Error of fetch all submissions")
           console.log('Error getting submissions: ', error)
-
         })
-
     },
     
     fetch_replied_submissions ({ commit, getters }) {
@@ -2475,6 +2493,7 @@ export const store = new Vuex.Store({
     },
     // should change this function!
     async sendMessageToFirebase ({ commit, getters }, payload) {
+     
       commit('set_send_chat_data', payload)
       var message = getters.sendChatDataMessage
       var role = getters.user_role
