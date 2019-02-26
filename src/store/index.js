@@ -2488,6 +2488,7 @@ export const store = new Vuex.Store({
     },
     // should change this function!
     async sendMessageToFirebase ({ commit, getters }, payload) {
+     
       commit('set_send_chat_data', payload)
       var message = getters.sendChatDataMessage
       var role = getters.user_role

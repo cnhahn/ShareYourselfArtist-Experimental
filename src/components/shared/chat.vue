@@ -35,7 +35,6 @@
                     <v-list-tile-text
                     class="date"
                     v-html="chat.time"
-                    name='time'
                     ></v-list-tile-text>
                     <!-- <v-list-tile-text class="date" v-html="chat.daystamp" name='date'></v-list-tile-text> -->
                   </v-list-tile>
@@ -160,26 +159,31 @@ import EmojiPicker from './EmojiPicker.vue'
             let childData = childSnapshot.val();
             let chat = null
 
-             if (!firstDate) {
-              maxDate = new Date(childData.daystamp);
-              firstDate = true;
-            } else {
-              indexDate = new Date(childData.daystamp);
-
-              if(maxDate < indexDate){
-                maxDate = indexDate;
-                let dateItem = {
-                   date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
-                };
-                chat_items.push(dateItem);
-              }
-            }
             let newAvatar;
             let name;
+            if(childData.userId != undefined){
+              db.collection('users').doc(childData.userId).get()
+              .then(doc => {
 
-            db.collection('users').doc(childData.userId).get()
-            .then(doc => {
+              if (!firstDate) {
+                maxDate = new Date(childData.daystamp);
+                let dateItem = {
+                    date : maxDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                  };
+                  chat_items.push(dateItem);
+                firstDate = true;
+              } else {
+                indexDate = new Date(childData.daystamp);
 
+                if(maxDate < indexDate){
+                  maxDate = indexDate;
+                  let dateItem = {
+                    date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                  };
+                  chat_items.push(dateItem);
+                  maxDate = indexDate;
+                }
+              }
               newAvatar = doc.data().profileUrl;
               name = doc.data().name;
               if(newAvatar == undefined){
@@ -212,15 +216,13 @@ import EmojiPicker from './EmojiPicker.vue'
               })
               .catch(error => {
                 console.log(error)
-                //response.send(error)
-              })
-              console.log(newAvatar);
-            
-            
-            
+              
+              }) 
+              itemProcessed++;
+            }
 
             
-            itemProcessed++;
+            
           });
 
           if (!newMessage) {
@@ -272,7 +274,7 @@ import EmojiPicker from './EmojiPicker.vue'
             url: '',
             color: color,
             attach_url:'',
-            userId: this.$store.state.user.id
+            userId:  this.$store.state.user.id
           })
       }
         this.clearInput();
@@ -280,9 +282,6 @@ import EmojiPicker from './EmojiPicker.vue'
       refreshContainer() {
         var container = document.getElementById("chat-container")
         container.scrollTop = container.scrollHeight;
-      },
-      getUserId() {
-        // return firebase.auth().currentUser.uid;
       },
       makeTimeStamp() {
         var d = new Date();
@@ -320,7 +319,7 @@ import EmojiPicker from './EmojiPicker.vue'
     created () {
       let db = firebase.firestore()
       db.collection("messages").where("chat_message", "==", true)
-    .onSnapshot(function(querySnapshot) {
+        .onSnapshot(function(querySnapshot) {
         let messages = [];
         querySnapshot.forEach(function(doc) {
             messages.push(doc.data().message);
@@ -332,14 +331,13 @@ import EmojiPicker from './EmojiPicker.vue'
 <style scoped>
   .date{
     font-size: 1.5ch;
-    color:#FF7D26;
+    color:black;
     opacity: 0.5;
     text-align:right;
   }
   .date-chat-item{
-    color:#FF7D26;
+    color:black;
     font-size: 2ch;
-    margin-left:40%;
     margin-top:5px;
     margin-bottom:5px;
     font-family: Arial, Helvetica, sans-serif;
