@@ -1804,9 +1804,7 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log("Error of fetch all submissions")
           console.log('Error getting submissions: ', error)
-
         })
-
     },
     
     fetch_replied_submissions ({ commit, getters }) {
@@ -2490,6 +2488,7 @@ export const store = new Vuex.Store({
     },
     // should change this function!
     async sendMessageToFirebase ({ commit, getters }, payload) {
+     
       commit('set_send_chat_data', payload)
       var message = getters.sendChatDataMessage
       var role = getters.user_role
