@@ -68,7 +68,7 @@
               >
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <img :src="image_url" height="150"></img>
+              <img :src="image_url" height="350"></img>
             </v-flex>
           </div>
           </v-layout> 
@@ -203,6 +203,24 @@
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.
           this.image_url = fileReader.result
+
+          // holds the uploaded image, used to get dimensions
+          var img = new Image()
+          // image loading is done asynchronously, so you have to wait for load event
+          // in other words, you have to wait for the image to load before using image
+          img.onload = function()
+          {
+            var width = img.width
+            var height = img.height
+            //console.log('image width: ', width)
+            //console.log('image height: ', height)
+
+            // resize the image proportionally if too large, keeping aspect ratio
+            var maxWidth = 1200
+            var maxHeight = 630
+          }
+          img.src = this.image_url
+
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
         })
         fileReader.readAsDataURL(files[0])
