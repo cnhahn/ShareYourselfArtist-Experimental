@@ -24,6 +24,7 @@ export const store = new Vuex.Store({
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    recently_responded_arts: [],
     comments: [],
     commenting_mode: false,
     sideNavItems: [
@@ -395,6 +396,9 @@ export const store = new Vuex.Store({
     setArts(state, payload) {
       state.arts.push(payload)
     },
+    set_recently_responded_arts (state, payload) {
+      state.recently_responded_arts.push(payload)
+    },
     set_comments(state, payload) {
       state.comments.push(payload)
     },
@@ -550,36 +554,40 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    retrieve_recently_responded_arts () {
+    retrieve_recently_responded_arts({ commit, dispatch, state }, payload) {
+      state.recently_responded_arts = []
       let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
       let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/recentlyRepliedSubmissions'
       console.log("In retrieve_recently_responded_arts")
       if (!('fetch' in window)) {
         console.log('Fetch API not found, try including the polyfill');
         return
-      }else{
+      } else {
         console.log("Aye works")
       }
-      fetch( proxyUrl +targetUrl)
-      .then(function (response) {
-        return response.json()
-      })
-      .then(function (myJson) {
-        // let jsonSize = myJson.length
-        // let i = 0
-        // console.log("jsonSize is " , jsonSize)
-        // for ( i = 0; i < jsonSize; i++) {
-        //   console.log("Entering for loop")
-        //   let object = myJson[i]
-        //   console.log("object is ", object)
-        // }
-        console.log(myJson.body)
-        let jsonSize = Object.keys(myJson.body).length
-        let i = 0
-        for(i = 0 ; i < jsonSize; i++){
-          console.log("Item is " , myJson.body[i])
-        }
-      })
+      fetch(proxyUrl + targetUrl)
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (myJson) {
+          // let jsonSize = myJson.length
+          // let i = 0
+          // console.log("jsonSize is " , jsonSize)
+          // for ( i = 0; i < jsonSize; i++) {
+          //   console.log("Entering for loop")
+          //   let object = myJson[i]
+          //   console.log("object is ", object)
+          // }
+          console.log(myJson.body)
+          let jsonSize = Object.keys(myJson.body).length
+          let i = 0
+          for (i = 0; i < jsonSize; i++) {
+            console.log("Item is ", myJson.body[i])
+            commit('set_recently_responded_arts', myJson.body[i])
+            
+          }
+          console.log('recently_responded_arts is ' , state.recently_responded_arts)
+        })
     },
     delete_art_piece({ commit, dispatch }, payload) {
       console.log("Entered delete art piece")
@@ -2923,6 +2931,9 @@ export const store = new Vuex.Store({
     //returns whether or not the art was updated
     get_art_uploaded(state) {
       return state.art_uploaded
+    },
+    get_recently_responded_arts(state) {
+      return state.recently_responded_arts
     }
   }
 })

@@ -55,6 +55,7 @@
     <v-tabs color="primary" light grow>
 
       <v-tab >  Dashboard </v-tab>
+           <v-spacer></v-spacer>
         <v-tab-item :value="dashboard-tab">
 
           <v-layout row wrap mb-5>
@@ -152,30 +153,46 @@
         </v-tab-item>
 
       <v-tab> Recommended Artists </v-tab>
+           <v-spacer></v-spacer>
         <v-tab-item>
           <v-card flat>
             <v-card-text> Recommended Artists </v-card-text>
           </v-card>
         </v-tab-item>
+        <v-spacer></v-spacer>
 
       <v-tab v-on:click="respondedArts()"> Responded Art Pieces </v-tab>
         <v-tab-item>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-card>
-                <v-list>
-                  <v-list-tile v-for="art in arts" :key = 'art.id'>
-                    <v-list-title-content>
-                      <v-list-title-title v-text="art.art_title"></v-list-title-title>
-                    </v-list-title-content>
-                    <v-list-title-avatar>
-                      <img : src = {{art.upload_date}}>
-                    </v-list-title-avatar>
-                  </v-list-tile>
-                </v-list>
-              </v-card>
-            </v-flex>
-          </v-layout>
+          <v-container justify-center>
+            <v-layout row >
+              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
+                <v-card>
+                  <v-list three-line >
+                    <template v-for="art in recently_responded_arts">
+
+                      <v-list-tile>
+                        <v-list-tile-avatar>
+                          <img  :src="art.url" >
+                        </v-list-tile-avatar>
+                        <v-list-title-content>
+                          <v-list-tile-title v-text="art.art_title"></v-list-tile-title>
+                          <v-list-sub-title v-text="art.description"></v-list-sub-title>
+                        </v-list-title-content>
+                      </v-list-tile>
+                      
+                      <v-list-tile>
+                        <v-list-title-content justify-end>
+                          <v-list-tile-title> Response By : {{art.business_name}} </v-list-tile-title>
+                          <v-list-sub-title v-text="art.response"></v-list-sub-title>                    
+                        </v-list-title-content>
+                      </v-list-tile>
+                      
+                    </template>
+                  </v-list>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
         </v-tab-item>
     </v-tabs>
   </v-container>
@@ -211,6 +228,11 @@
     },
 
     computed: {
+      recently_responded_arts(){
+        let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
+        console.log("Returned in computed recently responded is " , recently_responded_arts)
+        return recently_responded_arts
+      },
       arts() {
         let arts = this.$store.getters.allArts;
 
