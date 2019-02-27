@@ -199,6 +199,9 @@
           return
         }
 
+        // lets methods be used within fileReader load
+        var self = this
+
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.
@@ -210,14 +213,36 @@
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
           {
-            var width = img.width
+            console.log('image width: ', img.width)
+            console.log('image height: ', img.height)
+            // resize the image proportionally if too large, keeping aspect ratio
+            self.resizeImage(img.width, img.height, 1200, 630)
+
+            /*var width = img.width
             var height = img.height
-            //console.log('image width: ', width)
-            //console.log('image height: ', height)
+            console.log('image width: ', width)
+            console.log('image height: ', height)
 
             // resize the image proportionally if too large, keeping aspect ratio
             var maxWidth = 1200
             var maxHeight = 630
+            var ratio = 0
+
+            if (width > maxWidth)
+            {
+              ratio = maxWidth / width
+              height = height * ratio
+              width = width * ratio
+            }
+            if (height > maxHeight)
+            {
+              ratio = maxHeight / height
+              width = width * ratio
+              height = height * ratio
+            }
+
+            console.log('resized image width: ', width)
+            console.log('resized image height: ', height)*/
           }
           img.src = this.image_url
 
@@ -230,6 +255,26 @@
       },
         nextStepCallback(currentStep) {
         console.log("Next")
+      },
+      // resize the image proportionally if too large, keeping aspect ratio
+      resizeImage(width, height, maxWidth, maxHeight) {
+        var ratio = 0
+
+        if (width > maxWidth)
+        {
+          ratio = maxWidth / width
+          height = height * ratio
+          width = width * ratio
+        }
+        if (height > maxHeight)
+        {
+          ratio = maxHeight / height
+          width = width * ratio
+          height = height * ratio
+        }
+
+        console.log('resized image width: ', width)
+        console.log('resized image height: ', height)
       }
     }
   }
