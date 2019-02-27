@@ -32,12 +32,11 @@
           <v-list-tile-content flex style="font-size:14px;">
 
 
-            <!--Adds artist's name to sidebar-->
+     
 
             <!--Adds link to artist's instagram to sidebar-->
-            <div v-if = "check_if_artist_has_entered_instagram">
-               <v-list-tile-title style="margin-left: 10px;">{{this.artist_name}}</v-list-tile-title>
-
+            <div >
+               <v-list-tile-title style="margin-left: 10px;">{{this.$store.getters.signed_in_user.name}}</v-list-tile-title>
             </div>
           </v-list-tile-content>
         </v-list-tile>
@@ -283,15 +282,17 @@
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
-              <v-layout @click="go_to_viewed_artist_page(index)" style="cursor: pointer">
-                <v-flex xs2>
-                  <v-avatar>
+              <v-layout  style="cursor: pointer">
+
+                <!-- Profile Picture Icon -->
+                <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
+                  <v-avatar >
                     <img style="position:absolute; left:150px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
-
-               <v-flex xs10 ml-2>
+                <!-- Title and Artist Name  -->
+               <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index-1)">
                   <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
                   <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
                 </v-flex> 
@@ -405,8 +406,15 @@ export default {
       screen_breakpoint_2: false,
       sideNav: false,
       items: this.$store.getters.top_12_recent_art,
-      top_12_recent_art: this.$store.getters.top_12_recent_art
+      top_12_recent_art: this.$store.getters.top_12_recent_art,
+      art_selected_url: null
 /////////////////THIS IS FOR TESTING ONLY
+    }
+  },
+  watch: {
+    art_selected_url: function(val) {
+      console.log("watching art_selected_url change", val);
+      // this.reviewList__unread_reviews()
     }
   },
 computed:{
@@ -500,6 +508,33 @@ artist_instagram() {
   }
   },
   methods: {
+    clicked_art(art_piece) {
+      console.log("The art piece being passed in is ", art_piece)
+      let art_unique_timestamp = art_piece.upload_date
+      this.$store.commit('set_clicked_art', art_unique_timestamp)
+      localStorage.setItem('clicked_art', art_unique_timestamp)
+      const arts= this.top_12_recent_art
+      console.log('art_unique_timestamp', art_unique_timestamp)
+      for (var i=0; i < arts.length; i++) {
+        if (arts[i].art.url === art_piece.url) {
+           console.log('art in loop',arts[i])
+           localStorage.setItem('art_title',arts[i].art_title)
+           localStorage.setItem('description',arts[i].description)
+           this.$store.state.signed_in_user.instagram
+           localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('upload_date', arts[i].upload_date)
+           console.log("About to commit art info array " , arts[i].art)
+           this.$store.commit('set_viewed_art_image_info' , arts[i].art)
+           this.$store.commit('set_categories', arts[i].categories)
+           break
+        }
+      }
+      console.log("Error before this line")
+      this.art_selected_url = localStorage.getItem('url')
+      this.$router.push({
+        name: 'art'
+      })
+    },
   onResize() {
     this.screen_breakpoint = window.innerWidth > 1200
     this.screen_breakpoint_2 = window.innerWidth > 525

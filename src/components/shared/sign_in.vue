@@ -373,7 +373,7 @@
       reset_password() {
         this.$store.dispatch('reset_password', 'ddavisscott@gmail.com')
         this.dialog2 = false
-        alert('If the email that you entered is associated with a customer account in our records, you will receive an email from us with instructions for reseting your password. If you do nor receive an email, please chec')
+        alert('If the email that you entered is associated with a customer account in our records, you will receive an email from us with instructions for reseting your password. If you do nor receive an email, please check')
       },
       onSignin() {
         this.dialog = true
