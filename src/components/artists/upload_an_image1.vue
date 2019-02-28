@@ -1,122 +1,100 @@
 <template>
   <!--Styled by Jin. No modification on code.-->
   <v-container fill-height>
-    <v-layout align-center>
-      <v-flex>
 
-      <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :right="x === 'right'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'"
-      >
-      {{ text }}
-      <v-btn
-        color="pink"
-        flat
-        @click="snackbar = false"
-      >
-        Close
-      </v-btn>
-      </v-snackbar>
+    <v-layout align-center> 
+        <v-snackbar
+        v-model="snackbar"
+        :bottom="y === 'bottom'"
+        :left="x === 'left'"
+        :multi-line="mode === 'multi-line'"
+        :right="x === 'right'"
+        :timeout="timeout"
+        :top="y === 'top'"
+        :vertical="mode === 'vertical'"
+        >
+          {{ text }}
+          <v-btn color="pink" flat @click="snackbar = false"> Close </v-btn>
+        </v-snackbar>
+    </v-layout>
 
-        <h3 class="display-3">Great, let's get started. </h3>
-        <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
-        <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it.</span><br>
-        <span class="subheading">You'll be able to chat with them, and share any information you think they might need for their coverage.</span>
-        <v-divider class="my-3"></v-divider>
-        <div class="display-1">Let's Upload your art piece!</div>
-        <div class="buttons-123">
-          <v-btn
-            class="mx-0"
-            color="primary"
-            depressed
-            large
-            router to="/upload_an_image1"
-            @click="onPickFile"
-          >
-            Upload your art
-          </v-btn>
-          <input type="file"
-                style="display:none"
-                ref="fileInput"
-                accept="image/*"
-                @change="onFilePicked">
-          <v-btn
-            class="mx-0"
-            depressed
-            large
-            color="primary"
-            router to="/upload_an_image"
-            :disabled="image_is_not_loaded"
-            @click="getUserId">Next
+    <v-layout align-center justify-center>
+      <v-flex xs12 >
+        <div class="display-4 pa-4 "> Great, let's get started</div>
 
-          </v-btn>
-        </div> 
-                 
-          <v-layout row="">
-            <div class="preview-image">
-            <v-flex xs12="" sm6="">
-              <v-alert
-                v-if="image_size_accepted == false"
-                :value="true"
-                type="error"
-              >
+        <div class="ml-1 ">
+
+          <div class="display-3 pl-4 pr-4"> Blogs and labels typically respond within hours.</div>
+          <div class ="pa-4">
+            <div class="headline">If a blog decides that they like your piece, they'll let you know when and how they plan to share it.</div>
+            <div class="headline">You'll be able to chat with them and share any information you think they might need for their coverage.</div>
+          </div>
+
+          <div class="pa-4">
+            <div class="display-1">Let's upload your art piece!</div>
+            <div class="buttons-123">
+              <v-btn class="mx-0" color="primary" depressed large router to="/upload_an_image1" @click="onPickFile"> Upload your art </v-btn>
+              <input class ="mx-1" type="file" style="display:none" ref="fileInput" accept="image/*" @change="onFilePicked">
+              <v-btn class="mx-0" depressed large color="primary" router to="/upload_an_image" :disabled="image_is_not_loaded" @click="getUserId">
+                Next 
+              </v-btn>
+            </div> 
+          </div>
+
+          <div class="preview-image pl-4">
+            <v-flex xs12>
+              <v-alert v-if="image_size_accepted == false" :value="true" type="error">
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <img :src="image_url" height="150"></img>
+              <img :src="image_url" height="150">
             </v-flex>
           </div>
-          </v-layout> 
-                   
-        <v-layout>
-      <div class="text-xs-center" id="tour">
-        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
-          <template slot-scope="tour">
-            <transition name="fade">
-              <v-step
-                v-if="tour.currentStep === index"
-                v-for="(step, index) of tour.steps"
-                :key="index"
-                :step="step"
-                :previous-step="tour.previousStep"
-                :next-step="tour.nextStep"
-                :stop="tour.stop"
-                :is-first="tour.isFirst"
-                :is-last="tour.isLast"
-                :labels="tour.labels"
-              >
-              <template v-if="tour.currentStep === 0">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
-                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
-                  </div>
-                </template>
-                <template v-if="tour.currentStep === 1">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
-                    <v-btn type="button" @click="tour.nextStep" depressed color="primary">Next Step</v-btn>
-                  </div>
-                </template>
-                <template v-if="tour.currentStep === 2">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.stop" depressed color="primary">
-                      Close
-                    </v-btn>
-                  </div>
-                </template>
-              </v-step>
-            </transition>
-          </template>
-        </v-tour>
-      </div>
-    </v-layout>
+
+          <div class="text-xs-center pa-4">
+            <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+              <template slot-scope="tour">
+                <transition name="fade">
+                  <v-step
+                    v-if="tour.currentStep === index"
+                    v-for="(step, index) of tour.steps"
+                    :key="index"
+                    :step="step"
+                    :previous-step="tour.previousStep"
+                    :next-step="tour.nextStep"
+                    :stop="tour.stop"
+                    :is-first="tour.isFirst"
+                    :is-last="tour.isLast"
+                    :labels="tour.labels"
+                  >
+                    <template v-if="tour.currentStep === 0">
+                      <div slot="actions">
+                        <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                        <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                      </div>
+                    </template>
+                    <template v-if="tour.currentStep === 1">
+                      <div slot="actions">
+                        <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                        <v-btn type="button" @click="tour.nextStep" depressed color="primary">Next Step</v-btn>
+                      </div>
+                    </template>
+                    <template v-if="tour.currentStep === 2">
+                      <div slot="actions">
+                        <v-btn type="button" @click="tour.stop" depressed color="primary">
+                          Close
+                        </v-btn>
+                      </div>
+                    </template>
+                  </v-step>
+                </transition>
+              </template>
+            </v-tour>
+          </div>
+
+        </div>
       </v-flex>
     </v-layout>
+        
   </v-container>
 </template>
 
@@ -219,40 +197,4 @@
 
 
 <style>
-  .iconRow {
-    font-size: 200px;
-    color: #FF7D27;
-  }
-
-  .display-1 {
-    margin-top: 5px;
-    margin-bottom: 10px;
-    margin-left: 300px;
-  }
-
-  .display-2 {
-    margin-top: 10px;
-    margin-left: 300px;
-  }
-
-  .display-3{
-    margin-left: 300px;
-  }
-
-  .subheading{
-    margin-left: 300px;
-  }
-
-  .buttons-123{
-    margin-left: 300px;
-  }
-
-  .preview-image{
-    margin-left: 300px;
-  }
-
-  #tour {
-    margin-top: 50px;
-    margin-left: 300px;
-  }
 </style>

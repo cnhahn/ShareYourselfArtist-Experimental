@@ -1,50 +1,52 @@
 <template>
-  <v-container>
-    <div class="text-xs-center" offset-sm4 id="tour">
-        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
-          <template slot-scope="tour">
-            <transition name="fade">
-              <v-step
-                v-if="tour.currentStep === index"
-                v-for="(step, index) of tour.steps"
-                :key="index"
-                :step="step"
-                :previous-step="tour.previousStep"
-                :next-step="tour.nextStep"
-                :stop="tour.stop"
-                :is-first="tour.isFirst"
-                :is-last="tour.isLast"
-                :labels="tour.labels"
-              >
-              <template v-if="tour.currentStep === 2">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
-                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
-                  </div>
+  <v-container fill-height>
+    <v-layout row align-center justify-center>
+      <v-flex xs12 > 
+
+        <v-flex xs12 sm6>
+          <v-layout row justify-center>
+            <div class=" pb-4 text-xs-center display-2"> Art Details </div>
+            <div class="text-xs-center" offset-sm4 id="tour">
+              <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+                <template slot-scope="tour">
+                  <transition name="fade">
+                    <v-step
+                      v-if="tour.currentStep === index"
+                      v-for="(step, index) of tour.steps"
+                      :key="index"
+                      :step="step"
+                      :previous-step="tour.previousStep"
+                      :next-step="tour.nextStep"
+                      :stop="tour.stop"
+                      :is-first="tour.isFirst"
+                      :is-last="tour.isLast"
+                      :labels="tour.labels"
+                    >
+                      <template v-if="tour.currentStep === 2">
+                        <div slot="actions">
+                          <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                          <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                        </div>
+                      </template>
+                      <template v-if="tour.currentStep === 3">
+                        <div slot="actions">
+                          <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                        </div>
+                      </template>
+                    </v-step>
+                  </transition>
                 </template>
-                <template v-if="tour.currentStep === 3">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
-                  </div>
-                </template>
-              </v-step>
-            </transition>
-          </template>
-        </v-tour>
-      </div>
-    <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
-        <h2 class="title">
-          Art Info
-        </h2>
-      </v-flex>
-    </v-layout>
-    <v-layout row>
-      <v-flex xs12>
+              </v-tour>
+            </div>
+          </v-layout>
+        </v-flex>
+
         <form>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+          <v-layout row justify-center> 
+            <v-flex xs12 sm6 >
+                
               <v-text-field
+                class = "pb-4"
                 name='artistName'
                 label='Artist Name'
                 id='artist-name'
@@ -52,86 +54,59 @@
                 required
               >
               </v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+
               <v-text-field
                 name='artTitle'
+                class = "pb-4"
                 label='Art Title'
                 id='art-title'
                 v-model='artTitle'
                 required
               >
               </v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+
               <v-text-field multi-line
-                            name='description'
-                            id='art-description'
-                            label='Please provide a description about the piece '
-                            :rules="[(v) => v.length <= 120 || 'Max 120 characters']"
-                            :counter="120"
-                            v-model='description'
-                            required
+                name='description'
+                id='art-description'
+                class = "pb-4"
+                label='Please provide a description about the piece '
+                :rules="[(v) => v.length <= 120 || 'Max 120 characters']"
+                :counter="120"
+                v-model='description'
+                required
               >
               </v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-            </v-flex>
-          </v-layout>
 
-<!-- Associated tags for uploads -->
+              <v-card>
+                <v-select :items="items" attach chips name='categories' id='categories' label='Categories'
+                v-model='categories' required multiple/>
+              </v-card>
 
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-card id="selectbox">
-                  <v-container
-                    fluid
-                  >
-                    <v-layout
-                      align-center
-                      wrap
-                    >
-                        <v-select
-                          :items="items"
-                          attach
-                          chips
-                          name='categories'
-                          id='categories'
-                          label='categories'
-                          v-model='categories'
-                          required
-                          multiple
-                        ></v-select>
-                    </v-layout>
-                  </v-container>
-                </v-card>
-            </v-flex>
-          </v-layout>
+              <div class="pt-4 pb-4">
+                <v-layout>
+
+                  <v-flex xs12 sm6>
+                    <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
+                    <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
+                  </v-flex>
+
+                  <v-flex xs12 sm6>
+                    <div class = "mt-1">
+                      <v-progress-circular
+                        v-if="submission_in_progress"
+                        indeterminate
+                        color="primary">
+                      </v-progress-circular>
+                    </div>
+                  </v-flex>
+                  
+                </v-layout>
+              </div>
 
 
-
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-btn depressed dark color="black" @click="goBack">Back</v-btn>
-              <v-btn depressed color="primary" :disabled="!formIsValid" @click="onSubmit">Submit</v-btn>
-
-              <v-progress-circular
-                v-if="submission_in_progress"
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-
-              <div> </div> <!-- For Spacing -->
-
-              <div id="uploadsuccess" v-if="submitted">
-              <!-- Toast message for upload image succes / failure -->
-              <!-- Success message for when image uploads to the database -->
+              <div id="uploadsuccess" v-if="submitted"  class = "pb-4">
+                <!-- Toast message for upload image succes / failure -->
+                <!-- Success message for when image uploads to the database -->
                 <v-alert
                   :value="alert"
                   type="success"
@@ -140,6 +115,7 @@
                 >
                   Image Uploaded!
                 </v-alert>
+
                 <!-- Error emssage when image does not upload to the database -->
                 <v-alert
                   :value="!alert"
@@ -152,46 +128,44 @@
               </div>
 
               <v-layout>
+                <div class="text-xs-center" offset-sm4 id="tour">
+                  <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
+                    <template slot-scope="tour">
+                      <transition name="fade">
+                        <v-step
+                          v-if="tour.currentStep === index"
+                          v-for="(step, index) of tour.steps"
+                          :key="index"
+                          :step="step"
+                          :previous-step="tour.previousStep"
+                          :next-step="tour.nextStep"
+                          :stop="tour.stop"
+                          :is-first="tour.isFirst"
+                          :is-last="tour.isLast"
+                          :labels="tour.labels"
+                        >
+                        <template v-if="tour.currentStep === 0">
+                            <div slot="actions">
+                              <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
+                              <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
+                            </div>
+                          </template>
+                          <template v-if="tour.currentStep === 1">
+                            <div slot="actions">
+                              <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
+                            </div>
+                          </template>
+                        </v-step>
+                      </transition>
+                    </template>
+                  </v-tour>
+                </div>
+              </v-layout>
 
-
-      <div class="text-xs-center" offset-sm4 id="tour">
-
-        <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks">
-          <template slot-scope="tour">
-            <transition name="fade">
-              <v-step
-                v-if="tour.currentStep === index"
-                v-for="(step, index) of tour.steps"
-                :key="index"
-                :step="step"
-                :previous-step="tour.previousStep"
-                :next-step="tour.nextStep"
-                :stop="tour.stop"
-                :is-first="tour.isFirst"
-                :is-last="tour.isLast"
-                :labels="tour.labels"
-              >
-              <template v-if="tour.currentStep === 0">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.nextStep" large depressed color="primary">Yes</v-btn>
-                    <v-btn type="button" @click="tour.stop" large depressed color="primary">No</v-btn>
-                  </div>
-                </template>
-                <template v-if="tour.currentStep === 1">
-                  <div slot="actions">
-                    <v-btn type="button" @click="tour.stop" depressed color="primary">Close</v-btn>
-                  </div>
-                </template>
-              </v-step>
-            </transition>
-          </template>
-        </v-tour>
-      </div>
-
-    </v-layout>
             </v-flex>
           </v-layout>
         </form>
+
       </v-flex>
     </v-layout>
   </v-container>
@@ -274,13 +248,11 @@
           let art_uploaded = this.$store.getters.get_art_uploaded
           console.log('artuploaded is ' , art_uploaded)
           this.submission_in_progress = false
-          if(art_uploaded == true){
-           
+          if(art_uploaded == true){           
             console.log("It's true!")
             this.alert = true;
             setTimeout( () =>
             this.$router.push({
-
               path: 'artist_dashboard'
             }),
             1500);
@@ -304,11 +276,6 @@
 </script>
 
 <style type="text/css">
-  #selectbox{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    
-  }
   #uploadsuccess{
     /* display: inline-block;  */
     width: 100%
