@@ -45,18 +45,6 @@
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
               <v-text-field
-                name='artistName'
-                label='Artist Name'
-                id='artist-name'
-                v-model='artistName'
-                required
-              >
-              </v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
                 name='artTitle'
                 label='Art Title'
                 id='art-title'
@@ -236,7 +224,7 @@
     computed: {
       // Styled by Jin. No modification on code.
       formIsValid () {
-        return this.artistName !== '' && this.artTitle !== '' && this.description !== '' && this.categories !== ''
+        return this.artTitle !== '' && this.description !== '' && this.categories !== ''
       },
       art_submission_progress(){
         console.log("Enetered computed art submission progress")
@@ -261,7 +249,7 @@
         this.submission_in_progress = true;
         this.$store.dispatch('uploadImage', {
           operation: this.operation,
-          artist_name: this.artistName,
+          artist_name: this.$store.getters.signed_in_user.name,
           description: this.description,
           art_title: this.artTitle,
           categories: this.categories,
