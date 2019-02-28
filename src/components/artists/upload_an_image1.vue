@@ -23,7 +23,6 @@
         Close
       </v-btn>
       </v-snackbar>
-
         <h3 class="display-3">Great, let's get started. </h3>
         <h4 class="display-1">Blogs and labels typically respond within hours.</h4>
         <span class="subheading">If a blog decides that they like your piece, they'll let you know when and how they plan to share it.</span><br>
@@ -69,12 +68,31 @@
                 Image size is too large! Please reduce the image size
               </v-alert>
               <!--<img :src="image_url" height="350"></img>-->
-              <img :src="image_url"
+              <!--<img :src="image_url" height="550"></img>-->
+              <div v-if="image_too_big == false">
+                <img :src="image_url"
                     :style="{
-                      width: pre_width + 'px',
-                      height: pre_height + 'px'
+                      width: resized_width + 'px',
+                      height: resized_height + 'px'
                     }"
-               ></img>
+                ></img>
+                </div>
+               <div v-else>
+                 <div v-if="image_is_landscape">
+                    <img :src="image_url"
+                      :style="{
+                      width: max_pre_width + 'px'
+                      }"
+                    ></img>
+                 </div>
+                 <div v-else>
+                   <img :src="image_url"
+                      :style="{
+                      height: max_pre_height + 'px'
+                      }"
+                    ></img>
+                 </div>  
+               </div>
             </v-flex>
           </div>
           </v-layout> 
@@ -148,8 +166,12 @@
         file_name: null,
         file: {},
         image_is_not_loaded: true,
-        pre_width: 0,
-        pre_height: 0,
+        max_pre_width: 600,
+        max_pre_height: 430,
+        image_too_big: false,
+        image_is_landscape: true,
+        resized_width: 0,
+        resized_height: 0,
         steps: [
           {
             target: '#v-step-0', 
@@ -207,6 +229,9 @@
           return
         }
 
+        // assume uploaded image not over max dimensions at first
+        this.image_too_big = false
+        this.image_is_landscape = true
         // lets methods be used within fileReader load
         var self = this
 
@@ -223,34 +248,13 @@
           {
             //console.log('image width: ', img.width)
             //console.log('image height: ', img.height)
-            // resize the image proportionally if too large, keeping aspect ratio
+            
+            // check orientation
+            self.checkOrientation(img.width, img.height)
+
+            // this is to resize the uploaded image
+            // max width allowed = 1200, height allowed = 630
             self.resizeImage(img.width, img.height, 1200, 630)
-
-            /*var width = img.width
-            var height = img.height
-            console.log('image width: ', width)
-            console.log('image height: ', height)
-
-            // resize the image proportionally if too large, keeping aspect ratio
-            var maxWidth = 1200
-            var maxHeight = 630
-            var ratio = 0
-
-            if (width > maxWidth)
-            {
-              ratio = maxWidth / width
-              height = height * ratio
-              width = width * ratio
-            }
-            if (height > maxHeight)
-            {
-              ratio = maxHeight / height
-              width = width * ratio
-              height = height * ratio
-            }
-
-            console.log('resized image width: ', width)
-            console.log('resized image height: ', height)*/
           }
           img.src = this.image_url
 
@@ -264,13 +268,22 @@
         nextStepCallback(currentStep) {
         console.log("Next")
       },
+      checkOrientation(width, height)
+      {
+        // check if landscape or portrait to set max preview dimensions
+        if (width >= height)
+        {
+          this.image_is_landscape = true
+        }
+        else
+        {
+          this.image_is_landscape = false
+        }
+      },
       resizeImage(width, height, maxWidth, maxHeight) {
         // resize the image proportionally if too large, keeping aspect ratio
-        // if image too large, preview dimensions = resized image dimensions * 0.75
+        // preview is restricted to max width or height, depending on orientation
         var ratio = 0
-
-        this.pre_width = width
-        this.pre_height = height
 
         if (width > maxWidth)
         {
@@ -278,8 +291,7 @@
           height = height * ratio
           width = width * ratio
 
-          this.pre_width = width * ratio * 0.75
-          this.pre_height = height * ratio * 0.75
+          this.image_too_big = true
         }
         if (height > maxHeight)
         {
@@ -287,12 +299,11 @@
           width = width * ratio
           height = height * ratio
 
-          this.pre_width = width * ratio * 0.75
-          this.pre_height = height * ratio * 0.75
+          this.image_too_big = true
         }
 
-        //console.log('preview image width: ', this.pre_width)
-        //console.log('preview image height: ', this.pre_height)
+        this.resized_width = width
+        this.resized_height = height
         //console.log('resized image width: ', width)
         //console.log('resized image height: ', height)
       }
