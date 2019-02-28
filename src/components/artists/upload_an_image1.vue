@@ -68,7 +68,13 @@
               >
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <img :src="image_url" height="350"></img>
+              <!--<img :src="image_url" height="350"></img>-->
+              <img :src="image_url"
+                    :style="{
+                      width: pre_width + 'px',
+                      height: pre_height + 'px'
+                    }"
+               ></img>
             </v-flex>
           </div>
           </v-layout> 
@@ -142,6 +148,8 @@
         file_name: null,
         file: {},
         image_is_not_loaded: true,
+        pre_width: 0,
+        pre_height: 0,
         steps: [
           {
             target: '#v-step-0', 
@@ -213,8 +221,8 @@
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
           {
-            console.log('image width: ', img.width)
-            console.log('image height: ', img.height)
+            //console.log('image width: ', img.width)
+            //console.log('image height: ', img.height)
             // resize the image proportionally if too large, keeping aspect ratio
             self.resizeImage(img.width, img.height, 1200, 630)
 
@@ -256,25 +264,37 @@
         nextStepCallback(currentStep) {
         console.log("Next")
       },
-      // resize the image proportionally if too large, keeping aspect ratio
       resizeImage(width, height, maxWidth, maxHeight) {
+        // resize the image proportionally if too large, keeping aspect ratio
+        // if image too large, preview dimensions = resized image dimensions * 0.75
         var ratio = 0
+
+        this.pre_width = width
+        this.pre_height = height
 
         if (width > maxWidth)
         {
           ratio = maxWidth / width
           height = height * ratio
           width = width * ratio
+
+          this.pre_width = width * ratio * 0.75
+          this.pre_height = height * ratio * 0.75
         }
         if (height > maxHeight)
         {
           ratio = maxHeight / height
           width = width * ratio
           height = height * ratio
+
+          this.pre_width = width * ratio * 0.75
+          this.pre_height = height * ratio * 0.75
         }
 
-        console.log('resized image width: ', width)
-        console.log('resized image height: ', height)
+        //console.log('preview image width: ', this.pre_width)
+        //console.log('preview image height: ', this.pre_height)
+        //console.log('resized image width: ', width)
+        //console.log('resized image height: ', height)
       }
     }
   }
