@@ -1645,9 +1645,11 @@ export const store = new Vuex.Store({
         .sendPasswordResetEmail(payload)
         .then(function () {
           // Email sent.
+          console.log('email to recover password sent')
         })
         .catch(function (error) {
           // An error happened.
+          console.log('Error sending password reset email:', error)
         })
     },
     get_users({ commit }) {
