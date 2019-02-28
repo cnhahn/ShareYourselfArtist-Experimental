@@ -188,6 +188,122 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
 
 })
 
+exports.recentlyRepliedSubmissions = functions.https.onRequest((request, response) => {
+  //params is the data that will specify 
+  //console.log(event.body)
+  //let params = event.body
+  //console.log("params is typeOf: " + typeof params)
+ 
+  //response is the object that we will return to the client
+  let db = admin.firestore()
+  let responseCode = 200;
+
+  //Handle event data
+  // if(event.body.amount == null || event.body.amount == undefined){
+    
+  //   responseCode = 400
+  //   //response["statusCode"] = responseCode
+  //   //response["body"] = 'Incorrect parameters, please supply amount of submissions to return in body'
+  //   let responseBody = {
+  //     data:'Incorrect parameters, please supply amount of submissions to return in body'
+  //   }
+
+  //   let reply = {
+  //     statusCode : responseCode,
+  //     body : JSON.stringify(responseBody)
+  //   }
+  //   response.status(400).send(reply)
+  // }
+  //else{
+    //let amount = parseInt(params.amount, 10)
+
+    let responseBody = {
+      
+    }
+
+    // ascending or descending?
+    let submissions = db.collection('review_requests').where("replied", "==", true).orderBy('replied_date', "desc").limit(20).get()
+      .then(function(querySnapshot){
+        let promises = [];
+        querySnapshot.forEach(function(doc){
+          promises.push(doc)
+        })
+        return Promise.all(promises)
+      })
+      .then(function(results){
+        // loop through results and place them in the response object under the 'body' object
+        let requestMetaData = {
+          art_title: '',
+          artist_id : '',
+          artist_name: '',
+          //categories: [],
+          delete: false,
+          description: '',
+          upload_date: 0,
+          url : '',
+          artist_email: '',
+          business_email : '',
+          business_name : '',
+          businessUserId: '',
+          read_byartist : false,
+          refunded: 0,
+          replied: true,
+          replied_date: 0,
+          radios: '',
+          response: '',
+          submitted_on: 0,
+          submitted_with_free_cerdit: true
+        }
+
+        for(var i = 0; i < results.length; i++){
+          
+          console.log('artist at position ' + i + " and id: "+ results[i].data().art.artist_id)
+          let emptyArray = []
+          emptyArray = results[i].data().art.categories
+          requestMetaData.art_title = results[i].data().art.art_title
+          requestMetaData.artist_id = results[i].data().art.artist_id
+          requestMetaData.artist_name = results[i].data().art.artist_name
+          requestMetaData['categories'] = emptyArray 
+          requestMetaData.delete = results[i].data().art.delete
+          requestMetaData.description = results[i].data().art.description
+          requestMetaData.upload_date = results[i].data().art.upload_date
+          requestMetaData.url = results[i].data().art.url
+          requestMetaData.artist_email = results[i].data().artist_email
+          requestMetaData.business_email = results[i].data().businessId.business_email
+          requestMetaData.business_name = results[i].data().businessId.business_name
+          requestMetaData.businessUserId = results[i].data().businessId.userId
+          requestMetaData.read_byartist = results[i].data().read_byartist
+          requestMetaData.refunded = results[i].data().refunded
+          requestMetaData.replied = results[i].data().replied
+          requestMetaData.replied_date = results[i].data().replied_date
+          requestMetaData.radios = results[i].data().submission_response.radios
+          requestMetaData.response = results[i].data().submission_response.response
+          requestMetaData.submitted_on = results[i].data().submitted_on
+          requestMetaData.submitted_with_free_cerdit = results[i].data().submitted_with_free_cerdit
+          console.log("art name at this pos: " + requestMetaData.artist_name)
+          console.log("here is obj: " + requestMetaData)
+
+          // Necessary to a deep copy of the requestMetaData object
+          let tempData = JSON.parse(JSON.stringify(requestMetaData))
+          responseBody[i] = tempData
+          // responseBody[i] = results[i].data();
+        }
+        let reply = {
+          statusCode : responseCode,
+          body : responseBody
+        }
+
+        console.log('responding here: ', response)
+        return response.send(reply)
+      })
+      .catch(function(error){
+        return response.send(error)
+      })
+
+  //}
+
+})
+
 exports.getUserAvatar = functions.https.onRequest((request, response) => {
   let userId = request.body.userId
   const db = admin.firestore()

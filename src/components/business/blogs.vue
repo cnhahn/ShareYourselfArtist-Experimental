@@ -110,7 +110,7 @@
           color = "primary"
           style="margin-left: 0px; margin-top: -10px"
         >
-          Select Blog
+          Submit Art Pieces To This Blog
         </v-btn>
 
 

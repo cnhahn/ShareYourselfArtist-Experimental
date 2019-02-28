@@ -17,13 +17,14 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     art_uploaded: null,
-    viewed_art_image_info : [],
+    viewed_art_image_info: [],
     top_12_recent_art: [],
     viewed_artist_data: {},
     localStorage,
     db: firebase.firestore(),
     chat_database: firebase.database(),
     arts: [],
+    recently_responded_arts: [],
     comments: [],
     commenting_mode: false,
     sideNavItems: [
@@ -210,50 +211,50 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
-    set_viewed_art_image_info(state,payload){
+    set_viewed_art_image_info(state, payload) {
       state.viewed_art_image_info = [],
-      state.viewed_art_image_info = payload
+        state.viewed_art_image_info = payload
     },
     // Sign user out by setting user element to null
-    set_user_to_null(state){
-      state.user = null 
+    set_user_to_null(state) {
+      state.user = null
       state.user_role = ''
       //console.log('set user to null')
     },
-    set_art_uploaded (state, payload) {
+    set_art_uploaded(state, payload) {
       state.art_uploaded = payload
     },
-    set_info_of_business_for_dashboard2 (state, payload) {
+    set_info_of_business_for_dashboard2(state, payload) {
       state.info_of_business_for_dashboard2 = payload
     },
-    clear_info_of_business_for_dashboard2 (state) {
+    clear_info_of_business_for_dashboard2(state) {
       state.info_of_business_for_dashboard2 = {}
     },
-    clear_businesses_being_submitted(state){
+    clear_businesses_being_submitted(state) {
       state.businesses_being_submitted = []
     },
-    set_epoch_month_times (state, payload) {
+    set_epoch_month_times(state, payload) {
       state.epoch_month_time = payload
     },
-    set_chart_array_for_submissions (state, payload) {
+    set_chart_array_for_submissions(state, payload) {
       state.chart_array_for_submissions = payload
     },
-    set_chart_replied_for_submissions (state, payload) {
+    set_chart_replied_for_submissions(state, payload) {
       state.chart_replied_for_submissions = payload
     },
-    set_chart_paid_for_submissions (state, payload) {
+    set_chart_paid_for_submissions(state, payload) {
       state.chart_paid_for_submissions = payload
     },
-    set_chart_free_for_submissions (state, payload) {
+    set_chart_free_for_submissions(state, payload) {
       state.chart_free_for_submissions = payload
     },
-    clear_query_datePicker_list (state) {
+    clear_query_datePicker_list(state) {
       state.replied_requests_for_report_datePicker = []
     },
-    set_query_business_email (state, payload) {
+    set_query_business_email(state, payload) {
       state.query_business_email = payload.business_email
     },
-    set_datePicker (state, payload) {
+    set_datePicker(state, payload) {
       const start_date = payload.startDate + '-00-00-00'
       const start_d = start_date.split('-')
       const start_epoch = new Date(
@@ -283,19 +284,19 @@ export const store = new Vuex.Store({
       state.datePicker.startDate = start_epoch
       state.datePicker.endDate = end_epoch
     },
-    set_top_12_recent_art (state, payload) {
+    set_top_12_recent_art(state, payload) {
       state.top_12_recent_art.push(payload)
     },
-    set_commenting_mode (state, payload) {
+    set_commenting_mode(state, payload) {
       state.commenting_mode = payload
     },
-    set_viewed_artist_data (state, payload) {
+    set_viewed_artist_data(state, payload) {
       state.viewed_artist_data = payload
     },
-    clear_top_12_recent_art (state) {
+    clear_top_12_recent_art(state) {
       state.top_12_recent_art = []
     },
-    set_free_credits (state, payload) {
+    set_free_credits(state, payload) {
       console.log('inside set free credits')
       console.log(payload)
       if (payload != null || payload != undefined || payload != '') {
@@ -306,32 +307,32 @@ export const store = new Vuex.Store({
         )
       }
     },
-    set_artists_email_list (state, payload) {
+    set_artists_email_list(state, payload) {
       state.artists_email_list.push(payload)
     },
-    clear_artists_email_list (state) {
+    clear_artists_email_list(state) {
       state.artists_email_list = []
     },
-    set_blog_for_report (state, payload) {
+    set_blog_for_report(state, payload) {
       state.blog_for_report = payload
     },
-    set_categories (state, payload) {
+    set_categories(state, payload) {
       state.categories = payload
     },
-    set_updatedCategories (state, payload) {
+    set_updatedCategories(state, payload) {
       state.updatedCategories = payload
     },
-    set_businesses_being_submitted (state, payload) {
+    set_businesses_being_submitted(state, payload) {
       console.log("payload for business beings ubmitted is ", payload)
       state.businesses_being_submitted = payload
     },
-    set_art_being_submitted_is_selected (state, payload) {
+    set_art_being_submitted_is_selected(state, payload) {
       state.art_being_submitted_is_selected = payload
     },
-    set_business_being_submitted_is_selected (state, payload) {
+    set_business_being_submitted_is_selected(state, payload) {
       state.business_being_submitted_is_selected = payload
     },
-    set_art_being_replied (state, payload) {
+    set_art_being_replied(state, payload) {
       (state.art_being_replied.art_title = payload.art_title),
         (state.art_being_replied.artist_name = payload.artist_name),
         (state.art_being_replied.submitted_on = payload.submitted_on),
@@ -339,116 +340,119 @@ export const store = new Vuex.Store({
         (state.art_being_replied.artist_id = payload.artist_id),
         (state.art_being_replied.docId = payload.docId)
     },
-    increase_credits (state, payload) {
+    increase_credits(state, payload) {
       state.credits = state.credits + payload
     },
-    set_credits (state, payload) {
+    set_credits(state, payload) {
       state.credits = payload
     },
-    reset_replied_submissions (state) {
+    reset_replied_submissions(state) {
       state.replied_submissions.length = 0
     },
-    set_replied_submissions (state, payload) {
+    set_replied_submissions(state, payload) {
       state.replied_submissions.push(payload)
     },
-    clear_replied_submissions_array (state) {
+    clear_replied_submissions_array(state) {
       state.replied_submissions = []
     },
-    set_response (state, payload) {
+    set_response(state, payload) {
       state.submission_response.response = payload.response
       state.submission_response.radios = payload.radios
     },
-    set_submission_response (state, payload) {
+    set_submission_response(state, payload) {
       state.submission_response = payload
     },
-    clear_submissions_for_this_business_array (state) {
+    clear_submissions_for_this_business_array(state) {
       state.submissions_for_this_business = []
     },
-    set_submissions_for_this_business (state, payload) {
+    set_submissions_for_this_business(state, payload) {
       state.submissions_for_this_business.push(payload)
     },
-    set_art_being_submitted (state, payload) {
+    set_art_being_submitted(state, payload) {
       state.art_being_submitted.art = payload
     },
-    set_business_being_submitted (state, payload) {
+    set_business_being_submitted(state, payload) {
       state.art_being_submitted.businessId = payload.businessId
       state.art_being_submitted.submitted_on = payload.date
     },
-    set_clicked_art (state, payload) {
+    set_clicked_art(state, payload) {
       state.clicked_art = payload
     },
-    business_signing_up (state, payload) {
+    business_signing_up(state, payload) {
       state.business_signing_up = payload
     },
-    artist_signing_up (state, payload) {
+    artist_signing_up(state, payload) {
       state.artist_signing_up = payload
     },
-    test (state, payload) {
+    test(state, payload) {
       state.test = payload
     },
-    set_image_folder (state, payload) {
+    set_image_folder(state, payload) {
       state.image_folder = payload
     },
-    clear_arts_array (state) {
+    clear_arts_array(state) {
       state.arts = []
     },
-    setArts (state, payload) {
+    setArts(state, payload) {
       state.arts.push(payload)
     },
-    set_comments (state, payload) {
+    set_recently_responded_arts (state, payload) {
+      state.recently_responded_arts.push(payload)
+    },
+    set_comments(state, payload) {
       state.comments.push(payload)
     },
-    clear_viewed_arts_array (state) {
+    clear_viewed_arts_array(state) {
       state.viewed_arts = []
     },
-    clear_comments_array (state) {
+    clear_comments_array(state) {
       state.comments = []
     },
-    set_viewed_arts (state, payload) {
+    set_viewed_arts(state, payload) {
       state.viewed_arts.push(payload)
     },
-    setArtCategory (state, payload) {
+    setArtCategory(state, payload) {
       console.log('payload.indexOfUpdatedArt', payload.indexOfUpdatedArt)
       console.log('payload.categories', payload.categories)
       state.arts[payload.indexOfUpdatedArt].categories = payload.categories
     },
-    clearBusinesses (state) {
+    clearBusinesses(state) {
     },
-    setBusinesses (state, payload) {
+    setBusinesses(state, payload) {
       state.businesses.push(payload)
     },
-    set_replied_requests_for_report_datePicker (state, payload) {
+    set_replied_requests_for_report_datePicker(state, payload) {
       state.replied_requests_for_report_datePicker.push(payload)
     },
-    clear_replied_for_report_datePicker (state) {
+    clear_replied_for_report_datePicker(state) {
       state.replied_requests_for_report_datePicker = []
     },
-    setClickedBusiness (state, payload) {
+    setClickedBusiness(state, payload) {
       state.clicked_business = payload
     },
-    setUserRole (state, payload) {
+    setUserRole(state, payload) {
       state.user_role = payload
     },
-    uploadedArt (state, payload) {
+    uploadedArt(state, payload) {
       state.uploadedArts.push(payload)
     },
-    setUser (state, payload) {
+    setUser(state, payload) {
       state.user = payload
     },
-    setUrl (state, payload) {
+    setUrl(state, payload) {
       state.url = payload
     },
-    set_logo_url (state, payload) {
+    set_logo_url(state, payload) {
       state.logo_url = payload
     },
-    setLoading (state, payload) {
+    setLoading(state, payload) {
       state.loading = payload
     },
-    setError (state, payload) {
+    setError(state, payload) {
       state.error = payload
     },
-    set_stored_user_email (state){
-      firebase.auth().onAuthStateChanged(function(user) {
+    set_stored_user_email(state) {
+      firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           state.stored_user_email = user.email
         } else {
@@ -457,20 +461,20 @@ export const store = new Vuex.Store({
         }
       });
     },
-    set_user_email (state) {
+    set_user_email(state) {
       state.signed_in_user_email = firebase.auth().currentUser.email
     },
-    clearError (state) {
+    clearError(state) {
       state.error = null
     },
-    set_send_chat_data (state, payload) {
+    set_send_chat_data(state, payload) {
       state.sendChatData.message = payload.message
       state.sendChatData.user = payload.user
       state.sendChatData.daystamp = payload.daystamp
       state.sendChatData.timestamp = payload.timestamp
       state.sendChatData.url = payload.url
     },
-    setUserRandColor (state) {
+    setUserRandColor(state) {
       var rand = Math.floor(Math.random() * 10)
       var randColors = [
         'randColor1',
@@ -488,85 +492,120 @@ export const store = new Vuex.Store({
       state.color = randColors[rand]
       console.log('color: ' + state.color)
     },
-    setUserColor (state, payload) {
+    setUserColor(state, payload) {
       state.color = payload.color
     },
-    image_being_uploaded (state, payload) {
+    image_being_uploaded(state, payload) {
       state.image_being_uploaded = payload
     },
-    set_user_email (state) {
+    set_user_email(state) {
       state.art_being_submitted.artist_email = firebase.auth().currentUser.email
     },
-    clearError (state) {
+    clearError(state) {
       state.error = null
     },
-    signed_in_user_id (state, payload) {
+    signed_in_user_id(state, payload) {
       state.signed_in_user_id = payload
     },
-    signed_in_user (state, payload) {
+    signed_in_user(state, payload) {
       state.signed_in_user = payload
     },
-    sign_out_signed_in_user (state) {
+    sign_out_signed_in_user(state) {
       state.signed_in_user = null
       state.url = null
       state.color = 'primary'
     },
-    set_replied_for_report (state, payload) {
+    set_replied_for_report(state, payload) {
       state.replied_for_report.push(payload)
     },
-    set_report_month (state, payload) {
+    set_report_month(state, payload) {
       state.report_month = payload
     },
-    set_select_blog (state, payload) {
+    set_select_blog(state, payload) {
       (state.selectBlog.name = payload.name),
         (state.selectBlog.userId = payload.userId),
         (state.selectBlog.role = payload.role)
     },
-    set_submissions_for_year (state, payload) {
+    set_submissions_for_year(state, payload) {
       // aortizoj
       state.submissions_for_year.push(payload)
     },
-    clear_submissions_for_year_array (state) {
+    clear_submissions_for_year_array(state) {
       // aortizoj
       state.submissions_for_year = []
     },
-    set_submissions_for_month (state, payload) {
+    set_submissions_for_month(state, payload) {
       // aortizoj
       state.submissions_for_month.push(payload)
     },
-    set_epochFirstDayOfMonthArray (state, payload) {
+    set_epochFirstDayOfMonthArray(state, payload) {
       // aortizoj
       state.epochFirstDayOfMonthArray.push(payload)
     },
-    clear_submissions_for_month_array (state) {
+    clear_submissions_for_month_array(state) {
       // aortizoj
       state.submissions_for_month = []
     },
-    set_monthly_report_submissions (state, payload) {
+    set_monthly_report_submissions(state, payload) {
       state.monthly_report_submissions = payload
     },
-    set_artist_settings_artist (state, payload) {
+    set_artist_settings_artist(state, payload) {
       state.artist_settings_artist = payload.obj
     }
   },
   actions: {
-    delete_art_piece({commit, dispatch}, payload) {
+    retrieve_recently_responded_arts({ commit, dispatch, state }, payload) {
+      state.recently_responded_arts = []
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/recentlyRepliedSubmissions'
+      console.log("In retrieve_recently_responded_arts")
+      if (!('fetch' in window)) {
+        console.log('Fetch API not found, try including the polyfill');
+        return
+      } else {
+        console.log("Aye works")
+      }
+      fetch(proxyUrl + targetUrl)
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (myJson) {
+          // let jsonSize = myJson.length
+          // let i = 0
+          // console.log("jsonSize is " , jsonSize)
+          // for ( i = 0; i < jsonSize; i++) {
+          //   console.log("Entering for loop")
+          //   let object = myJson[i]
+          //   console.log("object is ", object)
+          // }
+          console.log(myJson.body)
+          let jsonSize = Object.keys(myJson.body).length
+          let i = 0
+          for (i = 0; i < jsonSize; i++) {
+            console.log("Item is ", myJson.body[i])
+            commit('set_recently_responded_arts', myJson.body[i])
+            
+          }
+          console.log('recently_responded_arts is ' , state.recently_responded_arts)
+        })
+    },
+    delete_art_piece({ commit, dispatch }, payload) {
       console.log("Entered delete art piece")
       // Got the url so we can find the art piece to delete
       console.log(payload)
       let db = firebase.firestore()
       let art = db.collection("art").where("url", "==", payload.url)
-      .get()
-      .then(function (results){
-        results.forEach(function (doc) {
-          console.log(doc.id)
-          db.collection("art").doc(doc.id).update({
-            delete: true
-          }).then( res => {
-            dispatch('fetchArts')
+        .get()
+        .then(function (results) {
+          results.forEach(function (doc) {
+            console.log(doc.id)
+            db.collection("art").doc(doc.id).update({
+              delete: true
+            }).then(res => {
+              dispatch('fetchArts')
+            })
           })
         })
-      })
 
       // .where("url", "==", "https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/QBRXqktYi0QigFboM92crKAONKn1%2Fburnupchart1.jpg?alt=media&token=ed28f585-9f0c-48de-84f0-2851aed5a798")
       // .get()
@@ -578,45 +617,45 @@ export const store = new Vuex.Store({
       // })
 
     },
-    add_delete_field_to_art () {
+    add_delete_field_to_art() {
       console.log('Entered add_delete_field_to_art')
       // Get all artists from Firebase
       let db = firebase.firestore()
       let art_piece = db.collection('art')
-      .get()
-      .then(function (results) {
-        results.forEach(function (doc) {
-          let user = doc.id 
+        .get()
+        .then(function (results) {
+          results.forEach(function (doc) {
+            let user = doc.id
             console.log("doc data is now ", doc.data())
+          })
         })
-      })
-      .catch(function (error) {
-        console.log('error getting documents yas: ', error)
-      })
+        .catch(function (error) {
+          console.log('error getting documents yas: ', error)
+        })
     },
-    verify_free_credits_field () {
+    verify_free_credits_field() {
       // Get all artists from Firebase
       let db = firebase.firestore()
       let artists = db.collection('users').where('role', '==', 'artist')
-      .get()
-      .then(function (results) {
-        results.forEach(function (doc) {
-          if (doc.data().free_credits === undefined) {
-            let userId = doc.data().userId
-            db.collection('users').doc(userId).update({
-              'free_credits': '2'
-            })
-            .then(function () {
-              console.log('Document Succesfully updated!')
-            })
-          }
+        .get()
+        .then(function (results) {
+          results.forEach(function (doc) {
+            if (doc.data().free_credits === undefined) {
+              let userId = doc.data().userId
+              db.collection('users').doc(userId).update({
+                'free_credits': '2'
+              })
+                .then(function () {
+                  console.log('Document Succesfully updated!')
+                })
+            }
+          })
         })
-      })
-      .catch(function (error) {
-        console.log('error getting documents yas: ', error)
-      })
-    },      
-    update_art_comments ({commit}, payload) {
+        .catch(function (error) {
+          console.log('error getting documents yas: ', error)
+        })
+    },
+    update_art_comments({ commit }, payload) {
       console.log('update_art: ', payload)
       let db = firebase.firestore()
       let id_of_art = db.collection('art').where('upload_date', '==', payload.upload_date)
@@ -638,7 +677,7 @@ export const store = new Vuex.Store({
       })
     },
     // yiwayana
-    push_updated_business_info_to_firebase ({commit}, payload) {
+    push_updated_business_info_to_firebase({ commit }, payload) {
       let db = firebase.firestore()
       let userId = ''
       let userid_of_business = db.collection('users').where('email', '==', payload.email)
@@ -667,57 +706,57 @@ export const store = new Vuex.Store({
       })
     },
     // for report
-    fetch_top_12_recent_art ({commit, getters}) {
+    fetch_top_12_recent_art({ commit, getters }) {
       // commit('clear_top_12_recent_art')
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
-                          .orderBy('submitted_on', 'desc').limit(12)
+        .orderBy('submitted_on', 'desc').limit(12)
       let ordered_top_12_list = [];
       let report = temp_report.get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              console.log('art title for navigation panel ' , doc.data().art.art_title)
-              ordered_top_12_list.push(doc.data())
-            })
-            let i;
-            for( i = 0; i < ordered_top_12_list.length; i++){
-              commit('set_top_12_recent_art',ordered_top_12_list[i])
-            }
-              
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            console.log('art title for navigation panel ', doc.data().art.art_title)
+            ordered_top_12_list.push(doc.data())
           })
-          .catch(function (error) {
-            console.log('Error getting report: ', error)
-          })
+          let i;
+          for (i = 0; i < ordered_top_12_list.length; i++) {
+            commit('set_top_12_recent_art', ordered_top_12_list[i])
+          }
+
+        })
+        .catch(function (error) {
+          console.log('Error getting report: ', error)
+        })
     },
-    get_replied ({commit, getters}) {
+    get_replied({ commit, getters }) {
       let db = firebase.firestore()
       var temp_report = db.collection('review_requests')
-                          .where('replied', '==', true)
-                          .where('businessId.userId', '==', getters.user.id)
+        .where('replied', '==', true)
+        .where('businessId.userId', '==', getters.user.id)
       let report = temp_report
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              var month = getters.report_month
-              const today = Date.now()
-              const timeDiff = today - (1000 * 60 * 60 * 24 * 30 * month)
-              if (doc.data().submitted_on >= timeDiff) {
-                if (doc.data().submitted_on <= today) {
-                  commit('set_replied_for_report', doc.data())
-                }
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            var month = getters.report_month
+            const today = Date.now()
+            const timeDiff = today - (1000 * 60 * 60 * 24 * 30 * month)
+            if (doc.data().submitted_on >= timeDiff) {
+              if (doc.data().submitted_on <= today) {
+                commit('set_replied_for_report', doc.data())
               }
-            })
+            }
           })
-          .catch(function (error) {
-            console.log('Error getting report: ', error)
-          })
+        })
+        .catch(function (error) {
+          console.log('Error getting report: ', error)
+        })
     },
 
     // yiwayana
-    query_info_of_business_for_dashboard2 ({commit, state}, payload) {
+    query_info_of_business_for_dashboard2({ commit, state }, payload) {
       let db = firebase.firestore()
       let query = db.collection('users')
-      .where('email', '==', payload)
+        .where('email', '==', payload)
       query.get().then(function (results) {
         if (results.empty) {
           ('no documents found')
@@ -730,7 +769,7 @@ export const store = new Vuex.Store({
     },
 
     // yiwayana
-    report_datePicker ({ commit, state }) {
+    report_datePicker({ commit, state }) {
       commit('clear_replied_for_report_datePicker')
       let db = firebase.firestore()
       let temp_report = db.collection('review_requests')
@@ -753,7 +792,7 @@ export const store = new Vuex.Store({
       })
     },
 
-    get_replied ({ commit, getters }) {
+    get_replied({ commit, getters }) {
       let db = firebase.firestore()
       var temp_report = db
         .collection('review_requests')
@@ -786,7 +825,7 @@ export const store = new Vuex.Store({
           console.log('Error getting report: ', error)
         })
     },
-    get_artist_settings_artist ({commit, getters}, email) {
+    get_artist_settings_artist({ commit, getters }, email) {
       let db = firebase.firestore()
       let users = db.collection('users')
       let query = users
@@ -811,7 +850,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
-    distributeCredits ({commit, getters}, numCredits) {
+    distributeCredits({ commit, getters }, numCredits) {
       let db = firebase.firestore()
       db.collection('users').get().then(function (users) {
         users.forEach(function (doc) {
@@ -829,14 +868,14 @@ export const store = new Vuex.Store({
           })
         })
       })
-      .then(function () {
-        console.log('Artist credits successfully updated!')
-      })
-      .catch(function (error) {
-        console.error('Error writing document: ', error)
-      })
+        .then(function () {
+          console.log('Artist credits successfully updated!')
+        })
+        .catch(function (error) {
+          console.error('Error writing document: ', error)
+        })
     },
-    updateArtistSettings ({commit, getters}, artist) {
+    updateArtistSettings({ commit, getters }, artist) {
       let db = firebase.firestore()
       db.collection('users').doc(artist.userId).update({
         name: artist.name,
@@ -850,11 +889,11 @@ export const store = new Vuex.Store({
         console.log('Document successfully updated!')
         localStorage.setItem('artist_settings_artist', JSON.stringify(artist))
       })
-      .catch(function (error) {
-        console.error('Error writing document: ', error)
-      })
+        .catch(function (error) {
+          console.error('Error writing document: ', error)
+        })
     },
-    get_monthly_report_submissions ({
+    get_monthly_report_submissions({
       commit,
       getters
     }, yearMonth) {
@@ -893,7 +932,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
-    get_month_to_month_epoch_times ({ state, commit }) {
+    get_month_to_month_epoch_times({ state, commit }) {
       console.log('in month to month')
       let today = Date.now()
       let date = new Date(today)
@@ -949,7 +988,7 @@ export const store = new Vuex.Store({
 
     // Aortiz and Yiwayana
     // Create an array of size 12, fill each index with submissions for that month
-    filter_submissions_by_month ({ commit, state, dispatch }, payload) {
+    filter_submissions_by_month({ commit, state, dispatch }, payload) {
       dispatch('get_month_to_month_epoch_times')
       var monthEpochTimes = state.epoch_month_time
       console.log('Inside filter submissions')
@@ -1173,7 +1212,7 @@ export const store = new Vuex.Store({
     },
 
     // the foll function us used bt dashboard page to get the replied submissions for businesses. this function is temporary and will be updated
-    get_submissions_for_year ({ commit, getters, dispatch }) {
+    get_submissions_for_year({ commit, getters, dispatch }) {
       // aortizoj
       commit('clear_submissions_for_year_array')
       let today = Date.now()
@@ -1250,7 +1289,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents:', error)
         })
     },
-    get_submissions_for_month ({ commit, getters }) {
+    get_submissions_for_month({ commit, getters }) {
       // aortizoj
       commit('clear_submissions_for_month_array')
       let today = Date.now()
@@ -1314,13 +1353,13 @@ export const store = new Vuex.Store({
         })
     },
 
-    signUserInGoogle ({ commit, getters }) {
+    signUserInGoogle({ commit, getters }) {
       commit('setLoading', true)
       commit('clearError')
       let provider = new firebase.auth.GoogleAuthProvider()
       provider.setCustomParameters({
         'prompt': 'select_account'
-     })
+      })
       firebase
         .auth()
         .signInWithPopup(provider)
@@ -1407,7 +1446,7 @@ export const store = new Vuex.Store({
             })
         })
     },
-    signUserInFacebook ({ commit }) {
+    signUserInFacebook({ commit }) {
       commit('setLoading', true)
       commit('clearError')
       firebase
@@ -1494,7 +1533,7 @@ export const store = new Vuex.Store({
             })
         })
     },
-    update_review_read_byUser_status ({ commit }, payload) {
+    update_review_read_byUser_status({ commit }, payload) {
       console.log('payload: ', payload)
       const db = firebase.firestore()
       const collectionRef = db
@@ -1519,7 +1558,7 @@ export const store = new Vuex.Store({
           })
         })
     },
-    update_user_credit ({ getters }, payload) {
+    update_user_credit({ getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1539,7 +1578,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user credit: ', error)
         })
     },
-    update_user_free_credit ({ getters }, payload) {
+    update_user_free_credit({ getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1559,7 +1598,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user credit: ', error)
         })
     },
-    update_user_subscription ({ getters }, payload) {
+    update_user_subscription({ getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1577,7 +1616,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user subscription: ', error)
         })
     },
-    get_user_credit ({ commit }, payload) {
+    get_user_credit({ commit }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1598,7 +1637,7 @@ export const store = new Vuex.Store({
     },
 
 
-    reset_password ({ commit }, payload) {
+    reset_password({ commit }, payload) {
       console.log(payload)
       let auth = firebase.auth()
       let emailAddress = payload
@@ -1611,7 +1650,7 @@ export const store = new Vuex.Store({
           // An error happened.
         })
     },
-    get_users ({ commit }) {
+    get_users({ commit }) {
       commit('clearBusinesses')
       let db = firebase.firestore()
       let businesses = db
@@ -1628,7 +1667,7 @@ export const store = new Vuex.Store({
           console.log('Error getting businesses: ', error)
         })
     },
-    get_email_list_of_artists ({ commit }) {
+    get_email_list_of_artists({ commit }) {
       console.log('inside  get_email_list_of_artists')
       commit('clear_artists_email_list')
       let db = firebase.firestore()
@@ -1650,7 +1689,7 @@ export const store = new Vuex.Store({
         })
     },
 
-    fetch_clicked_business ({ commit, getters }) {
+    fetch_clicked_business({ commit, getters }) {
       let db = firebase.firestore()
       let role = db
         .collection('users')
@@ -1666,7 +1705,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents: ', error)
         })
     },
-    async fetchUserDocument ({ commit, getters }) {
+    async fetchUserDocument({ commit, getters }) {
       console.log('getters.user.id' + getters.user.id)
       let db = firebase.firestore()
       let user = await db
@@ -1687,7 +1726,7 @@ export const store = new Vuex.Store({
         })
     },
 
-    fetchArts ({ commit, getters }) {
+    fetchArts({ commit, getters }) {
       commit('setLoading', true)
       commit('clear_arts_array')
       let db = firebase.firestore()
@@ -1706,7 +1745,7 @@ export const store = new Vuex.Store({
           console.log('Error getting documents: ', error)
         })
     },
-    fetchViewedArts ({ commit, getters }, payload) {
+    fetchViewedArts({ commit, getters }, payload) {
       commit('clear_viewed_arts_array')
       console.log('payload ' + payload)
       let db = firebase.firestore()
@@ -1724,10 +1763,10 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log('Error getting documents: ', error)
         })
-     },
+    },
 
     // this function gets the submissions for a business and
-    async fetchSubmissions ({ commit, getters }) {
+    async fetchSubmissions({ commit, getters }) {
       commit('clear_submissions_for_this_business_array')
       const db = firebase.firestore()
       const collectionRef = await db
@@ -1751,30 +1790,30 @@ export const store = new Vuex.Store({
         // })
         .then(function (querySnapshot) {
           const promises = []
-          querySnapshot.forEach(function (doc){
+          querySnapshot.forEach(function (doc) {
             console.log('docdoc: ', doc)
             promises.push(doc)
           })
           return Promise.all(promises) //returning promises sends the resolved results to 
         })                             //to the next .then()
-        .then(function (data){
+        .then(function (data) {
           console.log(data)
           let results = []
-          data.forEach(function(dataSnap){
+          data.forEach(function (dataSnap) {
             console.log('data: ', dataSnap.data())
             results.push(dataSnap.data())
           })
           return results
         })
-        .then(function (ids){
+        .then(function (ids) {
           console.log("arrays length:" + ids.length)
-          for(var i = 0; i<ids.length; i++){
+          for (var i = 0; i < ids.length; i++) {
             // console.log('inside ids: ', ids[i])
-            
+
             commit('set_submissions_for_this_business', ids[i])
-          }          
+          }
         })
-        .then(function(reply){
+        .then(function (reply) {
 
           // return response.send('Testing this with all submissions')
           console.log('end of fetchSubmissions function')
@@ -1783,13 +1822,13 @@ export const store = new Vuex.Store({
           console.log('Error with submissions: ', error)
         })
     },
-    async fetch_all_Submissions ({ commit, getters }) {
+    async fetch_all_Submissions({ commit, getters }) {
       console.log("Entered fetch all submissions")
       commit('clear_submissions_for_this_business_array')
       const db = firebase.firestore()
-      console.log("Do we get here? IF we do the  user id is :  " , (null == getters.user))
+      console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
 
-        const collectionRef =  await db
+      const collectionRef = await db
         .collection('review_requests')
         .where('businessId.userId', '==', getters.user.id)
         .get()
@@ -1811,10 +1850,10 @@ export const store = new Vuex.Store({
           console.log('Error getting submissions: ', error)
         })
     },
-    
-    fetch_replied_submissions ({ commit, getters }) {
+
+    fetch_replied_submissions({ commit, getters }) {
       console.log("Entered fetch replied submissions here")
-      console.log("fetch replied submissions user.id is " , getters.user.id)
+      console.log("fetch replied submissions user.id is ", getters.user.id)
       commit('clear_submissions_for_this_business_array')
       let db = firebase.firestore()
       let role = db
@@ -1833,16 +1872,16 @@ export const store = new Vuex.Store({
         })
     },
 
-      // Styled by Jin. No modification on code.
-    uploadImage ({commit, getters}, payload) {
+    // Styled by Jin. No modification on code.
+    uploadImage({ commit, getters }, payload) {
 
-      return new Promise((resolve,reject) => {
+      return new Promise((resolve, reject) => {
         console.log("image-_being uploaded is ", getters.image_being_uploaded.file)
         // first put the image in the storage
         // Create a root reference
-      let ref = firebase.storage().ref()
-      console.log('Error may begin here test by Yas')
-      let uploadTask = ref
+        let ref = firebase.storage().ref()
+        console.log('Error may begin here test by Yas')
+        let uploadTask = ref
           .child(
             getters.user.id +
             getters.image_folder +
@@ -1850,7 +1889,7 @@ export const store = new Vuex.Store({
           )
           .put(getters.image_being_uploaded.file)
         // Listen for state changes, errors, and completion of the upload.
-          uploadTask.on(
+        uploadTask.on(
           firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
           function (snapshot) {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -1883,9 +1922,9 @@ export const store = new Vuex.Store({
                 break
             }
           },
-           function () {
+          function () {
             // Upload completed successfully, now we can get the download URL
-             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               commit('setUrl', downloadURL) // Jin: this led to profile url change.
               if (payload.operation === 'art_upload') {
                 let art = {
@@ -1923,23 +1962,23 @@ export const store = new Vuex.Store({
           }
         )
         console.log("Near end of uploadImage")
-      // Line commented out by Yas as this line gave the error: "uploadTask.on(...).put is not a function"
-      // .put(getters.image_being_uploaded.file)
-      // Listen for state changes, errors, and completion of the upload.
+        // Line commented out by Yas as this line gave the error: "uploadTask.on(...).put is not a function"
+        // .put(getters.image_being_uploaded.file)
+        // Listen for state changes, errors, and completion of the upload.
 
         let art = {
-        art_title: payload.art_title,
-        artist_name: payload.artist_name,
-        url: getters.url,
-        description: payload.description,
-        upload_date: payload.upload_date,
-        artist_id: getters.user.id
-      }
-    })
+          art_title: payload.art_title,
+          artist_name: payload.artist_name,
+          url: getters.url,
+          description: payload.description,
+          upload_date: payload.upload_date,
+          artist_id: getters.user.id
+        }
+      })
 
       // upload the artist data and the url
-      },
-    submit_submission_response ({ getters }) {
+    },
+    submit_submission_response({ getters }) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('review_requests')
@@ -1960,54 +1999,54 @@ export const store = new Vuex.Store({
         })
     },
 
-    update_art_category_tags ({ getters }, payload) {
+    update_art_category_tags({ getters }, payload) {
       const db = firebase.firestore()
       const uploadDate = parseInt(payload.upload_date, 10)
       const categories = payload.categories
       const collectionRef = db.collection('art').where('upload_date', '==', uploadDate)
-      .get()
-      .then(function (querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-          var docRef = db.collection('art').doc(doc.id)
-          return docRef.update(
-            {'categories': categories}
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            var docRef = db.collection('art').doc(doc.id)
+            return docRef.update(
+              { 'categories': categories }
             )
+          })
         })
-      })
-      .then(function () {
-        console.log('successfully updated categories')
-      })
-      .catch(function (error) {
-        console.error('Error updating categories: ', error)
-      })
-    },
-
-    submit_request ({ getters }) {
-     let businesses_being_submitted = getters.businesses_being_submitted
-     for (let i = 0; i < businesses_being_submitted.length; i++) {
-       let art_being_submitted = getters.art_being_submitted
-       art_being_submitted.submitted_on = Date.now()
-       art_being_submitted.submitted_with_free_cerdit = false
-       art_being_submitted.businessId = businesses_being_submitted[i]
-       art_being_submitted.replied = false
-       art_being_submitted.refunded = 0;
-       const db = firebase.firestore()
-       const collectionRef = db
-        .collection('review_requests')
-        .doc()
-        .set(art_being_submitted)
-        .then(function (docRef) {
-          console.log('School submission written with ID: ', docRef.id)
-          // router.push({
-          //   name: 'submit_result'
-          // })
+        .then(function () {
+          console.log('successfully updated categories')
         })
         .catch(function (error) {
-          console.error('Error adding document: ', error)
+          console.error('Error updating categories: ', error)
         })
-     }
-   },
-    submit_request_with_free_credits ({ getters }) {
+    },
+
+    submit_request({ getters }) {
+      let businesses_being_submitted = getters.businesses_being_submitted
+      for (let i = 0; i < businesses_being_submitted.length; i++) {
+        let art_being_submitted = getters.art_being_submitted
+        art_being_submitted.submitted_on = Date.now()
+        art_being_submitted.submitted_with_free_cerdit = false
+        art_being_submitted.businessId = businesses_being_submitted[i]
+        art_being_submitted.replied = false
+        art_being_submitted.refunded = 0;
+        const db = firebase.firestore()
+        const collectionRef = db
+          .collection('review_requests')
+          .doc()
+          .set(art_being_submitted)
+          .then(function (docRef) {
+            console.log('School submission written with ID: ', docRef.id)
+            // router.push({
+            //   name: 'submit_result'
+            // })
+          })
+          .catch(function (error) {
+            console.error('Error adding document: ', error)
+          })
+      }
+    },
+    submit_request_with_free_credits({ getters }) {
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
         let art_being_submitted = getters.art_being_submitted
@@ -2019,18 +2058,18 @@ export const store = new Vuex.Store({
         art_being_submitted.businessId = businesses_being_submitted[i]
         const db = firebase.firestore()
         const collectionRef = db
-         .collection('review_requests')
-         .doc()
-         .set(art_being_submitted)
-         .then(function (docRef) {
-           console.log('Submission written with ID: ', docRef.id)
-           // router.push({
-           //   name: 'submit_result'
-           // })
-         })
-         .catch(function (error) {
-           console.error('Error adding document: ', error)
-         })
+          .collection('review_requests')
+          .doc()
+          .set(art_being_submitted)
+          .then(function (docRef) {
+            console.log('Submission written with ID: ', docRef.id)
+            // router.push({
+            //   name: 'submit_result'
+            // })
+          })
+          .catch(function (error) {
+            console.error('Error adding document: ', error)
+          })
       }
     },
 
@@ -2038,7 +2077,7 @@ export const store = new Vuex.Store({
     Sign up/Sign in flow
     Create record of business with upload avatar url in Firestore
     */
-    create_a_new_business ({ commit, getters, dispatch }, payload) {
+    create_a_new_business({ commit, getters, dispatch }, payload) {
       console.log('Inside cretae a new business')
       // first put the image in the storage
       // Create a root reference
@@ -2132,7 +2171,7 @@ export const store = new Vuex.Store({
     Sign up/Sign in flow
     Create an artist record in Firestore
     */
-    create_a_new_artist ({ commit, getters }, payload) {
+    create_a_new_artist({ commit, getters }, payload) {
       localStorage.setItem('userId', 1000)
       localStorage.setItem('role', payload.role)
 
@@ -2177,7 +2216,7 @@ export const store = new Vuex.Store({
         })
     },
 
-    uploadAvatar ({ commit, getters }, payload) {
+    uploadAvatar({ commit, getters }, payload) {
       firebase
         .storage()
         .ref(
@@ -2187,7 +2226,7 @@ export const store = new Vuex.Store({
         )
         .put(getters.image_being_uploaded.file)
     },
-    async singBusinessUp ({ commit }, payload) {
+    async singBusinessUp({ commit }, payload) {
       try {
         let response = await firebase
           .auth()
@@ -2201,63 +2240,63 @@ export const store = new Vuex.Store({
           .child(response.user.uid + '/logo/' + payload.file_name)
           .put(payload.file)
         uploadTask.on(
-            firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-            function (snapshot) {
-              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-              var progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-              console.log('Upload is ' + progress + '% done')
-              switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                  console.log('Upload is paused')
-                  break
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                  console.log('Upload is running')
-                  break
-              }
-            },
-            function (error) {
-              // A full list of error codes is available at
-              switch (error.code) {
-                case 'storage/unauthorized':
-                  alert(error.code)
-                  // User doesn't have permission to access the object
-                  break
-
-                case 'storage/canceled':
-                  alert(error.code)
-                  // User canceled the upload
-                  break
-                case 'storage/unknown':
-                  alert(error.code)
-                  // Unknown error occurred, inspect error.serverResponse
-                  break
-              }
-            },
-            function () {
-              // Upload completed successfully, now we can get the download URL
-              uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-                console.log('Url captured' + downloadURL)
-                payload.url = downloadURL
-                payload.userId = response.user.uid
-                payload.file = ''
-                const db = firebase.firestore()
-                db.collection('users')
-                  .doc(payload.userId)
-                  .set(payload)
-                  .then(function () {
-                    firebase
-                      .auth()
-                      .signOut()
-                      .then(user => {
-                        console.log('Document successfully written!')
-                        router.push({
-                          name: 'sign_in'
-                        })
-                      })
-                  })
-              })
+          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function (snapshot) {
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            console.log('Upload is ' + progress + '% done')
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused')
+                break
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running')
+                break
             }
+          },
+          function (error) {
+            // A full list of error codes is available at
+            switch (error.code) {
+              case 'storage/unauthorized':
+                alert(error.code)
+                // User doesn't have permission to access the object
+                break
+
+              case 'storage/canceled':
+                alert(error.code)
+                // User canceled the upload
+                break
+              case 'storage/unknown':
+                alert(error.code)
+                // Unknown error occurred, inspect error.serverResponse
+                break
+            }
+          },
+          function () {
+            // Upload completed successfully, now we can get the download URL
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+              console.log('Url captured' + downloadURL)
+              payload.url = downloadURL
+              payload.userId = response.user.uid
+              payload.file = ''
+              const db = firebase.firestore()
+              db.collection('users')
+                .doc(payload.userId)
+                .set(payload)
+                .then(function () {
+                  firebase
+                    .auth()
+                    .signOut()
+                    .then(user => {
+                      console.log('Document successfully written!')
+                      router.push({
+                        name: 'sign_in'
+                      })
+                    })
+                })
+            })
+          }
         )
         console.log('response: ', response.user.uid)
         console.log('payload: ', payload)
@@ -2272,7 +2311,7 @@ export const store = new Vuex.Store({
     Sign up/Sign in flow
     Register user with Firebase Authentication
     */
-    signUserUp ({ commit }, payload) {
+    signUserUp({ commit }, payload) {
       commit('setLoading', true)
       commit('clearError')
       firebase
@@ -2325,14 +2364,14 @@ export const store = new Vuex.Store({
           })
       }
     },
-    image_being_uploaded ({ commit }, payload) {
+    image_being_uploaded({ commit }, payload) {
       commit('image_being_uploaded', payload)
     },
-    logo_url ({ commit }, payload) {
+    logo_url({ commit }, payload) {
       commit('set_logo_url', payload)
     },
 
-    clearError ({ commit }) {
+    clearError({ commit }) {
       commit('clearError')
     },
 
@@ -2340,7 +2379,7 @@ export const store = new Vuex.Store({
     Sign up/Sign in flow
     Sign user in and load information from Firestore
     */
-    signUserIn ({ commit, dispatch, getters }, payload) {
+    signUserIn({ commit, dispatch, getters }, payload) {
       commit('signUserOut', commit)
       commit('setLoading', true)
       commit('clearError')
@@ -2408,7 +2447,7 @@ export const store = new Vuex.Store({
                         // check current user's role to see if they're allowed to enter
                         console.log('current role at this instance: ' + doc.data().role)
                         localStorage.setItem('role', doc.data().role)
-                        
+
                         if (doc.data().role == 'artist') {
                           router.push({
                             name: 'artist_dashboard'
@@ -2443,7 +2482,7 @@ export const store = new Vuex.Store({
                   } else {
                     alert(
                       err.message +
-                        'Or you may have not confirmed your email yet. If you need further assistance, please send us an email.'
+                      'Or you may have not confirmed your email yet. If you need further assistance, please send us an email.'
                     )
                   }
                 })
@@ -2462,7 +2501,7 @@ export const store = new Vuex.Store({
     Sign up/Sign in flow
     Sign user out. Set every parameter to null
     */
-    signUserOut ({ commit }) {
+    signUserOut({ commit }) {
       commit('clearError')
       localStorage.setItem('userId', null)
       firebase
@@ -2483,17 +2522,17 @@ export const store = new Vuex.Store({
         })
     },
 
-    autoSignIn ({ commit }, payload) {
+    autoSignIn({ commit }, payload) {
       commit('setUser', {
         id: payload.uid
       })
     },
-    clearError ({ commit }) {
+    clearError({ commit }) {
       commit(clearError)
     },
     // should change this function!
-    async sendMessageToFirebase ({ commit, getters }, payload) {
-     
+    async sendMessageToFirebase({ commit, getters }, payload) {
+
       commit('set_send_chat_data', payload)
       var message = getters.sendChatDataMessage
       var role = getters.user_role
@@ -2521,64 +2560,64 @@ export const store = new Vuex.Store({
       newChatDatabaseRef.set(sendData)
     },
 
-    uploadProfileImage ({commit, getters}) {
+    uploadProfileImage({ commit, getters }) {
       let ref = firebase.storage().ref()
       let uploadTask = ref
-          .child(
-            getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
-          )
-          .put(getters.image_being_uploaded.file)
-        // Listen for state changes, errors, and completion of the upload.
+        .child(
+          getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
+        )
+        .put(getters.image_being_uploaded.file)
+      // Listen for state changes, errors, and completion of the upload.
       uploadTask.on(
-          firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function (snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            console.log('Upload is ' + progress + '% done')
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused')
-                break
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running')
-                break
-            }
-          },
-          function (error) {
-            // A full list of error codes is available at
-            switch (error.code) {
-              case 'storage/unauthorized':
-                alert(error.code)
-                // User doesn't have permission to access the object
-                break
+        firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+        function (snapshot) {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          console.log('Upload is ' + progress + '% done')
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused')
+              break
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running')
+              break
+          }
+        },
+        function (error) {
+          // A full list of error codes is available at
+          switch (error.code) {
+            case 'storage/unauthorized':
+              alert(error.code)
+              // User doesn't have permission to access the object
+              break
 
-              case 'storage/canceled':
-                alert(error.code)
-                // User canceled the upload
-                break
-              case 'storage/unknown':
-                alert(error.code)
-                // Unknown error occurred, inspect error.serverResponse
-                break
-            }
-          },
-          // Additional code to upload/update Profile Logo - Wan
-           // Additional code to upload/update Profile Logo - Wan
-          function () {
-            // Upload completed successfully, now we can get the download URL
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('Url captured: ' + downloadURL)
-              commit('setUrl', downloadURL)
-              console.log('State url' + getters.url)
+            case 'storage/canceled':
+              alert(error.code)
+              // User canceled the upload
+              break
+            case 'storage/unknown':
+              alert(error.code)
+              // Unknown error occurred, inspect error.serverResponse
+              break
+          }
+        },
+        // Additional code to upload/update Profile Logo - Wan
+        // Additional code to upload/update Profile Logo - Wan
+        function () {
+          // Upload completed successfully, now we can get the download URL
+          uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            console.log('Url captured: ' + downloadURL)
+            commit('setUrl', downloadURL)
+            console.log('State url' + getters.url)
 
-              // Now that download URL is obtained, downloadURL is sent to Firebase
-              // to connect the user's ID to the updated profile picture
-              let updateData = {}
-              let db = getters.db
-              let userId = getters.user.id
-              let user = db
-              .collection('users').doc(userId).update({profileUrl: downloadURL}).then((data) => {
+            // Now that download URL is obtained, downloadURL is sent to Firebase
+            // to connect the user's ID to the updated profile picture
+            let updateData = {}
+            let db = getters.db
+            let userId = getters.user.id
+            let user = db
+              .collection('users').doc(userId).update({ profileUrl: downloadURL }).then((data) => {
                 let updateData = db.collection('users').doc(userId).get().then(function (doc) {
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
@@ -2590,10 +2629,10 @@ export const store = new Vuex.Store({
                   console.log('Error getting document:', error)
                 })
               })
-            })
           })
+        })
     },
-    async updateArtistProfileToFirebase ({commit, dispatch, getters}, payload) {
+    async updateArtistProfileToFirebase({ commit, dispatch, getters }, payload) {
       commit('setLoading', true)
       let instagram = payload.instagram
       let name = payload.name
@@ -2615,25 +2654,25 @@ export const store = new Vuex.Store({
 
       console.log(updateData)
       let user = db
-          .collection('users').doc(userId).update(updateData).then((data) => {
-            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
-              if (doc.exists) {
-                commit('signed_in_user', doc.data())
-                commit('setLoading', false)
-              } else {
-                // doc.data() will be undefined in this case
-              }
-            })
+        .collection('users').doc(userId).update(updateData).then((data) => {
+          let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+            if (doc.exists) {
+              commit('signed_in_user', doc.data())
+              commit('setLoading', false)
+            } else {
+              // doc.data() will be undefined in this case
+            }
+          })
             .catch(function (error) {
               console.log('Error getting document:', error)
             })
-          })
+        })
     },
-    async updateBusinessProfileToFirebase (
+    async updateBusinessProfileToFirebase(
       { commit, dispatch, getters },
       payload
     ) {
-      function setValidData (payload) {
+      function setValidData(payload) {
         let initData = payload.data
         let initDataProperty = payload.property
         let updateData = payload.updateData
@@ -2656,15 +2695,15 @@ export const store = new Vuex.Store({
       let worth_knowing = payload.worth_knowing
       let additional_notes = payload.additional_notes
 
-      updateData = setValidData({updateData: updateData, data: publication, property: 'publication'})
+      updateData = setValidData({ updateData: updateData, data: publication, property: 'publication' })
       if (follower_count !== 0) {
         updateData.follower_count = follower_count
       }
-      updateData = setValidData({updateData: updateData, data: website, property: 'website'})
-      updateData = setValidData({updateData: updateData, data: about, property: 'about'})
-      updateData = setValidData({updateData: updateData, data: worth_knowing, property: 'worth_knowing'})
-      updateData = setValidData({updateData: updateData, data: additional_notes, property: 'additional_notes'})
-      updateData = setValidData({updateData: updateData, data: instagram, property: 'instagram'})
+      updateData = setValidData({ updateData: updateData, data: website, property: 'website' })
+      updateData = setValidData({ updateData: updateData, data: about, property: 'about' })
+      updateData = setValidData({ updateData: updateData, data: worth_knowing, property: 'worth_knowing' })
+      updateData = setValidData({ updateData: updateData, data: additional_notes, property: 'additional_notes' })
+      updateData = setValidData({ updateData: updateData, data: instagram, property: 'instagram' })
 
       if (name !== undefined && name !== '') {
         updateData.business_name = name
@@ -2675,120 +2714,120 @@ export const store = new Vuex.Store({
       }
       console.log(updateData)
       let user = db
-          .collection('users').doc(userId).update(updateData).then((data) => {
-            let updateData = db.collection('users').doc(userId).get().then(function (doc) {
-              if (doc.exists) {
-                commit('signed_in_user', doc.data())
-                commit('setLoading', false)
-              } else {
-                // doc.data() will be undefined in this case
-              }
-            })
+        .collection('users').doc(userId).update(updateData).then((data) => {
+          let updateData = db.collection('users').doc(userId).get().then(function (doc) {
+            if (doc.exists) {
+              commit('signed_in_user', doc.data())
+              commit('setLoading', false)
+            } else {
+              // doc.data() will be undefined in this case
+            }
+          })
             .catch(function (error) {
               console.log('Error getting document:', error)
             })
-          })
+        })
     }
   },
   getters: {
-    get_art_being_submitted_is_selected(state){
+    get_art_being_submitted_is_selected(state) {
       return state.art_being_submitted_is_selected
     },
-    stored_user_email(state){
+    stored_user_email(state) {
       return state.stored_user_email;
     },
-    viewed_artist_data (state) {
+    viewed_artist_data(state) {
       return state.viewed_artist_data
     },
-    commenting_mode (state) {
+    commenting_mode(state) {
       return state.commenting_mode
     },
-    viewed_arts (state) {
+    viewed_arts(state) {
       return state.viewed_arts
     },
-    comments (state) {
+    comments(state) {
       return state.comments
     },
-    top_12_recent_art (state) {
+    top_12_recent_art(state) {
       return state.top_12_recent_art
     },
-    businesses_being_submitted (state) {
+    businesses_being_submitted(state) {
       return state.businesses_being_submitted
     },
-    report_month (state) {
+    report_month(state) {
       return state.report_month
     },
-    businesses_being_submitted (state) {
+    businesses_being_submitted(state) {
       return state.businesses_being_submitted
     },
-    report_month (state) {
+    report_month(state) {
       return state.report_month
     },
-    replied_for_report (state) {
+    replied_for_report(state) {
       return state.replied_for_report
     },
-    credits (state) {
+    credits(state) {
       return state.credits
     },
-    replied_submissions (state) {
+    replied_submissions(state) {
       return state.replied_submissions
     },
-    submission_response (state) {
+    submission_response(state) {
       return state.submission_response
     },
-    art_being_replied (state) {
+    art_being_replied(state) {
       return state.art_being_replied
     },
-    submissions_for_this_business (state) {
+    submissions_for_this_business(state) {
       return state.submissions_for_this_business
     },
-    art_being_submitted (state) {
+    art_being_submitted(state) {
       return state.art_being_submitted
     },
-    business_signing_up (state) {
+    business_signing_up(state) {
       return state.business_signing_up
     },
-    clicked_busliness (state) {
+    clicked_busliness(state) {
       return state.clicked_business
     },
-    image_folder (state) {
+    image_folder(state) {
       return state.image_folder
     },
-    user_role (state) {
+    user_role(state) {
       return state.user_role
     },
-    user (state) {
+    user(state) {
       return state.user
     },
-    url (state) {
+    url(state) {
       return state.url
     },
-    color (state) {
+    color(state) {
       return state.color
     },
-    categories (state) {
+    categories(state) {
       return state.categories
     },
-    updatedCategories (state) {
+    updatedCategories(state) {
       return state.updatedCategories
     },
-    image_being_uploaded (state) {
+    image_being_uploaded(state) {
       return state.image_being_uploaded
     },
-    businesses (state) {
+    businesses(state) {
       return state.businesses
     },
-    allArts (state) {
+    allArts(state) {
       return state.arts
     },
     // a getter function that returns an array that contains arts that are sorted by their upload date.
-    uploadedArts (state) {
+    uploadedArts(state) {
       return state.arts.sort((artA, artB) => {
         return artA.upload_date < artB.upload_date
       })
     },
     // a getter that returns a function that takes in an artId and...
-    uploadedArt (state) {
+    uploadedArt(state) {
       return artId => {
         return state.uploadedArts.find(art => {
           return art.id - artId
@@ -2796,102 +2835,105 @@ export const store = new Vuex.Store({
       }
     },
     // a getter function that takes in an array that contains all of the arts and returns the first five of them as futured arts
-    featuredArts (state, getters) {
+    featuredArts(state, getters) {
       return getters.uploadedArts.slice(0, 5)
     },
-    error (state) {
+    error(state) {
       return state.error
     },
-    loading (state) {
+    loading(state) {
       return state.loading
     },
     // a getter that returns the chat database
-    chat_database (state) {
+    chat_database(state) {
       return state.chat_database
     },
-    replied_requests_for_report (state) {
+    replied_requests_for_report(state) {
       return state.replied_requests_for_report
     },
-    sendChatDataMessage (state) {
+    sendChatDataMessage(state) {
       return state.sendChatData.message
     },
-    sendChatDataUser (state) {
+    sendChatDataUser(state) {
       return state.sendChatData.user
     },
-    sendChatDataDaystamp (state) {
+    sendChatDataDaystamp(state) {
       return state.sendChatData.daystamp
     },
-    sendChatDataTimestamp (state) {
+    sendChatDataTimestamp(state) {
       return state.sendChatData.timestamp
     },
-    sendChatDataUrl (state) {
+    sendChatDataUrl(state) {
       return state.sendChatData.url
     },
-    signed_in_business (state) {
+    signed_in_business(state) {
       return state.signed_in_business
     },
-    avatar (state) {
+    avatar(state) {
       return state.avatar
     },
-    signed_in_user (state) {
+    signed_in_user(state) {
       return state.signed_in_user
     },
 
-    signed_in_user_id (state) {
+    signed_in_user_id(state) {
       return state.signed_in_user_id
     },
-    db (state) {
+    db(state) {
       return state.db
     },
-    current_credits (state) {
+    current_credits(state) {
       return state.signed_in_user.credits
     },
-    selectBlog (state) {
+    selectBlog(state) {
       return state.selectBlog
     },
-    datePicker (state) {
+    datePicker(state) {
       return state.replied_requests_for_report_datePicker
     },
-    query_email (state) {
+    query_email(state) {
       return state.query_business_email
     },
-    free_credits (state) {
+    free_credits(state) {
       return state.free_credits
     },
-    artists_email_list (state) {
+    artists_email_list(state) {
       return state.artists_email_list
     },
-    submissions_for_month (state) {
+    submissions_for_month(state) {
       return state.submissions_for_month
     },
-    submissions_for_year (state) {
+    submissions_for_year(state) {
       return state.submissions_for_year
     },
-    monthly_report_submissions (state) {
+    monthly_report_submissions(state) {
       return state.monthly_report_submissions
     },
-    artist_settings_artist (state) {
+    artist_settings_artist(state) {
       return state.artist_settings_artist
     },
     // Yiwayana and aortiz
-    yearly_chart_array (state) {
+    yearly_chart_array(state) {
       return state.chart_array_for_submissions
     },
-    yearly_chart_replied (state) {
+    yearly_chart_replied(state) {
       return state.chart_replied_for_submissions
     },
-    yearly_chart_paid (state) {
+    yearly_chart_paid(state) {
       return state.chart_paid_for_submissions
     },
-    yearly_chart_free (state) {
+    yearly_chart_free(state) {
       return state.chart_free_for_submissions
     },
-    info_of_business_for_dashboard2 (state) {
+    info_of_business_for_dashboard2(state) {
       return state.info_of_business_for_dashboard2
     },
     //returns whether or not the art was updated
-    get_art_uploaded (state) {
+    get_art_uploaded(state) {
       return state.art_uploaded
+    },
+    get_recently_responded_arts(state) {
+      return state.recently_responded_arts
     }
   }
 })
