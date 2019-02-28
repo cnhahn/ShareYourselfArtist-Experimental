@@ -33,6 +33,7 @@
                   <div class="hidden-md-and-up">
 
                     <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
+                    <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) ">Delete </v-btn>
                   </div>
                 </v-flex>
                 <v-flex lg6 md6 sm6 xs12>
@@ -49,6 +50,7 @@
 
                     <v-flex lg3 md2 sm2 xs12>
                       <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
+                      <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) ">Delete </v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -125,6 +127,7 @@
         this.fetchRepliedSubmissions()
         updating_responses = false*/
       },
+
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
         try {
