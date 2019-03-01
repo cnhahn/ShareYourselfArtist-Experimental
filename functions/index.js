@@ -534,6 +534,10 @@ exports.resizeFile = functions.storage.object().onFinalize((object) => {
   });
 });
 
+exports.test = functions.https.onRequest((req,res) => {
+  res.send("Deploying this function")
+})
+
 /*
 This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
 We utilize cronjobs to be able to call this function every 48 hours automatically

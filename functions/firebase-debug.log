@@ -1,0 +1,33 @@
+[debug] [2019-02-28T20:01:53.918Z] ----------------------------------------------------------------------
+[debug] [2019-02-28T20:01:53.923Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Yas\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only functions:test
+[debug] [2019-02-28T20:01:53.923Z] CLI Version:   6.3.1
+[debug] [2019-02-28T20:01:53.923Z] Platform:      win32
+[debug] [2019-02-28T20:01:53.923Z] Node Version:  v8.11.2
+[debug] [2019-02-28T20:01:53.924Z] Time:          Thu Feb 28 2019 12:01:53 GMT-0800 (Pacific Standard Time)
+[debug] [2019-02-28T20:01:53.924Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-02-28T20:01:53.942Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-02-28T20:01:53.943Z] > authorizing via signed-in user
+[debug] [2019-02-28T20:01:53.943Z] [iam] checking project sya-app for permissions ["firebase.projects.get"]
+[debug] [2019-02-28T20:01:53.945Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/sya-app:testIamPermissions  
+
+[debug] [2019-02-28T20:01:54.258Z] <<< HTTP RESPONSE 200
+[debug] [2019-02-28T20:01:54.263Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/sya-app  
+ 
+[debug] [2019-02-28T20:01:54.394Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Yas\Documents\UCSC\syasprint1'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-02-28T20:01:55.754Z] Fetching environment
+[debug] [2019-02-28T20:01:55.756Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/490982978690:getServerAppConfig  
+ 
+[debug] [2019-02-28T20:01:55.923Z] <<< HTTP RESPONSE 200
+[debug] [2019-02-28T20:01:55.923Z] Starting @google-cloud/functions-emulator
+[debug] [2019-02-28T20:01:58.002Z] Parsing function triggers
+[info] +  functions: weeklyFreeCredits: http://localhost:5000/sya-app/us-central1/weeklyFreeCredits
+[info] +  functions: recentlyRepliedSubmissions: http://localhost:5000/sya-app/us-central1/recentlyRepliedSubmissions
+[info] +  functions: getUserAvatar: http://localhost:5000/sya-app/us-central1/getUserAvatar
+[info] +  functions: addMessage: http://localhost:5000/sya-app/us-central1/addMessage
+[info] +  functions: test: http://localhost:5000/sya-app/us-central1/test
+[info] +  functions: daily_job: http://localhost:5000/sya-app/us-central1/daily_job
