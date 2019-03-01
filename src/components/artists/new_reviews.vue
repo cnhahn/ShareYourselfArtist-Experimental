@@ -14,7 +14,7 @@
 
     <v-btn @click="fetchRepliedSubmissions" flat color="primary"> All </v-btn>
         <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
-        <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
+    <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
 
     <v-data-table flat :items="reviewList" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
@@ -33,7 +33,7 @@
                   <div class="hidden-md-and-up">
 
                     <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
-                    <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) ">Delete </v-btn>
+                    <v-btn  v-if =(!props.item.delete_byartist)  flat small color="primary"  @click= "markAsDelete(props.item.submitted_on) ">Delete </v-btn>
                   </div>
                 </v-flex>
                 <v-flex lg6 md6 sm6 xs12>
@@ -50,7 +50,7 @@
 
                     <v-flex lg3 md2 sm2 xs12>
                       <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
-                      <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) ">Delete </v-btn>
+                      <v-btn  v-if =(!props.item.delete_byartist)   flat small color="primary"  @click= "markAsDelete(props.item.art.upload_date) ">Delete </v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -69,6 +69,7 @@
       return {
         dialog: false,
         mark_as_read_btn_clicked: false,
+        mark_as_delete_btn_clicked: false,
         reviewList: [],
         masterList: [],
         headers: [
@@ -84,6 +85,11 @@
       mark_as_read_btn_clicked: function(val) {
         console.log("watching mark as read btn clicked changed", val);
         this.reviewList__unread_reviews()
+      },
+      mark_as_delete_btn_clicked: function(val) {
+        console.log("watching delete btn clicked changed", val);
+        this.reviewList__read_reviews()
+        this.fetchRepliedSubmissions()
       }
     },
     // fetch submissions on create to be used later for display
@@ -103,21 +109,35 @@
       // filters the unread reviews by checking the field read_byartist is false against the array
       reviewList__unread_reviews: function () {
         this.reviewList = this.masterList.filter(( review ) => {
-          return review.read_byartist == false
+          return review.read_byartist == false && review.delete_byartist == false
         })
       },
       // filters the read reviews by checking the field read_byartist is true against the array
       reviewList__read_reviews: function () {
         this.reviewList = this.masterList.filter(( review ) => {
-          return review.read_byartist == true
+          return review.read_byartist == true && review.delete_byartist == true
         })
       },
       // button uses prop to identify and change the field read_byartist as true which can be found in read_reviews
       markAsRead: function (upload_date) {
-        this.mark_as_read_btn_clicked = !this.mark_as_read_btn_clicked
+        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked
         for ( var i in this.reviewList ) {
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].read_byartist = true
+            this.$store.dispatch( 'update_review_read_byUser_status', upload_date  )
+          break
+          }
+        }
+
+        /*updating_responses = true
+        this.fetchRepliedSubmissions()
+        updating_responses = false*/
+      },
+      markAsDelete: function (upload_date) {
+        this.mark_as_read_btn_clicked = !this.mark_as_read_btn_clicked
+        for ( var i in this.reviewList ) {
+          if ( this.reviewList[i].art.upload_date == upload_date ) {
+            this.reviewList[i].delete_byartist = true
             this.$store.dispatch( 'update_review_read_byUser_status', upload_date  )
           break
           }
