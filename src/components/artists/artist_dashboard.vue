@@ -311,9 +311,7 @@
         // in the array and delete it. 
         // Also had to implement vuetify components v-card, v-card-actions and v-dialogue
         // let art_to_be_deleted = this.arts[this.arts.length-idx-1]
-        console.log("art is  : " , this.currentArtToDelete, "idx is ", this.currentArtIndex, " length of array is " , this.arts.length)
         let art_to_be_deleted = this.arts[this.currentArtIndex]
-        console.log("art to be deleted is " , art_to_be_deleted)
         this.$store.dispatch('delete_art_piece', art_to_be_deleted)
         this.dialog=false
       },
