@@ -69,7 +69,7 @@
               </v-alert>
               <!--<img :src="image_url" height="350"></img>-->
               <!--<img :src="image_url" height="550"></img>-->
-              <div v-if="image_too_big == false">
+              <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
                     :style="{
                       width: resized_width + 'px',
@@ -77,7 +77,7 @@
                     }"
                 ></img>
                 </div>
-               <div v-else>
+               <div v-else>-->
                  <div v-if="image_is_landscape">
                     <img :src="image_url"
                       :style="{
@@ -92,7 +92,7 @@
                       }"
                     ></img>
                  </div>  
-               </div>
+               <!--</div>-->
             </v-flex>
           </div>
           </v-layout> 
