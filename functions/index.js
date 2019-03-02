@@ -9,6 +9,7 @@ You can reach me @ kagawong@ucsc.edu
 
 //used for 48 hour refund
 const secureCompare = require('secure-compare');
+const express = require('express');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const functions = require('firebase-functions');
@@ -423,6 +424,14 @@ exports.updateUserCategories = functions.https.onRequest((request, response) => 
       console.log(error)
       response.send(error)
     })
+})
+
+exports.recommendArtwork = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let userId = request.body.userId;
+  let mostPopularCategory;
+  const getCurrentUser = db.collection('users').doc(userId).get()
+  
 })
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
