@@ -144,6 +144,287 @@ If user already has maximum credits - run function, still update lastRanTime
   this function there are only 432 artists so everything is fine. Later on we will have to do 
   multiple batch writes if there are greater than 500 artists.
 */
+
+exports.updateUserCategories = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let batch = db.batch()
+
+   function updateFields (ID, list){
+    console.log('Now in updateFields')
+    let artistID = ID
+    let aRef = db.collection('users').doc(artistID)
+    console.log("About to start run Transaction")
+     return db.runTransaction(async t => {
+      //let aRef = db.collection('users').doc(element)
+
+      let doc = await t.get(aRef)        
+      if(doc.data() != undefined){
+        // console.log('doc.data is ' , doc.data().categories.drawing.count)
+        // console.log("drawing's count is typeOF: " + typeof doc.data().categories.drawing.count)
+        // console.log('list array ' , list)
+        // console.log('list is typeof: ' + typeof list[0])
+
+        // let drawing = doc.data().categories.drawing.count + list[0];
+        // let painting = doc.data().categories.painting.count + list[1]
+        // let sculpting = doc.data().categories.sculpting.count + list[2]
+        // let design = doc.data().categories.design.count + list[3]
+        // let threeD = doc.data().categories.threeD.count + list[4];
+        // let multimedia = doc.data().categories.multimedia.count + list[5];
+        // let blackandwhite = doc.data().categories.blackandwhite.count + list[6]
+        // let psychedelic = doc.data().categories.psychedelic.count + list[7]
+        // let portrait = doc.data().categories.portrait.count + list[8]
+        // let realism = doc.data().categories.realism.count + list[9]
+        // let abstract = doc.data().categories.abstract.count + list[10]
+
+        // console.log('drawing count: ', drawing + 'threeD count: ', threeD)
+        
+        //console.log("numRefunds : " + numRefunds)
+        //console.log("updated Credit amount: " + updateCredits)
+        await t.update(aRef, 
+          { 
+            categories: {
+              drawing : {
+                count : 0,
+                responded : 0
+              },
+              painting : {
+                count : 0,
+                responded : 0
+              },
+              sculpting:{
+                count : 0,
+                responded : 0
+              },
+              design:{
+                count : 0,
+                responded : 0              
+              },
+              threeD : {
+                count : 0,
+                responded : 0
+              },
+              multimedia : {
+                count : 0,
+                responded : 0
+              },
+              blackandwhite:{
+                count : 0,
+                responded : 0
+              },
+              psychedelic:{
+                count : 0,
+                responded : 0
+              },
+              portrait:{
+                count : 0,
+                responded : 0
+              },
+              realism: {
+                count : 0,
+                responded : 0
+              },
+              abstract: {
+                count : 0,
+                responded : 0
+              }  
+          } 
+          });
+      }
+      //console.log(JSON.stringify(doc.data()))
+    });
+  }
+
+  let totalNumberOfUsers
+  const categories = db.collection('users').get()
+    .then(function (querySnapshot) {
+      const promises = []
+      querySnapshot.forEach(function (doc) {
+        // console.log('artist ID: ', doc.data().artist_id, ' categories: ', doc.data().categories)
+        //response.send('artist ID: ', doc.data().artist_id, ' categories: ', doc.data().categories)
+        totalNumberOfUsers = querySnapshot.size
+        //console.log('total number of users is ', totalNumberOfUsers)
+        promises.push(doc)
+      })
+      return Promise.all(promises)
+    })
+    .then(function(artists){
+
+    let artCategories = {
+      'drawing' : 0, 
+      'painting' : 1, 
+      'sculpting' : 2, 
+      'design' : 3, 
+      '3D' : 4, 
+      'multimedia' : 5, 
+      'black&white': 6, 
+      'psychedelic': 7, 
+      'portrait' : 8, 
+      'realism': 9,
+      'abstract': 10
+    }
+
+ 
+
+      //console.log(artCategories['drawing'])
+       for(var i = 0; i < artists.length; i++){
+      //   console.log('artist ID: ', artists[i].data().artist_id, ' categories: ', artists[i].data().categories)
+      //   // categories [ drawing, painting, ]
+      //   // loop through this array, check 
+      //   /*The order of the array will be:
+      //   */ 
+      //   // [1,  0 , 0 ,0 , 1 , 0 , 0 ]
+      //   let category_list = artists[i].data().categories
+      //   let category_count = new Array(11).fill(0);
+
+      //   for(var j = 0 ; j <category_list.length; j++){
+      //     // Makes sure that the category we are looking at is one of the 11 possible categories.
+      //     let indexCat = artCategories[category_list[j]]
+      //     if(indexCat >= 0 && indexCat <= 10){
+      //       // console.log('category is ', category_list[j] , ' index is ', artCategories[category_list[j]]);
+      //       category_count[indexCat]++
+      //     }
+      //   }
+      // console.log('artists array is ', artists[i].data())
+
+      //   console.log('category array is ', category_count)
+         let artistID = db.collection('users').doc(artists[i].data().userId)
+        // let artistID = artists[i].data().artist_id
+        // updateFields(artistID, category_count)
+        // db.runTransaction(t => {
+        //     //let aRef = db.collection('users').doc(element)
+        //     let tD = '3D'
+        //     let blackandwhite = 'black&white'
+        //     let doc = await t.get(artistID)        
+        //     if(doc.data() != undefined){
+        //       let drawing = doc.data().drawing.count + category_list[0]
+        //       let painting = doc.data().painting.count + category_list[1]
+        //       let sculpting = doc.data().sculpting.count + category_list[2]
+        //       let design = doc.data().design.count + category_list[3]
+        //       let threeD = doc.data().tD.count + category_list[4];
+        //       let multimedia = doc.data().multimedia.count + category_list[5];
+        //       let blackandwhite = doc.data().blackandwhite.count + category_list[6]
+        //       let psychedelic = doc.data().psychedelic.count + category_list[7]
+        //       let portrait = doc.data().portrait.count + category_list[8]
+        //       //console.log("current Credit amount: " + currCredits)
+        //       let realism = doc.data().realism.count + category_list[9]
+        //       let abstract = doc.data().abstract.count + category_list[10]
+
+        //       //console.log("numRefunds : " + numRefunds)
+        //       //console.log("updated Credit amount: " + updateCredits)
+        //       await t.update(artistID, 
+        //         { 
+        //           categories: {
+        //             drawing : {
+        //               count : drawing,
+        //               responded : 0
+        //             },
+        //             painting : {
+        //               count : painting,
+        //               responded : 0
+        //             },
+        //             sculpting:{
+        //               count : sculpting,
+        //               responded : 0
+        //             },
+        //             design:{
+        //               count : design,
+        //               responded : 0              
+        //             },
+        //             '3D' : {
+        //               count : threeD,
+        //               responded : 0
+        //             },
+        //             multimedia : {
+        //               count : multimedia,
+        //               responded : 0
+        //             },
+        //             'black&white':{
+        //               count : blackandwhite,
+        //               responded : 0
+        //             },
+        //             psychedelic:{
+        //               count : psychedelic,
+        //               responded : 0
+        //             },
+        //             portrait:{
+        //               count : portrait,
+        //               responded : 0
+        //             },
+        //             realism: {
+        //               count : realism,
+        //               responded : 0
+        //             },
+        //             abstract: {
+        //               count : abstract,
+        //               responded : 0
+        //             }  
+        //         } 
+        //         });
+        //     }
+        //     //console.log(JSON.stringify(doc.data()))
+        //   });
+        // console.log('artist is ', artistID.name)
+        batch.update(artistID, {
+          categories: {
+              drawing : {
+                count : 0,
+                responded : 0
+              },
+              painting : {
+                count : 0,
+                responded : 0
+              },
+              sculpting:{
+                count : 0,
+                responded : 0
+              },
+              design:{
+                count : 0,
+                responded : 0
+              },
+              threeD : {
+                count : 0,
+                responded : 0
+              },
+              multimedia : {
+                count : 0,
+                responded : 0
+              },
+              blackandwhite :{
+                count : 0,
+                responded : 0
+              },
+              psychedelic:{
+                count : 0,
+                responded : 0
+              },
+              portrait:{
+                count : 0,
+                responded : 0
+              },
+              realism: {
+                count : 0,
+                responded : 0
+              },
+              abstract: {
+                count : 0,
+                responded : 0
+              }  
+          }
+        })
+      }
+      //return 'message'
+      return batch.commit()
+    })
+    .then(function(){
+      response.send('All categories initialized to default values')
+    })
+    .catch(function (error) {
+      console.log(error)
+      response.send(error)
+    })
+})
+
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let batch = db.batch()
@@ -151,25 +432,25 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
     .then(function (querySnapshot) {
       //const users = querySnapshot.data()
       const promises = []
-      querySnapshot.forEach(function (doc){
+      querySnapshot.forEach(function (doc) {
         promises.push(doc)
       })
       return Promise.all(promises) //returning promises sends the resolved results to 
     })                             //to the next .then()
-    .then(function (person){
+    .then(function (person) {
       let results = []
-      person.forEach(function(personSnap){
+      person.forEach(function (personSnap) {
         //const data = personSnap.data()
         results.push(personSnap.id)
       })
       return results
     })
-    .then(function (ids){
+    .then(function (ids) {
       console.log("arrays length:" + ids.length)
-      for(var i = 0; i<ids.length; i++){
+      for (var i = 0; i < ids.length; i++) {
         //console.log(ids[i])
         let artistsRef = db.collection('users').doc(ids[i])
-        batch.update(artistsRef, {free_credits: '2'})
+        batch.update(artistsRef, { free_credits: '2' })
         // artistsRef.update({
         //   'free_credits': '2'
         // })
@@ -178,11 +459,11 @@ exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
       //return 'credits?'
       //return response.send('Documents updated')
     })
-    .then(function(reply){
+    .then(function (reply) {
 
       return response.send('All artists updated with 2 free credits')
     })
-    .catch(function (error){
+    .catch(function (error) {
       response.send(error)
     })
 
@@ -193,14 +474,14 @@ exports.recentlyRepliedSubmissions = functions.https.onRequest((request, respons
   //console.log(event.body)
   //let params = event.body
   //console.log("params is typeOf: " + typeof params)
- 
+
   //response is the object that we will return to the client
   let db = admin.firestore()
   let responseCode = 200;
 
   //Handle event data
   // if(event.body.amount == null || event.body.amount == undefined){
-    
+
   //   responseCode = 400
   //   //response["statusCode"] = responseCode
   //   //response["body"] = 'Incorrect parameters, please supply amount of submissions to return in body'
@@ -215,90 +496,90 @@ exports.recentlyRepliedSubmissions = functions.https.onRequest((request, respons
   //   response.status(400).send(reply)
   // }
   //else{
-    //let amount = parseInt(params.amount, 10)
+  //let amount = parseInt(params.amount, 10)
 
-    let responseBody = {
-      
-    }
+  let responseBody = {
 
-    // ascending or descending?
-    let submissions = db.collection('review_requests').where("replied", "==", true).orderBy('replied_date', "desc").limit(20).get()
-      .then(function(querySnapshot){
-        let promises = [];
-        querySnapshot.forEach(function(doc){
-          promises.push(doc)
-        })
-        return Promise.all(promises)
+  }
+
+  // ascending or descending?
+  let submissions = db.collection('review_requests').where("replied", "==", true).orderBy('replied_date', "desc").limit(20).get()
+    .then(function (querySnapshot) {
+      let promises = [];
+      querySnapshot.forEach(function (doc) {
+        promises.push(doc)
       })
-      .then(function(results){
-        // loop through results and place them in the response object under the 'body' object
-        let requestMetaData = {
-          art_title: '',
-          artist_id : '',
-          artist_name: '',
-          //categories: [],
-          delete: false,
-          description: '',
-          upload_date: 0,
-          url : '',
-          artist_email: '',
-          business_email : '',
-          business_name : '',
-          businessUserId: '',
-          read_byartist : false,
-          refunded: 0,
-          replied: true,
-          replied_date: 0,
-          radios: '',
-          response: '',
-          submitted_on: 0,
-          submitted_with_free_cerdit: true
-        }
+      return Promise.all(promises)
+    })
+    .then(function (results) {
+      // loop through results and place them in the response object under the 'body' object
+      let requestMetaData = {
+        art_title: '',
+        artist_id: '',
+        artist_name: '',
+        //categories: [],
+        delete: false,
+        description: '',
+        upload_date: 0,
+        url: '',
+        artist_email: '',
+        business_email: '',
+        business_name: '',
+        businessUserId: '',
+        read_byartist: false,
+        refunded: 0,
+        replied: true,
+        replied_date: 0,
+        radios: '',
+        response: '',
+        submitted_on: 0,
+        submitted_with_free_cerdit: true
+      }
 
-        for(var i = 0; i < results.length; i++){
-          
-          console.log('artist at position ' + i + " and id: "+ results[i].data().art.artist_id)
-          let emptyArray = []
-          emptyArray = results[i].data().art.categories
-          requestMetaData.art_title = results[i].data().art.art_title
-          requestMetaData.artist_id = results[i].data().art.artist_id
-          requestMetaData.artist_name = results[i].data().art.artist_name
-          requestMetaData['categories'] = emptyArray 
-          requestMetaData.delete = results[i].data().art.delete
-          requestMetaData.description = results[i].data().art.description
-          requestMetaData.upload_date = results[i].data().art.upload_date
-          requestMetaData.url = results[i].data().art.url
-          requestMetaData.artist_email = results[i].data().artist_email
-          requestMetaData.business_email = results[i].data().businessId.business_email
-          requestMetaData.business_name = results[i].data().businessId.business_name
-          requestMetaData.businessUserId = results[i].data().businessId.userId
-          requestMetaData.read_byartist = results[i].data().read_byartist
-          requestMetaData.refunded = results[i].data().refunded
-          requestMetaData.replied = results[i].data().replied
-          requestMetaData.replied_date = results[i].data().replied_date
-          requestMetaData.radios = results[i].data().submission_response.radios
-          requestMetaData.response = results[i].data().submission_response.response
-          requestMetaData.submitted_on = results[i].data().submitted_on
-          requestMetaData.submitted_with_free_cerdit = results[i].data().submitted_with_free_cerdit
-          console.log("art name at this pos: " + requestMetaData.artist_name)
-          console.log("here is obj: " + requestMetaData)
+      for (var i = 0; i < results.length; i++) {
 
-          // Necessary to a deep copy of the requestMetaData object
-          let tempData = JSON.parse(JSON.stringify(requestMetaData))
-          responseBody[i] = tempData
-          // responseBody[i] = results[i].data();
-        }
-        let reply = {
-          statusCode : responseCode,
-          body : responseBody
-        }
+        console.log('artist at position ' + i + " and id: " + results[i].data().art.artist_id)
+        let emptyArray = []
+        emptyArray = results[i].data().art.categories
+        requestMetaData.art_title = results[i].data().art.art_title
+        requestMetaData.artist_id = results[i].data().art.artist_id
+        requestMetaData.artist_name = results[i].data().art.artist_name
+        requestMetaData['categories'] = emptyArray
+        requestMetaData.delete = results[i].data().art.delete
+        requestMetaData.description = results[i].data().art.description
+        requestMetaData.upload_date = results[i].data().art.upload_date
+        requestMetaData.url = results[i].data().art.url
+        requestMetaData.artist_email = results[i].data().artist_email
+        requestMetaData.business_email = results[i].data().businessId.business_email
+        requestMetaData.business_name = results[i].data().businessId.business_name
+        requestMetaData.businessUserId = results[i].data().businessId.userId
+        requestMetaData.read_byartist = results[i].data().read_byartist
+        requestMetaData.refunded = results[i].data().refunded
+        requestMetaData.replied = results[i].data().replied
+        requestMetaData.replied_date = results[i].data().replied_date
+        requestMetaData.radios = results[i].data().submission_response.radios
+        requestMetaData.response = results[i].data().submission_response.response
+        requestMetaData.submitted_on = results[i].data().submitted_on
+        requestMetaData.submitted_with_free_cerdit = results[i].data().submitted_with_free_cerdit
+        console.log("art name at this pos: " + requestMetaData.artist_name)
+        console.log("here is obj: " + requestMetaData)
 
-        console.log('responding here: ', response)
-        return response.send(reply)
-      })
-      .catch(function(error){
-        return response.send(error)
-      })
+        // Necessary to a deep copy of the requestMetaData object
+        let tempData = JSON.parse(JSON.stringify(requestMetaData))
+        responseBody[i] = tempData
+        // responseBody[i] = results[i].data();
+      }
+      let reply = {
+        statusCode: responseCode,
+        body: responseBody
+      }
+
+      console.log('responding here: ', response)
+      return response.send(reply)
+    })
+    .catch(function (error) {
+      return response.send(error)
+    })
 
   //}
 
@@ -534,9 +815,222 @@ exports.resizeFile = functions.storage.object().onFinalize((object) => {
   });
 });
 
-exports.test = functions.https.onRequest((req,res) => {
-  res.send("Deploying this function")
-})
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
+
+/*
+This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
+We utilize cronjobs to be able to call this function every 48 hours automatically
 
 /*
 This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
