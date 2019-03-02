@@ -1937,6 +1937,29 @@ export const store = new Vuex.Store({
                   delete: false,
                   artist_id: firebase.auth().currentUser.uid
                 }
+
+                let dataCategory = {}
+                dataCategory[0] = art.categories
+                dataCategory[1] = art.artist_id
+                let categoryJson = JSON.stringify(dataCategory)
+
+                //  Send API request to update user category
+                let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+                let targetUrl = proxyUrl + 'https://us-central1-sya-app.cloudfunctions.net/recentlyRepliedSubmissions'
+
+                if (!('fetch' in window)) {
+                  return
+                } else {
+                }
+
+                fetch(targetUrl, {
+                  method : 'post',
+                  headers : {
+                    "Content-type": "application/json"
+                  },
+                  body: categoryJson
+                })
+
                 const db = firebase.firestore()
                 const collectionRef = db.collection('art')
                 collectionRef
