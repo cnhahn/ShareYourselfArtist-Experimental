@@ -242,6 +242,8 @@
 
           // holds the uploaded image, used to get dimensions
           var img = new Image()
+
+          var dataURL = this.image_url
           // image loading is done asynchronously, so you have to wait for load event
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
@@ -254,11 +256,31 @@
 
             // this is to resize the uploaded image
             // max width allowed = 1200, height allowed = 630
-            self.resizeImage(img.width, img.height, 1200, 630)
+            var resizeDims = self.resizeImage(img.width, img.height, 1200, 630)
+            img.width = resizeDims[0]
+            img.height = resizeDims[1]
+            //console.log('resized image width: ', img.width)
+            //console.log('resized image height: ', img.height)
+
+            // https://stackoverflow.com/questions/23945494/use-html5-to-resize-an-image-before-upload
+            var canvas = document.createElement('canvas')
+            canvas.width = img.width
+            canvas.height = img.height
+            canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
+
+            var extension = self.checkUrl(img.src)
+            //console.log('image extension: ', extension)
+
+            dataURL = canvas.toDataURL('image/jpeg')
+            //console.log('dataURL: ', dataURL)
+            /*var resizedImage = dataURLToBlob(dataURL)
+            console.log('resizedImage: ', resizedImage)*/
           }
           img.src = this.image_url
+          //console.log('image_url: ', this.image_url)
 
-          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
+          //this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
+          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: dataURL /*this.image_url*/ })
         })
         fileReader.readAsDataURL(files[0])
       },
@@ -302,11 +324,39 @@
           this.image_too_big = true
         }
 
+        width = Math.round(width)
+        height = Math.round(height)
         this.resized_width = width
         this.resized_height = height
-        //console.log('resized image width: ', width)
-        //console.log('resized image height: ', height)
+        //console.log('resized image width: ', this.resized_width)
+        //console.log('resized image height: ', this.resized_height)
+
+        return [width, height]
+      },
+      checkUrl(url){
+        /*var arr = [ "jpeg", "jpg", "gif", "png" ];
+        var ext = url.substring(url.lastIndexOf(".")+1)
+        if($.inArray(ext,arr)){
+          alert("valid url");
+          return true;
+        }*/
+
+        /*
+        // Remove everything to the last slash in URL
+        url = url.substr(1 + url.lastIndexOf("/"))
+
+        // Break URL at ? and take first part (file name, extension)
+        url = url.split('?')[0]
+
+        // Sometimes URL doesn't have ? but #, so we should aslo do the same for #
+        url = url.split('#')[0]
+
+        // Now we have only extension
+        return url;*/
+
+        return url
       }
+
     }
   }
 </script>
