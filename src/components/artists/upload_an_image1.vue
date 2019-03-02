@@ -69,15 +69,15 @@
               </v-alert>
               <!--<img :src="image_url" height="350"></img>-->
               <!--<img :src="image_url" height="550"></img>-->
-              <div v-if="image_too_big == false">
+              <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
                     :style="{
                       width: resized_width + 'px',
                       height: resized_height + 'px'
                     }"
                 ></img>
-                </div>
-               <div v-else>
+              </div>
+               <div v-else>-->
                  <div v-if="image_is_landscape">
                     <img :src="image_url"
                       :style="{
@@ -92,7 +92,7 @@
                       }"
                     ></img>
                  </div>  
-               </div>
+               <!--</div>-->
             </v-flex>
           </div>
           </v-layout> 
@@ -209,14 +209,14 @@
         const files = event.target.files
         let file = files[0]
         console.log('Entered on FilePicked')
-        if(file.size > 4000000){
+        /*if(file.size > 4000000){
           this.image_size_accepted = false
           var input = document.getElementsByTagName('input')[0];
           input.value = null
           this.image_url = ''
           this.image_is_not_loaded = true
           return
-        } 
+        }*/ 
         console.log('file: ', file)
         this.file = file 
         this.image_is_not_loaded = false
@@ -243,13 +243,13 @@
           // holds the uploaded image, used to get dimensions
           var img = new Image()
 
-          var dataURL = this.image_url
+          var dataURL = '' //this.image_url
           // image loading is done asynchronously, so you have to wait for load event
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
           {
-            //console.log('image width: ', img.width)
-            //console.log('image height: ', img.height)
+            console.log('image width: ', img.width)
+            console.log('image height: ', img.height)
             
             // check orientation
             self.checkOrientation(img.width, img.height)
@@ -266,6 +266,8 @@
             var canvas = document.createElement('canvas')
             canvas.width = img.width
             canvas.height = img.height
+            console.log('resized image width: ', img.width)
+            console.log('resized image height: ', img.height)
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
 
             var extension = self.checkUrl(img.src)
