@@ -474,7 +474,7 @@ exports.updateUserCategories = functions.https.onRequest((request, response) => 
 
 exports.giveCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
-  let person = db.collection('users').doc()
+  let person = db.collection('users').doc('XpIQwNnOayXqjdlbh6jDDL5xaaz2')
 
   let transaction = db.runTransaction(t => {
     return t.get(person)
