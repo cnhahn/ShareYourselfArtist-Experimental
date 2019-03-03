@@ -48,11 +48,11 @@ export const store = new Vuex.Store({
       },
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       // { title: 'My Account', icon: 'account_box', link: '/account' },
-      {
-        title: 'Report',
-        icon: 'assessment',
-        link: '/report'
-      },
+      //{
+      //  title: 'Report',
+      //  icon: 'assessment',
+      //  link: '/report'
+      //},
       {
         title: 'Chat',
         icon: 'chat',
