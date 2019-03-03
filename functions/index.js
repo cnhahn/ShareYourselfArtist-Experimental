@@ -474,7 +474,65 @@ exports.updateUserCategories = functions.https.onRequest((request, response) => 
 
 exports.giveCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
-  let person = db.collection('users').doc().get()
+  let person = db.collection('users').doc()
+
+  let transaction = db.runTransaction(t => {
+    return t.get(person)
+      .then(doc => {
+        // Add one person to the city population
+        let categoryObj = {
+            drawing: {
+              count: 0,
+              responded: 0
+            },
+            painting: {
+              count: 0,
+              responded: 0
+            },
+            sculpting: {
+              count: 0,
+              responded: 0
+            },
+            design: {
+              count: 0,
+              responded: 0
+            },
+            threeD: {
+              count: 0,
+              responded: 0
+            },
+            multimedia: {
+              count: 0,
+              responded: 0
+            },
+            blackandwhite: {
+              count: 0,
+              responded: 0
+            },
+            psychedelic: {
+              count: 0,
+              responded: 0
+            },
+            portrait: {
+              count: 0,
+              responded: 0
+            },
+            realism: {
+              count: 0,
+              responded: 0
+            },
+            abstract: {
+              count: 0,
+              responded: 0
+            }
+        }
+        t.update(person, { categories: categoryObj });
+      });
+  }).then(result => {
+    console.log('Transaction success!');
+  }).catch(err => {
+    console.log('Transaction failure:', err);
+  });
 })
 
 exports.recommendArtwork = functions.https.onRequest((request, response) => {
@@ -483,7 +541,7 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
   let mostPopularCategory;
   const getCurrentUser = db.collection('users').doc(userId).get()
     .then()
-  
+
 })
 
 exports.updateArtistCategoryCount = functions.https.onRequest((request, response) => {
@@ -493,157 +551,146 @@ exports.updateArtistCategoryCount = functions.https.onRequest((request, response
   let batch = db.batch()
   let categoriesToUpdate = request.body[0];
   console.log(categoriesToUpdate)
-
   // XpIQwNnOayXqjdlbh6jDDL5xaaz2
   const currentUser = db.collection('users').doc(userId).get()
-      .then(user => {
-        let person = db.collection('users').doc(userId)
-        let currentCategories = user.data().categories
-        //console.log('type of currentCategories: ' + typeof currentCategories)
-        console.log(JSON.stringify(currentCategories))
+    .then(user => {
+      let person = db.collection('users').doc(userId)
+      let currentCategories = user.data().categories
+      //console.log('type of currentCategories: ' + typeof currentCategories)
+      console.log(JSON.stringify(currentCategories))
 
-        for(let i = 0; i < categoriesToUpdate.length; i++){
-          console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-          currentCategories[categoriesToUpdate[i]].count++
-          console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+      for (let i = 0; i < categoriesToUpdate.length; i++) {
+        console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+        currentCategories[categoriesToUpdate[i]].count++
+        console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
 
-          switch (categoriesToUpdate[i]) {
-            case 'painting':
-              console.log('matched with painting')
-              batch.update(person, {
-                categories: {
-                  painting: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.painting.responded
+        switch (categoriesToUpdate[i]) {
+          case 'painting':
+            console.log('matched with painting')
+            batch.set(person, {
+              categories: {
+                painting: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.painting.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'threeD':
+            console.log('matched with threeD')
+            batch.set(person, {
+              categories: {
+                threeD: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.threeD.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'drawing':
+            console.log('matched with drawing')
+            batch.set(person, {
+              categories: {
+                drawing: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.drawing.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'sculpting':
+            console.log('matched with sculpting')
+            batch.set(person, {
+              categories: {
+                sculpting: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.sculpting.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'design':
+            console.log('matched with design')
+            batch.set(person, {
+              categories: {
+                design: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.design.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'multimedia':
+            console.log('matched with multimedia')
+            batch.set(person, {
+              categories: {
+                multimedia: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.multimedia.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'blackandwhite':
+            console.log('matched with blackandwhite')
+            batch.set(person, {
+              categories: {
+                blackandwhite: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.blackandwhite.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'psychedelic':
+            console.log('matched with psychedelic')
+            batch.set(person, {
+              categories: {
+                psychedelic: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.psychedelic.responded
+                }
+              }
+            }, { merge: true })
+            break;
+          case 'portrait':
+            console.log('matched with portrait')
+            batch.set(person, {
+              categories: {
+                portrait: {
+                  count: currentCategories[categoriesToUpdate[i]].count++,
+                  responded: user.data().categories.portrait.responded
                   }
                 }
-              })
-              break;
-            case 'threeD':
-              console.log('matched with threeD')
-              batch.update(person, {
-                categories: {
-                  threeD: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.threeD.responded
-                  }
-                }
-              })
-              break;
-            case 'drawing':
-              console.log('matched with drawing')
-              batch.update(person, {
-                categories: {
-                  drawing: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.drawing.responded
-                  }
-                }
-              })
-              break;
-            case 'sculpting':
-              console.log('matched with sculpting')
-              batch.update(person, {
-                categories: {
-                  sculpting: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.sculpting.responded
-                  }
-                }
-              })
-              break;
-            case 'design':
-              console.log('matched with design')
-              batch.update(person, {
-                categories: {
-                  design: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.design.responded
-                  }
-                }
-              })
-              break;
-            case 'multimedia':
-              console.log('matched with multimedia')
-              batch.update(person, {
-                categories: {
-                  multimedia: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.multimedia.responded
-                  }
-                }
-              })
-              break;
-            case 'blackandwhite':
-              console.log('matched with blackandwhite')
-              batch.update(person, {
-                categories: {
-                  blackandwhite: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.blackandwhite.responded
-                  }
-                }
-              })
-              break;
-            case 'psychedelic':
-              console.log('matched with psychedelic')
-              batch.update(person, {
-                categories: {
-                  psychedelic: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.psychedelic.responded
-                  }
-                }
-              })
-              break;
-            case 'portrait':
-              console.log('matched with portrait')
-              batch.update(person, {
-                categories: {
-                  portrait: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.portrait.responded
-                  }
-                }
-              })
+              }, {merge:true})
               break;
             case 'realism':
               console.log('matched with realism')
-              batch.update(person, {
+              batch.set(person, {
                 categories: {
                   realism: {
                     count: currentCategories[categoriesToUpdate[i]].count++,
                     responded: user.data().categories.realism.responded
                   }
                 }
-              })
+              }, {merge:true})
               break;
             case 'abstract':
               console.log('matched with abstract')
-              batch.update(person, {
+              batch.set(person, {
                 categories: {
                   abstract: {
                     count: currentCategories[categoriesToUpdate[i]].count++,
                     responded: user.data().categories.abstract.responded
                   }
                 }
-              })
+              }, {merge:true})
               break;
 
             default:
               console.log('no cases matched')
           }
-          // let category = {};
-          // category[`categories.${categoriesToUpdate[i]}.count`] = currentCategories[categoriesToUpdate[i]].count++;
-          // batch.set(person, {
-          //   // ['categories.' + categoriesToUpdate[i] + '.count'] : currentCategories[categoriesToUpdate[i]].count++
-          //   category
-          // }, {merge : true})
         }
-
-
-        console.log('after the for loop')
-        console.log(categoriesToUpdate.length)
         return batch.commit()
         //return response.send("These categories were updated ", JSON.stringify(currentCategories))
       })
