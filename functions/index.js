@@ -706,11 +706,14 @@ exports.updateArtistCategoryCount = functions.https.onRequest((request, response
       })
 })
 
-// Triggered when a business responds to an artist and hits 'accept'. We 
+// Triggered when a business responds to an artist and hits 'accept'. We track both an artists acceptance
+// rate and the amount of times the business has replied.
 exports.updateArtistsAcceptedStat = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   const artist = request.body.artistID;
   const business = request.body.businessID;
+
+  //which collection should this go to?
   const artistRef = db.collection().doc(artist);
   const businessRef = db.collection().doc(business)
   let transaction = db.runTransaction(t => {
