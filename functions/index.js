@@ -544,6 +544,9 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
 
 })
 
+// This function is triggerred when an artist uploads artwork to their dashboard. We track 
+// which category of artwork the artist chose so that we can recommend them artists/artwork according to
+// their most popular categorie(s)
 exports.updateArtistCategoryCount = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let userId = request.body[1];
@@ -701,17 +704,36 @@ exports.updateArtistCategoryCount = functions.https.onRequest((request, response
       .catch(error => {
         response.send(error)
       })
-      
-  // })
-  // .then(res => {
-  //   console.log('It worked? ', res)
-  //   response.send(res)
-  // })
-  // .catch(error =>{
-  //   console.log('there was an error ', error)
-  //   response.send(error)
-  // })
-    
+})
+
+// Triggered when a business responds to an artist and hits 'accept'. We 
+exports.updateArtistsAcceptedStat = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  const artist = request.body.artistID;
+  const business = request.body.businessID;
+  const artistRef = db.collection().doc(artist);
+  const businessRef = db.collection().doc(business)
+  let transaction = db.runTransaction(t => {
+    return t.get(artistRef)
+      .then(doc => {
+        // Add one to the artist 'accepted' stat
+        let newArtistStat = doc.data().acceptedAmount + 1;
+        t.update(artistRef, {acceptedAmount: newArtistStat});
+        // We should also keep track of how many responses the business has made
+        let newBusinessStat = doc.data().acceptedAmount + 1;
+        t.update(businessRef, {acceptedAmount: newBusinessStat});
+        
+      });
+  })
+  .then(result => {
+    console.log('Transaction success!');
+    response.status(200).send("Artist's accepted stat updated.")
+  })
+  .catch(err => {
+    console.log('Transaction failure:', err);
+  });
+  
+
 })
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
