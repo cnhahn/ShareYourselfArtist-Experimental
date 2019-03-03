@@ -214,7 +214,7 @@
       },
       setEdit () {
         this.onEdit = true
-        // TODO: set Edit functions
+        // TODO: set Edit functions 
       },
       initial () {
         return String(this.$store.getters.signed_in_user.name).charAt(0)
