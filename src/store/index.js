@@ -27,6 +27,7 @@ export const store = new Vuex.Store({
     recently_responded_arts: [],
     comments: [],
     commenting_mode: false,
+    successfulProfilePicUpload: false,
     sideNavItems: [
       {
         title: 'Dashboard',
@@ -551,6 +552,9 @@ export const store = new Vuex.Store({
     },
     set_artist_settings_artist(state, payload) {
       state.artist_settings_artist = payload.obj
+    },
+    set_successful_profile_upload(state, payload) {
+      state.successfulProfilePicUpload = payload
     }
   },
   actions: {
@@ -2603,14 +2607,15 @@ export const store = new Vuex.Store({
           }
         },
         // Additional code to upload/update Profile Logo - Wan
-        // Additional code to upload/update Profile Logo - Wan
         function () {
           // Upload completed successfully, now we can get the download URL
           uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             console.log('Url captured: ' + downloadURL)
             commit('setUrl', downloadURL)
             console.log('State url' + getters.url)
-
+            console.log('we reached here which is one line before pls')
+            commit('set_successful_profile_upload', true)
+            console.log('state at this moment is: ', getters.successfulProfilePicUpload)
             // Now that download URL is obtained, downloadURL is sent to Firebase
             // to connect the user's ID to the updated profile picture
             let updateData = {}
@@ -2732,6 +2737,9 @@ export const store = new Vuex.Store({
   getters: {
     get_art_being_submitted_is_selected(state) {
       return state.art_being_submitted_is_selected
+    },
+    successfulProfilePicUpload(state) {
+      return state.successfulProfilePicUpload
     },
     stored_user_email(state) {
       return state.stored_user_email;

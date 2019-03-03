@@ -11,19 +11,33 @@
                 </v-avatar>
                 <!--TODO: Code for Uploading image. Should modify.-->
                 <!-- From store to url -->
+                <!-- Button components that were not working 
+                  :loading="imageNotLoaded"
+                :disabled="imageNotLoaded" -->
+
                 <v-btn
                     style="margin-top: 2vh; margin-left: 1vw;"
                     block
                     flat
                     depressed
                     :color="primary"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
                     class="mx-0"
                     @click.native="onPickFile"
                   >
                     Upload Photo
                   </v-btn>
+
+                  <!-- <v-flex xs12 sm6>
+                    <div class = "mt-1"> -->
+                      <v-progress-circular
+                        v-if="!fetchSuccessfulProfilePicUpload && imageNotLoaded"
+                        @change=fetchSuccessfulProfilePicUpload
+                        indeterminate
+                        color="primary">
+                      </v-progress-circular>
+                    <!-- </div>
+                  </v-flex> -->
+
                   <input type="file"
                         style="display:none"
                         ref="fileInput"
@@ -98,6 +112,7 @@
         onEdit: false,
         dataNotSent: false,
         imageNotLoaded: false,
+        imageFullyLoaded: this.$store.getters.successfulProfilePicUpload,
         editInfo: {
           name: '',
           instagram:'',
@@ -133,6 +148,9 @@
       },
       fetchUserInstagram () {
         return this.$store.getters.signed_in_user.instagram
+      },
+      fetchSuccessfulProfilePicUpload () {
+        return this.$store.getters.successfulProfilePicUpload
       }
     },
     methods: {
@@ -165,9 +183,11 @@
       },
       onPickFile () {
         this.$refs.fileInput.click()
+        this.$store.commit('set_successful_profile_upload', false)
         this.imageNotLoaded = true
       },
       onFilePicked (event) {
+        // let originalProfilePic = this.urlProfilepic
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
@@ -175,6 +195,7 @@
         let filename = files[0].name
         if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
+          this.imageNotLoaded = false
         }
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
@@ -184,8 +205,12 @@
               /* Extra code here to call function UploadProfileImage in index.js
                  store->index.js
               */
-              this.imageNotLoaded = false
               this.$store.dispatch('uploadProfileImage')
+
+            })
+            .then(() => {
+              this.imageFullyLoaded = this.$store.getters.successfulProfilePicUpload
+              this.imageNotLoaded = true
             })
         })
         fileReader.readAsDataURL(files[0])
