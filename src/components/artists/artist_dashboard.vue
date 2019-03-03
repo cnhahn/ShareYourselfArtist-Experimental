@@ -87,7 +87,7 @@
 
                   <div class="text-xs-center">
 
-                    <v-dialog v-model="dialog" width="500">
+                    <v-dialog v-model="dialog" width="30%">
 
                       <v-card>
 
