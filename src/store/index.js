@@ -403,7 +403,8 @@ export const store = new Vuex.Store({
       state.comments.push(payload)
     },
     clear_viewed_arts_array(state) {
-      state.viewed_arts = []
+      state.viewed_arts.length = 0
+      console.log('entered state.viewed arts is ' , state.viewed_arts)
     },
     clear_comments_array(state) {
       state.comments = []

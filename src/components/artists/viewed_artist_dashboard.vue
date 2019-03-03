@@ -35,6 +35,9 @@
        console.log("Fetch Arts Here! " + this.$store.getters.viewed_arts)
      })
     },*/
+    beforeMount(){
+      this.$store.commit('clear_viewed_arts_array')
+    },
     mounted: function () {
      this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
      })
@@ -46,7 +49,38 @@
     },
     computed: {
      arts() {
-        return this.$store.getters.viewed_arts;
+        let temp_arts = this.$store.getters.viewed_arts;
+        console.log(' this is the art array we are given ', temp_arts)
+        function compare(a, b) {
+          const upload_date1 = a.upload_date
+          const upload_date2 = b.upload_date
+          let comparison = 0;
+          if (upload_date1 > upload_date2) {
+            comparison = -1;
+          } else if (upload_date1 < upload_date2) {
+            comparison = 1;
+          }
+          return comparison;
+        }
+       
+        // create an array that removes all the "deleted" art pieces
+        console.log(temp_arts.sort(compare));
+        let arti = 0
+        var removed_deleted_art = [];
+        var duplicate_search = [];
+
+        for (arti = 0 ; arti < temp_arts.length; arti++){
+          if( (temp_arts[arti].delete != true) &&  (duplicate_search.indexOf(temp_arts[arti].upload_date) == -1) ){
+            removed_deleted_art.push(temp_arts[arti])
+            duplicate_search.push(temp_arts[arti].upload_date)
+          }
+        }
+
+
+
+        console.log('This is the art array after we remove the delted arts ', removed_deleted_art)
+
+        return removed_deleted_art;
       },
       loading() {
         return this.$store.getters.loading;
