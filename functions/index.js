@@ -735,8 +735,6 @@ exports.updateArtistsAcceptedStat = functions.https.onRequest((request, response
   .catch(err => {
     console.log('Transaction failure:', err);
   });
-  
-
 })
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
