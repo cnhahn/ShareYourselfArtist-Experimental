@@ -150,90 +150,90 @@ exports.updateUserCategories = functions.https.onRequest((request, response) => 
   const db = admin.firestore()
   let batch = db.batch()
 
-   function updateFields (ID, list){
-    console.log('Now in updateFields')
-    let artistID = ID
-    let aRef = db.collection('users').doc(artistID)
-    console.log("About to start run Transaction")
-     return db.runTransaction(async t => {
-      //let aRef = db.collection('users').doc(element)
+  //  function updateFields (ID, list){
+  //   console.log('Now in updateFields')
+  //   let artistID = ID
+  //   let aRef = db.collection('users').doc(artistID)
+  //   console.log("About to start run Transaction")
+  //    return db.runTransaction(async t => {
+  //     //let aRef = db.collection('users').doc(element)
 
-      let doc = await t.get(aRef)        
-      if(doc.data() != undefined){
-        // console.log('doc.data is ' , doc.data().categories.drawing.count)
-        // console.log("drawing's count is typeOF: " + typeof doc.data().categories.drawing.count)
-        // console.log('list array ' , list)
-        // console.log('list is typeof: ' + typeof list[0])
+  //     let doc = await t.get(aRef)        
+  //     if(doc.data() != undefined){
+  //       // console.log('doc.data is ' , doc.data().categories.drawing.count)
+  //       // console.log("drawing's count is typeOF: " + typeof doc.data().categories.drawing.count)
+  //       // console.log('list array ' , list)
+  //       // console.log('list is typeof: ' + typeof list[0])
 
-        // let drawing = doc.data().categories.drawing.count + list[0];
-        // let painting = doc.data().categories.painting.count + list[1]
-        // let sculpting = doc.data().categories.sculpting.count + list[2]
-        // let design = doc.data().categories.design.count + list[3]
-        // let threeD = doc.data().categories.threeD.count + list[4];
-        // let multimedia = doc.data().categories.multimedia.count + list[5];
-        // let blackandwhite = doc.data().categories.blackandwhite.count + list[6]
-        // let psychedelic = doc.data().categories.psychedelic.count + list[7]
-        // let portrait = doc.data().categories.portrait.count + list[8]
-        // let realism = doc.data().categories.realism.count + list[9]
-        // let abstract = doc.data().categories.abstract.count + list[10]
+  //       // let drawing = doc.data().categories.drawing.count + list[0];
+  //       // let painting = doc.data().categories.painting.count + list[1]
+  //       // let sculpting = doc.data().categories.sculpting.count + list[2]
+  //       // let design = doc.data().categories.design.count + list[3]
+  //       // let threeD = doc.data().categories.threeD.count + list[4];
+  //       // let multimedia = doc.data().categories.multimedia.count + list[5];
+  //       // let blackandwhite = doc.data().categories.blackandwhite.count + list[6]
+  //       // let psychedelic = doc.data().categories.psychedelic.count + list[7]
+  //       // let portrait = doc.data().categories.portrait.count + list[8]
+  //       // let realism = doc.data().categories.realism.count + list[9]
+  //       // let abstract = doc.data().categories.abstract.count + list[10]
 
-        // console.log('drawing count: ', drawing + 'threeD count: ', threeD)
+  //       // console.log('drawing count: ', drawing + 'threeD count: ', threeD)
         
-        //console.log("numRefunds : " + numRefunds)
-        //console.log("updated Credit amount: " + updateCredits)
-        await t.update(aRef, 
-          { 
-            categories: {
-              drawing : {
-                count : 0,
-                responded : 0
-              },
-              painting : {
-                count : 0,
-                responded : 0
-              },
-              sculpting:{
-                count : 0,
-                responded : 0
-              },
-              design:{
-                count : 0,
-                responded : 0              
-              },
-              threeD : {
-                count : 0,
-                responded : 0
-              },
-              multimedia : {
-                count : 0,
-                responded : 0
-              },
-              blackandwhite:{
-                count : 0,
-                responded : 0
-              },
-              psychedelic:{
-                count : 0,
-                responded : 0
-              },
-              portrait:{
-                count : 0,
-                responded : 0
-              },
-              realism: {
-                count : 0,
-                responded : 0
-              },
-              abstract: {
-                count : 0,
-                responded : 0
-              }  
-          } 
-          });
-      }
-      //console.log(JSON.stringify(doc.data()))
-    });
-  }
+  //       //console.log("numRefunds : " + numRefunds)
+  //       //console.log("updated Credit amount: " + updateCredits)
+  //       await t.update(aRef, 
+  //         { 
+  //           categories: {
+  //             drawing : {
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             painting : {
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             sculpting:{
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             design:{
+  //               count : 0,
+  //               responded : 0              
+  //             },
+  //             threeD : {
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             multimedia : {
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             blackandwhite:{
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             psychedelic:{
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             portrait:{
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             realism: {
+  //               count : 0,
+  //               responded : 0
+  //             },
+  //             abstract: {
+  //               count : 0,
+  //               responded : 0
+  //             }  
+  //         } 
+  //         });
+  //     }
+  //     //console.log(JSON.stringify(doc.data()))
+  //   });
+  // }
 
   let totalNumberOfUsers
   const categories = db.collection('users').get()
@@ -431,7 +431,41 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
   let userId = request.body.userId;
   let mostPopularCategory;
   const getCurrentUser = db.collection('users').doc(userId).get()
+    .then()
   
+})
+
+exports.updateArtistCategoryCount = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let userId = request.body[1];
+  console.log(userId)
+
+  let categoriesToUpdate = request.body[0];
+  console.log(categoriesToUpdate)
+
+  // XpIQwNnOayXqjdlbh6jDDL5xaaz2
+  const currentUser = db.collection('users').doc(userId).get()
+    .then(user => {
+      let currentCategories = user.data().categories
+      console.log('type of currentCategories: ' + typeof currentCategories)
+      console.log(JSON.stringify(currentCategories))
+
+      for(let i = 0; i < categoriesToUpdate.length; i++){
+        console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+        currentCategories[categoriesToUpdate[i]].count++
+        console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+      }
+      return currentCategories
+      // response.send(JSON.stringify(currentCategories))
+    })
+    .then(params => {
+      let update = db.collection('users').doc(userId).update({
+        
+      })
+    })
+    .catch(error => {
+      response.send(error)
+    })
 })
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
