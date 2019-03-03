@@ -231,6 +231,7 @@
 
         // assume uploaded image not over max dimensions at first
         this.image_too_big = false
+        // assume at first image is landscape
         this.image_is_landscape = true
         // lets methods be used within fileReader load
         var self = this
@@ -271,7 +272,8 @@
       checkOrientation(width, height)
       {
         // check if landscape or portrait to set max preview dimensions
-        if (width >= height)
+        // a square image is considered portrait
+        if (width > height)
         {
           this.image_is_landscape = true
         }
