@@ -4,7 +4,7 @@
       <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
         <img :src="this.$store.state.viewed_art_image_info.url" alt="" width="100%">
       </v-flex>
-      <v-flex lg4 md6 sm12 xs12 ml-2 mr-2>
+      <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
         <h2>{{this.$store.state.viewed_art_image_info.art_title}}</h2>
         <p>{{this.$store.state.viewed_art_image_info.description}}</p>
         <!-- v-select for new categories to be added -->
