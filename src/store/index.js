@@ -1570,7 +1570,7 @@ export const store = new Vuex.Store({
           querySnapshot.forEach(function (doc) {
             var docRef = db.collection('review_requests').doc(doc.id)
 
-            return docRef
+              return docRef
               .update({
                 delete_byartist: true
               })

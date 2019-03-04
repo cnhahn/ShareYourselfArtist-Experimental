@@ -78,23 +78,25 @@
             text: 'Art'
           },
         ],
-
         updating_responses: false
       }
     },
     watch: {
       mark_as_read_btn_clicked: function(val) {
-        this.reviewList__unread_reviews()
+        // this.reviewList__unread_reviews()
+        this.fetchRepliedSubmissions()
       },
       mark_as_delete_btn_clicked: function(val) {
-        this.reviewList__read_reviews()
+        // this.reviewList__read_reviews()
         this.fetchRepliedSubmissions()
       }
     },
+
     // fetch submissions on create to be used later for display
     created() {
       this.fetchRepliedSubmissions();
     },
+
     // once the replied submissions has been returned we can set loading to false => loading is a component we have set temporarily
     computed: {
       reviews() {
@@ -107,7 +109,6 @@
     methods: {
       // filters the unread reviews by checking the field read_byartist is false against the array
       reviewList__unread_reviews: function () {
-        
         this.reviewList = this.masterList.filter(( review ) => {
           return review.read_byartist == false && (review.delete_byartist != true)
         })
@@ -120,7 +121,6 @@
       },
       // button uses prop to identify and change the field read_byartist as true which can be found in read_reviews
       markAsRead: function (upload_date) {
-        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked
         for ( var i in this.reviewList ) {
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].read_byartist = true
@@ -128,10 +128,10 @@
           break
           }
         }
+        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked
       },
 
       markAsDelete: function (upload_date) {
-        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked
         for ( var i in this.reviewList ) {
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].delete_byartist = true
@@ -139,16 +139,16 @@
             break
           }
         }
+        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked;
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
         try {
-          //THIS CODE IS NOT GOOD STANDARD SHOULD BE REDONE 
           const that = this;
           this.$store.commit( 'clear_replied_submissions_array' )
           let fetchAsync = new Promise ( resolve => {
             let res = null
-            //Look into function binding --> function.bind(this)
+            // function.bind(this)
             let that_that = that
             that.$store.dispatch( 'fetch_replied_submissions' ).then(() => {
               res = that_that.$store.getters.replied_submissions
@@ -170,8 +170,6 @@
           console.log( error );
         }
       }
-
-
     }
   }
 </script>
