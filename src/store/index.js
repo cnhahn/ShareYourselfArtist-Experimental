@@ -2019,6 +2019,22 @@ export const store = new Vuex.Store({
         console.log('statistics is ' , statistics)
 
         let statisticsJson = JSON.stringify(statistics)
+        //  Send API request to update user category
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateAcceptedStats'
+
+        if (!('fetch' in window)) {
+          return
+        } else {
+        }
+        
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: statisticsJson
+        })
       }
       
       const db = firebase.firestore()
