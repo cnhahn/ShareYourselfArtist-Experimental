@@ -302,48 +302,59 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
               categories: {
                 drawing : {
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0                  
                 },
                 painting : {
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 sculpting:{
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 design:{
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 threeD : {
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 multimedia : {
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 blackandwhite :{
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 psychedelic:{
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 portrait:{
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 realism: {
                   totalReceived : 0,
-                  numberAccepted : 0
+                  numberAccepted : 0,
+                  numberResponded : 0   
                 },
                 abstract: {
                   totalReceived : 0,
-                  numberAccepted : 0
-                }  
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                }
               }
             })
 

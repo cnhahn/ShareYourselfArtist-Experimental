@@ -2262,48 +2262,59 @@ export const store = new Vuex.Store({
         categories: {
           drawing : {
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           painting : {
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           sculpting:{
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           design:{
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           threeD : {
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           multimedia : {
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           blackandwhite :{
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           psychedelic:{
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           portrait:{
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           realism: {
             count : 0,
-            responded : 0
+            responded : 0,
+            totalSubmitted : 0
           },
           abstract: {
             count : 0,
-            responded : 0
-          }  
+            responded : 0,
+            totalSubmitted : 0
+          }
         }
       }
       const db = firebase.firestore()
