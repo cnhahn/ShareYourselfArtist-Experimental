@@ -2043,10 +2043,10 @@ export const store = new Vuex.Store({
         .doc(getters.art_being_replied.docId)
       return collectionRef
         .update({
-          // replied: true,
-          // read_byartist: false,
-          // submission_response: getters.submission_response,
-          // replied_date: Date.now()
+          replied: true,
+          read_byartist: false,
+          submission_response: getters.submission_response,
+          replied_date: Date.now()
         })
         .then(function () {
           console.log('Submission successfully updated!')

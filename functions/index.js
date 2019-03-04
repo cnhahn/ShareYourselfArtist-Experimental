@@ -798,6 +798,7 @@ exports.updateArtistCategoryCount = functions.https.onRequest((request, response
 // rate and the amount of times the business has replied.
 exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
+  const batch = db.batch()
   const artistToUpdate = request.body[2];
   const businessToUpdate = request.body[1];
   const categoriesToUpdate = request.body[0];
@@ -816,7 +817,7 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
 
         for (let i = 0; i < categoriesToUpdate.length; i++) {
           //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-          currentCategories[categoriesToUpdate[i]].responded++
+          //currentCategories[categoriesToUpdate[i]].responded++
           //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
           switch (categoriesToUpdate[i]) {
             case 'painting':
@@ -983,7 +984,7 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
 
         for (let i = 0; i < categoriesToUpdate.length; i++) {
           //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-          currentCategories[categoriesToUpdate[i]].count++
+          //currentCategories[categoriesToUpdate[i]].count++
           //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
           switch (categoriesToUpdate[i]) {
             case 'painting':
