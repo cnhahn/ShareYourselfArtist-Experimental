@@ -32,6 +32,16 @@
                   >
             </v-flex>
 
+            <v-flex xs12 sm6>
+              <div class = "mt-1">
+                <v-progress-circular
+                  v-if="submission_in_progress"
+                  indeterminate
+                  color="red">
+                </v-progress-circular>
+              </div>
+            </v-flex>
+
             <v-flex lg6 md6 sm12 xs12>
               <div class="infoContainer">
                 <h1
@@ -93,7 +103,10 @@
     name: 'artist_profile',
     data () {
       return {
+        counter: 1,
+        check: null,
         urlProfilepic: this.$store.getters.url,
+        uploadProfileImage: false,
         file: null,
         onEdit: false,
         dataNotSent: false,
@@ -103,7 +116,10 @@
           instagram:'',
           selectedPhotoUrl: ''
         },
-        artistInfo: {}
+        artistInfo: {},
+        // If submitted is true, submit button was pressed, else it wasn't.
+        //submitted : false,
+        submission_in_progress : false
       }
     },
     beforeMount () {
@@ -154,6 +170,7 @@
         }
         if (typeof userInfo.photoUrl === 'string' && userInfo.photoUrl !== null) {
           newArtistInfo.photoUrl = userInfo.photoUrl
+
         } else if (typeof userInfo.photoUrl === "object" && userInfo.photoUrl !== null) {
           if(typeof userInfo.photoUrl.data.url === 'string') {
             newArtistInfo.photoUrl = userInfo.photoUrl.data.url
@@ -166,6 +183,7 @@
       onPickFile () {
         this.$refs.fileInput.click()
         this.imageNotLoaded = true
+        this.submission_in_progress = true;
       },
       onFilePicked (event) {
         const files = event.target.files
@@ -184,10 +202,17 @@
               /* Extra code here to call function UploadProfileImage in index.js
                  store->index.js
               */
-              this.imageNotLoaded = false
               this.$store.dispatch('uploadProfileImage')
+              
+              this.check = true;
+               
             })
-        })
+            //this.imageNotLoaded = false
+            //this.submission_in_progress = false;
+            //this.check = true;
+ 
+          })
+        //this.check = true;
         fileReader.readAsDataURL(files[0])
       },
       resetEdit () {
@@ -210,6 +235,7 @@
             that.resetEdit()
           }, 2000)
           this.setUserInfo()
+          
         })
       },
       setEdit () {
@@ -231,6 +257,17 @@
         } else {
           var date = passedDay.getDate() - 1
           return 'Joined ' + date + ' days ago'
+        }
+      }
+    },
+    watch: {
+      check: function(val) {
+        if(this.$store.state.image_uploaded == true)
+        //if(this.$store.state.check_image_c == false)
+        {
+          console.log('---stop loading prof img-----------artist_profile')
+          this.imageNotLoaded = false
+          this.submission_in_progress = false;
         }
       }
     }
