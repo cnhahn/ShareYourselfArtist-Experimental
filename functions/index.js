@@ -862,14 +862,14 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         })
       .then(function () {
           console.log('artist updated')
-          let message = 'artist updated'
-          resolve(message);
+          const status = 1
+          resolve(status);
           //response.send('artist updated')
         })
         .catch(error => {
           console.log('error updating artist', error)
-          let message = 'artist failed to update'
-          reject(message);
+          const status = 0
+          reject(status);
           //response.send(error)
         })
     })
@@ -992,19 +992,19 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 batch.set(businessRef, {
                   categories: {
                     realism: {
-                      count: currentCategories[categoriesToUpdate[i]].count++,
-                      responded: user.data().categories.realism.responded
+                      totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                      numOfResponses: user.data().categories.realism.numOfResponses
                     }
                   }
                 }, {merge:true})
                 break;
               case 'abstract':
                 console.log('matched with abstract')
-                batch.set(artistRef, {
+                batch.set(businessRef, {
                   categories: {
                     abstract: {
-                      count: currentCategories[categoriesToUpdate[i]].count++,
-                      responded: user.data().categories.abstract.responded
+                      totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                      numOfResponses: user.data().categories.abstract.numOfResponses
                     }
                   }
                 }, {merge:true})
@@ -1014,23 +1014,36 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 console.log('no cases matched')
             }
           }
-          return batch.commit()
+          return 
           //return response.send("These categories were updated ", JSON.stringify(currentCategories))
         })
       .then(function () {
-          console.log('artist updated')
-          let message = 'artist updated'
-          resolve(message);
-          //response.send('artist updated')
-        })
-        .catch(error => {
-          console.log('error updating artist', error)
-          let message = 'artist failed to update'
-          reject(message);
-          //response.send(error)
-        })
+        console.log('artist updated')
+        const status = 1
+        resolve(status);
+        //response.send('artist updated')
+      })
+      .catch(error => {
+        console.log('error updating artist', error)
+        const status = 0
+        reject(status);
+        //response.send(error)
+      })
     })
   }
+  function main(){
+    updateArtist()
+      .then(artStatus =>{
+        updateBusiness()
+          .then(businessStatus =>{
+            batch.commit()
+          })
+      })
+      .catch(status => {
+
+      })
+  }
+
 })
 
  // let transaction = db.runTransaction(t => {
