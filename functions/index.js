@@ -717,9 +717,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const artistRef = db.collection('users').doc(artist);
   const businessRef = db.collection('users').doc(business)
 
-  function updateArtist(artist){
+  function updateArtist(){
     return new Promise((resolve, reject) =>{
-      const currentArtist = db.collection('users').doc(artist).get()
+      const currentArtist = db.collection('users').doc(artistToUpdate).get()
       .then(user => {
         let person = db.collection('users').doc(userId)
         let currentCategories = user.data().categories
@@ -875,7 +875,161 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
     })
   }
   function updateBusiness(business){
+    return new Promise((resolve, reject) =>{
+      const currentBusiness = db.collection('users').doc(businessToUpdate).get()
+      .then(user => {
+        let person = db.collection('users').doc(userId)
+        let currentCategories = user.data().categories
+        //console.log('type of currentCategories: ' + typeof currentCategories)
+        console.log(JSON.stringify(currentCategories))
 
+        for (let i = 0; i < categoriesToUpdate.length; i++) {
+          //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+          currentCategories[categoriesToUpdate[i]].count++
+          //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
+          switch (categoriesToUpdate[i]) {
+            case 'painting':
+              console.log('matched with painting')
+              batch.set(businessRef, {
+                categories: {
+                  painting: {
+                    totalReceived : currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses : user.data().categories.painting.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'threeD':
+              console.log('matched with threeD')
+              batch.set(businessRef, {
+                categories: {
+                  threeD: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.threeD.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'drawing':
+              console.log('matched with drawing')
+              batch.set(businessRef, {
+                categories: {
+                  drawing: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.drawing.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'sculpting':
+              console.log('matched with sculpting')
+              batch.set(businessRef, {
+                categories: {
+                  sculpting: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.sculpting.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'design':
+              console.log('matched with design')
+              batch.set(businessRef, {
+                categories: {
+                  design: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.design.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'multimedia':
+              console.log('matched with multimedia')
+              batch.set(businessRef, {
+                categories: {
+                  multimedia: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.multimedia.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'blackandwhite':
+              console.log('matched with blackandwhite')
+              batch.set(businessRef, {
+                categories: {
+                  blackandwhite: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.blackandwhite.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'psychedelic':
+              console.log('matched with psychedelic')
+              batch.set(businessRef, {
+                categories: {
+                  psychedelic: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.psychedelic.numOfResponses
+                  }
+                }
+              }, { merge: true })
+              break;
+            case 'portrait':
+              console.log('matched with portrait')
+              batch.set(businessRef, {
+                categories: {
+                  portrait: {
+                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
+                    numOfResponses: user.data().categories.portrait.numOfResponses
+                    }
+                  }
+                }, {merge:true})
+                break;
+              case 'realism':
+                console.log('matched with realism')
+                batch.set(businessRef, {
+                  categories: {
+                    realism: {
+                      count: currentCategories[categoriesToUpdate[i]].count++,
+                      responded: user.data().categories.realism.responded
+                    }
+                  }
+                }, {merge:true})
+                break;
+              case 'abstract':
+                console.log('matched with abstract')
+                batch.set(artistRef, {
+                  categories: {
+                    abstract: {
+                      count: currentCategories[categoriesToUpdate[i]].count++,
+                      responded: user.data().categories.abstract.responded
+                    }
+                  }
+                }, {merge:true})
+                break;
+
+              default:
+                console.log('no cases matched')
+            }
+          }
+          return batch.commit()
+          //return response.send("These categories were updated ", JSON.stringify(currentCategories))
+        })
+      .then(function () {
+          console.log('artist updated')
+          let message = 'artist updated'
+          resolve(message);
+          //response.send('artist updated')
+        })
+        .catch(error => {
+          console.log('error updating artist', error)
+          let message = 'artist failed to update'
+          reject(message);
+          //response.send(error)
+        })
+    })
   }
 })
 
