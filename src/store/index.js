@@ -1978,24 +1978,40 @@ export const store = new Vuex.Store({
 
       // upload the artist data and the url
     },
-    submit_submission_response({ getters }) {
+    submit_submission_response({ getters } , payload) {
+      
+      let businessDecision =  getters.submission_response.radios
+      let artCategories = payload.categories
+      let businessId =  this.getters.user.id
+      let requestedArtist =  payload.art.art.artist_id
+
+      if (businessDecision) {
+        let statistics = {}
+        statistics[0] = artCategories
+        statistics[1] = businessId
+        statistics[2] = requestedArtist
+        console.log('statistics is ' , statistics)
+
+        let statisticsJson = JSON.stringify(statistics)
+      }
+      
       const db = firebase.firestore()
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
       return collectionRef
         .update({
-          replied: true,
-          read_byartist: false,
-          submission_response: getters.submission_response,
-          replied_date: Date.now()
+          // replied: true,
+          // read_byartist: false,
+          // submission_response: getters.submission_response,
+          // replied_date: Date.now()
         })
         .then(function () {
           console.log('Submission successfully updated!')
         })
         .catch(function (error) {
           // The document probably doesn't exist.
-          console.error('Error updating dsubmission: ', error)
+          console.error('Error updating submission: ', error)
         })
     },
 
