@@ -226,8 +226,10 @@ export const store = new Vuex.Store({
     },
     //to act as a spinner timer
     set_image_uploaded(state, payload){
+      console.log('payload for image upload is ' , payload)
       state.image_uploaded = payload
-      console.log('---stop loading prof img-----------index_profile')
+      console.log('image uploaded in store is now of value ', state.image_uploaded)
+      console.log('--- mutation : stop loading prof img-----------index_profile')
     },
     set_check_image_c(state,payload){
       state.check_image_c = payload
@@ -2608,7 +2610,7 @@ export const store = new Vuex.Store({
           //{  
             //commit('set_image_uploaded', true)
           //commit('set_check_image_c', true)
-            commit('set_image_uploaded', true)
+           //commit('set_image_uploaded', true)
           //}
           ///else
           //{
@@ -2654,6 +2656,7 @@ export const store = new Vuex.Store({
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
                     commit('setLoading', false)
+                    commit('set_image_uploaded', true)
                   } else {
                     // doc.data() will be undefined in this case
                   }
@@ -2977,6 +2980,10 @@ export const store = new Vuex.Store({
     },
     get_recently_responded_arts(state) {
       return state.recently_responded_arts
+    },
+    get_image_uploaded(state){
+      console.log('in get image uploaded and value is ' , state.image_uploaded)
+      return state.image_uploaded
     }
   }
 })

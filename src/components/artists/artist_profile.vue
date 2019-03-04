@@ -17,8 +17,8 @@
                     flat
                     depressed
                     :color="primary"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
+                    :loading="submission_in_progress"
+                    :disabled="submission_in_progress"
                     class="mx-0"
                     @click.native="onPickFile"
                   >
@@ -34,11 +34,11 @@
 
             <v-flex xs12 sm6>
               <div class = "mt-1">
-                <v-progress-circular
+                <!-- <v-progress-circular
                   v-if="submission_in_progress"
                   indeterminate
                   color="red">
-                </v-progress-circular>
+                </v-progress-circular> -->
               </div>
             </v-flex>
 
@@ -103,7 +103,7 @@
     name: 'artist_profile',
     data () {
       return {
-        counter: 1,
+        counter: false,
         check: null,
         urlProfilepic: this.$store.getters.url,
         uploadProfileImage: false,
@@ -119,7 +119,7 @@
         artistInfo: {},
         // If submitted is true, submit button was pressed, else it wasn't.
         //submitted : false,
-        submission_in_progress : false
+        submission_in_progress : false,
       }
     },
     beforeMount () {
@@ -149,7 +149,11 @@
       },
       fetchUserInstagram () {
         return this.$store.getters.signed_in_user.instagram
+      },
+      image_uploaded_finished(){
+        return this.$store.getters.get_image_uploaded
       }
+      
     },
     methods: {
 
@@ -186,6 +190,7 @@
         this.submission_in_progress = true;
       },
       onFilePicked (event) {
+        this.$store.commit('set_image_uploaded', false)
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
@@ -202,6 +207,7 @@
               /* Extra code here to call function UploadProfileImage in index.js
                  store->index.js
               */
+             console.log('the value of image uploaded is ', this.image_uploaded_finished)
               this.$store.dispatch('uploadProfileImage')
               
               this.check = true;
@@ -261,13 +267,10 @@
       }
     },
     watch: {
-      check: function(val) {
-        if(this.$store.state.image_uploaded == true)
-        //if(this.$store.state.check_image_c == false)
-        {
-          console.log('---stop loading prof img-----------artist_profile')
-          this.imageNotLoaded = false
-          this.submission_in_progress = false;
+      image_uploaded_finished: function(val) {
+        console.log('the value has changed!!!! it is now ' , val)
+        if(val == true){
+          this.submission_in_progress = false
         }
       }
     }
