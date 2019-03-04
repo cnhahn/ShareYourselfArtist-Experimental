@@ -264,25 +264,30 @@
 
             // https://stackoverflow.com/questions/23945494/use-html5-to-resize-an-image-before-upload
             var canvas = document.createElement('canvas')
-            canvas.width = img.width
-            canvas.height = img.height
             console.log('resized image width: ', img.width)
             console.log('resized image height: ', img.height)
+            canvas.width = img.width
+            canvas.height = img.height
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
 
             var extension = self.checkUrl(img.src)
             //console.log('image extension: ', extension)
 
             dataURL = canvas.toDataURL('image/jpeg')
+            //dataURL = canvas.toDataURL('img/jpeg')
+            //dataURL = canvas.toDataURL('jpeg')
+            //dataURL = canvas.toDataURL(this)
             //console.log('dataURL: ', dataURL)
             /*var resizedImage = dataURLToBlob(dataURL)
             console.log('resizedImage: ', resizedImage)*/
+
+            //self.$store.dispatch('image_being_uploaded', {file: self.file, image_url: dataURL})
           }
           img.src = this.image_url
           //console.log('image_url: ', this.image_url)
 
-          //this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
-          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: dataURL /*this.image_url*/ })
+          /* this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url}) */
+          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: dataURL})
         })
         fileReader.readAsDataURL(files[0])
       },
