@@ -710,25 +710,25 @@ exports.updateArtistCategoryCount = functions.https.onRequest((request, response
 // rate and the amount of times the business has replied.
 exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
-  const artistToUpdate = request.body.artistID;
-  const businessToUpdate = request.body.businessID;
-  const categoriesToUpdate = request.body.categories;
+  const artistToUpdate = request.body[2];
+  const businessToUpdate = request.body[1];
+  const categoriesToUpdate = request.body[0];
   //which collection should this go to?
-  const artistRef = db.collection('users').doc(artist);
-  const businessRef = db.collection('users').doc(business)
+  const artistRef = db.collection('users').doc(artistToUpdate);
+  const businessRef = db.collection('users').doc(businessToUpdate);
 
   function updateArtist(){
     return new Promise((resolve, reject) =>{
       const currentArtist = db.collection('users').doc(artistToUpdate).get()
       .then(user => {
-        let person = db.collection('users').doc(userId)
+        // let person = db.collection('users').doc(userId)
         let currentCategories = user.data().categories
         //console.log('type of currentCategories: ' + typeof currentCategories)
         console.log(JSON.stringify(currentCategories))
 
         for (let i = 0; i < categoriesToUpdate.length; i++) {
           //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-          currentCategories[categoriesToUpdate[i]].count++
+          currentCategories[categoriesToUpdate[i]].responded++
           //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
           switch (categoriesToUpdate[i]) {
             case 'painting':
@@ -736,8 +736,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   painting: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.painting.responded
+                    count: user.data().categories.painting.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.painting.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -747,8 +748,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   threeD: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.threeD.responded
+                    count: user.data().categories.threeD.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.threeD.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -758,8 +760,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   drawing: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.drawing.responded
+                    count: user.data().categories.drawing.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.drawing.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -769,8 +772,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   sculpting: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.sculpting.responded
+                    count: user.data().categories.sculpting.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.sculpting.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -780,8 +784,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   design: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.design.responded
+                    count: user.data().categories.design.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.design.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -791,8 +796,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   multimedia: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.multimedia.responded
+                    count: user.data().categories.multimedia.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.multimedia.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -802,8 +808,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   blackandwhite: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.blackandwhite.responded
+                    count: user.data().categories.blackandwhite.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.blackandwhite.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -813,8 +820,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   psychedelic: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.psychedelic.responded
+                    count: user.data().categories.psychedelic.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.psychedelic.totalSubmitted
                   }
                 }
               }, { merge: true })
@@ -824,8 +832,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(artistRef, {
                 categories: {
                   portrait: {
-                    count: currentCategories[categoriesToUpdate[i]].count++,
-                    responded: user.data().categories.portrait.responded
+                    count: user.data().categories.portrait.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded++,
+                    totalSubmitted: user.data().categories.portrait.totalSubmitted
                     }
                   }
                 }, {merge:true})
@@ -835,8 +844,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 batch.set(artistRef, {
                   categories: {
                     realism: {
-                      count: currentCategories[categoriesToUpdate[i]].count++,
-                      responded: user.data().categories.realism.responded
+                      count: user.data().categories.realism.count,
+                      responded: currentCategories[categoriesToUpdate[i]].responded++,
+                      totalSubmitted: user.data().categories.realism.totalSubmitted
                     }
                   }
                 }, {merge:true})
@@ -846,8 +856,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 batch.set(artistRef, {
                   categories: {
                     abstract: {
-                      count: currentCategories[categoriesToUpdate[i]].count++,
-                      responded: user.data().categories.abstract.responded
+                      count: user.data().categories.abstract.count,
+                      responded: currentCategories[categoriesToUpdate[i]].responded++,
+                      totalSubmitted: user.data().categories.abstract.totalSubmitted
                     }
                   }
                 }, {merge:true})
@@ -857,8 +868,7 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 console.log('no cases matched')
             }
           }
-          return batch.commit()
-          //return response.send("These categories were updated ", JSON.stringify(currentCategories))
+          return 
         })
       .then(function () {
           console.log('artist updated')
@@ -874,11 +884,11 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         })
     })
   }
-  function updateBusiness(business){
+  function updateBusiness(){
     return new Promise((resolve, reject) =>{
       const currentBusiness = db.collection('users').doc(businessToUpdate).get()
       .then(user => {
-        let person = db.collection('users').doc(userId)
+        // let person = db.collection('users').doc(userId)
         let currentCategories = user.data().categories
         //console.log('type of currentCategories: ' + typeof currentCategories)
         console.log(JSON.stringify(currentCategories))
@@ -893,8 +903,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   painting: {
-                    totalReceived : currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses : user.data().categories.painting.numOfResponses
+                    totalReceived : user.data().categories.painting.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.painting.numberResponded
                   }
                 }
               }, { merge: true })
@@ -904,8 +915,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   threeD: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.threeD.numOfResponses
+                    totalReceived : user.data().categories.threeD.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.threeD.numberResponded
                   }
                 }
               }, { merge: true })
@@ -915,8 +927,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   drawing: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.drawing.numOfResponses
+                    totalReceived : user.data().categories.drawing.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.drawing.numberResponded
                   }
                 }
               }, { merge: true })
@@ -926,8 +939,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   sculpting: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.sculpting.numOfResponses
+                    totalReceived : user.data().categories.sculpting.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.sculpting.numberResponded
                   }
                 }
               }, { merge: true })
@@ -937,8 +951,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   design: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.design.numOfResponses
+                    totalReceived : user.data().categories.design.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.design.numberResponded
                   }
                 }
               }, { merge: true })
@@ -948,8 +963,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   multimedia: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.multimedia.numOfResponses
+                    totalReceived : user.data().categories.multimedia.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.multimedia.numberResponded
                   }
                 }
               }, { merge: true })
@@ -959,8 +975,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   blackandwhite: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.blackandwhite.numOfResponses
+                    totalReceived : user.data().categories.blackandwhite.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.blackandwhite.numberResponded
                   }
                 }
               }, { merge: true })
@@ -970,8 +987,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   psychedelic: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.psychedelic.numOfResponses
+                    totalReceived : user.data().categories.psychedelic.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.psychedelic.numberResponded
                   }
                 }
               }, { merge: true })
@@ -981,8 +999,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
               batch.set(businessRef, {
                 categories: {
                   portrait: {
-                    totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                    numOfResponses: user.data().categories.portrait.numOfResponses
+                    totalReceived : user.data().categories.portrait.totalReceived,
+                    numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                    numberResponded : user.data().categories.portrait.numberResponded
                     }
                   }
                 }, {merge:true})
@@ -992,8 +1011,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 batch.set(businessRef, {
                   categories: {
                     realism: {
-                      totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                      numOfResponses: user.data().categories.realism.numOfResponses
+                      totalReceived : user.data().categories.realism.totalReceived,
+                      numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                      numberResponded : user.data().categories.realism.numberResponded
                     }
                   }
                 }, {merge:true})
@@ -1003,8 +1023,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                 batch.set(businessRef, {
                   categories: {
                     abstract: {
-                      totalReceived: currentCategories[categoriesToUpdate[i]].totalReceived++,
-                      numOfResponses: user.data().categories.abstract.numOfResponses
+                      totalReceived : user.data().categories.abstract.totalReceived,
+                      numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
+                      numberResponded : user.data().categories.abstract.numberResponded
                     }
                   }
                 }, {merge:true})
@@ -1018,31 +1039,32 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
           //return response.send("These categories were updated ", JSON.stringify(currentCategories))
         })
       .then(function () {
-        console.log('artist updated')
+        console.log('business updated')
         const status = 1
         resolve(status);
         //response.send('artist updated')
       })
       .catch(error => {
-        console.log('error updating artist', error)
+        console.log('error updating business', error)
         const status = 0
         reject(status);
         //response.send(error)
       })
     })
   }
-  function main(){
-    updateArtist()
-      .then(artStatus =>{
-        updateBusiness()
-          .then(businessStatus =>{
-            batch.commit()
-          })
-      })
-      .catch(status => {
-
-      })
-  }
+  updateArtist()
+    .then(artStatus =>{
+      return updateBusiness()
+    })
+    .then(function(){
+      return batch.commit()
+    })
+    .then(function(){
+      response.send('Businesses and Artists updated?')
+    })
+    .catch(status => {
+      response.send('There was an error')
+    })
 
 })
 
