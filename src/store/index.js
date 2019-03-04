@@ -2613,8 +2613,7 @@ export const store = new Vuex.Store({
             console.log('Url captured: ' + downloadURL)
             commit('setUrl', downloadURL)
             console.log('State url' + getters.url)
-            console.log('we reached here which is one line before pls')
-            commit('set_successful_profile_upload', true)
+
             console.log('state at this moment is: ', getters.successfulProfilePicUpload)
             // Now that download URL is obtained, downloadURL is sent to Firebase
             // to connect the user's ID to the updated profile picture
@@ -2627,6 +2626,8 @@ export const store = new Vuex.Store({
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
                     commit('setLoading', false)
+                    console.log('we reached here which is one line before pls')
+                    commit('set_successful_profile_upload', true)
                   } else {
                     // doc.data() will be undefined in this case
                   }

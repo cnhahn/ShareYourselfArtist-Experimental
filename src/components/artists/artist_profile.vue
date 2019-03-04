@@ -191,6 +191,9 @@
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
+        if(file === undefined){
+          this.imageNotLoaded = false
+        }
         this.file = file
         let filename = files[0].name
         if (filename.lastIndexOf('.') <= 0) {
