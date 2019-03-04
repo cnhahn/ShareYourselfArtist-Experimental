@@ -16,6 +16,7 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    top_ten_category: [],
     art_uploaded: null,
     viewed_art_image_info: [],
     top_12_recent_art: [],
@@ -211,9 +212,13 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_top_ten_category(state,payload){
+      state.top_ten_category = [],
+      state.top_ten_category = payload
+    },
     set_viewed_art_image_info(state, payload) {
       state.viewed_art_image_info = [],
-        state.viewed_art_image_info = payload
+      state.viewed_art_image_info = payload
     },
     // Sign user out by setting user element to null
     set_user_to_null(state) {
@@ -589,6 +594,58 @@ export const store = new Vuex.Store({
           console.log('recently_responded_arts is ' , state.recently_responded_arts)
         })
     },
+
+    retrieve_recommended_arts({commit,state,getters}, payload){
+      console.log('in retrieve recommende arts')
+      //Get current user's id and find their top submitted category.
+      let userId = getters.user.id
+      let db = firebase.firestore()
+      let art = db.collection("users").doc(userId).get()
+      .then(function (results){
+        console.log('categorie are ' ,results.data().categories)
+        // Convert object into an array
+        var categoryArray = Object.keys(results.data().categories).map(function(key) {
+          return [results.data().categories[key], key]
+        });
+        // Categories are all here, we will find the max category 
+        console.log('array object is now ' , categoryArray)
+        let maxCategory = 0;
+        for(var i = 0 ; i < categoryArray.length; i++){
+          if(categoryArray[i][0].responded >= maxCategory){
+            maxCategory = i;
+          }
+        }
+        let usersPopularCategory = categoryArray[maxCategory][1]
+
+
+        let search_users = db.collection('users').where('role' , '==' , 'artist').get()
+        .then(function (users){
+          let top_users = []
+          users.forEach(function (doc) {
+            if(doc.data().categories != undefined){
+              console.log('the category were looking at is ' , usersPopularCategory)
+              top_users.push({count: doc.data().categories[usersPopularCategory].responded, value: doc.id})
+    
+            }
+          })
+
+            top_users.sort(function(a, b) {
+              return a["count"] - b["count"]
+            })
+
+
+            console.log('top users is now ' , top_users)
+            let top_ten_users = []
+            // Now that we have all users, we will get the top 10 for this category
+            for (var tenUsers = 0 ; tenUsers < 10; tenUsers++){
+              //Now push into the top 10 category array
+              top_ten_users.push(top_users[top_users.length-1-tenUsers])
+            }
+            console.log(' top ten users are ' , top_ten_users)
+
+        })
+      })
+    },
     delete_art_piece({ commit, dispatch }, payload) {
       console.log("Entered delete art piece")
       // Got the url so we can find the art piece to delete
@@ -617,6 +674,11 @@ export const store = new Vuex.Store({
       // })
 
     },
+
+
+
+
+
     add_delete_field_to_art() {
       console.log('Entered add_delete_field_to_art')
       // Get all artists from Firebase

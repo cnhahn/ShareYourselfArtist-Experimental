@@ -152,14 +152,8 @@
 
         </v-tab-item>
 
-      <v-tab> Recommended Artists </v-tab>
-           <v-spacer></v-spacer>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-text> Recommended Artists </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-spacer></v-spacer>
+      <v-tab v-on:click="recommendedArts()"> Recommended Artists </v-tab>
+
 
       <v-tab v-on:click="respondedArts()"> Responded Art Pieces </v-tab>
         <v-tab-item>
@@ -169,7 +163,6 @@
                 <v-card>
                   <v-list three-line >
                     <template v-for="art in recently_responded_arts">
-
                       <v-list-tile>
                         <v-list-tile-avatar>
                           <img  :src="art.url" >
@@ -270,6 +263,10 @@
         respondedArts(){
           console.log("in responded arts")
           this.$store.dispatch('retrieve_recently_responded_arts')
+        },
+        recommendedArts(){
+          console.log('in recommended arts')
+          this.$store.dispatch('retrieve_recommended_arts')
         },
         clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
