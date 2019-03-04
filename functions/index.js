@@ -481,50 +481,61 @@ exports.giveCategories = functions.https.onRequest((request, response) => {
       .then(doc => {
         // Add one person to the city population
         let categoryObj = {
-            drawing: {
-              count: 0,
-              responded: 0
-            },
-            painting: {
-              count: 0,
-              responded: 0
-            },
-            sculpting: {
-              count: 0,
-              responded: 0
-            },
-            design: {
-              count: 0,
-              responded: 0
-            },
-            threeD: {
-              count: 0,
-              responded: 0
-            },
-            multimedia: {
-              count: 0,
-              responded: 0
-            },
-            blackandwhite: {
-              count: 0,
-              responded: 0
-            },
-            psychedelic: {
-              count: 0,
-              responded: 0
-            },
-            portrait: {
-              count: 0,
-              responded: 0
-            },
-            realism: {
-              count: 0,
-              responded: 0
-            },
-            abstract: {
-              count: 0,
-              responded: 0
-            }
+          drawing : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          painting : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          sculpting:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          design:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          threeD : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          multimedia : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          blackandwhite :{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          psychedelic:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          portrait:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          realism: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          abstract: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          }
         }
         t.update(person, { categories: categoryObj });
       });
@@ -542,6 +553,83 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
   const getCurrentUser = db.collection('users').doc(userId).get()
     .then()
 
+})
+
+exports.giveBusinessCategories = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let person = db.collection('users').doc('yekGAvzU5fZKh49e6w0tJuRmFFg1')
+
+  let transaction = db.runTransaction(t => {
+    return t.get(person)
+      .then(doc => {
+        // Add one person to the city population
+        let categoryObj = {
+          drawing : {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0                  
+          },
+          painting : {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          sculpting:{
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          design:{
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          threeD : {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          multimedia : {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          blackandwhite :{
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          psychedelic:{
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          portrait:{
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          realism: {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          },
+          abstract: {
+            totalReceived : 0,
+            numberAccepted : 0,
+            numberResponded : 0   
+          }
+        }
+        t.update(person, { categories: categoryObj });
+      });
+  }).then(result => {
+    
+    console.log('Transaction success!');
+    response.send('Transaction Success')
+  }).catch(err => {
+    console.log('Transaction failure:', err);
+    response.send('error', error)
+  });
 })
 
 // This function is triggerred when an artist uploads artwork to their dashboard. We track 
