@@ -152,10 +152,40 @@
 
         </v-tab-item>
 
-      <v-tab v-on:click="recommendedArts()"> Recommended Artists </v-tab>
+      <v-tab> Recommended Artists </v-tab>
+      <v-tab-item>
+          <v-container>
+            <v-layout row >
+              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
+                <v-card elevation>
+                  <v-list three-line >
+                    <template v-for="art in top_ten_category"  >
+                          <v-list-tile >
+                            <div class = "text-xs-center">
+                              <v-list-title-content>
+                                <v-list-tile-title > {{art.full_data.name }}</v-list-tile-title>
+                              </v-list-title-content>
+                            </div>
+                          </v-list-tile>
+                        
+                          <v-list-tile>
+                            <div class = "text-xs-center">
+                              <v-list-title-content >
+                                <v-list-tile-title class ="text-xs-center">  {{art.full_data.email}} </v-list-tile-title>
+                              </v-list-title-content>
+                            </div>
+                          </v-list-tile>
+                      <v-divider></v-divider>
+                    </template>
+                  </v-list>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>       
+      </v-tab-item>
 
 
-      <v-tab v-on:click="respondedArts()"> Responded Art Pieces </v-tab>
+      <v-tab > Responded Art Pieces </v-tab>
         <v-tab-item>
           <v-container justify-center>
             <v-layout row >
@@ -219,8 +249,14 @@
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
       }
     },
-
+    mounted(){
+      this.recommendedArts()
+      this.respondedArts()
+    },
     computed: {
+      top_ten_category(){
+        return this.$store.getters.get_top_ten_category;
+      },
       recently_responded_arts(){
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
         console.log("Returned in computed recently responded is " , recently_responded_arts)
@@ -260,15 +296,15 @@
       },
     },
     methods: {
-        respondedArts(){
-          console.log("in responded arts")
-          this.$store.dispatch('retrieve_recently_responded_arts')
-        },
-        recommendedArts(){
-          console.log('in recommended arts')
-          this.$store.dispatch('retrieve_recommended_arts')
-        },
-        clicked_art(art_unique_timestamp) {
+      respondedArts(){
+        console.log("in responded arts")
+        this.$store.dispatch('retrieve_recently_responded_arts')
+      },
+      recommendedArts(){
+        console.log('in recommended arts')
+        this.$store.dispatch('retrieve_recommended_arts')
+      },
+      clicked_art(art_unique_timestamp) {
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
         const arts= this.$store.state.arts

@@ -624,7 +624,7 @@ export const store = new Vuex.Store({
           users.forEach(function (doc) {
             if(doc.data().categories != undefined){
               console.log('the category were looking at is ' , usersPopularCategory)
-              top_users.push({count: doc.data().categories[usersPopularCategory].responded, value: doc.id})
+              top_users.push({count: doc.data().categories[usersPopularCategory].responded, value: doc.id, full_data: doc.data()})
     
             }
           })
@@ -633,15 +633,17 @@ export const store = new Vuex.Store({
               return a["count"] - b["count"]
             })
 
-
             console.log('top users is now ' , top_users)
             let top_ten_users = []
             // Now that we have all users, we will get the top 10 for this category
             for (var tenUsers = 0 ; tenUsers < 10; tenUsers++){
               //Now push into the top 10 category array
               top_ten_users.push(top_users[top_users.length-1-tenUsers])
+
             }
             console.log(' top ten users are ' , top_ten_users)
+            
+            commit('set_top_ten_category' , top_ten_users)
 
         })
       })
@@ -3157,6 +3159,9 @@ export const store = new Vuex.Store({
     },
     get_recently_responded_arts(state) {
       return state.recently_responded_arts
+    },
+    get_top_ten_category(state){
+      return state.top_ten_category
     }
   }
 })
