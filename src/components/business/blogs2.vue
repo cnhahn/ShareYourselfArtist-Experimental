@@ -151,7 +151,7 @@
           return business.userId != 'yekGAvzU5fZKh49e6w0tJuRmFFg1'
         }
          let developerEmails = ['1TGyTLJa9ZXjl0vqEeS97uNDV8O2','XpIQwNnOayXqjdlbh6jDDL5xaaz2','QBRXqktYi0QigFboM92crKAONKn1',
-          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1'];
+          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1', 'uBGYNkmd6oegfU6JDIRq1pDtYmz2'];
         let userID = this.$store.state.user.id;
         if( developerEmails.includes(userID)){
           this.user_info = this.$store.state.businesses;
