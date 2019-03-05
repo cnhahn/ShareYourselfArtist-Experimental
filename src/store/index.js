@@ -14,9 +14,12 @@ firebase.initializeApp(config)
 Vue.use(Vuex)
 Vue.use(VueGoogleCharts)
 
+
 export const store = new Vuex.Store({
   state: {
     top_ten_category: [],
+    check_image_c: true,
+    image_uploaded: false,
     art_uploaded: null,
     viewed_art_image_info: [],
     top_12_recent_art: [],
@@ -49,11 +52,11 @@ export const store = new Vuex.Store({
       },
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       // { title: 'My Account', icon: 'account_box', link: '/account' },
-      {
-        title: 'Report',
-        icon: 'assessment',
-        link: '/report'
-      },
+      //{
+      //  title: 'Report',
+      //  icon: 'assessment',
+      //  link: '/report'
+      //},
       {
         title: 'Chat',
         icon: 'chat',
@@ -226,6 +229,18 @@ export const store = new Vuex.Store({
       state.user_role = ''
       //console.log('set user to null')
     },
+    //to act as a spinner timer
+    set_image_uploaded(state, payload){
+      console.log('payload for image upload is ' , payload)
+      state.image_uploaded = payload
+      console.log('image uploaded in store is now of value ', state.image_uploaded)
+      console.log('--- mutation : stop loading prof img-----------index_profile')
+    },
+    set_check_image_c(state,payload){
+      state.check_image_c = payload
+      console.log('----check set-----')
+    },
+
     set_art_uploaded(state, payload) {
       state.art_uploaded = payload
     },
@@ -2788,6 +2803,7 @@ export const store = new Vuex.Store({
     uploadProfileImage({ commit, getters }) {
       let ref = firebase.storage().ref()
       let uploadTask = ref
+      //var image_check1 = 1
         .child(
           getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
         )
@@ -2808,6 +2824,24 @@ export const store = new Vuex.Store({
               console.log('Upload is running')
               break
           }
+          //spinner stuff ------------
+          //state.image_uploaded = true;
+          //console.log(state.image_upload);
+          //commit('set_image_uploaded', true)
+          //let check_spinner = status.check_image_c
+          //if (state.check_image_c == false)
+          //if (status.check_image_c == false)
+          //if(this.$store.state.check_image_c == false)
+          //{  
+            //commit('set_image_uploaded', true)
+          //commit('set_check_image_c', true)
+           //commit('set_image_uploaded', true)
+          //}
+          ///else
+          //{
+            //commit('set_check_image_c', false)
+          //}
+          //spinner stuff --------------
         },
         function (error) {
           // A full list of error codes is available at
@@ -2847,15 +2881,20 @@ export const store = new Vuex.Store({
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
                     commit('setLoading', false)
+                    commit('set_image_uploaded', true)
                   } else {
                     // doc.data() will be undefined in this case
                   }
+                  //state.image_uploaded = true;
                 }).catch(function (error) {
                   console.log('Error getting document:', error)
                 })
               })
           })
+          //state.image_uploaded = true;
+          //commit('set_image_uploaded', true)
         })
+        //commit('set_image_uploaded', true)
     },
     async updateArtistProfileToFirebase({ commit, dispatch, getters }, payload) {
       commit('setLoading', true)
@@ -2868,6 +2907,8 @@ export const store = new Vuex.Store({
       if (name !== undefined && name !== '') {
         updateData.name = name
       }
+
+      // i think this is where the photo is being updataed at within the whole process.
       if (photoUrl !== undefined && photoUrl !== '') {
         dispatch('uploadProfileImage').then(() => {
           updateData.photoUrl = getters.url
@@ -2955,6 +2996,11 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    //for spinner
+    get_check_image_c(state)
+    {
+      return state.check_image_c
+    },
     get_art_being_submitted_is_selected(state) {
       return state.art_being_submitted_is_selected
     },
@@ -3162,6 +3208,9 @@ export const store = new Vuex.Store({
     },
     get_top_ten_category(state){
       return state.top_ten_category
+    get_image_uploaded(state){
+      console.log('in get image uploaded and value is ' , state.image_uploaded)
+      return state.image_uploaded
     }
   }
 })
