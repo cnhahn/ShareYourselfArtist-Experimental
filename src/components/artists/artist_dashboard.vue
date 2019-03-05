@@ -36,7 +36,7 @@
         
 
           <v-layout row wrap mb-5>
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 >
+              <v-flex xs12 lg10 mt-5 mr-5 > <!--offset-lg2 -->
                 <v-card flat id="selectbox">
                     <v-container fluid>
                       <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
