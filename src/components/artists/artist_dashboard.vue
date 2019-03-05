@@ -36,7 +36,7 @@
         
 
           <v-layout row wrap mb-5>
-              <v-flex xs12 lg10 mt-5 mr-5 > <!--offset-lg2 -->
+              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 >
                 <v-card flat id="selectbox">
                     <v-container fluid>
                       <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
@@ -226,8 +226,8 @@
                             </div>
                           </v-card-text>
                         </v-card>
-
                     </template>
+              
               </v-flex>
             </v-layout>
           </v-container>
@@ -276,7 +276,6 @@
       },
       recently_responded_arts(){
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
-        console.log("Returned in computed recently responded is " , recently_responded_arts)
         return recently_responded_arts
       },
       arts() {
@@ -294,8 +293,6 @@
           return comparison;
         }
        
-        // create an array that removes all the "deleted" art pieces
-        console.log(arts.sort(compare));
         let arti = 0
         var removed_deleted_art = [];
         for (arti = 0 ; arti < arts.length; arti++){
@@ -304,7 +301,6 @@
           }
         }
 
-        console.log('remove deleted art', removed_deleted_art)
 
         return removed_deleted_art;
       },
@@ -314,11 +310,9 @@
     },
     methods: {
       respondedArts(){
-        console.log("in responded arts")
         this.$store.dispatch('retrieve_recently_responded_arts')
       },
       recommendedArts(){
-        console.log('in recommended arts')
         this.$store.dispatch('retrieve_recommended_arts')
       },
       clicked_art(art_unique_timestamp) {
