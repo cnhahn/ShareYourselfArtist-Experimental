@@ -376,7 +376,9 @@ export const store = new Vuex.Store({
       state.replied_submissions.length = 0
     },
     set_replied_submissions(state, payload) {
-      state.replied_submissions.push(payload)
+      if(payload.delete_byartist != true){
+        state.replied_submissions.push(payload)
+      }
     },
     clear_replied_submissions_array(state) {
       state.replied_submissions = []
@@ -429,7 +431,8 @@ export const store = new Vuex.Store({
       state.comments.push(payload)
     },
     clear_viewed_arts_array(state) {
-      state.viewed_arts = []
+      state.viewed_arts.length = 0
+      console.log('entered state.viewed arts is ' , state.viewed_arts)
     },
     clear_comments_array(state) {
       state.comments = []
@@ -1619,7 +1622,7 @@ export const store = new Vuex.Store({
         })
     },
     update_review_read_byUser_status({ commit }, payload) {
-      console.log('payload: ', payload)
+
       const db = firebase.firestore()
       const collectionRef = db
         .collection('review_requests')
@@ -1632,6 +1635,30 @@ export const store = new Vuex.Store({
             return docRef
               .update({
                 read_byartist: true
+              })
+              .then(function () {
+                console.log('read_by user field successfully updated!')
+              })
+              .catch(function (error) {
+                // The document probably doesn't exist.
+                console.error('Error updating read by user field: ', error)
+              })
+          })
+        })
+    },
+    delete_review({ commit }, payload) {
+      const db = firebase.firestore()
+      const collectionRef = db
+        .collection('review_requests')
+        .where('art.upload_date', '==', payload)
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            var docRef = db.collection('review_requests').doc(doc.id)
+
+              return docRef
+              .update({
+                delete_byartist: true
               })
               .then(function () {
                 console.log('read_by user field successfully updated!')
@@ -2172,6 +2199,7 @@ export const store = new Vuex.Store({
         art_being_submitted.submitted_with_free_cerdit = false
         art_being_submitted.businessId = businesses_being_submitted[i]
         art_being_submitted.replied = false
+        art_being_submitted.delete_byartist = false
         art_being_submitted.refunded = 0;
         const db = firebase.firestore()
         const collectionRef = db
@@ -2198,6 +2226,7 @@ export const store = new Vuex.Store({
         art_being_submitted.refunded = 0;
         //this next field will be used to track replies and refunds
         art_being_submitted.replied = false
+        art_being_submitted.delete_byartist = false
         art_being_submitted.businessId = businesses_being_submitted[i]
         const db = firebase.firestore()
         const collectionRef = db
