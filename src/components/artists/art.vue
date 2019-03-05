@@ -1,10 +1,10 @@
 <template>
   <v-container mt-3>
-    <v-layout row wrap>
-      <v-flex lg6 md6 sm12 xs12 ml-2 mr-2>
+    <v-layout row wrap> <!--wrap-->
+      <v-flex lg7 md6 sm12 xs12 ml-2 mr-2> <!--lg6-->
         <img :src="this.$store.state.viewed_art_image_info.url" alt="" width="100%">
       </v-flex>
-      <v-flex lg4 md6 sm12 xs12 ml-2 mr-2>
+      <v-flex lg7 md6 sm12 xs12 ml-2 mr-2> <!--lg4-->
         <h2>{{this.$store.state.viewed_art_image_info.art_title}}</h2>
         <p>{{this.$store.state.viewed_art_image_info.description}}</p>
         <!-- v-select for new categories to be added -->
@@ -14,7 +14,7 @@
                   >
                     <v-layout
                       align-center
-                      wrap
+                     wrap
                     >
                         <v-select
                           :items="items"
