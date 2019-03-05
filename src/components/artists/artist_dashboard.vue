@@ -26,37 +26,36 @@
       </v-card>
     </div>
 
-    <!-- This is where the user can choose categories to filter their art submissions by -->
-    <v-layout row>
-      <v-flex lg9 offset-lg1 mt-5>
-        <v-card flat id="selectbox">
-            <v-container fluid>
-              <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
-                  <v-select
-                    :items="items"
-                    attach
-                    chips
-                    name='categories'
-                    id='categories'
-                    label='categories'
-                    v-model='categories'
-                    required
-                    multiple
-                    v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
-                  ></v-select>
-              </v-layout>
-            </v-container>
-          </v-card>
-      </v-flex>
-    </v-layout>
+
 
     <v-tabs color="primary" light grow>
 
       <v-tab >  Dashboard </v-tab>
         <v-spacer></v-spacer>
         <v-tab-item :value="dashboard-tab">
+        
 
           <v-layout row wrap mb-5>
+              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 >
+                <v-card flat id="selectbox">
+                    <v-container fluid>
+                      <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
+                          <v-select
+                            :items="items"
+                            attach
+                            chips
+                            name='categories'
+                            id='categories'
+                            label='categories'
+                            v-model='categories'
+                            required
+                            multiple
+                            v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
+                          ></v-select>
+                      </v-layout>
+                    </v-container>
+                  </v-card>
+              </v-flex>
               <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in arts" :key='art.id'>
                 <v-card mt-3>
 
@@ -169,13 +168,14 @@
 
         </v-tab-item>
 
-      <v-tab> Recommended Artists </v-tab>
-        <v-spacer></v-spacer>
+      <!-- <v-tab> Recommended Artists </v-tab>
+           <v-spacer></v-spacer>
         <v-tab-item>
           <v-card flat>
             <v-card-text> Recommended Artists </v-card-text>
           </v-card>
-        </v-tab-item>
+        </v-tab-item> -->
+
         <v-spacer></v-spacer>
 
       <v-tab v-on:click="respondedArts()"> Responded Art Pieces </v-tab>
@@ -183,30 +183,28 @@
           <v-container justify-center>
             <v-layout row >
               <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                <v-card>
-                  <v-list three-line >
                     <template v-for="art in recently_responded_arts">
 
-                      <v-list-tile>
-                        <v-list-tile-avatar>
-                          <img  :src="art.url" >
-                        </v-list-tile-avatar>
-                        <v-list-title-content>
-                          <v-list-tile-title v-text="art.art_title"></v-list-tile-title>
-                          <v-list-sub-title v-text="art.description"></v-list-sub-title>
-                        </v-list-title-content>
-                      </v-list-tile>
-                      
-                      <v-list-tile>
-                        <v-list-title-content justify-end>
-                          <v-list-tile-title> Response By : {{art.business_name}} </v-list-tile-title>
-                          <v-list-sub-title v-text="art.response"></v-list-sub-title>                    
-                        </v-list-title-content>
-                      </v-list-tile>
-                      
+                        <v-card
+                        :key='art'
+                        >
+                          <img
+                          :src="art.url"
+                          >
+                          <v-card-title primary-title>
+                            <div>
+                              <h3 class="headline mb-0">Art Title: {{art.art_title}}</h3>
+                              <p>Description: {{art.description}} </p>
+                            </div>
+                          </v-card-title>
+                          <v-card-text >
+                            <div>
+                              <p >Response from <b>{{art.business_name}}</b>, "{{art.response}}"</p>
+                            </div>
+                          </v-card-text>
+                        </v-card>
+
                     </template>
-                  </v-list>
-                </v-card>
               </v-flex>
             </v-layout>
           </v-container>
@@ -404,7 +402,15 @@
     }
 }
 </script>
-<style>
+<style scope>
+  img {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+  p {
+    word-break: break-all;
+  }
   .loading_holder {
     width: 100vw;
     height: 100vh;

@@ -1937,6 +1937,12 @@ export const store = new Vuex.Store({
                   delete: false,
                   artist_id: firebase.auth().currentUser.uid
                 }
+
+                let dataCategory = {}
+                dataCategory[0] = art.categories
+                dataCategory[1] = art.artist_id
+                let categoryJson = JSON.stringify(dataCategory)
+
                 const db = firebase.firestore()
                 const collectionRef = db.collection('art')
                 collectionRef
@@ -1948,6 +1954,26 @@ export const store = new Vuex.Store({
                     // If art is uploaded, set variable to true
                     commit('set_art_uploaded', true)
                   })
+                  .then(function(){
+                    //  Send API request to update user category
+                    let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+                    let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateArtistCategoryCount'
+
+                    if (!('fetch' in window)) {
+                      return
+                    } else {
+                    }
+                    
+                    console.log('In upload image about to call fetch ')
+                    fetch(proxyUrl + targetUrl, {
+                      method: 'post',
+                      headers: {
+                        'Content-type': 'application/json'
+                      },
+                      body: categoryJson
+                    })
+                    console.log('leaving the .then fetch ')
+                })
                   .then(function () {
                     console.log("resolving upload image here")
                     resolve()
@@ -2143,6 +2169,52 @@ export const store = new Vuex.Store({
               upload_date: payload.upload_date,
               the_good: payload.the_good,
               url: getters.url
+              // categories: {
+              //   drawing : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   painting : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   sculpting:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   design:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   threeD : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   multimedia : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   blackandwhite :{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   psychedelic:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   portrait:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   realism: {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   abstract: {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   }  
+              // }
             }
             console.log('printing user in th ecreate a business: ', user)
             const db = firebase.firestore()
@@ -2186,7 +2258,64 @@ export const store = new Vuex.Store({
         email: payload.email,
         upload_date: payload.upload_date,
         userId: getters.user.id,
-        credits: 0
+        credits: 0,
+        categories: {
+          drawing : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          painting : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          sculpting:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          design:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          threeD : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          multimedia : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          blackandwhite :{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          psychedelic:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          portrait:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          realism: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          abstract: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          }
+        }
       }
       const db = firebase.firestore()
 

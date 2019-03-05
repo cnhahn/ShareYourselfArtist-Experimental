@@ -333,10 +333,10 @@
      </v-layout>
     </main>
 
-    <v-footer
+    <!-- <v-footer
     height="auto"
     style="background-color: #e5e5e5"
-  >
+    >
     <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
       <v-spacer></v-spacer>
       <p
@@ -376,7 +376,8 @@
       </v-flex>
 
     </v-layout>
-  </v-footer>
+  </v-footer> -->
+  
   </v-app>
 </template>
 <script>
