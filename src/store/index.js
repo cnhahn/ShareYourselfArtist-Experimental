@@ -36,10 +36,16 @@ export const store = new Vuex.Store({
         title: 'Dashboard',
         icon: 'dashboard',
         link: '/artist_dashboard'
+      },      {
+        //title: 'My Account',
+        title: 'My Account',
+        icon: 'home',
+        link: '/profile/artist'
       },
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       {
-        title: 'My Account',
+        //title: 'My Account',
+        title: 'Get Credits',
         icon: 'account_box',
         link: '/account'
       }
