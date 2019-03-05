@@ -204,9 +204,10 @@
           return sub.art.upload_date != nameKey
         })
         this.submissions = new_subs
+        console.log('nameKey is ' , nameKey , ' submissions is ' , new_subs)
         this.$store.commit('set_response', {response: response, radios:  radios })
-        //this.$store.commit('dec_num_submissions_for_this_business')
-        this.$store.dispatch('submit_submission_response')
+        // this.$store.commit('dec_num_submissions_for_this_business')
+        this.$store.dispatch('submit_submission_response', {categories: this.categories, art: this.art_being_replied} )
         this.dialog = false
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
