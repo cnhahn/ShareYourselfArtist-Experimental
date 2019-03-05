@@ -3208,6 +3208,7 @@ export const store = new Vuex.Store({
     },
     get_top_ten_category(state){
       return state.top_ten_category
+    },
     get_image_uploaded(state){
       console.log('in get image uploaded and value is ' , state.image_uploaded)
       return state.image_uploaded
