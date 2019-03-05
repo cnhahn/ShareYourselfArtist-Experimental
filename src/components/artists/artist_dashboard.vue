@@ -168,7 +168,7 @@
 
         </v-tab-item>
 
-      <v-tab> Recommended Artists </v-tab>
+      <!-- <v-tab> Recommended Artists </v-tab>
       <v-tab-item>
           <v-container>
             <v-layout row >
@@ -198,7 +198,7 @@
               </v-flex>
             </v-layout>
           </v-container>       
-      </v-tab-item>
+      </v-tab-item> -->
 
 
       <v-tab > Responded Art Pieces </v-tab>
