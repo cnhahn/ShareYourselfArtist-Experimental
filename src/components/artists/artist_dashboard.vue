@@ -114,8 +114,8 @@
 
           <v-layout row wrap mb-5>
             <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in def" :key='art.id'>
-              <v-card mt-3>
 
+              <v-card mt-3>
                 <v-card-media img :src="art.url" height="450px">
                 </v-card-media>
                 
@@ -369,7 +369,12 @@
           let art_to_be_deleted = this.def[this.currentArtIndex]
           console.log("art to be deleted is " , art_to_be_deleted)
           this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+          // This is to refresh the page without location.reload
+          let temp = this.def
+          this.def.length = 0
+          this.def = temp
           this.dialog=false
+          
         }
 
       },
