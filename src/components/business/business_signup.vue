@@ -282,21 +282,81 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
       onSubmit(){
             let currentdate = new Date()
             //this.$store.dispatch('signUserOut')
-            this.$store.dispatch('singBusinessUp', {publication:this.publication, 
-                                                            facebook:this.facebook,
-                                                            email:this.email,
-                                                            password:this.password,
-                                                            instagram:this.instagram,
-                                                            tumblr:this.tumblr,
-                                                            website: this.website,
-                                                            role:'business', 
-                                                            file:this.file,
-                                                            follower_count: this.follower_count,
-                                                            file_name: this.file_name,
-                                                            about: this.about,  
-                                                            additional_notes: this.additional_notes, 
-                                                            joined_on:Date.now(),
-                                                            upload_date:Date.now() })
+            this.$store.dispatch('singBusinessUp', 
+            {
+              publication:this.publication, 
+              facebook:this.facebook,
+              email:this.email,
+              password:this.password,
+              instagram:this.instagram,
+              tumblr:this.tumblr,
+              website: this.website,
+              role:'business', 
+              file:this.file,
+              follower_count: this.follower_count,
+              file_name: this.file_name,
+              about: this.about,  
+              additional_notes: this.additional_notes, 
+              joined_on:Date.now(),
+              upload_date:Date.now(),
+              categories: {
+                drawing : {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0                  
+                },
+                painting : {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                sculpting:{
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                design:{
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                threeD : {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                multimedia : {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                blackandwhite :{
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                psychedelic:{
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                portrait:{
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                realism: {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                },
+                abstract: {
+                  totalReceived : 0,
+                  numberAccepted : 0,
+                  numberResponded : 0   
+                }
+              }
+            })
 
         },
         

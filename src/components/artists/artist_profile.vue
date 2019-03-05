@@ -17,8 +17,8 @@
                     flat
                     depressed
                     :color="primary"
-                    :loading="imageNotLoaded"
-                    :disabled="imageNotLoaded"
+                    :loading="submission_in_progress"
+                    :disabled="submission_in_progress"
                     class="mx-0"
                     @click.native="onPickFile"
                   >
@@ -30,6 +30,16 @@
                         accept="image/*"
                         @change=onFilePicked
                   >
+            </v-flex>
+
+            <v-flex xs12 sm6>
+              <div class = "mt-1">
+                <!-- <v-progress-circular
+                  v-if="submission_in_progress"
+                  indeterminate
+                  color="red">
+                </v-progress-circular> -->
+              </div>
             </v-flex>
 
             <v-flex lg6 md6 sm12 xs12>
@@ -93,7 +103,10 @@
     name: 'artist_profile',
     data () {
       return {
+        counter: false,
+        check: null,
         urlProfilepic: this.$store.getters.url,
+        uploadProfileImage: false,
         file: null,
         onEdit: false,
         dataNotSent: false,
@@ -103,7 +116,10 @@
           instagram:'',
           selectedPhotoUrl: ''
         },
-        artistInfo: {}
+        artistInfo: {},
+        // If submitted is true, submit button was pressed, else it wasn't.
+        //submitted : false,
+        submission_in_progress : false,
       }
     },
     beforeMount () {
@@ -133,7 +149,11 @@
       },
       fetchUserInstagram () {
         return this.$store.getters.signed_in_user.instagram
+      },
+      image_uploaded_finished(){
+        return this.$store.getters.get_image_uploaded
       }
+      
     },
     methods: {
 
@@ -154,6 +174,7 @@
         }
         if (typeof userInfo.photoUrl === 'string' && userInfo.photoUrl !== null) {
           newArtistInfo.photoUrl = userInfo.photoUrl
+
         } else if (typeof userInfo.photoUrl === "object" && userInfo.photoUrl !== null) {
           if(typeof userInfo.photoUrl.data.url === 'string') {
             newArtistInfo.photoUrl = userInfo.photoUrl.data.url
@@ -166,8 +187,10 @@
       onPickFile () {
         this.$refs.fileInput.click()
         this.imageNotLoaded = true
+        this.submission_in_progress = true;
       },
       onFilePicked (event) {
+        this.$store.commit('set_image_uploaded', false)
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
@@ -184,10 +207,18 @@
               /* Extra code here to call function UploadProfileImage in index.js
                  store->index.js
               */
-              this.imageNotLoaded = false
+             console.log('the value of image uploaded is ', this.image_uploaded_finished)
               this.$store.dispatch('uploadProfileImage')
+              
+              this.check = true;
+               
             })
-        })
+            //this.imageNotLoaded = false
+            //this.submission_in_progress = false;
+            //this.check = true;
+ 
+          })
+        //this.check = true;
         fileReader.readAsDataURL(files[0])
       },
       resetEdit () {
@@ -210,6 +241,7 @@
             that.resetEdit()
           }, 2000)
           this.setUserInfo()
+          
         })
       },
       setEdit () {
@@ -231,6 +263,14 @@
         } else {
           var date = passedDay.getDate() - 1
           return 'Joined ' + date + ' days ago'
+        }
+      }
+    },
+    watch: {
+      image_uploaded_finished: function(val) {
+        console.log('the value has changed!!!! it is now ' , val)
+        if(val == true){
+          this.submission_in_progress = false
         }
       }
     }

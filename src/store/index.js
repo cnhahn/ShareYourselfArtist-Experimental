@@ -14,8 +14,12 @@ firebase.initializeApp(config)
 Vue.use(Vuex)
 Vue.use(VueGoogleCharts)
 
+
 export const store = new Vuex.Store({
   state: {
+    top_ten_category: [],
+    check_image_c: true,
+    image_uploaded: false,
     art_uploaded: null,
     viewed_art_image_info: [],
     top_12_recent_art: [],
@@ -48,11 +52,11 @@ export const store = new Vuex.Store({
       },
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       // { title: 'My Account', icon: 'account_box', link: '/account' },
-      {
-        title: 'Report',
-        icon: 'assessment',
-        link: '/report'
-      },
+      //{
+      //  title: 'Report',
+      //  icon: 'assessment',
+      //  link: '/report'
+      //},
       {
         title: 'Chat',
         icon: 'chat',
@@ -211,9 +215,13 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_top_ten_category(state,payload){
+      state.top_ten_category = [],
+      state.top_ten_category = payload
+    },
     set_viewed_art_image_info(state, payload) {
       state.viewed_art_image_info = [],
-        state.viewed_art_image_info = payload
+      state.viewed_art_image_info = payload
     },
     // Sign user out by setting user element to null
     set_user_to_null(state) {
@@ -221,6 +229,18 @@ export const store = new Vuex.Store({
       state.user_role = ''
       //console.log('set user to null')
     },
+    //to act as a spinner timer
+    set_image_uploaded(state, payload){
+      console.log('payload for image upload is ' , payload)
+      state.image_uploaded = payload
+      console.log('image uploaded in store is now of value ', state.image_uploaded)
+      console.log('--- mutation : stop loading prof img-----------index_profile')
+    },
+    set_check_image_c(state,payload){
+      state.check_image_c = payload
+      console.log('----check set-----')
+    },
+
     set_art_uploaded(state, payload) {
       state.art_uploaded = payload
     },
@@ -590,6 +610,60 @@ export const store = new Vuex.Store({
           console.log('recently_responded_arts is ' , state.recently_responded_arts)
         })
     },
+
+    retrieve_recommended_arts({commit,state,getters}, payload){
+      console.log('in retrieve recommende arts')
+      //Get current user's id and find their top submitted category.
+      let userId = getters.user.id
+      let db = firebase.firestore()
+      let art = db.collection("users").doc(userId).get()
+      .then(function (results){
+        console.log('categorie are ' ,results.data().categories)
+        // Convert object into an array
+        var categoryArray = Object.keys(results.data().categories).map(function(key) {
+          return [results.data().categories[key], key]
+        });
+        // Categories are all here, we will find the max category 
+        console.log('array object is now ' , categoryArray)
+        let maxCategory = 0;
+        for(var i = 0 ; i < categoryArray.length; i++){
+          if(categoryArray[i][0].responded >= maxCategory){
+            maxCategory = i;
+          }
+        }
+        let usersPopularCategory = categoryArray[maxCategory][1]
+
+
+        let search_users = db.collection('users').where('role' , '==' , 'artist').get()
+        .then(function (users){
+          let top_users = []
+          users.forEach(function (doc) {
+            if(doc.data().categories != undefined){
+              console.log('the category were looking at is ' , usersPopularCategory)
+              top_users.push({count: doc.data().categories[usersPopularCategory].responded, value: doc.id, full_data: doc.data()})
+    
+            }
+          })
+
+            top_users.sort(function(a, b) {
+              return a["count"] - b["count"]
+            })
+
+            console.log('top users is now ' , top_users)
+            let top_ten_users = []
+            // Now that we have all users, we will get the top 10 for this category
+            for (var tenUsers = 0 ; tenUsers < 10; tenUsers++){
+              //Now push into the top 10 category array
+              top_ten_users.push(top_users[top_users.length-1-tenUsers])
+
+            }
+            console.log(' top ten users are ' , top_ten_users)
+            
+            commit('set_top_ten_category' , top_ten_users)
+
+        })
+      })
+    },
     delete_art_piece({ commit, dispatch }, payload) {
       console.log("Entered delete art piece")
       // Got the url so we can find the art piece to delete
@@ -618,6 +692,11 @@ export const store = new Vuex.Store({
       // })
 
     },
+
+
+
+
+
     add_delete_field_to_art() {
       console.log('Entered add_delete_field_to_art')
       // Get all artists from Firebase
@@ -1938,6 +2017,12 @@ export const store = new Vuex.Store({
                   delete: false,
                   artist_id: firebase.auth().currentUser.uid
                 }
+
+                let dataCategory = {}
+                dataCategory[0] = art.categories
+                dataCategory[1] = art.artist_id
+                let categoryJson = JSON.stringify(dataCategory)
+
                 const db = firebase.firestore()
                 const collectionRef = db.collection('art')
                 collectionRef
@@ -1949,6 +2034,26 @@ export const store = new Vuex.Store({
                     // If art is uploaded, set variable to true
                     commit('set_art_uploaded', true)
                   })
+                  .then(function(){
+                    //  Send API request to update user category
+                    let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+                    let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateArtistCategoryCount'
+
+                    if (!('fetch' in window)) {
+                      return
+                    } else {
+                    }
+                    
+                    console.log('In upload image about to call fetch ')
+                    fetch(proxyUrl + targetUrl, {
+                      method: 'post',
+                      headers: {
+                        'Content-type': 'application/json'
+                      },
+                      body: categoryJson
+                    })
+                    console.log('leaving the .then fetch ')
+                })
                   .then(function () {
                     console.log("resolving upload image here")
                     resolve()
@@ -1979,7 +2084,39 @@ export const store = new Vuex.Store({
 
       // upload the artist data and the url
     },
-    submit_submission_response({ getters }) {
+    submit_submission_response({ getters } , payload) {
+      
+      let businessDecision =  getters.submission_response.radios
+      let artCategories = payload.categories
+      let businessId =  this.getters.user.id
+      let requestedArtist =  payload.art.art.artist_id
+
+      if (businessDecision) {
+        let statistics = {}
+        statistics[0] = artCategories
+        statistics[1] = businessId
+        statistics[2] = requestedArtist
+        console.log('statistics is ' , statistics)
+
+        let statisticsJson = JSON.stringify(statistics)
+        //  Send API request to update user category
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateAcceptedStats'
+
+        if (!('fetch' in window)) {
+          return
+        } else {
+        }
+        
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: statisticsJson
+        })
+      }
+      
       const db = firebase.firestore()
       const collectionRef = db
         .collection('review_requests')
@@ -1996,7 +2133,7 @@ export const store = new Vuex.Store({
         })
         .catch(function (error) {
           // The document probably doesn't exist.
-          console.error('Error updating dsubmission: ', error)
+          console.error('Error updating submission: ', error)
         })
     },
 
@@ -2144,6 +2281,52 @@ export const store = new Vuex.Store({
               upload_date: payload.upload_date,
               the_good: payload.the_good,
               url: getters.url
+              // categories: {
+              //   drawing : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   painting : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   sculpting:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   design:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   threeD : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   multimedia : {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   blackandwhite :{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   psychedelic:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   portrait:{
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   realism: {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   },
+              //   abstract: {
+              //     totalReceived : 0,
+              //     numOfResponses : 0
+              //   }  
+              // }
             }
             console.log('printing user in th ecreate a business: ', user)
             const db = firebase.firestore()
@@ -2187,7 +2370,64 @@ export const store = new Vuex.Store({
         email: payload.email,
         upload_date: payload.upload_date,
         userId: getters.user.id,
-        credits: 0
+        credits: 0,
+        categories: {
+          drawing : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          painting : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          sculpting:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          design:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          threeD : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          multimedia : {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          blackandwhite :{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          psychedelic:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          portrait:{
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          realism: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          },
+          abstract: {
+            count : 0,
+            responded : 0,
+            totalSubmitted : 0
+          }
+        }
       }
       const db = firebase.firestore()
 
@@ -2564,6 +2804,7 @@ export const store = new Vuex.Store({
     uploadProfileImage({ commit, getters }) {
       let ref = firebase.storage().ref()
       let uploadTask = ref
+      //var image_check1 = 1
         .child(
           getters.user.id + '/profile/' + getters.image_being_uploaded.file.name
         )
@@ -2584,6 +2825,24 @@ export const store = new Vuex.Store({
               console.log('Upload is running')
               break
           }
+          //spinner stuff ------------
+          //state.image_uploaded = true;
+          //console.log(state.image_upload);
+          //commit('set_image_uploaded', true)
+          //let check_spinner = status.check_image_c
+          //if (state.check_image_c == false)
+          //if (status.check_image_c == false)
+          //if(this.$store.state.check_image_c == false)
+          //{  
+            //commit('set_image_uploaded', true)
+          //commit('set_check_image_c', true)
+           //commit('set_image_uploaded', true)
+          //}
+          ///else
+          //{
+            //commit('set_check_image_c', false)
+          //}
+          //spinner stuff --------------
         },
         function (error) {
           // A full list of error codes is available at
@@ -2623,15 +2882,20 @@ export const store = new Vuex.Store({
                   if (doc.exists) {
                     commit('signed_in_user', doc.data())
                     commit('setLoading', false)
+                    commit('set_image_uploaded', true)
                   } else {
                     // doc.data() will be undefined in this case
                   }
+                  //state.image_uploaded = true;
                 }).catch(function (error) {
                   console.log('Error getting document:', error)
                 })
               })
           })
+          //state.image_uploaded = true;
+          //commit('set_image_uploaded', true)
         })
+        //commit('set_image_uploaded', true)
     },
     async updateArtistProfileToFirebase({ commit, dispatch, getters }, payload) {
       commit('setLoading', true)
@@ -2644,6 +2908,8 @@ export const store = new Vuex.Store({
       if (name !== undefined && name !== '') {
         updateData.name = name
       }
+
+      // i think this is where the photo is being updataed at within the whole process.
       if (photoUrl !== undefined && photoUrl !== '') {
         dispatch('uploadProfileImage').then(() => {
           updateData.photoUrl = getters.url
@@ -2731,6 +2997,11 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    //for spinner
+    get_check_image_c(state)
+    {
+      return state.check_image_c
+    },
     get_art_being_submitted_is_selected(state) {
       return state.art_being_submitted_is_selected
     },
@@ -2935,6 +3206,13 @@ export const store = new Vuex.Store({
     },
     get_recently_responded_arts(state) {
       return state.recently_responded_arts
+    },
+    get_top_ten_category(state){
+      return state.top_ten_category
+    },
+    get_image_uploaded(state){
+      console.log('in get image uploaded and value is ' , state.image_uploaded)
+      return state.image_uploaded
     }
   }
 })

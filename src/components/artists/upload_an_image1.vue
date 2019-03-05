@@ -46,7 +46,32 @@
               <v-alert v-if="image_size_accepted == false" :value="true" type="error">
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <img :src="image_url" height="150">
+              <!--<img :src="image_url" height="350"></img>-->
+              <!--<img :src="image_url" height="550"></img>-->
+              <!--<div v-if="image_too_big == false">
+                <img :src="image_url"
+                    :style="{
+                      width: resized_width + 'px',
+                      height: resized_height + 'px'
+                    }"
+                ></img>
+                </div>
+               <div v-else>-->
+                 <div v-if="image_is_landscape">
+                    <img :src="image_url"
+                      :style="{
+                      width: max_pre_width + 'px'
+                      }"
+                    ></img>
+                 </div>
+                 <div v-else>
+                   <img :src="image_url"
+                      :style="{
+                      height: max_pre_height + 'px'
+                      }"
+                    ></img>
+                 </div>  
+               <!--</div>-->
             </v-flex>
           </div>
 
@@ -120,6 +145,12 @@
         file_name: null,
         file: {},
         image_is_not_loaded: true,
+        max_pre_width: 600,
+        max_pre_height: 430,
+        image_too_big: false,
+        image_is_landscape: true,
+        resized_width: 0,
+        resized_height: 0,
         steps: [
           {
             target: '#v-step-0', 
@@ -177,10 +208,36 @@
           return
         }
 
+        // assume uploaded image not over max dimensions at first
+        this.image_too_big = false
+        // assume at first image is landscape
+        this.image_is_landscape = true
+        // lets methods be used within fileReader load
+        var self = this
+
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           // Callback after fileReader loads the data with Url.
           this.image_url = fileReader.result
+
+          // holds the uploaded image, used to get dimensions
+          var img = new Image()
+          // image loading is done asynchronously, so you have to wait for load event
+          // in other words, you have to wait for the image to load before using image
+          img.onload = function()
+          {
+            //console.log('image width: ', img.width)
+            //console.log('image height: ', img.height)
+            
+            // check orientation
+            self.checkOrientation(img.width, img.height)
+
+            // this is to resize the uploaded image
+            // max width allowed = 1200, height allowed = 630
+            self.resizeImage(img.width, img.height, 1200, 630)
+          }
+          img.src = this.image_url
+
           this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
         })
         fileReader.readAsDataURL(files[0])
@@ -190,6 +247,46 @@
       },
         nextStepCallback(currentStep) {
         console.log("Next")
+      },
+      checkOrientation(width, height)
+      {
+        // check if landscape or portrait to set max preview dimensions
+        // a square image is considered portrait
+        if (width > height)
+        {
+          this.image_is_landscape = true
+        }
+        else
+        {
+          this.image_is_landscape = false
+        }
+      },
+      resizeImage(width, height, maxWidth, maxHeight) {
+        // resize the image proportionally if too large, keeping aspect ratio
+        // preview is restricted to max width or height, depending on orientation
+        var ratio = 0
+
+        if (width > maxWidth)
+        {
+          ratio = maxWidth / width
+          height = height * ratio
+          width = width * ratio
+
+          this.image_too_big = true
+        }
+        if (height > maxHeight)
+        {
+          ratio = maxHeight / height
+          width = width * ratio
+          height = height * ratio
+
+          this.image_too_big = true
+        }
+
+        this.resized_width = width
+        this.resized_height = height
+        //console.log('resized image width: ', width)
+        //console.log('resized image height: ', height)
       }
     }
   }
