@@ -28,6 +28,123 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+exports.topCategories = functions.https.onRequest((req, res) => {
+  const db = admin.firestore()
+  let search_users = db.collection('users').where('role', '==', 'artist').get()
+    .then(function (users) {
+      let categories = ['abstract', 'blackandwhite', 'threeD', 'design', 'drawing', 'multimedia', 'painting', 'portrait', 'psychedelic', 'realism', 'sculpting']
+      let abstract = [], blackandwhite = [], threeD = [], design = [], drawing = [], multimedia = [], painting = [], portrait = [], psychedelic = [], realism = [], sculpting = [];
+
+      users.forEach(function (doc) {
+        // console.log('in for each ')
+        if (doc.data().categories != undefined) {
+          abstract.push({ count: doc.data().categories[categories[0]].responded, value: doc.id, full_data: doc.data() })
+          blackandwhite.push({ count: doc.data().categories[categories[1]].responded, value: doc.id, full_data: doc.data() })
+          threeD.push({ count: doc.data().categories[categories[2]].responded, value: doc.id, full_data: doc.data() })
+          design.push({ count: doc.data().categories[categories[3]].responded, value: doc.id, full_data: doc.data() })
+          drawing.push({ count: doc.data().categories[categories[4]].responded, value: doc.id, full_data: doc.data() })
+          multimedia.push({ count: doc.data().categories[categories[5]].responded, value: doc.id, full_data: doc.data() })
+          painting.push({ count: doc.data().categories[categories[6]].responded, value: doc.id, full_data: doc.data() })
+          portrait.push({ count: doc.data().categories[categories[7]].responded, value: doc.id, full_data: doc.data() })
+          psychedelic.push({ count: doc.data().categories[categories[8]].responded, value: doc.id, full_data: doc.data() })
+          realism.push({ count: doc.data().categories[categories[9]].responded, value: doc.id, full_data: doc.data() })
+          sculpting.push({ count: doc.data().categories[categories[10]].responded, value: doc.id, full_data: doc.data() })
+
+        }
+        // console.log('finishing one instance of for each')
+      })
+      
+      // console.log(sculpting)
+
+      abstract.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      blackandwhite.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      threeD.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      design.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      drawing.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      multimedia.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      painting.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      portrait.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      psychedelic.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      realism.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      sculpting.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+
+      // Now we want to store the results into firebase. 
+      
+
+      //res.send('done?')
+      // let top_ten_users = []
+      // // Now that we have all users, we will get the top 10 for this category
+      // for (var tenUsers = 0; tenUsers < 10; tenUsers++) {
+      //   //Now push into the top 10 category array
+      //   top_ten_users.push(top_users[top_users.length - 1 - tenUsers])
+
+      // }
+      // console.log(' top ten users are ', top_ten_users)
+
+      // commit('set_top_ten_category', top_ten_users)
+      let object = {
+        abstract : abstract,
+        blackandwhite : blackandwhite,
+        threeD: threeD,
+        design: design,
+        drawing: drawing,
+        multimedia: multimedia, 
+        portrait : portrait,
+        psychedelic : psychedelic,
+        realism : realism,
+        sculpting : sculpting
+      }
+       console.log('object here is: ', object)
+      return object
+    })
+    .then( categoryList =>{
+      const db = admin.firestore()
+      //
+      console.log('in the next .then()')
+      // for(let key in categoryList){
+        
+      // }
+
+      var catRef = db.collection('most_popular_artist').doc('sculpting');
+      console.log('passed catRef')
+      var currentCategory = categoryList['sculpting']
+      //let userID = currentCategory.value
+      let a = currentCategory[0].value
+      console.log('about to set set with options for ', a)
+      var setWithOptions = catRef.set({
+        user1 :  1,
+      })
+
+      res.send('finished');
+
+    })
+    .catch(error => {
+      res.send(error)
+    })
+})
+
 /*
 plan:
 going to use a testing account to test the if credits are working.

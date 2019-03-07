@@ -620,7 +620,7 @@ export const store = new Vuex.Store({
     },
 
     retrieve_recommended_arts({commit,state,getters}, payload){
-      console.log('in retrieve recommende arts')
+      console.log('in retrieve recommended arts')
       //Get current user's id and find their top submitted category.
       let userId = getters.user.id
       let db = firebase.firestore()
@@ -700,9 +700,6 @@ export const store = new Vuex.Store({
       // })
 
     },
-
-
-
 
 
     add_delete_field_to_art() {
