@@ -329,6 +329,40 @@ exports['default'] = ImageTools;
 module.exports = exports['default']; 
 /*** End ImageTools.js */
 
+/* Utility function to convert a canvas to a BLOB */
+var dataURLToBlob = function(dataURL) {
+    //console.log('url in util:', dataURL)
+    var BASE64_MARKER = ';base64,';
+    if (dataURL.indexOf(BASE64_MARKER) == -1) {
+        var parts = dataURL.split(',');
+        var contentType = parts[0].split(':')[1];
+        var raw = parts[1];
+
+        return new Blob([raw], {type: contentType});
+    }
+
+    var parts = dataURL.split(BASE64_MARKER);
+    var contentType = parts[0].split(':')[1];
+    var raw = window.atob(parts[1]);
+    var rawLength = raw.length;
+
+    var uInt8Array = new Uint8Array(rawLength);
+
+    for (var i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {type: contentType});
+}
+/* End Utility function to convert a canvas to a BLOB      */
+
+function blobToFile(theBlob, fileName){
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+}
+
   // Styled by Jin. No modification on code.
   export default {
     name: 'myTour',
@@ -441,7 +475,6 @@ module.exports = exports['default'];
           /*** End using ImageTools***/
 
           /*** Start using Canvas to resize image ***/
-          /*
           // holds the uploaded image, used to get dimensions
           var img = new Image()
 
@@ -450,39 +483,48 @@ module.exports = exports['default'];
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
           {
-            //console.log('image width: ', img.width)
-            //console.log('image height: ', img.height)
+            console.log('image width: ', img.width)
+            console.log('image height: ', img.height)
             
             // check orientation
             self.checkOrientation(img.width, img.height)
 
             // this is to resize the uploaded image
             // max width allowed = 1200, height allowed = 630
-            var resizeDims = self.resizeImage(img.width, img.height, 1200, 630)
+            var resizeDims = self.resizeImage(img.width, img.height, 400, 210)
             img.width = resizeDims[0]
             img.height = resizeDims[1]
 
             // https://stackoverflow.com/questions/23945494/use-html5-to-resize-an-image-before-upload
             var canvas = document.createElement('canvas')
-            //console.log('resized image width: ', img.width)
-            //console.log('resized image height: ', img.height)
             canvas.width = img.width
             canvas.height = img.height
+            console.log('resized image width: ', img.width)
+            console.log('resized image height: ', img.height)
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
 
             // dataURL = canvas.toDataURL('image/jpeg')
-            self.resizedURL = canvas.toDataURL('image/jpeg')
             //console.log('dataURL: ', dataURL)
 
-            //self.$store.dispatch('image_being_uploaded', {file: self.file, image_url: self.resizedURL})
-            console.log('resizedURL: ', self.resizedURL)
+            self.resizedURL = canvas.toDataURL('image/jpeg')
+            //console.log('resizedURL: ', self.resizedURL)
+
+            // a blob, a file is a type of blob
+            var resizedImage = dataURLToBlob(self.resizedURL)
+            console.log('resized image blob: ', resizedImage)
+
+            var resizedFile = blobToFile(resizedImage, filename)
+            console.log('resized file name: ', resizedFile.name)
+            console.log('resized image file: ', resizedImage)
+
+            self.$store.dispatch('image_being_uploaded', {file: resizedFile, image_url: self.resizedURL})
+            
           }
           img.src = this.image_url
           //console.log('image_url: ', this.image_url)
-          */
           /*** End using Canvas to resize image ***/
 
-          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
+          /* this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url}) */
           // this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: dataURL})
         })
         fileReader.readAsDataURL(files[0])
@@ -533,7 +575,36 @@ module.exports = exports['default'];
         this.resized_height = height
 
         return [width, height]
+      },
+
+      /* Utility function to convert a canvas to a BLOB */
+      /*
+      dataURLToBlob(dataURL) {
+          var BASE64_MARKER = ';base64,';
+          console.log('url in util:', dataURL)
+          if (dataURL.indexOf(BASE64_MARKER) == -1) {
+              var parts = dataURL.split(',');
+              var contentType = parts[0].split(':')[1];
+              var raw = parts[1];
+
+              return new Blob([raw], {type: contentType});
+          }
+
+          var parts = dataURL.split(BASE64_MARKER);
+          var contentType = parts[0].split(':')[1];
+          var raw = window.atob(parts[1]);
+          var rawLength = raw.length;
+
+          var uInt8Array = new Uint8Array(rawLength);
+
+          for (var i = 0; i < rawLength; ++i) {
+              uInt8Array[i] = raw.charCodeAt(i);
+          }
+
+          return new Blob([uInt8Array], {type: contentType});
       }
+      */
+      /* End Utility function to convert a canvas to a BLOB      */
 
     }
   }

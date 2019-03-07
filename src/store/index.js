@@ -496,6 +496,7 @@ export const store = new Vuex.Store({
       state.color = payload.color
     },
     image_being_uploaded(state, payload) {
+      //console.log('resizedURL and file in store: ', payload)
       state.image_being_uploaded = payload
     },
     set_user_email(state) {
@@ -1877,6 +1878,7 @@ export const store = new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         console.log("image-_being uploaded is ", getters.image_being_uploaded.file)
+        //console.log("image url being uploaded: ", getters.image_being_uploaded.image_url)
         // first put the image in the storage
         // Create a root reference
         let ref = firebase.storage().ref()
