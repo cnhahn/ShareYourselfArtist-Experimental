@@ -105,37 +105,83 @@ exports.topCategories = functions.https.onRequest((req, res) => {
 
       // commit('set_top_ten_category', top_ten_users)
       let object = {
-        abstract : abstract,
-        blackandwhite : blackandwhite,
-        threeD: threeD,
-        design: design,
-        drawing: drawing,
-        multimedia: multimedia, 
-        portrait : portrait,
-        psychedelic : psychedelic,
-        realism : realism,
-        sculpting : sculpting
+        abstract : abstract.slice(abstract.length-10, abstract.length),
+        blackandwhite : blackandwhite.slice(blackandwhite.length-10, blackandwhite.length),
+        threeD: threeD.slice(threeD.length-10, threeD.length),
+        design: design.slice(design.length-10, design.length),
+        drawing: drawing.slice(drawing.length-10, drawing.length),
+        multimedia: multimedia.slice(multimedia.length-10, multimedia.length), 
+        painting : painting.slice(painting.length-10, painting.length),
+        portrait : portrait.slice(portrait.length-10, portrait.length),
+        psychedelic : psychedelic.slice(psychedelic.length-10, psychedelic.length),
+        realism : realism.slice(realism.length-10, realism.length),
+        sculpting : sculpting.slice(sculpting.length-10, sculpting.length)
       }
-       console.log('object here is: ', object)
+      //  console.log('object here is: ', object)
       return object
     })
     .then( categoryList =>{
       const db = admin.firestore()
       //
       console.log('in the next .then()')
-      // for(let key in categoryList){
-        
-      // }
-
-      var catRef = db.collection('most_popular_artist').doc('sculpting');
-      console.log('passed catRef')
-      var currentCategory = categoryList['sculpting']
-      //let userID = currentCategory.value
-      let a = currentCategory[0].value
-      console.log('about to set set with options for ', a)
-      var setWithOptions = catRef.set({
-        user1 :  1,
-      })
+      for(let key in categoryList){
+        var catRef = db.collection('most_popular_artist').doc(key);
+        var currentCategory = categoryList[key]
+        console.log('Current sculpting category is ' , currentCategory)
+        //let userID = currentCategory.value
+        var setWithOptions = catRef.set({
+          user1 : {
+            count : currentCategory[9].count,
+            userID : currentCategory[9].value,
+            userData : currentCategory[9].full_data 
+          },
+          user2 : {
+            count : currentCategory[8].count,
+            userID : currentCategory[8].value,
+            userData : currentCategory[8].full_data 
+          },
+          user3 : {
+            count : currentCategory[7].count,
+            userID : currentCategory[7].value,
+            userData : currentCategory[7].full_data 
+          },
+          user4 : {
+            count : currentCategory[6].count,
+            userID : currentCategory[6].value,
+            userData : currentCategory[6].full_data 
+          } ,
+          user5 : {
+            count : currentCategory[5].count,
+            userID : currentCategory[5].value,
+            userData : currentCategory[5].full_data 
+          } ,
+          user6 : {
+            count : currentCategory[4].count,
+            userID : currentCategory[4].value,
+            userData : currentCategory[4].full_data 
+          } ,
+          user7 : {
+            count : currentCategory[3].count,
+            userID : currentCategory[3].value,
+            userData : currentCategory[3].full_data 
+          } ,
+          user8 : {
+            count : currentCategory[2].count,
+            userID : currentCategory[2].value,
+            userData : currentCategory[2].full_data 
+          },
+          user9 : {
+            count : currentCategory[1].count,
+            userID : currentCategory[1].value,
+            userData : currentCategory[1].full_data 
+          },
+          userten : {
+            count : currentCategory[0].count,
+            userID : currentCategory[0].value,
+            userData : currentCategory[0].full_data 
+          }
+        })
+      }
 
       res.send('finished');
 
@@ -1807,35 +1853,7 @@ exports.replyConfirmation = functions.firestore
   });
 
 //function to resize images on firebase storage
-exports.resizeFile = functions.storage.object().onFinalize((object) => {
-  const filePath = object.name;
-  const fileName = path.basename(filePath);
-  const contentType = object.contentType;
-  if (!contentType.startsWith('image/')) { //Initially the image would pass this, once resized the contentType changes to stop loop
-    console.log('This is not an image.');
-    return null;
-  }
-  const metadata = { //set contentType
-    contentType: contentType,
-  };
-  const currBucket = gcs.bucket("gs://sya-app.appspot.com") //bucket in our google cloud
-  const thumbFileName = fileName;
-  const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-  const tmpPath = path.join(os.tmpdir(), path.basename(filePath))
-  return currBucket.file(filePath).download({
-    destination: tmpPath
-  }).then(() => {
-    return spawn('convert', [tmpPath, '-resize', '600x600', tmpPath]);
-  }).then(() => {
-    return currBucket.file(filePath).delete({ destination: tmpPath })
-      .then(() => {
-        return currBucket.upload(tmpPath, {
-          destination: thumbFilePath,
-          contentType: 'jpeg/' //updates content type to stop the loop
-        })
-      })
-  });
-});
+
 
 
 /*
