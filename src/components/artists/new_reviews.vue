@@ -83,11 +83,11 @@
     },
     watch: {
       mark_as_read_btn_clicked: function(val) {
-        // this.reviewList__unread_reviews()
+        this.reviewList__unread_reviews()
         this.fetchRepliedSubmissions()
       },
       mark_as_delete_btn_clicked: function(val) {
-        // this.reviewList__read_reviews()
+        this.reviewList__unread_reviews()
         this.fetchRepliedSubmissions()
       }
     },
