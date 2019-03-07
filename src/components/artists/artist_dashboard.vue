@@ -168,7 +168,7 @@
 
         </v-tab-item>
 
-      <v-tab> Recommended Artists </v-tab>
+      <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
       <v-tab-item>
           <v-container>
             <v-layout row >
@@ -267,7 +267,6 @@
       }
     },
     mounted(){
-      this.recommendedArts()
       this.respondedArts()
     },
     computed: {

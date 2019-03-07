@@ -634,45 +634,43 @@ export const store = new Vuex.Store({
         // Categories are all here, we will find the max category 
         console.log('array object is now ' , categoryArray)
         let maxCategory = 0;
+        let maxCount = 0;
         for(var i = 0 ; i < categoryArray.length; i++){
-          if(categoryArray[i][0].responded >= maxCategory){
+          if(categoryArray[i][0].count >= maxCount){
+            maxCount = categoryArray[i][0].count
             maxCategory = i;
           }
         }
+        console.log('maxCategory is ', maxCategory )
         let usersPopularCategory = categoryArray[maxCategory][1]
+        console.log('my highest category is  ' , usersPopularCategory)
+  
+        let top_ten_users = []
 
+        let search_users = db.collection('most_popular_artist').doc(usersPopularCategory)
+        .get()
+        .then(function (querySnapshot) {
+          // querySnapshot.forEach(function (doc) {
+          //   console.log('search users', doc.data())
+          //   // ordered_top_12_list.push(doc.data())
+          // })
+         
+          let catobj = querySnapshot.data()
+          for(let key in catobj){
+            console.log('grabbed users top ten recommended artists ' , key)
+            let category_object = catobj[key]
+            top_ten_users.push({count: category_object.count, value: category_object.userID, full_data: category_object.userData})
+          }
 
-        let search_users = db.collection('users').where('role' , '==' , 'artist').get()
-        .then(function (users){
-          let top_users = []
-          users.forEach(function (doc) {
-            if(doc.data().categories != undefined){
-              console.log('the category were looking at is ' , usersPopularCategory)
-              top_users.push({count: doc.data().categories[usersPopularCategory].responded, value: doc.id, full_data: doc.data()})
-    
-            }
-          })
-
-            top_users.sort(function(a, b) {
-              return a["count"] - b["count"]
-            })
-
-            console.log('top users is now ' , top_users)
-            let top_ten_users = []
-            // Now that we have all users, we will get the top 10 for this category
-            for (var tenUsers = 0 ; tenUsers < 10; tenUsers++){
-              //Now push into the top 10 category array
-              top_ten_users.push(top_users[top_users.length-1-tenUsers])
-
-            }
-            console.log(' top ten users are ' , top_ten_users)
-            
-            commit('set_top_ten_category' , top_ten_users)
-
+          commit('set_top_ten_category' , top_ten_users)
         })
+        .catch(function (error) {
+          console.log('Error getting search users: ', error)
+        })
+
       })
     },
-    delete_art_piece({ commit, dispatch }, payload) {
+    delete_art_piece ({ commit, dispatch }, payload) {
       console.log("Entered delete art piece")
       // Got the url so we can find the art piece to delete
       console.log(payload)
