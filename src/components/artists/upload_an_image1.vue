@@ -326,7 +326,7 @@ var ImageTools = (function () {
 })();
 
 exports['default'] = ImageTools;
-module.exports = exports['default'];    
+module.exports = exports['default']; 
 /*** End ImageTools.js */
 
   // Styled by Jin. No modification on code.
@@ -426,6 +426,7 @@ module.exports = exports['default'];
           this.image_url = fileReader.result
 
           /*** Start using ImageTools to resize image***/
+          /*
           ImageTools.resize(this.files[0], {
             width: 320, // maximum width
             height: 240 // maximum height
@@ -436,6 +437,7 @@ module.exports = exports['default'];
           console.log('did it resize: ', didItResize)
           // you can also now upload this blob using an XHR.
           });
+          */
           /*** End using ImageTools***/
 
           /*** Start using Canvas to resize image ***/
