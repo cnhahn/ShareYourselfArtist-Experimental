@@ -305,6 +305,17 @@ function blobToFile(theBlob, fileName){
             console.log('resized image height: ', img.height)
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
 
+            // if image is a GIF, don't attempt a resize
+            // conversion will disable animations
+            var imgTypeStr = self.checkURL(self.image_url)
+            if (imgTypeStr === 'image/gif')
+            {
+              console.log('is a GIF')
+              self.$store.dispatch('image_being_uploaded', {file: self.file, image_url: self.image_url})
+            }
+            else
+            {
+
             // dataURL = canvas.toDataURL('image/jpeg')
             //console.log('dataURL: ', dataURL)
 
@@ -323,6 +334,8 @@ function blobToFile(theBlob, fileName){
             console.log('resized image file: ', resizedImage)
 
             self.$store.dispatch('image_being_uploaded', {file: resizedFile, image_url: self.resizedURL})
+
+            }
             
           }
           img.src = this.image_url
@@ -380,8 +393,12 @@ function blobToFile(theBlob, fileName){
         this.resized_height = height
 
         return [width, height]
+      },
+      checkURL(url)
+      {
+        // checks if the image is a gif, will have image/gif in data
+        return url.substring(url.indexOf(':')+1, url.indexOf(';'))
       }
-
     }
   }
 </script>
