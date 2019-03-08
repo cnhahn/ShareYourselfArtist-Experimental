@@ -68,6 +68,7 @@
                 Image size is too large! Please reduce the image size
               </v-alert>
               <!--<img :src="image_url" height="550"></img>-->
+              <!--uncomment below to get preview as actual size if image not too big-->
               <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
                     :style="{
@@ -147,7 +148,6 @@
 
 /* Utility function to convert a canvas to a BLOB */
 var dataURLToBlob = function(dataURL) {
-    //console.log('url in util:', dataURL)
     var BASE64_MARKER = ';base64,';
     if (dataURL.indexOf(BASE64_MARKER) == -1) {
         var parts = dataURL.split(',');
@@ -173,7 +173,7 @@ var dataURLToBlob = function(dataURL) {
 /* End Utility function to convert a canvas to a BLOB      */
 
 function blobToFile(theBlob, fileName){
-    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    // add date and name to a Blob
     theBlob.lastModifiedDate = new Date();
     theBlob.name = fileName;
     return theBlob;
@@ -279,71 +279,50 @@ function blobToFile(theBlob, fileName){
           // holds the uploaded image, used to get dimensions
           var img = new Image()
 
-          // var dataURL = ''
           // image loading is done asynchronously, so you have to wait for load event
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
-          {
-            console.log('image width: ', img.width)
-            console.log('image height: ', img.height)
-            
+          { 
             // check orientation
             self.checkOrientation(img.width, img.height)
 
             // this is to resize the uploaded image
             // max width allowed = 1200, height allowed = 630
-            var resizeDims = self.resizeImage(img.width, img.height, 1200, 630) //400, 210
+            var resizeDims = self.resizeImage(img.width, img.height, 1200, 630)
             img.width = resizeDims[0]
             img.height = resizeDims[1]
 
-            // https://stackoverflow.com/questions/23945494/use-html5-to-resize-an-image-before-upload
             var canvas = document.createElement('canvas')
             canvas.width = img.width
             canvas.height = img.height
-            console.log('resized image width: ', img.width)
-            console.log('resized image height: ', img.height)
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
 
             // if image is a GIF, don't attempt a resize
             // conversion will disable animations
             var imgTypeStr = self.checkURL(self.image_url)
-            console.log('image type: ', imgTypeStr)
             if (imgTypeStr === 'image/gif')
             {
-              console.log('is a GIF')
               self.$store.dispatch('image_being_uploaded', {file: self.file, image_url: self.image_url})
             }
             else
             {
+              // convert canvas to url
+              self.resizedURL = canvas.toDataURL(imgTypeStr)
 
-            // dataURL = canvas.toDataURL('image/jpeg')
-            //console.log('dataURL: ', dataURL)
+              // convert url to a blob, a file is a type of blob
+              var resizedImage = dataURLToBlob(self.resizedURL)
 
-            // convert canvas to url
-            self.resizedURL = canvas.toDataURL(imgTypeStr)
-            //console.log('resizedURL: ', self.resizedURL)
+              // convert blob to file by adding name and date
+              var resizedFile = blobToFile(resizedImage, filename)
 
-            // convert url to a blob, a file is a type of blob
-            var resizedImage = dataURLToBlob(self.resizedURL)
-            console.log('resized image blob: ', resizedImage)
-
-            // convert blob to file by adding name and date
-            var resizedFile = blobToFile(resizedImage, filename)
-            
-            console.log('resized file name: ', resizedFile.name)
-            console.log('resized image file: ', resizedImage)
-
-            self.$store.dispatch('image_being_uploaded', {file: resizedFile, image_url: self.resizedURL})
-
+              self.$store.dispatch('image_being_uploaded', {file: resizedFile, image_url: self.resizedURL})
             }
             
           }
           img.src = this.image_url
-          //console.log('image_url: ', this.image_url)
           /*** End using Canvas to resize image ***/
 
           /* this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url}) */
-          // this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: dataURL})
         })
         fileReader.readAsDataURL(files[0])
       },
