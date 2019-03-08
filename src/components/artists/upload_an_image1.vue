@@ -67,7 +67,6 @@
               >
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <!--<img :src="image_url" height="350"></img>-->
               <!--<img :src="image_url" height="550"></img>-->
               <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
@@ -308,6 +307,7 @@ function blobToFile(theBlob, fileName){
             // if image is a GIF, don't attempt a resize
             // conversion will disable animations
             var imgTypeStr = self.checkURL(self.image_url)
+            console.log('image type: ', imgTypeStr)
             if (imgTypeStr === 'image/gif')
             {
               console.log('is a GIF')
@@ -320,7 +320,7 @@ function blobToFile(theBlob, fileName){
             //console.log('dataURL: ', dataURL)
 
             // convert canvas to url
-            self.resizedURL = canvas.toDataURL('image/jpeg')
+            self.resizedURL = canvas.toDataURL(imgTypeStr)
             //console.log('resizedURL: ', self.resizedURL)
 
             // convert url to a blob, a file is a type of blob
@@ -367,7 +367,7 @@ function blobToFile(theBlob, fileName){
       },
       resizeImage(width, height, maxWidth, maxHeight) {
         // resize the image proportionally if too large, keeping aspect ratio
-        // preview is restricted to max width or height, depending on orientation
+        // preview is unaffected, restricted to max_pre_width or height, depending on orientation
         var ratio = 0
 
         if (width > maxWidth)
