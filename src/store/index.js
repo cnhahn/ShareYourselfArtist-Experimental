@@ -1964,14 +1964,12 @@ export const store = new Vuex.Store({
     },
 
     fetch_replied_submissions({ commit, getters }) {
-      console.log("Entered fetch replied submissions here")
-      console.log("fetch replied submissions user.id is ", getters.user.id)
       commit('clear_submissions_for_this_business_array')
       let db = firebase.firestore()
       let role = db
         .collection('review_requests')
         .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
+        .where('art.artist_id', '==', firebase.auth().currentUser.uid)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
