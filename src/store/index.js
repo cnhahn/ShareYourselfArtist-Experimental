@@ -798,8 +798,12 @@ export const store = new Vuex.Store({
       let report = temp_report.get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
-            console.log('art title for navigation panel ', doc.data().art.art_title)
-            ordered_top_12_list.push(doc.data())
+            if(doc.data().delete_byartist == undefined ){
+              ordered_top_12_list.push(doc.data())
+            }else if (doc.data().delete_byartist == true){
+            }else{
+              ordered_top_12_list.push(doc.data())
+            }
           })
           let i;
           for (i = 0; i < ordered_top_12_list.length; i++) {

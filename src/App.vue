@@ -386,7 +386,6 @@ export default {
   //you also need to add this func in main.vues
   beforeMount(){
     this.$store.dispatch('fetch_top_12_recent_art')
-    console.log('APP.vue Page ----- fetch_top_12_recent_art": ', this.$store.state.top_12_recent_art)
     
   },
   mounted() {
@@ -405,10 +404,7 @@ export default {
       url: window.location.hostname,
       screen_breakpoint: false,
       screen_breakpoint_2: false,
-      sideNav: false,
-      items: this.$store.getters.top_12_recent_art,
-      top_12_recent_art: this.$store.getters.top_12_recent_art,
-      art_selected_url: null
+      sideNav: false, 
 /////////////////THIS IS FOR TESTING ONLY
     }
   },
@@ -421,6 +417,9 @@ export default {
 computed:{
     avatarSize () {
       return `55px`
+    },
+    top_12_recent_art(){
+      return this.$store.getters.top_12_recent_art
     },
   // unread_reviews(){
   //   let Array= this.$store.state.replied_submissions
