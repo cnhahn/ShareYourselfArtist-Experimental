@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
     top_ten_category: [],
     check_image_c: true,
     image_uploaded: false,
+    start_image_uploaded: false,
     art_uploaded: null,
     viewed_art_image_info: [],
     top_12_recent_art: [],
@@ -37,14 +38,14 @@ export const store = new Vuex.Store({
         icon: 'dashboard',
         link: '/artist_dashboard'
       },      {
-        //title: 'My Account',
-        title: 'My Account',
+        //title: 'My Profile',
+        title: 'My Profile',
         icon: 'home',
         link: '/profile/artist'
       },
       // { title: 'Bio & Stats', icon: 'face', link: '/bio' },
       {
-        //title: 'My Account',
+        //title: 'Get Credits',
         title: 'Get Credits',
         icon: 'account_box',
         link: '/account'
@@ -235,12 +236,20 @@ export const store = new Vuex.Store({
       state.user_role = ''
       //console.log('set user to null')
     },
+    //set the spinner for the timer
+    set_start_image_uploaded(state, payload){
+      state.start_image_uploaded = payload
+    },
+
     //to act as a spinner timer
     set_image_uploaded(state, payload){
+      console.log('entered set_image_uploaded------------------index.js')
       console.log('payload for image upload is ' , payload)
       state.image_uploaded = payload
       console.log('image uploaded in store is now of value ', state.image_uploaded)
-      console.log('--- mutation : stop loading prof img-----------index_profile')
+      //console.log('--- mutation : stop loading prof img-----------index_profile')
+
+      console.log('exited set_image_uploaded-------------------index.js')
     },
     set_check_image_c(state,payload){
       state.check_image_c = payload
@@ -2010,6 +2019,7 @@ export const store = new Vuex.Store({
             switch (snapshot.state) {
               case firebase.storage.TaskState.PAUSED: // or 'paused'
                 console.log('Upload is paused')
+                //here put spinner setter
                 break
               case firebase.storage.TaskState.RUNNING: // or 'running'
                 console.log('Upload is running in uploadImage')
@@ -2853,9 +2863,12 @@ export const store = new Vuex.Store({
           console.log('Upload is ' + progress + '% done')
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
+              commit('set_start_image_uploaded', true)
               console.log('Upload is paused')
+              
               break
             case firebase.storage.TaskState.RUNNING: // or 'running'
+              commit('set_start_image_uploaded', true)
               console.log('Upload is running')
               break
           }
@@ -2877,6 +2890,7 @@ export const store = new Vuex.Store({
             //commit('set_check_image_c', false)
           //}
           //spinner stuff --------------
+          commit('set_start_image_uploaded', true)
         },
         function (error) {
           // A full list of error codes is available at
@@ -2884,15 +2898,18 @@ export const store = new Vuex.Store({
             case 'storage/unauthorized':
               alert(error.code)
               // User doesn't have permission to access the object
+              commit('set_image_uploaded', true)
               break
 
             case 'storage/canceled':
               alert(error.code)
               // User canceled the upload
+              commit('set_image_uploaded', true)
               break
             case 'storage/unknown':
               alert(error.code)
               // Unknown error occurred, inspect error.serverResponse
+              commit('set_image_uploaded', true)
               break
           }
         },
@@ -2918,10 +2935,12 @@ export const store = new Vuex.Store({
                     commit('setLoading', false)
                     commit('set_image_uploaded', true)
                   } else {
+                    
                     // doc.data() will be undefined in this case
                   }
                   //state.image_uploaded = true;
                 }).catch(function (error) {
+                  
                   console.log('Error getting document:', error)
                 })
               })
@@ -3022,6 +3041,7 @@ export const store = new Vuex.Store({
               commit('setLoading', false)
             } else {
               // doc.data() will be undefined in this case
+              
             }
           })
             .catch(function (error) {
@@ -3244,9 +3264,15 @@ export const store = new Vuex.Store({
     get_top_ten_category(state){
       return state.top_ten_category
     },
+    get_start_uploaded(state){
+      return state.start_image_uploaded
+    },
     get_image_uploaded(state){
+      console.log('entered get_image_uploaded --- index.js')
       console.log('in get image uploaded and value is ' , state.image_uploaded)
       return state.image_uploaded
     }
   }
 })
+
+      

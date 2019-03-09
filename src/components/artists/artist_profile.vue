@@ -19,6 +19,7 @@
                     :color="primary"
                     :loading="submission_in_progress"
                     :disabled="submission_in_progress"
+                 
                     class="mx-0"
                     @click.native="onPickFile"
                   >
@@ -104,7 +105,7 @@
     data () {
       return {
         counter: false,
-        check: null,
+        ipro_loaded: true,
         urlProfilepic: this.$store.getters.url,
         uploadProfileImage: false,
         file: null,
@@ -150,6 +151,10 @@
       fetchUserInstagram () {
         return this.$store.getters.signed_in_user.instagram
       },
+      start_image_upload()
+      {
+        return this.$store.getters.get_start_uploaded
+      },
       image_uploaded_finished(){
         return this.$store.getters.get_image_uploaded
       }
@@ -158,9 +163,11 @@
     methods: {
 
       emptyUserInfo () {
+        console.log('Entered set emptyuserinfo ------------')
         this.artistInfo = {};
       },
       setUserInfo () {
+        console.log('Entered set userinfo ------------')
         this.urlProfilepic = this.$store.getters.signed_in_user.profileUrl
         let userInfo = this.$store.getters.signed_in_user
         console.log(userInfo.name)
@@ -185,20 +192,33 @@
         this.artistInfo = newArtistInfo
       },
       onPickFile () {
+        console.log('Entered onPickFile Function')
         this.$refs.fileInput.click()
         this.imageNotLoaded = true
-        this.submission_in_progress = true;
+       // this.submission_in_progress = true;
+        console.log('Exited onPickFile Function')
       },
       onFilePicked (event) {
+        console.log('Entered onFilePicked Function')
+
+        this.$store.commit('set_start_image_uploaded', false)
         this.$store.commit('set_image_uploaded', false)
+
         const files = event.target.files
         let file = files[0]
         console.log('file: ' + file)
         this.file = file
+        //this will stop the spinner only after requirment is met
+        //requirement: must successfully upload a new profile image
+        if (file == null || file == undefined)
+        {
+          this.submission_in_progress = false
+        }
         let filename = files[0].name
         if (filename.lastIndexOf('.') <= 0) {
           return alert('Please add a valid image file')
         }
+        console.log ('look here for event ' + this.event)
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
           this.editInfo.selectedPhotoUrl = fileReader.result
@@ -207,19 +227,13 @@
               /* Extra code here to call function UploadProfileImage in index.js
                  store->index.js
               */
-             console.log('the value of image uploaded is ', this.image_uploaded_finished)
-              this.$store.dispatch('uploadProfileImage')
-              
-              this.check = true;
-               
+              console.log('the value of image uploaded is ', this.image_uploaded_finished)
+              this.$store.dispatch('uploadProfileImage')  
             })
-            //this.imageNotLoaded = false
-            //this.submission_in_progress = false;
-            //this.check = true;
- 
           })
-        //this.check = true;
+
         fileReader.readAsDataURL(files[0])
+        console.log('Exited onFilePicked Function')
       },
       resetEdit () {
         this.onEdit = false
@@ -252,6 +266,15 @@
         return String(this.$store.getters.signed_in_user.name).charAt(0)
       },
       getPassedTime (time) {
+        console.log('Entered getpassedtime')
+        //console.log('1 submission_in_progress: ' + this.submission_in_progress)
+        //console.log('urlProfilepic:' + this.urlProfilepic)
+        //console.log('uploadProfileImage:' + this.uploadProfileImage)
+        //console.log('file:' + this.file)
+        //console.log('onEdit:' + this.onEdit)
+        //console.log('dataNotSent:' + this.dataNotSent)
+        //console.log('imageNotLoaded:' + this.imageNotLoaded)
+        
         var today = new Date()
         var thatDay = new Date(time)
         var passedTime = today - thatDay
@@ -264,14 +287,31 @@
           var date = passedDay.getDate() - 1
           return 'Joined ' + date + ' days ago'
         }
+        console.log('Exited getpassedtime')
       }
     },
     watch: {
+      start_image_upload: function(val)
+      {
+        console.log('Entered watcher start_image_upload')
+        console.log('-----------------enter image uploaded start', val)
+        if(val == true){
+          this.submission_in_progress = true
+        }
+        console.log('Exited watcher start_image_upload')
+      },
+
+
       image_uploaded_finished: function(val) {
+        console.log('Entered watcher image_uploaded_finished')
+        console.log('image_uploaded_finished ---->' + this.file)
         console.log('the value has changed!!!! it is now ' , val)
+        console.log('2 submission_in_progress: ' + this.submission_in_progress)
         if(val == true){
           this.submission_in_progress = false
+          
         }
+        console.log('Exited watcher image_uploaded_finished')
       }
     }
   }
