@@ -385,7 +385,7 @@ export default {
   ///this calls the data for the side bar you need this
   //you also need to add this func in main.vues
   beforeMount(){
-    this.$store.dispatch('fetch_top_12_recent_art')
+    // this.$store.dispatch('fetch_top_12_recent_art')
     
   },
   mounted() {
@@ -542,7 +542,7 @@ artist_instagram() {
   go_to_viewed_artist_page(index){
     //const test = this.$store.getters.top_12_recent_art
     //console.log('this.items[index] $#$#%#^#^', test[index])
-    this.$store.commit('set_viewed_artist_data',this.items[index])
+    this.$store.commit('set_viewed_artist_data',this.top_12_recent_art[index])
     this.$router.push({
       name:'viewed_artist_dashboard'
     })
@@ -550,8 +550,8 @@ artist_instagram() {
   //This method handles going to a new artist page once you click on one of the featured artworks
   go_to_viewed_artist_page(index){
     const test = this.$store.getters.top_12_recent_art
-    console.log('this.items[index] $#$#%#^#^', test[index])
-    this.$store.commit('set_viewed_artist_data',this.items[index])
+    console.log('this.items[index] ' ,  test[index])
+    this.$store.commit('set_viewed_artist_data',this.top_12_recent_art[index])
     this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
      })
     this.$router.push({

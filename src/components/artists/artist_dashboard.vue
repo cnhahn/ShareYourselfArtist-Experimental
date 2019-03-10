@@ -367,6 +367,7 @@
           let art_to_be_deleted = this.arts[this.currentArtIndex]
           console.log("art to be deleted is " , art_to_be_deleted)
           this.$store.dispatch('delete_art_piece', art_to_be_deleted)
+          this.$store.dispatch('delete_from_review_requests', art_to_be_deleted)
           this.dialog=false
         }else{
           console.log("DEF")
