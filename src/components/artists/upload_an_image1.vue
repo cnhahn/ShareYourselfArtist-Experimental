@@ -47,10 +47,7 @@
                 Image size is too large! Please reduce the image size
               </v-alert>
               <!--<img :src="image_url" height="550"></img>-->
-<<<<<<< HEAD
               <!--uncomment below to get preview as actual size if image not too big-->
-=======
->>>>>>> sya-dev-branch
               <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
                     :style="{
@@ -58,11 +55,7 @@
                       height: resized_height + 'px'
                     }"
                 ></img>
-<<<<<<< HEAD
               </div>
-=======
-                </div>
->>>>>>> sya-dev-branch
                <div v-else>-->
                  <div v-if="image_is_landscape">
                     <img :src="image_url"
