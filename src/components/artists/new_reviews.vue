@@ -5,7 +5,6 @@
         <c-spinner></c-spinner>
       </div>
     </div>
-
     <v-progress-circular
     v-if="updating_responses"
     indeterminate
@@ -13,13 +12,13 @@
     ></v-progress-circular>
 
     <v-btn @click="fetchRepliedSubmissions" flat color="primary"> All </v-btn>
-        <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
-        <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
+    <v-btn @click="getUnreadReviews" flat color="primary">Unread</v-btn>
+    <v-btn @click="getReadReviews" flat color="primary" >Read</v-btn>
 
     <v-data-table flat :items="reviewList" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
         <td>
-            <v-layout row wrap>
+            <v-layout  row wrap>
                 <v-flex lg1 md1 sm1 xs12>
                   <v-avatar v-if="true" style="width: 100px; margin-top: 1vh">
                     <img :src="`${props.item.art.url}`">
@@ -32,7 +31,9 @@
                   </div>
                   <div class="hidden-md-and-up">
 
-                    <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
+                    <v-btn  v-if=(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
+                    <v-btn  v-if=(props.item.read_byartist)   flat small color="primary"  @click= "markAsDelete(props.item.art.upload_date) "> Delete </v-btn>
+
                   </div>
                 </v-flex>
                 <v-flex lg6 md6 sm6 xs12>
@@ -49,6 +50,7 @@
 
                     <v-flex lg3 md2 sm2 xs12>
                       <v-btn  v-if =(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
+                      <v-btn  v-if =(props.item.read_byartist)   flat small color="primary"  @click= "markAsDelete(props.item.art.upload_date) ">Delete </v-btn>
                     </v-flex>
                   </v-layout>
                 </v-flex>
@@ -57,6 +59,7 @@
 
     </template>
     </v-data-table>
+
   </v-container>
 </template>
 
@@ -66,7 +69,9 @@
     data() {
       return {
         dialog: false,
-        mark_as_read_btn_clicked: false,
+        readButtonClick: false,
+        deleteButtonClick: false,
+        currentSelection: '',
         reviewList: [],
         masterList: [],
         headers: [
@@ -74,20 +79,21 @@
             text: 'Art'
           },
         ],
-
         updating_responses: false
       }
     },
     watch: {
-      mark_as_read_btn_clicked: function(val) {
-        console.log("watching mark as read btn clicked changed", val);
-        this.reviewList__unread_reviews()
+      readButtonClick: function(val) {
+        this.updateReviewList()
+      },
+      deleteButtonClick: function(val){
+        this.updateReviewListDelete()
       }
     },
-    // fetch submissions on create to be used later for display
     created() {
       this.fetchRepliedSubmissions();
     },
+
     // once the replied submissions has been returned we can set loading to false => loading is a component we have set temporarily
     computed: {
       reviews() {
@@ -99,31 +105,60 @@
     },
     methods: {
       // filters the unread reviews by checking the field read_byartist is false against the array
-      reviewList__unread_reviews: function () {
+      getUnreadReviews: function () {
+        this.currentSelection = 'unread';
         this.reviewList = this.masterList.filter(( review ) => {
-          return review.read_byartist == false
+          return review.read_byartist == false && review.delete_byartist != true
         })
       },
       // filters the read reviews by checking the field read_byartist is true against the array
-      reviewList__read_reviews: function () {
+      getReadReviews: function () {
+        this.currentSelection = 'read';
         this.reviewList = this.masterList.filter(( review ) => {
-          return review.read_byartist == true
+          return review.read_byartist == true && review.delete_byartist != true 
         })
       },
       // button uses prop to identify and change the field read_byartist as true which can be found in read_reviews
       markAsRead: function (upload_date) {
-        this.mark_as_read_btn_clicked = !this.mark_as_read_btn_clicked
-        for ( var i in this.reviewList ) {
+        
+        for (var i in this.reviewList) {
+           console.log(this.reviewList[i].art.upload_date);
+           console.log(upload_date, ' THIS');
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].read_byartist = true
             this.$store.dispatch( 'update_review_read_byUser_status', upload_date  )
-          break
+            break
           }
         }
 
-        /*updating_responses = true
-        this.fetchRepliedSubmissions()
-        updating_responses = false*/
+        this.readButtonClick = !this.readButtonClick;
+      },
+
+      markAsDelete: function (upload_date) {
+       
+        for ( var i in this.reviewList ) {
+          if ( this.reviewList[i].art.upload_date == upload_date ) {
+            this.reviewList[i].delete_byartist = true
+            this.$store.dispatch( 'delete_review', upload_date  )
+            break
+          }
+        }
+
+         this.deleteButtonClick = !this.deleteButtonClick;
+      },
+      updateReviewList(){
+        if(this.currentSelection == 'all'){
+          // this.fetchRepliedSubmissions();
+        } else if(this.currentSelection == 'read'){
+          this.getReadReviews();
+        } else if(this.currentSelection == 'unread'){
+          this.getUnreadReviews();
+        }
+      },
+      updateReviewListDelete(){
+          this.reviewList = this.reviewList.filter(( review ) => {
+            return review.delete_byartist != true 
+        })
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
@@ -132,17 +167,18 @@
           this.$store.commit( 'clear_replied_submissions_array' )
           let fetchAsync = new Promise ( resolve => {
             let res = null
+            // function.bind(this)
             let that_that = that
             that.$store.dispatch( 'fetch_replied_submissions' ).then(() => {
               res = that_that.$store.getters.replied_submissions
               resolve ( res )
             })
           })
-          fetchAsync.then (
+          fetchAsync.then (   
             res => {
+              this.currentSelection = 'all'
               that.masterList = res
               that.reviewList = res
-              console.log("Entered here to create masterList")
               if ( res == null ) {
                 that.$router.push ({
                   name: 'reviews_empty'
@@ -197,4 +233,3 @@
     cursor: pointer;
   }
 </style>
-

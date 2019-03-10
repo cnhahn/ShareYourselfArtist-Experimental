@@ -110,7 +110,7 @@
           color = "primary"
           style="margin-left: 0px; margin-top: -10px"
         >
-          Select Blog
+          Submit Art Pieces To This Blog
         </v-btn>
 
 
@@ -182,7 +182,7 @@
       },
       user_info() {
         let developerEmails = ['1TGyTLJa9ZXjl0vqEeS97uNDV8O2','XpIQwNnOayXqjdlbh6jDDL5xaaz2','QBRXqktYi0QigFboM92crKAONKn1',
-          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1'];
+          'nNJHapui93YxDgqCRkLIYBtHjR43','cnhahn@ucsc.edu','KwZ3wOqr06UvELnintWeZYF2aga2', 'yekGAvzU5fZKh49e6w0tJuRmFFg1', 'uBGYNkmd6oegfU6JDIRq1pDtYmz2'];
         let userID = this.$store.state.user.id;
    
         function filter_test(business) {

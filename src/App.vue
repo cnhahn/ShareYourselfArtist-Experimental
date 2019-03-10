@@ -278,7 +278,7 @@
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
   <!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated">
-          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 150px;">Recently Submitted Artists</p>
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 130px;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
@@ -287,7 +287,7 @@
                 <!-- Profile Picture Icon -->
                 <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
                   <v-avatar >
-                    <img style="position:absolute; left:150px;" :src="top_12_recent_art[index-1].art.url" >
+                    <img style="position:absolute; left:130px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
@@ -333,10 +333,10 @@
      </v-layout>
     </main>
 
-    <v-footer
+    <!-- <v-footer
     height="auto"
     style="background-color: #e5e5e5"
-  >
+    >
     <v-layout justify-center row wrap mt-5 mb-4 ml-4 mr-4>
       <v-spacer></v-spacer>
       <p
@@ -376,7 +376,8 @@
       </v-flex>
 
     </v-layout>
-  </v-footer>
+  </v-footer> -->
+  
   </v-app>
 </template>
 <script>
