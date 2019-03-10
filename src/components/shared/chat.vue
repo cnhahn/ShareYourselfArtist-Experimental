@@ -144,8 +144,16 @@ import EmojiPicker from './EmojiPicker.vue'
         let chat_items = this.chat_items;
         const that = this
         let chat_ref = firebase_db.ref('chat')
+        
+        
+        
         this.$store
         chat_ref.on('value', function(snapshot, newMessage = true) {
+          let promises = [];
+          let newAvatar;
+          let name;
+          let chat = null;
+          let chatArrayItems = [];
           let firstDate = false;
           let maxDate = new Date();
           let indexDate = new Date();
@@ -153,84 +161,80 @@ import EmojiPicker from './EmojiPicker.vue'
           chat_items.length = 0;
           let itemProcessed = 0;
           snapshot.forEach(function(childSnapshot){
-           
-            
-            let childKey = childSnapshot.key;
-            let childData = childSnapshot.val();
-            let chat = null
+            if(childSnapshot.val().userId != undefined){
+              chatArrayItems.push(childSnapshot);
+              promises.push(db.collection('users').doc(childSnapshot.val().userId).get());
+            }                   
+          });
 
-            let newAvatar;
-            let name;
-            if(childData.userId != undefined){
-              db.collection('users').doc(childData.userId).get()
-              .then(doc => {
-
-              if (!firstDate) {
-                maxDate = new Date(childData.daystamp);
-                let dateItem = {
-                    date : maxDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
-                  };
-                  chat_items.push(dateItem);
-                firstDate = true;
-              } else {
-                indexDate = new Date(childData.daystamp);
-
-                if(maxDate < indexDate){
-                  maxDate = indexDate;
-                  let dateItem = {
-                    date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
-                  };
-                  chat_items.push(dateItem);
-                  maxDate = indexDate;
-                }
-              }
-              newAvatar = doc.data().profileUrl;
-              name = doc.data().name;
-              if(newAvatar == undefined){
-                chat = {
-                    key: childKey,
-                    color: childData.color,
-                    name: name,
-                    message: childData.message,
-                    time: childData.timestamp,
-                    daystamp: childData.daystamp,
-                    initial: String(name).charAt(0),
-                    displayAvatar: 'display:none'
-                  }
-              } else {
-                chat = {
-                  key: childKey,
-                  color: childData.color,
-                  avatar:newAvatar,
-                  name: name,
-                  message: childData.message,
-                  time: childData.timestamp,
-                  daystamp: childData.daystamp,
-                  initial: String(name).charAt(0),
-                  url:newAvatar,
-                  displayAvatar: 'display:block'
-                }
-              }
+          Promise.all(promises).then(doc => {
                 
-                chat_items.push(chat);
+                for(let i = 0; i < doc.length; i++){
+                  newAvatar = doc[i].data().profileUrl;
+                  name = doc[i].data().name;
+
+
+                  if (!firstDate) {
+                    maxDate = new Date(chatArrayItems[i].val().daystamp);
+                    let dateItem = {
+                        date : maxDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                      };
+                      chat_items.push(dateItem);
+                    firstDate = true;
+                  } else {
+                    indexDate = new Date(chatArrayItems[i].val().daystamp);
+
+                    if(maxDate < indexDate){
+                      maxDate = indexDate;
+                      let dateItem = {
+                        date : indexDate.toLocaleDateString("en-US", {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                      };
+                      chat_items.push(dateItem);
+                      maxDate = indexDate;
+                    }
+                  }
+                
+                  if(newAvatar == undefined){
+                    chat = {
+                        key: chatArrayItems[i].key,
+                        color: chatArrayItems[i].val().color,
+                        name: name,
+                        message: chatArrayItems[i].val().message,
+                        time: chatArrayItems[i].val().timestamp,
+                        daystamp: chatArrayItems[i].val().daystamp,
+                        initial: String(name).charAt(0),
+                        displayAvatar: 'display:none'
+                      }
+                  } else {
+                    chat = {
+                      key: chatArrayItems[i].key,
+                      color: chatArrayItems[i].val().color,
+                      avatar:newAvatar,
+                      name: name,
+                      message: chatArrayItems[i].val().message,
+                      time: chatArrayItems[i].val().timestamp,
+                      daystamp: chatArrayItems[i].val().daystamp,
+                      initial: String(name).charAt(0),
+                      url:newAvatar,
+                      displayAvatar: 'display:block'
+                    }
+                  }
+            
+                  chat_items.push(chat);
+                }
+            
               })
               .catch(error => {
                 console.log(error)
               
               }) 
-              itemProcessed++;
-            }
-
-            
-            
-          });
-
           if (!newMessage) {
           } else {
             
             that.canRefresh = true;
           }
         })
+
       },
       sendMessage(e) {
         if (this.message === '') {
