@@ -46,8 +46,8 @@
               <v-alert v-if="image_size_accepted == false" :value="true" type="error">
                 Image size is too large! Please reduce the image size
               </v-alert>
-              <!--<img :src="image_url" height="350"></img>-->
               <!--<img :src="image_url" height="550"></img>-->
+              <!--uncomment below to get preview as actual size if image not too big-->
               <!--<div v-if="image_too_big == false">
                 <img :src="image_url"
                     :style="{
@@ -55,7 +55,7 @@
                       height: resized_height + 'px'
                     }"
                 ></img>
-                </div>
+              </div>
                <div v-else>-->
                  <div v-if="image_is_landscape">
                     <img :src="image_url"
@@ -124,6 +124,40 @@
 </template>
 
 <script>
+
+/* Utility function to convert a canvas to a BLOB */
+var dataURLToBlob = function(dataURL) {
+    var BASE64_MARKER = ';base64,';
+    if (dataURL.indexOf(BASE64_MARKER) == -1) {
+        var parts = dataURL.split(',');
+        var contentType = parts[0].split(':')[1];
+        var raw = parts[1];
+
+        return new Blob([raw], {type: contentType});
+    }
+
+    var parts = dataURL.split(BASE64_MARKER);
+    var contentType = parts[0].split(':')[1];
+    var raw = window.atob(parts[1]);
+    var rawLength = raw.length;
+
+    var uInt8Array = new Uint8Array(rawLength);
+
+    for (var i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {type: contentType});
+}
+/* End Utility function to convert a canvas to a BLOB      */
+
+function blobToFile(theBlob, fileName){
+    // add date and name to a Blob
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+}
+
   // Styled by Jin. No modification on code.
   export default {
     name: 'myTour',
@@ -151,6 +185,7 @@
         image_is_landscape: true,
         resized_width: 0,
         resized_height: 0,
+        resizedURL: '',
         steps: [
           {
             target: '#v-step-0', 
@@ -188,14 +223,14 @@
         const files = event.target.files
         let file = files[0]
         console.log('Entered on FilePicked')
-        if(file.size > 4000000){
+        /*if(file.size > 4000000){
           this.image_size_accepted = false
           var input = document.getElementsByTagName('input')[0];
           input.value = null
           this.image_url = ''
           this.image_is_not_loaded = true
           return
-        } 
+        }*/ 
         console.log('file: ', file)
         this.file = file 
         this.image_is_not_loaded = false
@@ -220,25 +255,54 @@
           // Callback after fileReader loads the data with Url.
           this.image_url = fileReader.result
 
+          /*** Start using Canvas to resize image ***/
           // holds the uploaded image, used to get dimensions
           var img = new Image()
+
           // image loading is done asynchronously, so you have to wait for load event
           // in other words, you have to wait for the image to load before using image
           img.onload = function()
-          {
-            //console.log('image width: ', img.width)
-            //console.log('image height: ', img.height)
-            
+          { 
             // check orientation
             self.checkOrientation(img.width, img.height)
 
             // this is to resize the uploaded image
             // max width allowed = 1200, height allowed = 630
-            self.resizeImage(img.width, img.height, 1200, 630)
+            var resizeDims = self.resizeImage(img.width, img.height, 1200, 630)
+            img.width = resizeDims[0]
+            img.height = resizeDims[1]
+
+            var canvas = document.createElement('canvas')
+            canvas.width = img.width
+            canvas.height = img.height
+            canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height)
+
+            // if image is a GIF, don't attempt a resize
+            // conversion will disable animations
+            var imgTypeStr = self.checkURL(self.image_url)
+            if (imgTypeStr === 'image/gif')
+            {
+              self.$store.dispatch('image_being_uploaded', {file: self.file, image_url: self.image_url})
+            }
+            else
+            {
+              // convert canvas to url
+              self.resizedURL = canvas.toDataURL(imgTypeStr)
+
+              // convert url to a blob, a file is a type of blob
+              var resizedImage = dataURLToBlob(self.resizedURL)
+
+              // convert blob to file by adding name and date
+              var resizedFile = blobToFile(resizedImage, filename)
+
+              self.$store.dispatch('image_being_uploaded', {file: resizedFile, image_url: self.resizedURL})
+            }
+            
           }
           img.src = this.image_url
+          /*** End using Canvas to resize image ***/
 
-          this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url})
+          /* this.$store.dispatch('image_being_uploaded', {file: this.file, image_url: this.image_url}) */
         })
         fileReader.readAsDataURL(files[0])
       },
@@ -263,7 +327,7 @@
       },
       resizeImage(width, height, maxWidth, maxHeight) {
         // resize the image proportionally if too large, keeping aspect ratio
-        // preview is restricted to max width or height, depending on orientation
+        // preview is unaffected, restricted to max_pre_width or height, depending on orientation
         var ratio = 0
 
         if (width > maxWidth)
@@ -283,10 +347,17 @@
           this.image_too_big = true
         }
 
+        width = Math.round(width)
+        height = Math.round(height)
         this.resized_width = width
         this.resized_height = height
-        //console.log('resized image width: ', width)
-        //console.log('resized image height: ', height)
+
+        return [width, height]
+      },
+      checkURL(url)
+      {
+        // checks if the image is a gif, will have image/gif in data
+        return url.substring(url.indexOf(':')+1, url.indexOf(';'))
       }
     }
   }
