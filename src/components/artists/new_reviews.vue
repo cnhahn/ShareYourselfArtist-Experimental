@@ -12,8 +12,8 @@
     ></v-progress-circular>
 
     <v-btn @click="fetchRepliedSubmissions" flat color="primary"> All </v-btn>
-    <v-btn @click="reviewList__unread_reviews" flat color="primary">Unread</v-btn>
-    <v-btn @click="reviewList__read_reviews" flat color="primary" >Read</v-btn>
+    <v-btn @click="getUnreadReviews" flat color="primary">Unread</v-btn>
+    <v-btn @click="getReadReviews" flat color="primary" >Read</v-btn>
 
     <v-data-table flat :items="reviewList" hide-actions class="elevation-1">
     <template slot="items" slot-scope="props">
@@ -31,7 +31,7 @@
                   </div>
                   <div class="hidden-md-and-up">
 
-                    <v-btn  v-if=(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.submitted_on) "> Mark as read</v-btn>
+                    <v-btn  v-if=(!props.item.read_byartist)  flat small color="primary"  @click= "markAsRead(props.item.art.upload_date) "> Mark as read</v-btn>
                     <v-btn  v-if=(props.item.read_byartist)   flat small color="primary"  @click= "markAsDelete(props.item.art.upload_date) "> Delete </v-btn>
 
                   </div>
@@ -69,8 +69,9 @@
     data() {
       return {
         dialog: false,
-        mark_as_read_btn_clicked: false,
-        mark_as_delete_btn_clicked: false,
+        readButtonClick: false,
+        deleteButtonClick: false,
+        currentSelection: '',
         reviewList: [],
         masterList: [],
         headers: [
@@ -82,17 +83,13 @@
       }
     },
     watch: {
-      mark_as_read_btn_clicked: function(val) {
-        // this.reviewList__unread_reviews()
-        this.fetchRepliedSubmissions()
+      readButtonClick: function(val) {
+        this.updateReviewList()
       },
-      mark_as_delete_btn_clicked: function(val) {
-        // this.reviewList__read_reviews()
-        this.fetchRepliedSubmissions()
+      deleteButtonClick: function(val){
+        this.updateReviewListDelete()
       }
     },
-
-    // fetch submissions on create to be used later for display
     created() {
       this.fetchRepliedSubmissions();
     },
@@ -108,30 +105,37 @@
     },
     methods: {
       // filters the unread reviews by checking the field read_byartist is false against the array
-      reviewList__unread_reviews: function () {
+      getUnreadReviews: function () {
+        this.currentSelection = 'unread';
         this.reviewList = this.masterList.filter(( review ) => {
-          return review.read_byartist == false && (review.delete_byartist != true)
+          return review.read_byartist == false && review.delete_byartist != true
         })
       },
       // filters the read reviews by checking the field read_byartist is true against the array
-      reviewList__read_reviews: function () {
+      getReadReviews: function () {
+        this.currentSelection = 'read';
         this.reviewList = this.masterList.filter(( review ) => {
           return review.read_byartist == true && review.delete_byartist != true 
         })
       },
       // button uses prop to identify and change the field read_byartist as true which can be found in read_reviews
       markAsRead: function (upload_date) {
-        for ( var i in this.reviewList ) {
+        
+        for (var i in this.reviewList) {
+           console.log(this.reviewList[i].art.upload_date);
+           console.log(upload_date, ' THIS');
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].read_byartist = true
             this.$store.dispatch( 'update_review_read_byUser_status', upload_date  )
-          break
+            break
           }
         }
-        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked
+
+        this.readButtonClick = !this.readButtonClick;
       },
 
       markAsDelete: function (upload_date) {
+       
         for ( var i in this.reviewList ) {
           if ( this.reviewList[i].art.upload_date == upload_date ) {
             this.reviewList[i].delete_byartist = true
@@ -139,7 +143,22 @@
             break
           }
         }
-        this.mark_as_delete_btn_clicked = !this.mark_as_delete_btn_clicked;
+
+         this.deleteButtonClick = !this.deleteButtonClick;
+      },
+      updateReviewList(){
+        if(this.currentSelection == 'all'){
+          // this.fetchRepliedSubmissions();
+        } else if(this.currentSelection == 'read'){
+          this.getReadReviews();
+        } else if(this.currentSelection == 'unread'){
+          this.getUnreadReviews();
+        }
+      },
+      updateReviewListDelete(){
+          this.reviewList = this.reviewList.filter(( review ) => {
+            return review.delete_byartist != true 
+        })
       },
       // calls this function once on created(), grabs submissions inside the promise.
       async fetchRepliedSubmissions () {
@@ -155,8 +174,9 @@
               resolve ( res )
             })
           })
-          fetchAsync.then (
+          fetchAsync.then (   
             res => {
+              this.currentSelection = 'all'
               that.masterList = res
               that.reviewList = res
               if ( res == null ) {

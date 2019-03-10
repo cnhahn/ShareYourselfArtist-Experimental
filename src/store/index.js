@@ -526,6 +526,7 @@ export const store = new Vuex.Store({
       state.color = payload.color
     },
     image_being_uploaded(state, payload) {
+      //console.log('resizedURL and file in store: ', payload)
       state.image_being_uploaded = payload
     },
     set_user_email(state) {
@@ -691,7 +692,6 @@ export const store = new Vuex.Store({
             })
           })
         })
-
       // .where("url", "==", "https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/QBRXqktYi0QigFboM92crKAONKn1%2Fburnupchart1.jpg?alt=media&token=ed28f585-9f0c-48de-84f0-2851aed5a798")
       // .get()
       // .then(function (results) {
@@ -701,6 +701,30 @@ export const store = new Vuex.Store({
       //   console.log('error getting documents yas: ', error)
       // })
 
+    },
+
+    delete_from_review_requests({commit,dispatch}, payload){
+      let db= firebase.firestore()
+      let art = db.collection('review_requests').where('art.url' , '==' , payload.url)
+      .get()
+      .then(function (results){
+        results.forEach(function(doc){
+          console.log(doc.id)
+          console.log('going to update art in review requests')
+          db.collection('review_requests').doc(doc.id).update({
+            art: {
+              art_title: payload.art_title,
+              artist_id: payload.artist_id, 
+              artist_name: payload.artist_name,
+              categories: payload.categories,
+              description: payload.description,
+              upload_date: payload.upload_date,
+              url: payload.url,
+              delete: true
+            }
+          })
+        })
+      })
     },
 
 
@@ -796,16 +820,30 @@ export const store = new Vuex.Store({
     fetch_top_12_recent_art({ commit, getters }) {
       // commit('clear_top_12_recent_art')
       let db = firebase.firestore()
+      let counter = 0
       let temp_report = db.collection('review_requests')
-        .orderBy('submitted_on', 'desc').limit(12)
+        .orderBy('submitted_on', 'desc')
       let ordered_top_12_list = [];
       let report = temp_report.get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
-            console.log('art title for navigation panel ', doc.data().art.art_title)
-            ordered_top_12_list.push(doc.data())
+
+            if(counter == 12 ) {
+            }else{
+              console.log('fetching art  ' , doc.data().art)
+              if(doc.data().art.delete == undefined){
+                ordered_top_12_list.push(doc.data())
+                counter++
+              }else if (doc.data().art.delete == true){
+  
+              }else{
+                ordered_top_12_list.push(doc.data())
+                counter++
+              }
+            }
           })
           let i;
+          console.log('what is our current top 12 artists filtered by delte ' , ordered_top_12_list )
           for (i = 0; i < ordered_top_12_list.length; i++) {
             commit('set_top_12_recent_art', ordered_top_12_list[i])
           }
@@ -1963,14 +2001,12 @@ export const store = new Vuex.Store({
     },
 
     fetch_replied_submissions({ commit, getters }) {
-      console.log("Entered fetch replied submissions here")
-      console.log("fetch replied submissions user.id is ", getters.user.id)
       commit('clear_submissions_for_this_business_array')
       let db = firebase.firestore()
       let role = db
         .collection('review_requests')
         .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
+        .where('art.artist_id', '==', firebase.auth().currentUser.uid)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
@@ -1988,6 +2024,7 @@ export const store = new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         console.log("image-_being uploaded is ", getters.image_being_uploaded.file)
+        //console.log("image url being uploaded: ", getters.image_being_uploaded.image_url)
         // first put the image in the storage
         // Create a root reference
         let ref = firebase.storage().ref()
