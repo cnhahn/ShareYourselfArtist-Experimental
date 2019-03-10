@@ -525,6 +525,7 @@ export const store = new Vuex.Store({
       state.color = payload.color
     },
     image_being_uploaded(state, payload) {
+      //console.log('resizedURL and file in store: ', payload)
       state.image_being_uploaded = payload
     },
     set_user_email(state) {
@@ -1996,14 +1997,12 @@ export const store = new Vuex.Store({
     },
 
     fetch_replied_submissions({ commit, getters }) {
-      console.log("Entered fetch replied submissions here")
-      console.log("fetch replied submissions user.id is ", getters.user.id)
       commit('clear_submissions_for_this_business_array')
       let db = firebase.firestore()
       let role = db
         .collection('review_requests')
         .where('replied', '==', true)
-        .where('art.artist_id', '==', getters.user.id)
+        .where('art.artist_id', '==', firebase.auth().currentUser.uid)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
@@ -2021,6 +2020,7 @@ export const store = new Vuex.Store({
 
       return new Promise((resolve, reject) => {
         console.log("image-_being uploaded is ", getters.image_being_uploaded.file)
+        //console.log("image url being uploaded: ", getters.image_being_uploaded.image_url)
         // first put the image in the storage
         // Create a root reference
         let ref = firebase.storage().ref()
