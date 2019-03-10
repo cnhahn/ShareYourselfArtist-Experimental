@@ -544,6 +544,7 @@ artist_instagram() {
     //const test = this.$store.getters.top_12_recent_art
     //console.log('this.items[index] $#$#%#^#^', test[index])
     this.$store.commit('set_viewed_artist_data',this.items[index])
+    console.log('what is this.items ', this.items[index])
     this.$router.push({
       name:'viewed_artist_dashboard'
     })

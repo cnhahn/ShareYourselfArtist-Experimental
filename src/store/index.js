@@ -17,6 +17,7 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    users_top_category : '' ,
     top_ten_category: [],
     check_image_c: true,
     image_uploaded: false,
@@ -643,6 +644,7 @@ export const store = new Vuex.Store({
         }
         console.log('maxCategory is ', maxCategory )
         let usersPopularCategory = categoryArray[maxCategory][1]
+        state.users_top_category = usersPopularCategory
         console.log('my highest category is  ' , usersPopularCategory)
   
         let top_ten_users = []
@@ -661,6 +663,8 @@ export const store = new Vuex.Store({
             let category_object = catobj[key]
             top_ten_users.push({count: category_object.count, value: category_object.userID, full_data: category_object.userData})
           }
+
+          console.log('full data is ' , top_ten_users[0].full_data)
 
           commit('set_top_ten_category' , top_ten_users)
         })

@@ -169,29 +169,46 @@
         </v-tab-item>
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
+
       <v-tab-item>
+          <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
           <v-container>
             <v-layout row >
               <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
                 <v-card elevation>
-                  <v-list three-line >
-                    <template v-for="art in top_ten_category"  >
-                          <v-list-tile >
-                            <div class = "text-xs-center">
-                              <v-list-title-content>
-                                <v-list-tile-title > {{art.full_data.name }}</v-list-tile-title>
-                              </v-list-title-content>
-                            </div>
-                          </v-list-tile>
-                        
-                          <v-list-tile>
-                            <div class = "text-xs-center">
-                              <v-list-title-content >
-                                <v-list-tile-title class ="text-xs-center">  {{art.full_data.email}} </v-list-tile-title>
-                              </v-list-title-content>
-                            </div>
-                          </v-list-tile>
-                      <v-divider></v-divider>
+                  <v-list three-line class= "changePointer"  >
+                    <template v-for="art,index in top_ten_category"  >
+                        <v-divider></v-divider>
+                        <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
+                  
+                            <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                              <img v-if="art.full_data.profileUrl != undefined && art.full_data.profileUrl != null" v-bind:src="art.full_data.profileUrl" alt="avatar">
+                              <div v-else>
+                                <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                  <span style="color: white;" class = "display-3"> {{art.full_data.name.charAt(0).toUpperCase()}} </span>
+                                </v-avatar>
+                              </div>
+                            </v-avatar>
+                            
+                            <v-list-tile >
+                              <div class = "text-xs-center headline">
+                                <v-list-title-content>
+                                  <v-list-tile-title class ="pb-5" > {{art.full_data.name }}</v-list-tile-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>
+                          
+                            <v-list-tile>
+                              <div class = "text-xs-center">
+                                <v-list-title-content >
+                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{art.full_data.email}} </v-list-tile-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>
+
+                        </v-flex> 
+                       
+                        <v-divider></v-divider>
                     </template>
                   </v-list>
                 </v-card>
@@ -260,6 +277,7 @@
         artList: [],
         chip1:true,
         categories: '',
+        profile_exists: false,
         def: [],
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
@@ -268,8 +286,12 @@
     },
     mounted(){
       this.respondedArts()
+
     },
     computed: {
+      users_top_category(){
+        return this.$store.state.users_top_category
+      },
       top_ten_category(){
         return this.$store.getters.get_top_ten_category;
       },
@@ -312,6 +334,15 @@
       },
     },
     methods: {
+      go_to_viewed_artist_page(index){
+        //const test = this.$store.getters.top_12_recent_art
+        //console.log('this.items[index] $#$#%#^#^', test[index])
+        
+        this.$store.commit('set_viewed_artist_data',this.top_ten_category[index])
+        this.$router.push({
+          name:'viewed_artist_dashboard'
+        })
+      },
       respondedArts(){
         console.log("in responded arts")
         this.$store.dispatch('retrieve_recently_responded_arts')
@@ -467,5 +498,12 @@
     margin-bottom: 20px;
     /*margin-left: 80px;*/
     margin-left: 280px;
+  }
+  .changePointer{
+    cursor: pointer;
+  }
+
+  .italic{
+    font-style: italic;
   }
 </style>

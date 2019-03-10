@@ -39,8 +39,15 @@
       this.$store.commit('clear_viewed_arts_array')
     },
     mounted: function () {
-     this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
-     })
+        console.log('in in statement of mounted function')
+        this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.value).then(response => {
+        })
+  
+        console.log('in the else statement of mounted')
+        // this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
+        // })
+    
+
     },
     data() {
       return {
