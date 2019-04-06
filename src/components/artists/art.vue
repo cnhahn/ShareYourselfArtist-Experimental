@@ -107,7 +107,8 @@
       },
 
 // function to update tags to firestore
-      updateTags(upload_date, categories){this.$store.commit('set_categories', categories)
+      updateTags(upload_date, categories){
+        this.$store.commit('set_categories', categories)
         //this.$store.commit('mutationName', payload)
         this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
         .then(response => {
