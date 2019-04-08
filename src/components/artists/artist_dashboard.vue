@@ -213,35 +213,31 @@
 
       <v-tab > Responded Art Pieces </v-tab>
         <v-tab-item>
-          <v-container justify-center>
-            <v-layout row >
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                    <template v-for="art in recently_responded_arts">
-
-                        <v-card
-                        :key='art'
-                        >
-                          <img
-                          :src="art.url"
-                          >
-                          <v-card-title primary-title>
-                            <div>
-                              <h3 class="headline mb-0">Art Title: {{art.art_title}}</h3>
-                              <p>Description: {{art.description}} </p>
-                            </div>
-                          </v-card-title>
-                          <v-card-text >
-                            <div>
-                              <p >Response from <b>{{art.business_name}}</b>, "{{art.response}}"</p>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                    </template>
-              
-              </v-flex>
-            </v-layout>
-          </v-container>
+          <v-layout pa-4 row wrap justify-center>
+            <v-flex xs6 v-for="art in recently_responded_arts">
+                <v-card
+                :key='art'
+                >
+                  <v-img 
+                  :src="art.url"
+                  >
+                  </v-img>
+                  <v-card-title primary-title>
+                    <div>
+                      <h3 class="headline mb-0">Art Title: {{art.art_title}}</h3>
+                      <p>Description: {{art.description}} </p>
+                    </div>
+                  </v-card-title>
+                  <v-card-text >
+                    <div>
+                      <p >Response from <b>{{art.business_name}}</b>, "{{art.response}}"</p>
+                    </div>
+                  </v-card-text>
+                </v-card>
+            </v-flex>
+          </v-layout>
         </v-tab-item>
+    
     </v-tabs>
 
 
