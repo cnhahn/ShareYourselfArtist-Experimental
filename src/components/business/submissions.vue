@@ -141,10 +141,32 @@
     },
 
     methods:{
+        // used to sort because array.sort sorts alphabetically by default
+        // a and b are submissions, return highest date to lowest
+        compareDates(a, b)
+        {
+          if (b.submitted_on != null && a.submitted_on != null)
+          {
+            return b.submitted_on - a.submitted_on
+          }
+          else
+          {
+            console.log('time submitted not available')
+            return b.art.upload_date - a.art.upload_date
+          }
+          
+        },
+        // sort submissions by most recent upload date
+        sortByDate(submissions)
+        {
+          submissions.sort(this.compareDates)
+        },
         initialImageLoad() {
           this.$store.dispatch('fetch_all_Submissions').then(response => {
           this.submissions = this.$store.getters.submissions_for_this_business
           console.log("Submissions is ", this.submissions)
+          // order by most recent upload date
+          this.sortByDate(this.submissions)
           this.master_submissions = this.$store.getters.submissions_for_this_business
           }, error => {
             console.error("Reached error in mounted function " , error)
