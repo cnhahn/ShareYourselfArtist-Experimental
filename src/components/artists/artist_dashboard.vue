@@ -1,12 +1,11 @@
 <template>
-
   <div  v-if="loading" class="loading_holder">
     <div class="spinner_holder">
       <c-spinner></c-spinner>
     </div>
   </div>
 
-  <v-container v-else>
+  <v-container v-else grid-list-md>
     <!-- If no images are found with the selected categories, display a toast message to the user  -->
     <div v-if="noneFound">
       <v-card>
@@ -28,92 +27,87 @@
 
 
 
-    <v-tabs color="primary" light grow>
-
+    <v-tabs light grow>
       <v-tab >  Dashboard </v-tab>
-        <v-spacer></v-spacer>
         <v-tab-item :value="dashboard-tab">
-        
+          <v-layout pa-2 row wrap justify-center>
 
-          <v-layout row wrap mb-5>
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 >
-                <v-card flat id="selectbox">
-                    <v-container fluid>
-                      <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
-                          <v-select
-                            :items="items"
-                            attach
-                            chips
-                            name='categories'
-                            id='categories'
-                            label='categories'
-                            v-model='categories'
-                            required
-                            multiple
-                            v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
-                          ></v-select>
-                      </v-layout>
-                    </v-container>
-                  </v-card>
-              </v-flex>
-              <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in arts" :key='art.id'>
-                <v-card mt-3>
+            <v-flex xs3> </v-flex>
 
-                  <v-card-media img :src="art.url" height="450px">
-                  </v-card-media>
+            <v-flex xs6>
+              <v-card flat >
+                <v-select
+                  :items="items"
+                  attach
+                  chips
+                  name='categories'
+                  id='categories'
+                  label='Select categories to filter by'
+                  v-model='categories'
+                  multiple
+                  v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
+                ></v-select>
+              </v-card>
+            </v-flex>
 
-                  <v-card-title primary-title>
+            <v-flex xs3> </v-flex>
+
+            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
+              <v-card mt-3>
+                <v-card-media img :src="art.url" height="450px">
+                </v-card-media>
+
+                <v-card-title primary-title>
+                  <div>
+                    <h3 class="headline mb-0">{{art.art_title}}</h3>
                     <div>
-                      <h3 class="headline mb-0">{{art.art_title}}</h3>
-                      <div>
-                        <v-chip
-                          v-for="(tag, index) in art.categories"
-                          :key='tag.id'
-                          v-model = 'art.categories[index]'
-                          class="display_chips"
-                          close
-                          @input="removeChip(art.upload_date, art.categories)"
-                        >
-                          {{art.categories[index]}} </v-chip>
-                      </div>
+                      <v-chip
+                        v-for="(tag, index) in art.categories"
+                        :key='tag.id'
+                        v-model = 'art.categories[index]'
+                        class="display_chips"
+                        close
+                        @input="removeChip(art.upload_date, art.categories)"
+                      >
+                        {{art.categories[index]}} </v-chip>
                     </div>
-                  </v-card-title>
+                  </div>
+                </v-card-title>
 
-                  <v-card-actions>
-                    <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
-                    <div class="text-xs-center">
-                      <v-dialog v-model="dialog" width="30%">
-                        <v-card>
+                <v-card-actions>
+                  <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
+                  <div class="text-xs-center">
+                    <v-dialog v-model="dialog" width="30%">
+                      <v-card>
 
-                          <v-card-title class="headline grey lighten-2" primary-title> Deleting Message </v-card-title>
-                          <v-card-text> Are you sure you want to delete? </v-card-text>
-                          <v-divider></v-divider>
+                        <v-card-title class="headline grey lighten-2" primary-title> Deleting Message </v-card-title>
+                        <v-card-text> Are you sure you want to delete? </v-card-text>
+                        <v-divider></v-divider>
 
-                          <v-card-actions>
+                        <v-card-actions>
 
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" @click="delete_art('art')"> Delete </v-btn>
-                            <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn color="primary" @click="delete_art('art')"> Delete </v-btn>
+                          <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
 
-                          </v-card-actions>
+                        </v-card-actions>
 
-                        </v-card>
-                      </v-dialog>
-                    </div>
+                      </v-card>
+                    </v-dialog>
+                  </div>
 
-                    <v-spacer></v-spacer>
-                    <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
 
-                  </v-card-actions>
+                </v-card-actions>
 
-                </v-card>
-              </v-flex>
-          </v-layout>
+              </v-card>
+            </v-flex>
 
-          <v-layout row wrap mb-5>
-            <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in def" :key='art.id'>
+
+            <v-flex xs6 v-if="def.length != 0"  v-for="art,index in def" :key='art.id'>
 
               <v-card mt-3>
                 <v-card-media img :src="art.url" height="450px">
@@ -136,7 +130,7 @@
                 <v-card-actions>
                   <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
                   <v-spacer></v-spacer>
-                 <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
+                  <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
                   <div class="text-xs-center">
                     <v-dialog v-model="dialog" width="30%">
                       <v-card>
@@ -164,59 +158,58 @@
 
               </v-card>
             </v-flex>
-          </v-layout>
 
+            
+          </v-layout>
         </v-tab-item>
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
-
-      <v-tab-item>
-          <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
-          <v-container>
-            <v-layout row >
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                <v-card elevation>
-                  <v-list three-line class= "changePointer"  >
-                    <template v-for="art,index in top_ten_category"  >
-                        <v-divider></v-divider>
-                        <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
-                  
-                            <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                              <img v-if="art.full_data.profileUrl != undefined && art.full_data.profileUrl != null" v-bind:src="art.full_data.profileUrl" alt="avatar">
-                              <div v-else>
-                                <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                  <span style="color: white;" class = "display-3"> {{art.full_data.name.charAt(0).toUpperCase()}} </span>
-                                </v-avatar>
-                              </div>
-                            </v-avatar>
+        <v-tab-item>
+            <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
+            <v-container>
+              <v-layout row >
+                <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
+                  <v-card elevation>
+                    <v-list three-line class= "changePointer"  >
+                      <template v-for="art,index in top_ten_category"  >
+                          <v-divider></v-divider>
+                          <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
+                    
+                              <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                                <img v-if="art.full_data.profileUrl != undefined && art.full_data.profileUrl != null" v-bind:src="art.full_data.profileUrl" alt="avatar">
+                                <div v-else>
+                                  <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                    <span style="color: white;" class = "display-3"> {{art.full_data.name.charAt(0).toUpperCase()}} </span>
+                                  </v-avatar>
+                                </div>
+                              </v-avatar>
+                              
+                              <v-list-tile >
+                                <div class = "text-xs-center headline">
+                                  <v-list-title-content>
+                                    <v-list-tile-title class ="pb-5" > {{art.full_data.name }}</v-list-tile-title>
+                                  </v-list-title-content>
+                                </div>
+                              </v-list-tile>
                             
-                            <v-list-tile >
-                              <div class = "text-xs-center headline">
-                                <v-list-title-content>
-                                  <v-list-tile-title class ="pb-5" > {{art.full_data.name }}</v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
-                          
-                            <v-list-tile>
-                              <div class = "text-xs-center">
-                                <v-list-title-content >
-                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{art.full_data.email}} </v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
+                              <v-list-tile>
+                                <div class = "text-xs-center">
+                                  <v-list-title-content >
+                                    <v-list-tile-title class ="text-xs-center headline pb-5">  {{art.full_data.email}} </v-list-tile-title>
+                                  </v-list-title-content>
+                                </div>
+                              </v-list-tile>
 
-                        </v-flex> 
-                       
-                        <v-divider></v-divider>
-                    </template>
-                  </v-list>
-                </v-card>
-              </v-flex>
-            </v-layout>
-          </v-container>       
-      </v-tab-item>
-
+                          </v-flex> 
+                        
+                          <v-divider></v-divider>
+                      </template>
+                    </v-list>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>       
+        </v-tab-item>
 
       <v-tab > Responded Art Pieces </v-tab>
         <v-tab-item>
@@ -249,8 +242,9 @@
             </v-layout>
           </v-container>
         </v-tab-item>
-
     </v-tabs>
+
+
 
   </v-container>
 </template>
@@ -489,17 +483,7 @@
     margin-right: 5px;
     background-color: lightgray;
   }
-  #selectbox{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    /*margin-left: 80px;*/
-    margin-left: 280px;
-  }
   .changePointer{
     cursor: pointer;
-  }
-
-  .italic{
-    font-style: italic;
   }
 </style>
