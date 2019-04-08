@@ -151,10 +151,19 @@
           }
           else
           {
+            // null, place at end as oldest submissions
             console.log('time submitted not available')
-            return b.art.upload_date - a.art.upload_date
+            return -1
+
+            //return b.art.upload_date - a.art.upload_date
+
+            /*if (a === null)  // a is null? last 
+              return -1;
+            else if (b === null)  // b is null? last
+              return 1;*/
+
+            //return (b===null)-(a===null)
           }
-          
         },
         // sort submissions by most recent upload date
         sortByDate(submissions)
