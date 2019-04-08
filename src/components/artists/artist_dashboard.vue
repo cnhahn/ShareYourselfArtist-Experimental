@@ -30,7 +30,7 @@
     <v-tabs light grow>
       <v-tab >  Dashboard </v-tab>
         <v-tab-item :value="dashboard-tab">
-          <v-layout pa-2 row wrap justify-center>
+          <v-layout pa-4 row wrap justify-center>
 
             <v-flex xs3> </v-flex>
 
