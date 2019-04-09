@@ -168,7 +168,7 @@
 
         </v-tab-item>
 
-      <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
+      <v-tab @click="recommendedArts()"> Recommended Businesses </v-tab>
 
       <v-tab-item>
           <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
