@@ -16,10 +16,8 @@
       </v-carousel>-->
 
     <v-layout row justify-center>
-      <v-layout row wrap mb-5 v-if="submissions">
-        <!-- <div v-if="submissions"> -->
+      <!-- <v-layout row wrap mb-5 v-if="submissions">
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
-          <!-- <div v-if="submission"> -->
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -28,9 +26,6 @@
                 <v-flex>
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
                   <v-layout row >
-                    <!-- <div class="text-xs-center" v-for="(c, index) in 3">
-                      <v-chip>{{ submission.art.categories[index] }}</v-chip>
-                    </div> -->
                   </v-layout>
                   <v-spacer></v-spacer>
                   <div v-if="submission.instagram"><h3 class="mb-0">{{submission.instagram}}</h3></div>
@@ -45,7 +40,6 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <!--<v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.submission_response == undefined"><v-icon>reply</v-icon></v-btn>-->
               <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
@@ -62,11 +56,19 @@
           </v-card-text>
         </v-slide-y-transition>
           </v-card>
-        <!-- </div> -->
         </v-flex>
-        <!-- </div> -->
 
-      </v-layout>
+      </v-layout> -->
+      <div id="app">
+        <v-app id="inspire">
+          <div class="text-xs-center">
+            <v-pagination
+              v-model="page"
+              :length="6"
+            ></v-pagination>
+          </div>
+        </v-app>
+      </div>
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
         <v-toolbar dark color="primary">
@@ -144,7 +146,8 @@
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 50 characters']
+        rules: [v => v.length > 50 || 'Min 50 characters'],
+        page: 1
       }
     },
     mounted(){
