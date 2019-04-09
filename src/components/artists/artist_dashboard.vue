@@ -237,7 +237,6 @@
             </v-flex>
           </v-layout>
         </v-tab-item>
-    
     </v-tabs>
 
 
