@@ -154,7 +154,7 @@
           }
           else
           {
-            // null, place at end as oldest submissions
+            // place null submissions at end, assuming these are older submissions
             console.log('time submitted not available')
             return -1
 
@@ -165,7 +165,7 @@
             else if (b === null)  // b is null? last
               return 1;*/
 
-            //return (b===null)-(a===null)
+            //return (a===null)-(b===null)
           }
         },
         // sort submissions by most recent upload date
@@ -198,6 +198,7 @@
           console.log('here are submissions: ' + this.submissions)
           console.log('here are master submissions: ' + this.master_submissions)
           this.submissions = this.$store.getters.submissions_for_this_business
+          this.sortByDate(this.submissions)
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
           console.log('now here is submissions: ' + this.submissions)
