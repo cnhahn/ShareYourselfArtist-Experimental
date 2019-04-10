@@ -286,7 +286,7 @@
 
                 <!-- Profile Picture Icon -->
                 <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
-                  <v-avatar >
+                  <v-avatar>
                     <img style="position:absolute; left:130px;" :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>

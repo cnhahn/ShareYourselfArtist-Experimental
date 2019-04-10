@@ -9,7 +9,7 @@
     class="resize_list"
     >
 
-      <v-list-tile-content >
+      <v-list-tile-content>
         <v-list-tile-title class="t" v-html="comment_field.from"></v-list-tile-title>
         <v-list-tile-sub-title class="b" v-html="comment_field.comment"></v-list-tile-sub-title>
       </v-list-tile-content>
@@ -19,7 +19,6 @@
 
     <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
 
-    
     <v-spacer></v-spacer>
     
     <div class = "main-container" id="titling">
@@ -73,7 +72,6 @@
       </v-btn>
     </v-snackbar>
   </v-container>
-
 </template>
 
 <script>
