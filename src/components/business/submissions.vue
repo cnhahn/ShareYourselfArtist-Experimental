@@ -5,16 +5,19 @@
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
 
-    <div class="text-xs-center">
+    <<div class="text-xs-center">
       <v-pagination
         v-model="page"
-        :length="6"
+        :length="submissions.length"
       ></v-pagination>
     </div>
 
     <v-layout row justify-center>
-      <!-- <v-layout row wrap mb-5 v-if="submissions">
+      <v-layout row wrap mb-5 v-if="submissions">
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
+
+          <div v-if="submissions[page-1]===submission">
+
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -53,14 +56,16 @@
           </v-card-text>
         </v-slide-y-transition>
           </v-card>
-        </v-flex>
 
-      </v-layout> -->
+        </div>
+
+        </v-flex>
+      </v-layout>
 
       <!--<div class="text-xs-center">
         <v-pagination
           v-model="page"
-          :length="6"
+          :length="submissions.length"
         ></v-pagination>
       </div>-->
 
@@ -113,6 +118,14 @@
       </v-card>
     </v-dialog>
   </v-layout>
+
+  <!--<div class="text-xs-center">
+    <v-pagination
+      v-model="page"
+      :length="6"
+    ></v-pagination>
+  </div>-->
+
   </v-container>
 </template>
 
