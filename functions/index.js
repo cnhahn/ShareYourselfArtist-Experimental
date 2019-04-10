@@ -982,21 +982,21 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   console.log('Artist to update is ', artistToUpdate)
   console.log('Business to update is', businessToUpdate)
 
-  function updateBusiness(arrayOfArtists){
+  async function updateBusiness(arrayOfArtists){
     let business = db.collection('users').doc(arrayOfArtists)
     return db.runTransaction(t => {
       return Promise.all(arrayOfArtists.map(async (element) => {
         let doc = await t.get(business);
         if(doc.data() != undefined && doc.data().categories != undefined){
-          let currCategories = doc.data().categories;
-          //console.log("current Credit amount: " + currCredits)
-          let numRefunds = artistsObj[element]
-          let updateCredits = currCredits + numRefunds
-          //console.log("numRefunds : " + numRefunds)
-          //console.log("updated Credit amount: " + updateCredits)
-          await t.update(aRef, { credits: updateCredits });
+          let currCategories = doc.data().categories;  // the state of the users current categories before modification
+          for(cat in categoriesToUpdate){
+            if(radios == true){
+              currCategories[cat].numberAccepted++;
+            }
+            currCategories[cat].numberResponded++;
+          }
+          await t.update(business, { categories: currCategories });
         }
-        //console.log(JSON.stringify(doc.data()))
       }));
     });
   }
@@ -1161,11 +1161,19 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         return batch.commit()
       })
       .then(function () {
+        //now update the business that replied
+        let businessID = [businessToUpdate];
+        // why use an array of one element? Because the updateBusiness function is a modified version of refund.js in sya-app-dev/lambda 
+        // and this is a quick implementation, will remove later
+        return updateBusiness(businessID);
         console.log('artist updated')
         response.send('artist updated')
         //const status = 1
         //resolve();
         //response.send('artist updated')
+      })
+      .then(function(){
+        response.send('artist and business updated')
       })
       .catch(error => {
         console.log('error updating artist', error)
@@ -1174,6 +1182,12 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         //reject();
         //response.send(error)
       })
+  }
+  // The business did not hit 'accept', so we only update the businesses values.
+  else{
+    let businessID = [businessToUpdate];
+    await updateBusiness(businessID); //might change 'await' to 'return' as above?
+    response.send("Finished updating the business");
   }
   // function updateBusiness(){
   //   return new Promise((resolve, reject) =>{
