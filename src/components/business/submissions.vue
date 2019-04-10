@@ -5,15 +5,12 @@
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
 
-      <!--<v-carousel>
-        <v-carousel-item :key="i" v-for="i in 5">
-          <v-layout row>
-            <v-flex xs4 :key="j" v-for="j in 3">
-              <img :src="'https://placehold.it/380x500/?text=' + i + '-' + j" alt="">
-            </v-flex>
-          </v-layout>
-        </v-carousel-item>
-      </v-carousel>-->
+    <div class="text-xs-center">
+      <v-pagination
+        v-model="page"
+        :length="6"
+      ></v-pagination>
+    </div>
 
     <v-layout row justify-center>
       <!-- <v-layout row wrap mb-5 v-if="submissions">
@@ -59,16 +56,14 @@
         </v-flex>
 
       </v-layout> -->
-      <div id="app">
-        <v-app id="inspire">
-          <div class="text-xs-center">
-            <v-pagination
-              v-model="page"
-              :length="6"
-            ></v-pagination>
-          </div>
-        </v-app>
-      </div>
+
+      <!--<div class="text-xs-center">
+        <v-pagination
+          v-model="page"
+          :length="6"
+        ></v-pagination>
+      </div>-->
+
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
         <v-toolbar dark color="primary">
