@@ -1,10 +1,6 @@
 <template>
   <v-container ml-3>
   <v-layout class = "main-container" wrap>
-    <div class = "main-container">
-    <h2>{{this.art.art_title}}</h2>
-    <p>{{this.art.description}}</p>
-    </div>
 
     <v-list two-line>
     <template v-for="comment_field in new_comments_field">
@@ -25,20 +21,30 @@
 
     
     <v-spacer></v-spacer>
+    
+    <div class = "main-container" id="titling">
+    <h2>{{this.art.art_title}} </h2>
+    <h2 id="authorname">by {{this.art.artist_name}}</h2>
+    <p>{{this.art.description}}</p>
+    </div>
 
+  
     <div class = "small-container">
+      <v-divider class = "dividing"></v-divider>
       <v-avatar size="100px" class="avatarStyle" v-bind:cpriolor="black">
         <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
         <div v-else>
           <span style="font-size: 10em; color: white;">{{initial()}}</span>
         </div>
       </v-avatar>
-        <v-text-field class="commenting"
-          label="Add Comment.."
-          single-line
-          v-model="comment"
-      ></v-text-field>
 
+      <v-text-field 
+        solo
+        class="commenting"
+        label="Add Comment.."
+        single-line
+        v-model="comment"
+      ></v-text-field>
     </div>
 
       <div mb-5 class="small-container">
@@ -89,6 +95,7 @@ import * as firebase from 'firebase'
           art:{
             url: localStorage.getItem('url'),
             art_title: localStorage.getItem('art_title'),
+            artist_name: localStorage.getItem('artist_name'),
             description: localStorage.getItem('description'),
             upload_date: localStorage.getItem('upload_date'),
             newComment:''
@@ -183,9 +190,18 @@ import * as firebase from 'firebase'
    width: 100%;
  }
  .small-container {
-   width: 80%;
-   padding: 10px;
+   width: 100%;
+   /* padding: 10px; */
  }
+
+  #titling {
+    margin-top: 3%;
+  }
+
+  #authorname{
+    font-size: 95%;
+    margin-bottom: 2%;
+  }
 
  .t{
     font-weight: bold
@@ -200,9 +216,11 @@ import * as firebase from 'firebase'
     height:65px;
 
   }
-  /* .commenting {
-    padding: 10px;
-  } */
+  .dividing {
+    /* padding-top: 30px;
+    padding-bottom: 30px; */
+    margin-bottom: 3%;
+  }
 
 </style>
 
