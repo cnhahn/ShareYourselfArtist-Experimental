@@ -2159,31 +2159,32 @@ export const store = new Vuex.Store({
       let businessId =  this.getters.user.id
       let requestedArtist =  payload.art.art.artist_id
 
-      if (businessDecision) {
-        let statistics = {}
-        statistics[0] = artCategories
-        statistics[1] = businessId
-        statistics[2] = requestedArtist
-        console.log('statistics is ' , statistics)
+      
+      let statistics = {}
+      statistics[0] = artCategories
+      statistics[1] = businessId
+      statistics[2] = requestedArtist
+      statistics[3] = businessDecision   // determines if business hit 'accept'(true) or 'decline'(false)
+      console.log('statistics is ' , statistics)
 
-        let statisticsJson = JSON.stringify(statistics)
-        //  Send API request to update user category
-        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
-        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateAcceptedStats'
+      let statisticsJson = JSON.stringify(statistics)
+      //  Send API request to update user category
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateAcceptedStats'
 
-        if (!('fetch' in window)) {
-          return
-        } else {
-        }
-        
-        fetch(proxyUrl + targetUrl, {
-          method: 'post',
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: statisticsJson
-        })
+      if (!('fetch' in window)) {
+        return
+      } else {
       }
+      
+      fetch(proxyUrl + targetUrl, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: statisticsJson
+      })
+    
       
       const db = firebase.firestore()
       const collectionRef = db

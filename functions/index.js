@@ -720,6 +720,13 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
 
 })
 
+/*
+giveBusinessCategories:
+A function meant to RUN ONCE in order to update all businesses in the 
+'user' collection so that they have these new entries. All new businesses should either have these 
+fields by default when creating their account, or the fields will be created when they receive/respond (to) a review-request.
+
+*/
 exports.giveBusinessCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let person = db.collection('users').doc('yekGAvzU5fZKh49e6w0tJuRmFFg1')
@@ -727,7 +734,6 @@ exports.giveBusinessCategories = functions.https.onRequest((request, response) =
   let transaction = db.runTransaction(t => {
     return t.get(person)
       .then(doc => {
-        // Add one person to the city population
         let categoryObj = {
           drawing : {
             totalReceived : 0,
@@ -967,6 +973,7 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const artistToUpdate = request.body[2];
   const businessToUpdate = request.body[1];
   const categoriesToUpdate = request.body[0];
+  const radios = request.body[3];  // accepted or declined radios
   console.log('Artist to update is ', artistToUpdate)
   //which collection should this go to?
   const artistRef = db.collection('users').doc(artistToUpdate);
@@ -974,9 +981,30 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
 
   console.log('Artist to update is ', artistToUpdate)
   console.log('Business to update is', businessToUpdate)
-  //function updateArtist(){
-    // return new Promise((resolve, reject) =>{
-      const currentArtist = db.collection('users').doc(artistToUpdate).get()
+
+  function updateBusiness(arrayOfArtists){
+    let business = db.collection('users').doc(arrayOfArtists)
+    return db.runTransaction(t => {
+      return Promise.all(arrayOfArtists.map(async (element) => {
+        let doc = await t.get(business);
+        if(doc.data() != undefined && doc.data().categories != undefined){
+          let currCategories = doc.data().categories;
+          //console.log("current Credit amount: " + currCredits)
+          let numRefunds = artistsObj[element]
+          let updateCredits = currCredits + numRefunds
+          //console.log("numRefunds : " + numRefunds)
+          //console.log("updated Credit amount: " + updateCredits)
+          await t.update(aRef, { credits: updateCredits });
+        }
+        //console.log(JSON.stringify(doc.data()))
+      }));
+    });
+  }
+
+  // If the business hit 'accept' when sending their response, we update both artist and business values.
+  // If the business hit 'decline' we only update the businesses values.
+  if (radios == true) {
+    const currentArtist = db.collection('users').doc(artistToUpdate).get()
       .then(user => {
         let person = db.collection('users').doc(artistToUpdate)
         let currentCategories = user.data().categories
@@ -1097,57 +1125,56 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                     count: user.data().categories.portrait.count,
                     responded: currentCategories[categoriesToUpdate[i]].responded,
                     //totalSubmitted: user.data().categories.portrait.totalSubmitted
-                    }
                   }
-                }, {merge:true})
-                break;
-              case 'realism':
-                console.log('matched with realism')
-                batch.set(artistRef, {
-                  categories: {
-                    realism: {
-                      count: user.data().categories.realism.count,
-                      responded: currentCategories[categoriesToUpdate[i]].responded,
-                      //totalSubmitted: user.data().categories.realism.totalSubmitted
-                    }
+                }
+              }, { merge: true })
+              break;
+            case 'realism':
+              console.log('matched with realism')
+              batch.set(artistRef, {
+                categories: {
+                  realism: {
+                    count: user.data().categories.realism.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded,
+                    //totalSubmitted: user.data().categories.realism.totalSubmitted
                   }
-                }, {merge:true})
-                break;
-              case 'abstract':
-                console.log('matched with abstract')
-                batch.set(artistRef, {
-                  categories: {
-                    abstract: {
-                      count: user.data().categories.abstract.count,
-                      responded: currentCategories[categoriesToUpdate[i]].responded,
-                      //totalSubmitted: user.data().categories.abstract.totalSubmitted
-                    }
+                }
+              }, { merge: true })
+              break;
+            case 'abstract':
+              console.log('matched with abstract')
+              batch.set(artistRef, {
+                categories: {
+                  abstract: {
+                    count: user.data().categories.abstract.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded,
+                    //totalSubmitted: user.data().categories.abstract.totalSubmitted
                   }
-                }, {merge:true})
-                break;
+                }
+              }, { merge: true })
+              break;
 
-              default:
-                console.log('no cases matched')
-            }
+            default:
+              console.log('no cases matched')
           }
-          return batch.commit()
-        })
+        }
+        return batch.commit()
+      })
       .then(function () {
-          console.log('artist updated')
-          response.send('artist updated')
-          //const status = 1
-          //resolve();
-          //response.send('artist updated')
-        })
-        .catch(error => {
-          console.log('error updating artist', error)
-          const status = 0
-          response.send(error)
-          //reject();
-          //response.send(error)
-        })
-    // })
-  //}
+        console.log('artist updated')
+        response.send('artist updated')
+        //const status = 1
+        //resolve();
+        //response.send('artist updated')
+      })
+      .catch(error => {
+        console.log('error updating artist', error)
+        const status = 0
+        response.send(error)
+        //reject();
+        //response.send(error)
+      })
+  }
   // function updateBusiness(){
   //   return new Promise((resolve, reject) =>{
   //     const currentBusiness = db.collection('users').doc(businessToUpdate).get()
@@ -1342,6 +1369,17 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
     // .catch(status => {
     //   response.send('There was an error in the updateArtist call')
     // })
+
+})
+
+exports.updateBusinessResponseStats = functions.https.onRequest((request, response) =>{
+  const db = admin.firestore();
+  const artistToUpdate = request.body[2];
+  const businessToUpdate = request.body[1];
+  const categoriesToUpdate = request.body[0];
+  const artistRef = db.collection('users').doc(artistToUpdate);
+  const businessRef = db.collection('users').doc(businessToUpdate);
+
 
 })
 
