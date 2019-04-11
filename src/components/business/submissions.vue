@@ -5,7 +5,7 @@
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
 
-    <<div class="text-xs-center">
+    <div class="text-xs-center">
       <v-pagination
         v-model="page"
         :length="submissions.length"
