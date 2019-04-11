@@ -12,11 +12,48 @@
       ></v-pagination>
     </div>
 
+    <!--<v-layout row wrap justify-center>
+    <v-flex xs12 md12 sm6>
+      <div class = "text-xs-center">
+        <v-spacer></v-spacer> 
+        <v-progress-circular
+          v-if="loading_submissions"
+          indeterminate
+          color="primary">
+        </v-progress-circular>
+      </div>
+    </v-flex>
+    </v-layout>-->
+
+    <div class = "text-xs-center">
+      <div v-if="loading_submissions">
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+      </div> 
+      <v-progress-circular
+        v-if="loading_submissions"
+        indeterminate
+        color="primary">
+      </v-progress-circular>
+    </div>
+
     <v-layout row justify-center>
       <v-layout row wrap mb-5 v-if="submissions">
+
+      <!--<v-flex xs12 sm6>
+        <div class = "mt-1">
+          <v-progress-circular
+            v-if="loading_submissions"
+            indeterminate
+            color="primary">
+          </v-progress-circular>
+        </div>
+      </v-flex>-->
+
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
 
-          <div v-if="submissions[page-1]===submission">
+          <!--<div v-if="submissions[page-1]===submission">-->
 
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
@@ -57,17 +94,10 @@
         </v-slide-y-transition>
           </v-card>
 
-        </div>
+        <!--</div>-->
 
         </v-flex>
       </v-layout>
-
-      <!--<div class="text-xs-center">
-        <v-pagination
-          v-model="page"
-          :length="submissions.length"
-        ></v-pagination>
-      </div>-->
 
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
@@ -155,7 +185,8 @@
         sub_list: [],
         nameKey: '',
         rules: [v => v.length > 50 || 'Min 50 characters'],
-        page: 1
+        page: 1,
+        loading_submissions: false
       }
     },
     mounted(){
@@ -178,13 +209,6 @@
             return -1
 
             //return b.art.upload_date - a.art.upload_date
-
-            /*if (a === null)  // a is null? last 
-              return -1;
-            else if (b === null)  // b is null? last
-              return 1;*/
-
-            //return (a===null)-(b===null)
           }
         },
         // sort submissions by most recent upload date
@@ -193,12 +217,14 @@
           submissions.sort(this.compareDates)
         },
         initialImageLoad() {
+          this.loading_submissions = true
           this.$store.dispatch('fetch_all_Submissions').then(response => {
           this.submissions = this.$store.getters.submissions_for_this_business
           console.log("Submissions is ", this.submissions)
           // order by most recent upload date
           this.sortByDate(this.submissions)
           this.master_submissions = this.$store.getters.submissions_for_this_business
+          this.loading_submissions = false
           }, error => {
             console.error("Reached error in mounted function " , error)
           })
