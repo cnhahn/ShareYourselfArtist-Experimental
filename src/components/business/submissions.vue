@@ -8,9 +8,11 @@
     <div class="text-xs-center">
       <v-pagination
         v-model="page"
-        :length="submissions.length"
+        :length="Math.ceil(submissions.length / 4)"
       ></v-pagination>
     </div>
+
+    <p>{{page}}</p>
 
     <!--<v-layout row wrap justify-center>
     <v-flex xs12 md12 sm6>
@@ -51,7 +53,7 @@
         </div>
       </v-flex>-->
 
-        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
+        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in section" :key='submission.id'>
 
           <!--<div v-if="submissions[page-1]===submission">-->
 
@@ -139,7 +141,7 @@
                 <v-radio label="Accept" value="accepted"></v-radio>
                 <v-radio label="Decline" value="declined"></v-radio>
                 </v-radio-group>
-            <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn>
+            <!-- <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn> -->
             <v-container fluid>
 
   </v-container>
@@ -180,20 +182,38 @@
         categories: [],
         master_submissions: [],
         submissions: [],
+        section: [],
         read_submissions: [],
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 50 characters'],
+        rules: [v => v.length > 50 || 'Min 0 characters'],
         page: 1,
-        loading_submissions: false
+        loading_submissions: false,        
       }
+    },
+    beforeMount() {
     },
     mounted(){
       this.initialImageLoad();
     },
-
     methods:{
+        // populate submissions array depending on the current page selected
+        populateSubmissions(page, submissions)
+        {
+          if(submissions.length !== null && submissions.length !== 0)
+          {
+            let section = []
+            let startIndex = (page-1) * 4
+            for(let i = startIndex; i < (startIndex + 4); i++)
+            {
+              section.push(submissions[i])
+            }
+
+            this.section = section
+          }
+
+        },
         // used to sort because array.sort sorts alphabetically by default
         // a and b are submissions, return highest date to lowest
         compareDates(a, b)
@@ -232,6 +252,11 @@
             console.log("Got here in sbumissions empty ")
             this.$router.push('/submissions/empty')
           }
+
+          // for(let i = 0; i < 4; i++)
+          // {
+          //   this.section.push(this.submissions[i])
+          // }
       }, 
       download: function(art_link) {
         console.log(art_link)
@@ -358,6 +383,11 @@
             this.art_being_replied = myArray[i];
           }
         }
+      }
+    },
+    watch: {
+      page: function (val) {
+       this.populateSubmissions(val, this.submissions)
       }
     },
 
