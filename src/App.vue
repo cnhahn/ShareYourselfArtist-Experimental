@@ -124,7 +124,7 @@
             </router-link>
           </v-list-tile-content>
         </v-list-tile>
-        
+        <br> <br>
         <v-list-tile>
           <v-chip
             v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'"
@@ -133,7 +133,7 @@
             color="primary"
             text-color="white"
             v-on:click="$router.push('/account')">
-            &nbsp;Freebie Credits: {{this.$store.state.free_credits}}
+            &nbsp;Freebie Credits&nbsp;&nbsp;: {{this.$store.state.free_credits}}
           </v-chip>
         </v-list-tile>
 
@@ -283,7 +283,6 @@
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
               <v-layout  style="cursor: pointer">
-
                 <!-- Profile Picture Icon -->
                 <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
                   <v-avatar >
@@ -296,7 +295,7 @@
                   <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
                   <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
                 </v-flex> 
-
+              
             </v-layout>
             </v-flex>
           </v-layout>

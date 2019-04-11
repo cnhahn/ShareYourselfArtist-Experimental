@@ -1,36 +1,36 @@
 <template>
-  <v-container  >
+  <v-container>
     <center>
 
-            <v-flex lg6 md6 sm12 xs12>
-              <v-avatar size="180px" class="avatarStyle" v-bind:cpriolor="black">
-                  <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
-                  <div v-else>
-                    <span style="font-size: 10em; color: white;">{{initial()}}</span>
-                  </div>
-                </v-avatar>
-                <!--TODO: Code for Uploading image. Should modify.-->
-                <!-- From store to url -->
-                <v-btn
-                    style="margin-top: 2vh; margin-left: 1vw;"
-                    block
-                    flat
-                    depressed
-                    :color="primary"
-                    :loading="submission_in_progress"
-                    :disabled="submission_in_progress"
-                 
-                    class="mx-0"
-                    @click.native="onPickFile"
-                  >
-                    Upload Photo
-                  </v-btn>
-                  <input type="file"
-                        style="display:none"
-                        ref="fileInput"
-                        accept="image/*"
-                        @change=onFilePicked
-                  >
+      <v-flex lg6 md6 sm12 xs12>
+        <v-avatar size="180px" class="avatarStyle" v-bind:cpriolor="black">
+            <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
+            <div v-else>
+              <span style="font-size: 10em; color: white;">{{initial()}}</span>
+            </div>
+          </v-avatar>
+          <!--TODO: Code for Uploading image. Should modify.-->
+          <!-- From store to url -->
+          <v-btn
+            style="margin-top: 2vh; margin-left: 1vw;"
+            block
+            flat
+            depressed
+            :color="primary"
+            :loading="submission_in_progress"
+            :disabled="submission_in_progress"
+          
+            class="mx-0"
+            @click.native="onPickFile"
+          >
+            Upload Photo
+          </v-btn>
+          <input type="file"
+                style="display:none"
+                ref="fileInput"
+                accept="image/*"
+                @change=onFilePicked
+          >
             </v-flex>
 
             <v-flex xs12 sm6>
@@ -157,17 +157,20 @@
       },
       image_uploaded_finished(){
         return this.$store.getters.get_image_uploaded
+      },
+      unit_test(){
+        return this.$store.getters.get_start_count
       }
       
     },
     methods: {
 
       emptyUserInfo () {
-        console.log('Entered set emptyuserinfo ------------')
+        //console.log('Entered set emptyuserinfo ------------')
         this.artistInfo = {};
       },
       setUserInfo () {
-        console.log('Entered set userinfo ------------')
+        //console.log('Entered set userinfo ------------')
         this.urlProfilepic = this.$store.getters.signed_in_user.profileUrl
         let userInfo = this.$store.getters.signed_in_user
         console.log(userInfo.name)
@@ -192,14 +195,14 @@
         this.artistInfo = newArtistInfo
       },
       onPickFile () {
-        console.log('Entered onPickFile Function')
+        //console.log('Entered onPickFile Function')
         this.$refs.fileInput.click()
         this.imageNotLoaded = true
        // this.submission_in_progress = true;
-        console.log('Exited onPickFile Function')
+       // console.log('Exited onPickFile Function')
       },
       onFilePicked (event) {
-        console.log('Entered onFilePicked Function')
+        //console.log('Entered onFilePicked Function')
 
         this.$store.commit('set_start_image_uploaded', false)
         this.$store.commit('set_image_uploaded', false)
@@ -233,7 +236,7 @@
           })
 
         fileReader.readAsDataURL(files[0])
-        console.log('Exited onFilePicked Function')
+        //console.log('Exited onFilePicked Function')
       },
       resetEdit () {
         this.onEdit = false
@@ -274,7 +277,8 @@
         //console.log('onEdit:' + this.onEdit)
         //console.log('dataNotSent:' + this.dataNotSent)
         //console.log('imageNotLoaded:' + this.imageNotLoaded)
-        
+        console.log('current unit_test result', this.unit_test)
+
         var today = new Date()
         var thatDay = new Date(time)
         var passedTime = today - thatDay
@@ -293,8 +297,8 @@
     watch: {
       start_image_upload: function(val)
       {
-        console.log('Entered watcher start_image_upload')
-        console.log('-----------------enter image uploaded start', val)
+        //console.log('Entered watcher start_image_upload')
+        //console.log('-----------------enter image uploaded start', val)
         if(val == true){
           this.submission_in_progress = true
         }
@@ -303,15 +307,15 @@
 
 
       image_uploaded_finished: function(val) {
-        console.log('Entered watcher image_uploaded_finished')
-        console.log('image_uploaded_finished ---->' + this.file)
-        console.log('the value has changed!!!! it is now ' , val)
-        console.log('2 submission_in_progress: ' + this.submission_in_progress)
+       // console.log('Entered watcher image_uploaded_finished')
+       // console.log('image_uploaded_finished ---->' + this.file)
+       // console.log('the value has changed!!!! it is now ' , val)
+       // console.log('2 submission_in_progress: ' + this.submission_in_progress)
         if(val == true){
           this.submission_in_progress = false
           
         }
-        console.log('Exited watcher image_uploaded_finished')
+       // console.log('Exited watcher image_uploaded_finished')
       }
     }
   }

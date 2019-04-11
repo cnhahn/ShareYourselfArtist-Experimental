@@ -1,9 +1,114 @@
 <template>
-  <v-container ml-3>
-  <v-layout class = "main-container" wrap>
-    <div class = "main-container">
-    <h2>{{this.art.art_title}}</h2>
-    <p>{{this.art.description}}</p>
+  <v-container>
+
+    <v-layout >
+      <v-flex xs12 sm6 offset-sm3 fill-height> 
+        <v-card>
+          <v-flex> 
+            <v-img> 
+              <img :src="this.art.url" width="100%" height="100%">
+            </v-img>
+          </v-flex> 
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            
+            <v-btn icon>
+              <v-icon>favorite</v-icon>
+            </v-btn>
+            <v-btn icon>
+              <v-icon>bookmark</v-icon>
+            </v-btn>
+            <v-btn icon>
+              <v-icon>share</v-icon>
+            </v-btn>
+          </v-card-actions>
+
+          <v-card-title primary-title>
+            <div>
+              <div class="headline mb-0">
+                <h2>
+                  {{this.art.art_title}}
+                </h2>
+              </div>
+
+              <div>
+                <p class="text-sm-left">
+                  {{this.art.description}}
+                </p>
+              </div>
+            </div>
+          </v-card-title>
+
+          <v-flex>
+            <v-card>
+              <v-list two-line>
+                <template v-for="comment_field in new_comments_field">
+                  <v-list-tile :key="comment_field.comment" class="resize_list">
+                    <v-list-tile-content>
+                      <v-list-tile-title class="t" v-html="comment_field.from"></v-list-tile-title>
+                      <v-list-tile-sub-title class="b" v-html="comment_field.comment"></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </template>
+              </v-list>
+
+              <div class = "small-container">
+                <v-text-field label="Comment" single-line v-model="comment"> 
+                </v-text-field>
+              </div>
+              
+              <div mb-5 class="small-container-btn">
+                <v-btn v-if= "!this.comment.length"  disabled  small>
+                  Send
+                </v-btn>
+                <v-btn v-else depressed small dark color="black" @click="save_comment(art)">
+                  Send
+                </v-btn>
+                <v-btn depressed small dark color="black" @click="back">
+                  Back
+                </v-btn>
+              </div>
+
+            </v-card>
+          </v-flex>  
+
+        </v-card>
+      </v-flex>
+    </v-layout>
+
+  </v-container>
+</template>
+<!--
+  <v-layout class = "main-container" align-center justify-center column fill-height>
+  
+
+
+
+    <img :src="this.art.url" alt="" width="80%" height=100%>
+
+    <br>
+
+    <!--
+    <v-flex xs6>
+      <v-card white>
+        <v-card-text class="px-0">{{this.art.art_title}}</v-card-text>
+      </v-card>
+    </v-flex>
+
+    <v-flex xs6>
+      <v-card white>
+        <v-card-text class="px-0">{{this.art.description}}</v-card-text>
+      </v-card>
+    </v-flex>
+    -->
+<!--
+    <div class = "small-container-titles ">
+      <h2>{{this.art.art_title}}</h2>
+    </div>
+
+    <div class = "small-container-details ">
+      <p>{{this.art.description}}</p>
     </div>
 
     <!--<p v-for="comment_field in new_comments_field"
@@ -13,7 +118,7 @@
     </pre> 
     </p>
     <v-spacer></v-spacer>-->
-
+<!--
     <v-list two-line>
     <template v-for="comment_field in new_comments_field">
     <v-list-tile
@@ -38,13 +143,17 @@
       ></v-text-field>
     </div>
 
-      <div mb-5 class="small-container">
-      <v-btn v-if= "!this.comment.length"   disabled  large>Send</v-btn>
-      <v-btn v-else depressed  dark large color="primary" @click="save_comment(art)">Send</v-btn>
-      <v-btn  depressed dark large color="black" @click="back">Back</v-btn>
+    <div mb-5 class="small-container">
+      <v-btn v-if= "!this.comment.length"  disabled  small>Send</v-btn>
+      <v-btn v-else depressed small dark color="black" @click="save_comment(art)">Send</v-btn>
+      <v-btn depressed small dark color="black" @click="back">Back</v-btn>
     </div>
-    <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
+  </v-flex>
+  
+  
   </v-layout>
+
+
   <v-snackbar
       v-model="snackbar"
       :bottom="y === 'bottom'"
@@ -64,9 +173,8 @@
         Close
       </v-btn>
     </v-snackbar>
-  </v-container>
+     -->
 
-</template>
 
 <script>
 import * as firebase from 'firebase'
@@ -176,9 +284,30 @@ import * as firebase from 'firebase'
  .main-container {
    width: 100%;
  }
- .small-container {
+ .small-container-titles {
+   font-size: 12pt;
+   font-family: Arial, Helvetica, sans-serif;
+   
    width: 80%;
  }
+
+ .small-container-details {
+   font-size: 12pt;
+   font-family: Arial, Helvetica, sans-serif;
+   
+   width: 80%;
+ }
+
+ .small-container {
+   margin-left: 1.20rem;
+   width: 80%;
+ }
+
+  .small-container-btn {
+   margin-left: 0.55rem;
+   width: 80%;
+ }
+
 
  .t{
     font-weight: bold

@@ -28,7 +28,7 @@
 
 
 
-    <v-tabs color="primary" light grow>
+    <v-tabs color="primary" xs12 lg10 offset-lg2 mt-5 mr-5 light grow>
 
       <v-tab >  Dashboard </v-tab>
         <v-spacer></v-spacer>
@@ -36,10 +36,10 @@
         
 
           <v-layout row wrap mb-5>
-              <v-flex xs12 lg10 mt-5 mr-5 > <!--offset-lg2 -->
+              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5> <!--offset-lg2 -->
                 <v-card flat id="selectbox">
                     <v-container fluid>
-                      <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
+                      <v-layout xs12 lg10 offset-lg3 ml-5 column align-center justify-center>
                           <v-select
                             :items="items"
                             attach
@@ -462,6 +462,6 @@
     margin-top: 20px;
     margin-bottom: 20px;
     /*margin-left: 80px;*/
-    margin-left: 280px;
+    margin-left: 0px;
   }
 </style>
