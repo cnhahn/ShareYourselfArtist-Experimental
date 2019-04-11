@@ -974,7 +974,9 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const businessToUpdate = request.body[1];
   const categoriesToUpdate = request.body[0];
   const radios = request.body[3];  // accepted or declined radios
-  console.log('Artist to update is ', artistToUpdate)
+  console.log("Accepted status", radios);
+  console.log("Radios is typeOF", typeof(radios));
+
   //which collection should this go to?
   const artistRef = db.collection('users').doc(artistToUpdate);
   const businessRef = db.collection('users').doc(businessToUpdate);
@@ -982,33 +984,32 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   console.log('Artist to update is ', artistToUpdate)
   console.log('Business to update is', businessToUpdate)
 
-  async function updateBusiness(arrayOfArtists){
-    let business = db.collection('users').doc(arrayOfArtists)
-    return db.runTransaction(t => {
-      return Promise.all(arrayOfArtists.map(async (element) => {
-        let doc = await t.get(business);
-        if(doc.data() != undefined && doc.data().categories != undefined){
-          let currCategories = doc.data().categories;  // the state of the users current categories before modification
-          for(cat in categoriesToUpdate){
-            if(radios == true){
-              currCategories[cat].numberAccepted++;
-            }
-            currCategories[cat].numberResponded++;
-          }
-          await t.update(business, { categories: currCategories });
-        }
-      }));
-    });
-  }
+  // function updateBusiness(business){
+  //     return db.runTransaction(t => {
+  //       let businessRef = db.collection('users').doc(business)
+  //       if(doc.data() != undefined && doc.data().categories != undefined){
+  //         let currCategories = doc.data().categories;  // the state of the users current categories before modification
+  //         for(cat in categoriesToUpdate){
+  //           if(radios == true){
+  //             currCategories[cat].numberAccepted++;
+  //           }
+  //           currCategories[cat].numberResponded++;
+  //         }
+  //         await t.update(businessRef, { categories: currCategories });
+  //         resolve(1);
+  //       }
+  //       reject(0);
+  //   });
+  // }
 
   // If the business hit 'accept' when sending their response, we update both artist and business values.
   // If the business hit 'decline' we only update the businesses values.
-  if (radios == true) {
     const currentArtist = db.collection('users').doc(artistToUpdate).get()
       .then(user => {
         let person = db.collection('users').doc(artistToUpdate)
         let currentCategories = user.data().categories
-        //console.log('type of currentCategories: ' + typeof currentCategories)
+        console.log('type of currentCategories: ' + typeof currentCategories)
+        console.log('currentCategories\n', currentCategories)
         console.log(JSON.stringify(currentCategories))
 
         for (let i = 0; i < categoriesToUpdate.length; i++) {
@@ -1161,19 +1162,36 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         return batch.commit()
       })
       .then(function () {
-        //now update the business that replied
-        let businessID = [businessToUpdate];
-        // why use an array of one element? Because the updateBusiness function is a modified version of refund.js in sya-app-dev/lambda 
-        // and this is a quick implementation, will remove later
-        return updateBusiness(businessID);
-        console.log('artist updated')
-        response.send('artist updated')
-        //const status = 1
-        //resolve();
-        //response.send('artist updated')
-      })
-      .then(function(){
-        response.send('artist and business updated')
+        // now update the business
+        let transaction = db.runTransaction(t => {
+          return t.get(businessRef)
+            .then(doc => {
+              console.log("Now entering the artist + business transaction")
+              if (doc.data() != undefined && doc.data().categories != undefined) {
+                let currCategories = doc.data().categories;  // the state of the users current categories before modification
+                console.log("Business to update: ", businessToUpdate);
+                console.log("Type of currCategories is", typeof(currCategories));
+                console.log("currCategories is \n",currCategories)
+                console.log("categories to update: \n", categoriesToUpdate )
+                for (var cat in categoriesToUpdate) {
+                  console.log('cat is ', categoriesToUpdate[cat])
+                  console.log("cat is typeOf", typeof(cat));
+                  console.log("currCategories[cat] is:", currCategories[cat] )    //this is undefined, incorrect access
+                  currCategories[categoriesToUpdate[cat]].numberAccepted++;
+                  currCategories[categoriesToUpdate[cat]].numberResponded++;
+                }
+                t.update(businessRef, { categories: currCategories });
+              }
+            });
+        })
+        .then(() => {
+          response.send('Updates complete')
+        })
+        .catch((error) =>{
+          console.log(error)
+          console.log("There was an error updating the business")
+          response.send(error)
+        })
       })
       .catch(error => {
         console.log('error updating artist', error)
@@ -1182,13 +1200,30 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
         //reject();
         //response.send(error)
       })
-  }
   // The business did not hit 'accept', so we only update the businesses values.
-  else{
-    let businessID = [businessToUpdate];
-    await updateBusiness(businessID); //might change 'await' to 'return' as above?
-    response.send("Finished updating the business");
-  }
+  // else{
+  //   let transaction = db.runTransaction(t => {
+  //     return t.get(businessRef)
+  //       .then(doc => {
+  //         if (doc.data() != undefined && doc.data().categories != undefined) {
+  //           let currCategories = doc.data().categories;  // the state of the users current categories before modification
+  //           for (cat in categoriesToUpdate) {
+  //             if (radios == true) {
+  //               currCategories[cat].numberAccepted++;
+  //             }
+  //             currCategories[cat].numberResponded++;
+  //           }
+  //           t.update(businessRef, { categories: currCategories });
+  //         }
+  //       });
+  //   })
+  //   .then(result => {
+  //     response.send("Artist and Business Transaction success")
+  //   })
+  //   .catch(err =>{
+  //     response.send(err);
+  //   })
+  // }
   // function updateBusiness(){
   //   return new Promise((resolve, reject) =>{
   //     const currentBusiness = db.collection('users').doc(businessToUpdate).get()
