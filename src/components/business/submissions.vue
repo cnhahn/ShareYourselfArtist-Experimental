@@ -5,16 +5,7 @@
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
 
-    <div class="text-xs-center">
-      <v-pagination
-        v-model="page"
-        :length="Math.ceil(submissions.length / 4)"
-      ></v-pagination>
-    </div>
-
-    <p>{{page}}</p>
-
-    <!--<v-layout row wrap justify-center>
+    <!-- <v-layout row wrap justify-center>
     <v-flex xs12 md12 sm6>
       <div class = "text-xs-center">
         <v-spacer></v-spacer> 
@@ -25,7 +16,7 @@
         </v-progress-circular>
       </div>
     </v-flex>
-    </v-layout>-->
+    </v-layout> -->
 
     <div class = "text-xs-center">
       <div v-if="loading_submissions">
@@ -150,14 +141,12 @@
       </v-card>
     </v-dialog>
   </v-layout>
-
-  <!--<div class="text-xs-center">
-    <v-pagination
-      v-model="page"
-      :length="6"
-    ></v-pagination>
-  </div>-->
-
+    <div class="text-xs-center mb-5">
+      <v-pagination
+        v-model="page"
+        :length="Math.ceil(submissions.length / 4)"
+      ></v-pagination>
+    </div>
   </v-container>
 </template>
 
@@ -201,16 +190,17 @@
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
-          if(submissions.length !== null && submissions.length !== 0)
+          if(submissions.length !== undefined && submissions.length !== 0)
           {
             let section = []
             let startIndex = (page-1) * 4
-            for(let i = startIndex; i < (startIndex + 4); i++)
+            for(let i = startIndex; i < (startIndex + 4) && submissions[i] !== undefined; i++)
             {
               section.push(submissions[i])
             }
 
             this.section = section
+            console.log('section arr:', this.section)
           }
 
         },
@@ -245,6 +235,15 @@
           this.sortByDate(this.submissions)
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
+
+          let temp = []
+          for(let i = 0; this.submissions[i] !== null && i < 4; i++)
+          {
+            temp.push(this.submissions[i])
+          }
+          this.section = temp
+          console.log('submissions arr len', this.submissions.length)
+
           }, error => {
             console.error("Reached error in mounted function " , error)
           })
@@ -253,10 +252,6 @@
             this.$router.push('/submissions/empty')
           }
 
-          // for(let i = 0; i < 4; i++)
-          // {
-          //   this.section.push(this.submissions[i])
-          // }
       }, 
       download: function(art_link) {
         console.log(art_link)
