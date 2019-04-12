@@ -974,7 +974,7 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const businessToUpdate = request.body[1];
   const categoriesToUpdate = request.body[0];
   const radios = request.body[3];  // accepted or declined radios
-  const accepted = false;
+  let accepted = false;
   console.log("Accepted status", radios);
   if(radios === 'accepted' || radios === 'Accepted'){
     accepted = true;
@@ -990,25 +990,6 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
 
   console.log('Artist to update is ', artistToUpdate)
   console.log('Business to update is', businessToUpdate)
-
-  // function updateBusiness(business){
-  //     return db.runTransaction(t => {
-  //       let businessRef = db.collection('users').doc(business)
-  //       if(doc.data() != undefined && doc.data().categories != undefined){
-  //         let currCategories = doc.data().categories;  // the state of the users current categories before modification
-  //         for(cat in categoriesToUpdate){
-  //           if(radios == true){
-  //             currCategories[cat].numberAccepted++;
-  //           }
-  //           currCategories[cat].numberResponded++;
-  //         }
-  //         await t.update(businessRef, { categories: currCategories });
-  //         resolve(1);
-  //       }
-  //       reject(0);
-  //   });
-  // }
-
   // If the business hit 'accept' when sending their response, we update both artist and business values.
   // If the business hit 'decline' we only update the businesses values.
 
@@ -1235,361 +1216,171 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
       response.send(err);
     })
   }
-  // function updateBusiness(){
-  //   return new Promise((resolve, reject) =>{
-  //     const currentBusiness = db.collection('users').doc(businessToUpdate).get()
-  //     .then(user => {
-  //       // let person = db.collection('users').doc(userId)
-  //       let currentCategories = user.data().categories
-  //       //console.log('type of currentCategories: ' + typeof currentCategories)
-  //       console.log(JSON.stringify(currentCategories))
-
-  //       for (let i = 0; i < categoriesToUpdate.length; i++) {
-  //         //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-  //         //currentCategories[categoriesToUpdate[i]].count++
-  //         //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-  //         switch (categoriesToUpdate[i]) {
-  //           case 'painting':
-  //             console.log('matched with painting')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 painting: {
-  //                   totalReceived : user.data().categories.painting.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.painting.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'threeD':
-  //             console.log('matched with threeD')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 threeD: {
-  //                   totalReceived : user.data().categories.threeD.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.threeD.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'drawing':
-  //             console.log('matched with drawing')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 drawing: {
-  //                   totalReceived : user.data().categories.drawing.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.drawing.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'sculpting':
-  //             console.log('matched with sculpting')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 sculpting: {
-  //                   totalReceived : user.data().categories.sculpting.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.sculpting.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'design':
-  //             console.log('matched with design')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 design: {
-  //                   totalReceived : user.data().categories.design.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.design.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'multimedia':
-  //             console.log('matched with multimedia')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 multimedia: {
-  //                   totalReceived : user.data().categories.multimedia.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.multimedia.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'blackandwhite':
-  //             console.log('matched with blackandwhite')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 blackandwhite: {
-  //                   totalReceived : user.data().categories.blackandwhite.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.blackandwhite.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'psychedelic':
-  //             console.log('matched with psychedelic')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 psychedelic: {
-  //                   totalReceived : user.data().categories.psychedelic.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.psychedelic.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'portrait':
-  //             console.log('matched with portrait')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 portrait: {
-  //                   totalReceived : user.data().categories.portrait.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.portrait.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'realism':
-  //               console.log('matched with realism')
-  //               batch.set(businessRef, {
-  //                 categories: {
-  //                   realism: {
-  //                     totalReceived : user.data().categories.realism.totalReceived,
-  //                     numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                     numberResponded : user.data().categories.realism.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'abstract':
-  //               console.log('matched with abstract')
-  //               batch.set(businessRef, {
-  //                 categories: {
-  //                   abstract: {
-  //                     totalReceived : user.data().categories.abstract.totalReceived,
-  //                     numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                     numberResponded : user.data().categories.abstract.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-
-  //             default:
-  //               console.log('no cases matched')
-  //           }
-  //         }
-  //         return 
-  //         //return response.send("These categories were updated ", JSON.stringify(currentCategories))
-  //       })
-  //     .then(function () {
-  //       console.log('business updated')
-  //       const status = 1
-  //       resolve();
-  //       //response.send('artist updated')
-  //     })
-  //     .catch(error => {
-  //       console.log('error updating business', error)
-  //       const status = 0
-  //       reject();
-  //       //response.send(error)
-  //     })
-  //   })
-  // }
-  // updateArtist()
-  //   .then(artStatus =>{
-  //     // return updateBusiness()
-  //     console.log('In the first .then of updateArtist')
-  //     updateBusiness()
-  //       .then(function(status){
-  //         console.log('in the first .then of updateBusiness')
-  //         return batch.commit()
-  //       })
-  //       .then(function(){
-  //         console.log('Business and Artists updated')
-  //         response.send('Business and Artists updated')
-  //       })
-  //   })
-
-
-    // .then(function(){
-    //   //return batch.commit()
-    // })
-    // .then(function(){
-    //   console.log('Businesses and Artists updated?')
-    //   response.send('Businesses and Artists updated?')
-    // })
-    // .catch(status => {
-    //   response.send('There was an error in the updateArtist call')
-    // })
-
 })
 
-exports.updateBusinessResponseStats = functions.https.onRequest((request, response) =>{
-  const db = admin.firestore();
-  const artistToUpdate = request.body[2];
-  const businessToUpdate = request.body[1];
-  const categoriesToUpdate = request.body[0];
-  const artistRef = db.collection('users').doc(artistToUpdate);
-  const businessRef = db.collection('users').doc(businessToUpdate);
+// runs once per day. Updates the topBusinesses collection which keeps track of each business in the 
+exports.businessTopCategories = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let search_users = db.collection('users').where('role', '==', 'business').get()
+    .then(function (users) {
+      let categories = ['abstract', 'blackandwhite', 'threeD', 'design', 'drawing', 'multimedia', 'painting', 'portrait', 'psychedelic', 'realism', 'sculpting']
+      let abstract = [], blackandwhite = [], threeD = [], design = [], drawing = [], multimedia = [], painting = [], portrait = [], psychedelic = [], realism = [], sculpting = [];
+
+      users.forEach(function (doc) {
+        // console.log('in for each ')
+        if (doc.data().categories != undefined) {
+          abstract.push({ count: doc.data().categories[categories[0]].responded, value: doc.id, full_data: doc.data() })
+          blackandwhite.push({ count: doc.data().categories[categories[1]].responded, value: doc.id, full_data: doc.data() })
+          threeD.push({ count: doc.data().categories[categories[2]].responded, value: doc.id, full_data: doc.data() })
+          design.push({ count: doc.data().categories[categories[3]].responded, value: doc.id, full_data: doc.data() })
+          drawing.push({ count: doc.data().categories[categories[4]].responded, value: doc.id, full_data: doc.data() })
+          multimedia.push({ count: doc.data().categories[categories[5]].responded, value: doc.id, full_data: doc.data() })
+          painting.push({ count: doc.data().categories[categories[6]].responded, value: doc.id, full_data: doc.data() })
+          portrait.push({ count: doc.data().categories[categories[7]].responded, value: doc.id, full_data: doc.data() })
+          psychedelic.push({ count: doc.data().categories[categories[8]].responded, value: doc.id, full_data: doc.data() })
+          realism.push({ count: doc.data().categories[categories[9]].responded, value: doc.id, full_data: doc.data() })
+          sculpting.push({ count: doc.data().categories[categories[10]].responded, value: doc.id, full_data: doc.data() })
+
+        }
+        // console.log('finishing one instance of for each')
+      })
+
+      // console.log(sculpting)
+
+      abstract.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      blackandwhite.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      threeD.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      design.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      drawing.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      multimedia.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      painting.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      portrait.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      psychedelic.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      realism.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+      sculpting.sort(function (a, b) {
+        return a["count"] - b["count"]
+      })
+
+      // Now we want to store the results into firebase. 
 
 
+      //res.send('done?')
+      // let top_ten_users = []
+      // // Now that we have all users, we will get the top 10 for this category
+      // for (var tenUsers = 0; tenUsers < 10; tenUsers++) {
+      //   //Now push into the top 10 category array
+      //   top_ten_users.push(top_users[top_users.length - 1 - tenUsers])
+
+      // }
+      // console.log(' top ten users are ', top_ten_users)
+
+      // commit('set_top_ten_category', top_ten_users)
+      let object = {
+        abstract: abstract.slice(abstract.length - 10, abstract.length),
+        blackandwhite: blackandwhite.slice(blackandwhite.length - 10, blackandwhite.length),
+        threeD: threeD.slice(threeD.length - 10, threeD.length),
+        design: design.slice(design.length - 10, design.length),
+        drawing: drawing.slice(drawing.length - 10, drawing.length),
+        multimedia: multimedia.slice(multimedia.length - 10, multimedia.length),
+        painting: painting.slice(painting.length - 10, painting.length),
+        portrait: portrait.slice(portrait.length - 10, portrait.length),
+        psychedelic: psychedelic.slice(psychedelic.length - 10, psychedelic.length),
+        realism: realism.slice(realism.length - 10, realism.length),
+        sculpting: sculpting.slice(sculpting.length - 10, sculpting.length)
+      }
+      //  console.log('object here is: ', object)
+      return object
+    })
+    .then(categoryList => {
+      console.log('in the next .then()')
+      let batch = db.batch()
+      for (let key in categoryList) {
+        var catRef = db.collection('most_popular_artist').doc(key);
+        var currentCategory = categoryList[key]
+        console.log('Current sculpting category is ', currentCategory)
+        //let userID = currentCategory.value
+        batch.set(catRef, {
+          user1: {
+            count: currentCategory[9].count,
+            userID: currentCategory[9].value,
+            userData: currentCategory[9].full_data
+          },
+          user2: {
+            count: currentCategory[8].count,
+            userID: currentCategory[8].value,
+            userData: currentCategory[8].full_data
+          },
+          user3: {
+            count: currentCategory[7].count,
+            userID: currentCategory[7].value,
+            userData: currentCategory[7].full_data
+          },
+          user4: {
+            count: currentCategory[6].count,
+            userID: currentCategory[6].value,
+            userData: currentCategory[6].full_data
+          },
+          user5: {
+            count: currentCategory[5].count,
+            userID: currentCategory[5].value,
+            userData: currentCategory[5].full_data
+          },
+          user6: {
+            count: currentCategory[4].count,
+            userID: currentCategory[4].value,
+            userData: currentCategory[4].full_data
+          },
+          user7: {
+            count: currentCategory[3].count,
+            userID: currentCategory[3].value,
+            userData: currentCategory[3].full_data
+          },
+          user8: {
+            count: currentCategory[2].count,
+            userID: currentCategory[2].value,
+            userData: currentCategory[2].full_data
+          },
+          user9: {
+            count: currentCategory[1].count,
+            userID: currentCategory[1].value,
+            userData: currentCategory[1].full_data
+          },
+          userten: {
+            count: currentCategory[0].count,
+            userID: currentCategory[0].value,
+            userData: currentCategory[0].full_data
+          }
+        })
+      }
+      return batch.commit();
+    })
+    .then(() => {
+      response.send('finished');
+    })
+    .catch(error => {
+      response.send(error);
+    })
 })
-
- // let transaction = db.runTransaction(t => {
-  //   return t.get(artistRef)
-  //     .then(doc => {
-  //       for(let i = 0; i < categoryToUpdate.length; i++){
-  //         switch (categoriesToUpdate[i]) {
-  //           case 'painting':
-  //             console.log('matched with painting')
-  //             batch.set(person, {
-  //               categories: {
-  //                 painting: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.painting.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'threeD':
-  //             console.log('matched with threeD')
-  //             batch.set(person, {
-  //               categories: {
-  //                 threeD: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.threeD.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'drawing':
-  //             console.log('matched with drawing')
-  //             batch.set(person, {
-  //               categories: {
-  //                 drawing: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.drawing.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'sculpting':
-  //             console.log('matched with sculpting')
-  //             batch.set(person, {
-  //               categories: {
-  //                 sculpting: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.sculpting.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'design':
-  //             console.log('matched with design')
-  //             batch.set(person, {
-  //               categories: {
-  //                 design: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.design.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'multimedia':
-  //             console.log('matched with multimedia')
-  //             batch.set(person, {
-  //               categories: {
-  //                 multimedia: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.multimedia.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'blackandwhite':
-  //             console.log('matched with blackandwhite')
-  //             batch.set(person, {
-  //               categories: {
-  //                 blackandwhite: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.blackandwhite.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'psychedelic':
-  //             console.log('matched with psychedelic')
-  //             batch.set(person, {
-  //               categories: {
-  //                 psychedelic: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.psychedelic.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'portrait':
-  //             console.log('matched with portrait')
-  //             batch.set(person, {
-  //               categories: {
-  //                 portrait: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.portrait.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'realism':
-  //               console.log('matched with realism')
-  //               batch.set(person, {
-  //                 categories: {
-  //                   realism: {
-  //                     count: currentCategories[categoriesToUpdate[i]].count++,
-  //                     responded: user.data().categories.realism.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'abstract':
-  //               console.log('matched with abstract')
-  //               batch.set(person, {
-  //                 categories: {
-  //                   abstract: {
-  //                     count: currentCategories[categoriesToUpdate[i]].count++,
-  //                     responded: user.data().categories.abstract.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  
-  //             default:
-  //               console.log('no cases matched')
-  //         }
-  //       }
-  //       // Add one to the artist 'accepted' stat
-  //       let newArtistStat = doc.data().categories.category.acceptedAmount + 1;
-  //       t.update(artistRef, {acceptedAmount: newArtistStat});
-  //       // We should also keep track of how many responses the business has made
-  //       let newBusinessStat = doc.data().acceptedAmount + 1;
-  //       t.update(businessRef, {acceptedAmount: newBusinessStat});
-        
-  //     });
-  // })
-  // .then(result => {
-  //   console.log('Transaction success!');
-  //   response.status(200).send("Artist's accepted stat updated.")
-  // })
-  // .catch(err => {
-  //   console.log('Transaction failure:', err);
-  // });
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
