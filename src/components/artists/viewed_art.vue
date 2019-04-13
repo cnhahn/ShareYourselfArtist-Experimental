@@ -2,8 +2,13 @@
   <v-container>
 
     <v-layout >
-      <v-flex xs12 sm6 offset-sm3 fill-height> 
+      <!-- sm6  -->
+      <!-- <v-flex xs12 fill-height>
+        <v-flex xs12 sm6 offset-sm3 fill-height>  -->
+      <v-flex xs12 sm8 offset-sm3 row fill-height> 
+
         <v-card>
+        
           <v-flex> 
             <v-img> 
               <img :src="this.art.url" width="100%" height="100%">
@@ -69,14 +74,14 @@
                   Back
                 </v-btn>
               </div>
-
             </v-card>
           </v-flex>  
 
         </v-card>
+ 
       </v-flex>
-    </v-layout>
 
+    </v-layout>
   </v-container>
 </template>
 <!--

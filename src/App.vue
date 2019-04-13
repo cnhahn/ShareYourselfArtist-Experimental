@@ -277,7 +277,7 @@
       </v-flex>
        <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
   <!-- recently submitted -->
-        <v-card  flat v-if="userIsAuthanticated">
+        <v-card  flat v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'">
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 130px;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
@@ -477,7 +477,7 @@ artist_instagram() {
 },
   sideNavItems() {
     if (this.$store.getters.user_role =='artist'){
-        return this.$store.state.sideNavItems
+      return this.$store.state.sideNavItems
     }else{
       return this.$store.state.business_side_nav_items
     }
