@@ -178,7 +178,7 @@
         nameKey: '',
         rules: [v => v.length > 50 || 'Min 0 characters'],
         page: 1,
-        loading_submissions: false,        
+        loading_submissions: false       
       }
     },
     beforeMount() {
@@ -208,8 +208,20 @@
         // a and b are submissions, return highest date to lowest
         compareDates(a, b)
         {
+          /*let date_converted = function(sub_date){
+            let date = new Date(sub_date);
+            console.log('CMP DATE IS: ' ,date)
+            return date
+          }*/
+
           if (b.submitted_on != null && a.submitted_on != null)
           {
+            
+            /*let sub_date_a = parseInt(a.submitted_on, 10)
+            let sub_date_b = parseInt(b.submitted_on, 10)
+            let date_a = date_converted(sub_date_a)
+            let date_b = date_converted(sub_date_b)
+            return date_b - date_a*/
             return b.submitted_on - a.submitted_on
           }
           else
@@ -259,6 +271,7 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
+        this.loading_submissions = true
         this.$store.dispatch('fetch_all_Submissions').then(response => {
           console.log('here are submissions: ' + this.submissions)
           console.log('here are master submissions: ' + this.master_submissions)
@@ -277,6 +290,23 @@
           console.log("submission numbero dos is null")
           this.$router.push('/submissions/empty')
         }
+        this.loading_submissions = false
+
+        /* Uncomment if you want to display same page every tab
+        if (this.page <= Math.ceil(this.submissions.length / 4))
+        {
+          this.populateSubmissions(this.page, this.submissions)
+        }
+        else
+        {
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }*/
+
+        // reset the page to 1 every time a new tab is selected
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
+
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
         })
@@ -287,6 +317,19 @@
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         })
+
+        /*if (this.page <= Math.ceil(this.submissions.length / 4))
+        {
+          this.populateSubmissions(this.page, this.submissions)
+        }
+        else
+        {
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }*/
+
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Retrieves review requests that have already been responded to */
@@ -294,6 +337,19 @@
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == true
         })
+
+        /* if (this.page <= Math.ceil(this.submissions.length / 4))
+        {
+          this.populateSubmissions(this.page, this.submissions)
+        }
+        else
+        {
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }*/
+
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
@@ -312,16 +368,22 @@
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
       clicked_art(art_unique_timestamp) {
+        //console.log('clicked reply')
+        /* timestamp is not unique
+        There may be multiple arts with the same timestamp. 
+        This will cause the wrong art to be displayed and reviewed */
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
-        let subs = this.submissions
-        let new_subs = this.submissions
-        this.submissions = new_subs
-        let myArray = this.$store.state.submissions_for_this_business
+        //let subs = this.submissions
+        //let new_subs = this.submissions
+        //this.submissions = new_subs
+        let myArray = this.submissions // this.$store.state.submissions_for_this_business
         for (var i = 0; i < myArray.length; i++) {
           if (myArray[i].art.upload_date === nameKey) {
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
+            console.log('title is', this.art_title)
+            console.log('submitted on: ', myArray[i].submitted_on)
             this.instagram = myArray[i].instagram
             this.artist_name = myArray[i].art.artist_name
             this.description = myArray[i].art.description
@@ -349,6 +411,8 @@
             })
           }
         }
+        console.log('final art title: ', this.art_title)
+        console.log('final doc id: ', this.docId)
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         this.dialog = true
       }
