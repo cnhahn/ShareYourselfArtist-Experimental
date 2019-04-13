@@ -258,6 +258,7 @@
 
           }, error => {
             console.error("Reached error in mounted function " , error)
+            this.loading_submissions = false
           })
           if (this.submissions === null) {
             console.log("Got here in sbumissions empty ")
@@ -292,7 +293,8 @@
         }
         this.loading_submissions = false
 
-        /* Uncomment if you want to display same page every tab
+        /* Uncomment if you want to display same page every tab,
+        reset to page 1 if page exceeds actual number of pages
         if (this.page <= Math.ceil(this.submissions.length / 4))
         {
           this.populateSubmissions(this.page, this.submissions)
@@ -314,10 +316,13 @@
 
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
+        this.loading_submissions = true
+
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         })
 
+        this.loading_submissions = false
         /*if (this.page <= Math.ceil(this.submissions.length / 4))
         {
           this.populateSubmissions(this.page, this.submissions)
@@ -334,9 +339,13 @@
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
+        this.loading_submissions = true
+
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == true
         })
+
+        this.loading_submissions = false
 
         /* if (this.page <= Math.ceil(this.submissions.length / 4))
         {
