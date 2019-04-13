@@ -70,7 +70,7 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
+              <v-btn icon @click.native="clicked_art(submission.art.upload_date, submission.docId)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
@@ -376,11 +376,12 @@
         this.dialog = false
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
-      clicked_art(art_unique_timestamp) {
+      clicked_art(art_unique_timestamp, art_unique_id) {
         //console.log('clicked reply')
-        /* timestamp is not unique
+        /* timestamp is not unique.
         There may be multiple arts with the same timestamp. 
-        This will cause the wrong art to be displayed and reviewed */
+        This will cause the wrong art to be displayed.
+        Using doc id instead */
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
         //let subs = this.submissions
@@ -388,7 +389,7 @@
         //this.submissions = new_subs
         let myArray = this.submissions // this.$store.state.submissions_for_this_business
         for (var i = 0; i < myArray.length; i++) {
-          if (myArray[i].art.upload_date === nameKey) {
+          if (myArray[i].art.upload_date === nameKey && myArray[i].docId === art_unique_id) {
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
             console.log('title is', this.art_title)
