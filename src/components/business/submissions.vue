@@ -116,7 +116,7 @@
               </p>
             </v-layout>
             <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{artist_name}}</span></p> </v-layout>
-            <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{instagram}}</span></p> </v-layout>
+            <v-layout row> <p class= "body-2">Instagram: <span class= "body-1">{{instagram}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2"> Submitted on:  <span class= "body-1">{{submitted_on}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2"> Description: <span class= "body-1">{{description}}</span></p> </v-layout>
             <v-text-field
@@ -132,7 +132,7 @@
                 <v-radio label="Accept" value="accepted"></v-radio>
                 <v-radio label="Decline" value="declined"></v-radio>
                 </v-radio-group>
-            <!-- <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn> -->
+            <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn>
             <v-container fluid>
 
   </v-container>
@@ -176,7 +176,7 @@
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 0 characters'],
+        rules: [v => v.length > 50 || 'Min 50 characters'],
         page: 1,
         loading_submissions: false       
       }
@@ -423,6 +423,19 @@
         }
         console.log('final art title: ', this.art_title)
         console.log('final doc id: ', this.docId)
+        console.log('final submitted on: ', this.submitted_on)
+        //console.log('final artist name: ', this.artist_name)
+        //console.log('final instagram: ', this.instagram)
+        // default value of artist name and Instagram is Not Available
+        // to not confuse the user
+        if (this.artist_name === undefined)
+        {
+          this.artist_name = 'N/A'
+        }
+        if (this.instagram === undefined)
+        {
+          this.instagram = 'N/A'
+        }
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         this.dialog = true
       }
