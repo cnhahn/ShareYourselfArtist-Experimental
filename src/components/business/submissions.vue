@@ -204,29 +204,48 @@
           }
 
         },
+        convert_date(sub_submitted_on)
+        {
+          let sub_date = parseInt(sub_submitted_on, 10)
+          let date = new Date(sub_date)
+          return date
+        },
         // used to sort because array.sort sorts alphabetically by default
         // a and b are submissions, return highest date to lowest
         compareDates(a, b)
         {
           /*let date_converted = function(sub_date){
-            let date = new Date(sub_date);
-            console.log('CMP DATE IS: ' ,date)
+            let date = new Date(sub_date)
+            //console.log('CMP DATE IS: ' ,date)
             return date
           }*/
 
-          if (b.submitted_on != null && a.submitted_on != null)
+            /*if(a.art.art_title === 'art_1' || b.art.art_title === 'art_1')
+            {
+              console.log('found art_1')
+              console.log('a: ', a.art.art_title)
+              console.log('a date: ', this.convert_date(a.submitted_on))
+              console.log('b: ', b.art.art_title)
+              console.log('b date: ', this.convert_date(b.submitted_on))
+            }
+            else if (a.art.art_title === 'Luminous' || b.art.art_title === 'Luminous')
+            {
+              console.log('found Luminous')
+            }*/
+
+          if (b.submitted_on !== undefined && a.submitted_on !== undefined)
           {
-            
             /*let sub_date_a = parseInt(a.submitted_on, 10)
             let sub_date_b = parseInt(b.submitted_on, 10)
             let date_a = date_converted(sub_date_a)
             let date_b = date_converted(sub_date_b)
             return date_b - date_a*/
+            
             return b.submitted_on - a.submitted_on
           }
           else
           {
-            // place null submissions at end, assuming these are older submissions
+            // place undefined submissions at end, assuming these are older submissions
             console.log('time submitted not available')
             return -1
 
@@ -238,6 +257,41 @@
         {
           submissions.sort(this.compareDates)
         },
+        checkSortByDate(submissions)
+        {
+          let date_a = null
+          let date_b = null
+          let temp = null
+          for (let i = 0; i < submissions.length - 1; i++)
+          {
+            for (let j = i+1; j < submissions.length; j++)
+            {
+              if (submissions[i].submitted_on !== undefined && submissions[j].submitted_on !== undefined)
+              {
+                date_a = this.convert_date(submissions[i].submitted_on)
+                date_b = this.convert_date(submissions[j].submitted_on)
+
+                if (date_a.getTime() < date_b.getTime())
+                {
+                  // console.log('uh oh')
+                  // this modifies the actual array's elements
+                  temp = submissions[j]
+                  submissions[j] = submissions[i]
+                  submissions[i] = temp
+                }
+                /*if (date_a.getMonth() < date_b.getMonth())
+                {
+                  console.log('a: ', submissions[i].art.art_title)
+                  console.log('month: ', date_a.getMonth())
+                  console.log('b: ', submissions[j].art.art_title)
+                  console.log('month: ', date_b.getMonth())
+                }*/
+              }
+            }
+          }
+
+          return submissions
+        },
         initialImageLoad() {
           this.loading_submissions = true
           this.$store.dispatch('fetch_all_Submissions').then(response => {
@@ -245,6 +299,9 @@
           console.log("Submissions is ", this.submissions)
           // order by most recent upload date
           this.sortByDate(this.submissions)
+
+          this.checkSortByDate(this.submissions)
+
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
 
@@ -278,6 +335,9 @@
           console.log('here are master submissions: ' + this.master_submissions)
           this.submissions = this.$store.getters.submissions_for_this_business
           this.sortByDate(this.submissions)
+
+          this.checkSortByDate(this.submissions)
+
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
           console.log('now here is submissions: ' + this.submissions)
@@ -393,7 +453,7 @@
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
             console.log('title is', this.art_title)
-            console.log('submitted on: ', myArray[i].submitted_on)
+            console.log('submitted on: ', this.convert_date(myArray[i].submitted_on))
             this.instagram = myArray[i].instagram
             this.artist_name = myArray[i].art.artist_name
             this.description = myArray[i].art.description
