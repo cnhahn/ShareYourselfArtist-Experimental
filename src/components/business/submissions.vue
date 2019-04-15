@@ -33,21 +33,7 @@
 
     <v-layout row justify-center>
       <v-layout row wrap mb-5 v-if="submissions">
-
-      <!--<v-flex xs12 sm6>
-        <div class = "mt-1">
-          <v-progress-circular
-            v-if="loading_submissions"
-            indeterminate
-            color="primary">
-          </v-progress-circular>
-        </div>
-      </v-flex>-->
-
         <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in section" :key='submission.id'>
-
-          <!--<div v-if="submissions[page-1]===submission">-->
-
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -86,9 +72,6 @@
           </v-card-text>
         </v-slide-y-transition>
           </v-card>
-
-        <!--</div>-->
-
         </v-flex>
       </v-layout>
 
@@ -204,9 +187,9 @@
           }
 
         },
-        convert_date(sub_submitted_on)
+        convert_date(submitted_on)
         {
-          let sub_date = parseInt(sub_submitted_on, 10)
+          let sub_date = parseInt(submitted_on, 10)
           let date = new Date(sub_date)
           return date
         },
@@ -214,33 +197,9 @@
         // a and b are submissions, return highest date to lowest
         compareDates(a, b)
         {
-          /*let date_converted = function(sub_date){
-            let date = new Date(sub_date)
-            //console.log('CMP DATE IS: ' ,date)
-            return date
-          }*/
-
-            /*if(a.art.art_title === 'art_1' || b.art.art_title === 'art_1')
-            {
-              console.log('found art_1')
-              console.log('a: ', a.art.art_title)
-              console.log('a date: ', this.convert_date(a.submitted_on))
-              console.log('b: ', b.art.art_title)
-              console.log('b date: ', this.convert_date(b.submitted_on))
-            }
-            else if (a.art.art_title === 'Luminous' || b.art.art_title === 'Luminous')
-            {
-              console.log('found Luminous')
-            }*/
 
           if (b.submitted_on !== undefined && a.submitted_on !== undefined)
-          {
-            /*let sub_date_a = parseInt(a.submitted_on, 10)
-            let sub_date_b = parseInt(b.submitted_on, 10)
-            let date_a = date_converted(sub_date_a)
-            let date_b = date_converted(sub_date_b)
-            return date_b - date_a*/
-            
+          { 
             return b.submitted_on - a.submitted_on
           }
           else
@@ -249,6 +208,7 @@
             console.log('time submitted not available')
             return -1
 
+            // upload_date is not accurate. don't use it
             //return b.art.upload_date - a.art.upload_date
           }
         },
@@ -257,6 +217,7 @@
         {
           submissions.sort(this.compareDates)
         },
+        // sort again, by most recent upload date first
         checkSortByDate(submissions)
         {
           let date_a = null
@@ -271,21 +232,15 @@
                 date_a = this.convert_date(submissions[i].submitted_on)
                 date_b = this.convert_date(submissions[j].submitted_on)
 
+                // most recent = submission a should happen after submission b
+                // check if that's not the case
                 if (date_a.getTime() < date_b.getTime())
                 {
-                  // console.log('uh oh')
                   // this modifies the actual array's elements
                   temp = submissions[j]
                   submissions[j] = submissions[i]
                   submissions[i] = temp
                 }
-                /*if (date_a.getMonth() < date_b.getMonth())
-                {
-                  console.log('a: ', submissions[i].art.art_title)
-                  console.log('month: ', date_a.getMonth())
-                  console.log('b: ', submissions[j].art.art_title)
-                  console.log('month: ', date_b.getMonth())
-                }*/
               }
             }
           }
@@ -299,7 +254,8 @@
           console.log("Submissions is ", this.submissions)
           // order by most recent upload date
           this.sortByDate(this.submissions)
-
+          // sort doesn't order correctly,
+          // this sorts by checking every submission but is very slow
           this.checkSortByDate(this.submissions)
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
@@ -354,7 +310,10 @@
         this.loading_submissions = false
 
         /* Uncomment if you want to display same page every tab,
-        reset to page 1 if page exceeds actual number of pages
+        and reset to page 1 if page exceeds actual number of pages.
+        Used in
+        fetch_submissions, submissions_unreplied_submissions, and
+        submissions_replied_submissions
         if (this.page <= Math.ceil(this.submissions.length / 4))
         {
           this.populateSubmissions(this.page, this.submissions)
@@ -383,15 +342,6 @@
         })
 
         this.loading_submissions = false
-        /*if (this.page <= Math.ceil(this.submissions.length / 4))
-        {
-          this.populateSubmissions(this.page, this.submissions)
-        }
-        else
-        {
-          this.page = 1
-          this.populateSubmissions(this.page, this.submissions)
-        }*/
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -406,16 +356,6 @@
         })
 
         this.loading_submissions = false
-
-        /* if (this.page <= Math.ceil(this.submissions.length / 4))
-        {
-          this.populateSubmissions(this.page, this.submissions)
-        }
-        else
-        {
-          this.page = 1
-          this.populateSubmissions(this.page, this.submissions)
-        }*/
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -437,23 +377,17 @@
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
       clicked_art(art_unique_timestamp, art_unique_id) {
-        //console.log('clicked reply')
-        /* timestamp is not unique.
+        /* Timestamp is not unique.
         There may be multiple arts with the same timestamp. 
         This will cause the wrong art to be displayed.
-        Using doc id instead */
+        Using doc id instead. */
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
-        //let subs = this.submissions
-        //let new_subs = this.submissions
-        //this.submissions = new_subs
         let myArray = this.submissions // this.$store.state.submissions_for_this_business
         for (var i = 0; i < myArray.length; i++) {
           if (myArray[i].art.upload_date === nameKey && myArray[i].docId === art_unique_id) {
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
-            console.log('title is', this.art_title)
-            console.log('submitted on: ', this.convert_date(myArray[i].submitted_on))
             this.instagram = myArray[i].instagram
             this.artist_name = myArray[i].art.artist_name
             this.description = myArray[i].art.description
@@ -481,11 +415,6 @@
             })
           }
         }
-        console.log('final art title: ', this.art_title)
-        console.log('final doc id: ', this.docId)
-        console.log('final submitted on: ', this.submitted_on)
-        //console.log('final artist name: ', this.artist_name)
-        //console.log('final instagram: ', this.instagram)
         // default value of artist name and Instagram is Not Available
         // to not confuse the user
         if (this.artist_name === undefined)
