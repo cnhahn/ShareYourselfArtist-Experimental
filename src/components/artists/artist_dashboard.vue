@@ -1,3 +1,4 @@
+
 <template>
   <div  v-if="loading" class="loading_holder">
     <div class="spinner_holder">
@@ -215,25 +216,22 @@
         <v-tab-item>
           <v-layout pa-4 row wrap justify-center>
             <v-flex xs6 v-for="art in recently_responded_arts">
-                <v-card
-                :key='art'
-                >
-                  <v-img 
-                  :src="art.url"
-                  >
-                  </v-img>
-                  <v-card-title primary-title>
-                    <div>
-                      <h3 class="headline mb-0">Art Title: {{art.art_title}}</h3>
-                      <p>Description: {{art.description}} </p>
-                    </div>
-                  </v-card-title>
-                  <v-card-text >
-                    <div>
-                      <p >Response from <b>{{art.business_name}}</b>, "{{art.response}}"</p>
-                    </div>
-                  </v-card-text>
-                </v-card>
+              <v-card :key='art' dark height="100%">
+                <v-card-media  img :src="art.url" height="450px"></v-card-media>
+              
+                <v-card-title primary-title>
+                  <div class="headline mb-0 ">
+                    <h3>  {{art.art_title}} </h3>
+                    <p>Description: {{art.description}} </p>
+                  </div>
+                </v-card-title>
+                <v-card-text >
+                  <div class ="title">
+                    <p style="text-decoration: underline;" >Response from <b>{{art.business_name}} : </b>
+                    <p> {{art.response}}</p>
+                  </div>
+                </v-card-text>
+              </v-card>
             </v-flex>
           </v-layout>
         </v-tab-item>
@@ -246,6 +244,7 @@
 
 
 <script>
+
 /*  buttons for delete can be found on lines 80 and 112*/
   export default {
     /*
@@ -460,9 +459,6 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
-  }
-  p {
-    word-break: break-all;
   }
   .loading_holder {
     width: 100vw;
