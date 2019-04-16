@@ -165,7 +165,7 @@
     beforeMount() {
     },
     mounted(){
-      this.initialImageLoad();
+      this.initialImageLoad()
     },
     methods:{
         // populate submissions array depending on the current page selected
@@ -184,6 +184,25 @@
             console.log('section arr:', this.section)
           }
 
+        },
+        // search the most recent page with the selected art title
+        findPage(title, submissions)
+        {
+          let currPage = 1
+
+          if(submissions.length !== undefined && submissions.length !== 0)
+          {
+            for (let i = 0; i < submissions.length && submissions[i] !== undefined; i++)
+            {
+              currPage = Math.floor(i / 4) + 1
+              //console.log('current page: ', currPage)
+              if (submissions[i].art.art_title === title)
+              {
+                //console.log('found ', title, ' at page ', currPage)
+                return currPage
+              }
+            }
+          }
         },
         convert_date(submitted_on)
         {
@@ -266,6 +285,9 @@
           }
           this.section = temp
           console.log('submissions arr len', this.submissions.length)
+
+          //this.page = this.findPage('Street at Night', this.submissions)
+          //this.populateSubmissions(this.page, this.submissions)
 
           }, error => {
             console.error("Reached error in mounted function " , error)
