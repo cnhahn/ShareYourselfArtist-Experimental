@@ -300,15 +300,6 @@ If user already has maximum credits - run function, still update lastRanTime
 // })
 
 
-/*
-  This function will update each artists free credit amount to 2 each week. It is hooked up
-  to a AWS CloudWatch CRON job so that it runs weekly
-
-  FUTURE TODO: The batch update used here can only do a maximum of 500 writes. As of writing
-  this function there are only 432 artists so everything is fine. Later on we will have to do 
-  multiple batch writes if there are greater than 500 artists.
-*/
-
 exports.updateUserCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let batch = db.batch()
@@ -722,12 +713,14 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
 
 /*
 giveBusinessCategories:
-A function meant to RUN ONCE in order to update all businesses in the 
+A function meant to RUN ONCE in order to update a specific business in the 
 'user' collection so that they have these new entries. All new businesses should either have these 
 fields by default when creating their account, or the fields will be created when they receive/respond (to) a review-request.
 
+Use this to reset a business back to default. Please only use this for very special debugging cases such as resetting a 
+admin test business account. There should be no real reason to reset an actual customer
 */
-exports.giveBusinessCategories = functions.https.onRequest((request, response) => {
+exports.resetBusinessCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let person = db.collection('users').doc('yekGAvzU5fZKh49e6w0tJuRmFFg1')
 
@@ -803,6 +796,84 @@ exports.giveBusinessCategories = functions.https.onRequest((request, response) =
   });
 })
 
+exports.giveAllBusinessesCategories = functions.https.onRequest((request, response) => {
+  let batch = admin.firestore().batch()
+  let db = admin.firestore()
+  let categoryObj = {
+    drawing : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0                  
+    },
+    painting : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    sculpting:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    design:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    threeD : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    multimedia : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    blackandwhite :{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    psychedelic:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    portrait:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    realism: {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    abstract: {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    }
+  }
+  
+  let users = db.collection('users').where('role', '==', 'business').get()
+    .then(snapshot => {
+      let promises = []
+      snapshot.forEach(doc =>{
+        promises.push(doc)
+      })
+      return Promise.all(promises)
+    })
+    .then(businesses => {
+      businesses.forEach(business=>{
+        let bRef = business.id
+        if(business.data().categories != undefined){
+          batch.update(bRef, {categories: categoryObj})
+        }
+      })
+    })
+})
 // This function is triggerred when an artist uploads artwork to their dashboard. We track 
 // which category of artwork the artist chose so that we can recommend them artists/artwork according to
 // their most popular categorie(s)
