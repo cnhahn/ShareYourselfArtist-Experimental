@@ -862,15 +862,18 @@ exports.giveAllBusinessesCategories = functions.https.onRequest((request, respon
       let promises = []
       snapshot.forEach(doc =>{
         promises.push(doc)
+        console.log('current snapshot: ', snapshot)
       })
       return Promise.all(promises)
     })
     .then(businesses => {
+      console.log('LIST OF PROMISES:')
+      console.log(businesses)
       businesses.forEach(business=>{
-        let bRef = business.id
-        if(business.data().categories != undefined){
-          batch.update(bRef, {categories: categoryObj})
-        }
+        let ID = business.data().userId
+        console.log('Current business to update: ', ID)
+        let bRef = db.collection('users').doc(ID)
+        batch.set(bRef, {categories: categoryObj}, {merge: true})
       })
       return batch.commit()
     })
