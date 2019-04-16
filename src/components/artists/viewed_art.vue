@@ -31,11 +31,19 @@
 
           <v-card-title primary-title>
             <div>
-              <div class="headline mb-0">
+              <div class="title mb-1">
                 <h2>
                   {{this.art.art_title}}
                 </h2>
               </div>
+
+            <div>
+              <div class="mb-2">
+                <h3>
+                    by {{this.art.artist_name}}
+                </h3>
+              </div>
+            </div>
 
               <div>
                 <p class="text-sm-left">
@@ -58,13 +66,18 @@
                 </template>
               </v-list>
 
-              <div class = "small-container">
-                <v-text-field label="Comment" single-line v-model="comment"> 
-                </v-text-field>
+              <div class = "small-container my-2">
+                <v-text-field 
+                  solo
+                  class="commenting"
+                  label="Add Comment.."
+                  single-line
+                  v-model="comment"
+                ></v-text-field>
               </div>
               
-              <div mb-5 class="small-container-btn">
-                <v-btn v-if= "!this.comment.length"  disabled  small>
+              <div class="small-container-btn my-2">
+                <v-btn v-if= "!this.comment.length" disabled small>
                   Send
                 </v-btn>
                 <v-btn v-else depressed small dark color="black" @click="save_comment(art)">
@@ -202,6 +215,7 @@ import * as firebase from 'firebase'
           art_title: localStorage.getItem('art_title'),
           description: localStorage.getItem('description'),
           upload_date: localStorage.getItem('upload_date'),
+          artist_name: localStorage.getItem('artist_name'),
           newComment:''
         },
 
