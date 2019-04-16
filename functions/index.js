@@ -872,7 +872,15 @@ exports.giveAllBusinessesCategories = functions.https.onRequest((request, respon
           batch.update(bRef, {categories: categoryObj})
         }
       })
+      return batch.commit()
     })
+    .then(r => {
+      response.send('All businesses updated')
+    })
+    .catch(error =>{
+      response.send(error)
+    })
+
 })
 // This function is triggerred when an artist uploads artwork to their dashboard. We track 
 // which category of artwork the artist chose so that we can recommend them artists/artwork according to
