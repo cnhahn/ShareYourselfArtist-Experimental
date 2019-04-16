@@ -57,8 +57,8 @@ import {
   VSelect,
   VMenu,
   VDialog,
-  VRadioGroup
-
+  VRadioGroup,
+  VPagination
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import VueResource from '../node_modules/vue-resource';
@@ -107,7 +107,8 @@ Vue.use(Vuetify, {
     VSelect,
     VMenu,
     VDialog,
-    VRadioGroup
+    VRadioGroup,
+    VPagination
   },
   theme: {
     primary: '#FF7D27',

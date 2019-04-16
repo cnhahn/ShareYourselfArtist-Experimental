@@ -107,7 +107,6 @@
               </v-card>
             </v-flex>
 
-
             <v-flex xs6 v-if="def.length != 0"  v-for="art,index in def" :key='art.id'>
 
               <v-card mt-3>
@@ -159,9 +158,16 @@
 
               </v-card>
             </v-flex>
-
             
           </v-layout>
+          <!-- <v-container>
+            <div class="text-xs-center mb-5">
+              <v-pagination
+                v-model="page"
+                :length="Math.ceil(submissions.length / 4)"
+              ></v-pagination>
+            </div>
+          </v-container> -->
         </v-tab-item>
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
@@ -270,6 +276,7 @@
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        page: 1
       }
     },
     mounted(){
