@@ -46,8 +46,6 @@
                   <v-spacer></v-spacer>
                   <div v-if="submission.instagram"><h3 class="mb-0">{{submission.instagram}}</h3></div>
                 </v-flex>
-                <v-flex>
-                </v-flex>
               </div>
               </v-card-title>
             </v-layout>
