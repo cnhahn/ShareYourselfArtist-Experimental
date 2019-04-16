@@ -1397,7 +1397,7 @@ exports.businessTopCategories = functions.https.onRequest((request, response) =>
       console.log('in the next .then()')
       let batch = db.batch()
       for (let key in categoryList) {
-        var catRef = db.collection('most_popular_artist').doc(key);
+        var catRef = db.collection('business_stats').doc(key);
         var currentCategory = categoryList[key]
         console.log('Current sculpting category is ', currentCategory)
         //let userID = currentCategory.value
