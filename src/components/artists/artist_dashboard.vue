@@ -53,9 +53,16 @@
 
             <v-flex xs3> </v-flex>
 
+<<<<<<< HEAD
             <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
               <v-card  dark mt-3>
                 <v-card-media class="white" img :src="art.url" height="450px">
+=======
+            <!-- <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'> -->
+            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in section" :key='art.id'>
+              <v-card mt-3>
+                <v-card-media img :src="art.url" height="450px">
+>>>>>>> cdbe4c1c1f75764e9ae364c336cfc85417382b5f
                 </v-card-media>
 
                 <v-card-title primary-title>
@@ -106,7 +113,6 @@
 
               </v-card>
             </v-flex>
-
 
             <v-flex xs6 v-if="def.length != 0"  v-for="art,index in def" :key='art.id'>
 
@@ -159,9 +165,16 @@
 
               </v-card>
             </v-flex>
-
             
           </v-layout>
+          <v-container>
+            <div class="text-xs-center mb-5">
+              <v-pagination
+                v-model="page"
+                :length="Math.ceil(arts.length / 4)"
+              ></v-pagination>
+            </div>
+          </v-container>
         </v-tab-item>
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
@@ -270,11 +283,12 @@
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        page: 1,
+        section: []
       }
     },
     mounted(){
       this.respondedArts()
-
     },
     computed: {
       users_top_category(){
@@ -289,6 +303,7 @@
       },
       arts() {
         let arts = this.$store.getters.allArts;
+        this.populateSubmissions(this.page, arts)
 
         function compare(a, b) {
           const upload_date1 = a.upload_date
@@ -318,6 +333,22 @@
       },
     },
     methods: {
+      // populate submissions array depending on the current page selected
+      populateSubmissions(page, submissions)
+      {
+        if(submissions.length !== undefined && submissions.length !== 0)
+        {
+          let section = []
+          let startIndex = (page-1) * 4
+          for(let i = startIndex; i < (startIndex + 4) && submissions[i] !== undefined; i++)
+          {
+            section.push(submissions[i])
+          }
+
+          this.section = section
+          console.log('section arr:', this.section)
+        }
+      },
       go_to_viewed_artist_page(index){
         //const test = this.$store.getters.top_12_recent_art
         //console.log('this.items[index] $#$#%#^#^', test[index])
@@ -451,7 +482,13 @@
             })
         }
       },
-    }
+    },
+    watch: {
+      page: function (val) {
+        let arts = this.$store.getters.allArts;
+        this.populateSubmissions(val, arts)
+      }
+    },
 }
 </script>
 <style scope>

@@ -4,11 +4,36 @@
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
+
+    <!-- <v-layout row wrap justify-center>
+    <v-flex xs12 md12 sm6>
+      <div class = "text-xs-center">
+        <v-spacer></v-spacer> 
+        <v-progress-circular
+          v-if="loading_submissions"
+          indeterminate
+          color="primary">
+        </v-progress-circular>
+      </div>
+    </v-flex>
+    </v-layout> -->
+
+    <div class = "text-xs-center">
+      <div v-if="loading_submissions">
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+      </div> 
+      <v-progress-circular
+        v-if="loading_submissions"
+        indeterminate
+        color="primary">
+      </v-progress-circular>
+    </div>
+
     <v-layout row justify-center>
       <v-layout row wrap mb-5 v-if="submissions">
-        <!-- <div v-if="submissions"> -->
-        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in submissions " :key='submission.id'>
-          <!-- <div v-if="submission"> -->
+        <v-flex xs12 lg4 offset-lg1 mt-5 v-for ="submission in section" :key='submission.id'>
           <v-card>
             <v-card-media :src= "submission.art.url" height="300px"></v-card-media>
             <v-layout row>
@@ -17,9 +42,6 @@
                 <v-flex>
                   <h4 class="mb-0">{{submission.art.art_title}}</h4>
                   <v-layout row >
-                    <!-- <div class="text-xs-center" v-for="(c, index) in 3">
-                      <v-chip>{{ submission.art.categories[index] }}</v-chip>
-                    </div> -->
                   </v-layout>
                   <v-spacer></v-spacer>
                   <div v-if="submission.instagram"><h3 class="mb-0">{{submission.instagram}}</h3></div>
@@ -34,8 +56,7 @@
                   <v-icon color="red" v-if="submission.submission_response.radios == 'declined'">close</v-icon>
                   <v-icon color="green" v-if="submission.submission_response.radios == 'accepted'">check</v-icon>
                </div>
-              <!--<v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.submission_response == undefined"><v-icon>reply</v-icon></v-btn>-->
-              <v-btn icon @click.native="clicked_art(submission.art.upload_date)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
+              <v-btn icon @click.native="clicked_art(submission.art.upload_date, submission.docId)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
               <v-spacer></v-spacer>
@@ -51,11 +72,9 @@
           </v-card-text>
         </v-slide-y-transition>
           </v-card>
-        <!-- </div> -->
         </v-flex>
-        <!-- </div> -->
-
       </v-layout>
+
     <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <v-card>
         <v-toolbar dark color="primary">
@@ -80,7 +99,7 @@
               </p>
             </v-layout>
             <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{artist_name}}</span></p> </v-layout>
-            <v-layout row> <p class= "body-2">Artist Name: <span class= "body-1">{{instagram}}</span></p> </v-layout>
+            <v-layout row> <p class= "body-2">Instagram: <span class= "body-1">{{instagram}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2"> Submitted on:  <span class= "body-1">{{submitted_on}}</span></p> </v-layout>
             <v-layout row> <p class= "body-2"> Description: <span class= "body-1">{{description}}</span></p> </v-layout>
             <v-text-field
@@ -99,12 +118,18 @@
             <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn>
             <v-container fluid>
 
-  </v-container>
+            </v-container>
           </v-flex>
         </v-layout>
       </v-card>
     </v-dialog>
   </v-layout>
+    <div class="text-xs-center mb-5">
+      <v-pagination
+        v-model="page"
+        :length="Math.ceil(submissions.length / 4)"
+      ></v-pagination>
+    </div>
   </v-container>
 </template>
 
@@ -129,30 +154,130 @@
         categories: [],
         master_submissions: [],
         submissions: [],
+        section: [],
         read_submissions: [],
         unread_submissions: [],
         sub_list: [],
         nameKey: '',
-        rules: [v => v.length > 50 || 'Min 50 characters']
+        rules: [v => v.length > 50 || 'Min 50 characters'],
+        page: 1,
+        loading_submissions: false       
       }
+    },
+    beforeMount() {
     },
     mounted(){
       this.initialImageLoad();
     },
-
     methods:{
+        // populate submissions array depending on the current page selected
+        populateSubmissions(page, submissions)
+        {
+          if(submissions.length !== undefined && submissions.length !== 0)
+          {
+            let section = []
+            let startIndex = (page-1) * 4
+            for(let i = startIndex; i < (startIndex + 4) && submissions[i] !== undefined; i++)
+            {
+              section.push(submissions[i])
+            }
+
+            this.section = section
+            console.log('section arr:', this.section)
+          }
+
+        },
+        convert_date(submitted_on)
+        {
+          let sub_date = parseInt(submitted_on, 10)
+          let date = new Date(sub_date)
+          return date
+        },
+        // used to sort because array.sort sorts alphabetically by default
+        // a and b are submissions, return highest date to lowest
+        compareDates(a, b)
+        {
+
+          if (b.submitted_on !== undefined && a.submitted_on !== undefined)
+          { 
+            return b.submitted_on - a.submitted_on
+          }
+          else
+          {
+            // place undefined submissions at end, assuming these are older submissions
+            console.log('time submitted not available')
+            return -1
+
+            // upload_date is not accurate. don't use it
+            //return b.art.upload_date - a.art.upload_date
+          }
+        },
+        // sort submissions by most recent upload date
+        sortByDate(submissions)
+        {
+          submissions.sort(this.compareDates)
+        },
+        // sort again, by most recent upload date first
+        checkSortByDate(submissions)
+        {
+          let date_a = null
+          let date_b = null
+          let temp = null
+          for (let i = 0; i < submissions.length - 1; i++)
+          {
+            for (let j = i+1; j < submissions.length; j++)
+            {
+              if (submissions[i].submitted_on !== undefined && submissions[j].submitted_on !== undefined)
+              {
+                date_a = this.convert_date(submissions[i].submitted_on)
+                date_b = this.convert_date(submissions[j].submitted_on)
+
+                // most recent = submission a should happen after submission b
+                // check if that's not the case
+                if (date_a.getTime() < date_b.getTime())
+                {
+                  // this modifies the actual array's elements
+                  temp = submissions[j]
+                  submissions[j] = submissions[i]
+                  submissions[i] = temp
+                }
+              }
+            }
+          }
+
+          return submissions
+        },
         initialImageLoad() {
+          this.loading_submissions = true
           this.$store.dispatch('fetch_all_Submissions').then(response => {
           this.submissions = this.$store.getters.submissions_for_this_business
           console.log("Submissions is ", this.submissions)
+          // order by most recent upload date
+          this.sortByDate(this.submissions)
+          // sort doesn't order correctly,
+          // this sorts by checking every submission but is very slow
+          this.checkSortByDate(this.submissions)
+
           this.master_submissions = this.$store.getters.submissions_for_this_business
+          this.loading_submissions = false
+
+          let temp = []
+          for(let i = 0; this.submissions[i] !== null && i < 4; i++)
+          {
+            temp.push(this.submissions[i])
+          }
+          this.section = temp
+          console.log('submissions arr len', this.submissions.length)
+
           }, error => {
             console.error("Reached error in mounted function " , error)
+            this.loading_submissions = false
           })
           if (this.submissions === null) {
             console.log("Got here in sbumissions empty ")
             this.$router.push('/submissions/empty')
           }
+
       }, 
       download: function(art_link) {
         console.log(art_link)
@@ -160,10 +285,15 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
+        this.loading_submissions = true
         this.$store.dispatch('fetch_all_Submissions').then(response => {
           console.log('here are submissions: ' + this.submissions)
           console.log('here are master submissions: ' + this.master_submissions)
           this.submissions = this.$store.getters.submissions_for_this_business
+          this.sortByDate(this.submissions)
+
+          this.checkSortByDate(this.submissions)
+
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
           console.log('now here is submissions: ' + this.submissions)
@@ -177,6 +307,27 @@
           console.log("submission numbero dos is null")
           this.$router.push('/submissions/empty')
         }
+        this.loading_submissions = false
+
+        /* Uncomment if you want to display same page every tab,
+        and reset to page 1 if page exceeds actual number of pages.
+        Used in
+        fetch_submissions, submissions_unreplied_submissions, and
+        submissions_replied_submissions
+        if (this.page <= Math.ceil(this.submissions.length / 4))
+        {
+          this.populateSubmissions(this.page, this.submissions)
+        }
+        else
+        {
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }*/
+
+        // reset the page to 1 every time a new tab is selected
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
+
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
         })
@@ -184,16 +335,30 @@
 
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
+        this.loading_submissions = true
+
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == undefined || review.replied == false
         })
+
+        this.loading_submissions = false
+
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
+        this.loading_submissions = true
+
         this.submissions = this.master_submissions.filter((review) => {
           return review.replied == true
         })
+
+        this.loading_submissions = false
+
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
@@ -211,15 +376,16 @@
         this.dialog = false
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
-      clicked_art(art_unique_timestamp) {
+      clicked_art(art_unique_timestamp, art_unique_id) {
+        /* Timestamp is not unique.
+        There may be multiple arts with the same timestamp. 
+        This will cause the wrong art to be displayed.
+        Using doc id instead. */
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
-        let subs = this.submissions
-        let new_subs = this.submissions
-        this.submissions = new_subs
-        let myArray = this.$store.state.submissions_for_this_business
+        let myArray = this.submissions // this.$store.state.submissions_for_this_business
         for (var i = 0; i < myArray.length; i++) {
-          if (myArray[i].art.upload_date === nameKey) {
+          if (myArray[i].art.upload_date === nameKey && myArray[i].docId === art_unique_id) {
             this.art_being_replied = myArray[i]
             this.art_title = myArray[i].art.art_title
             this.instagram = myArray[i].instagram
@@ -248,6 +414,16 @@
               docId: myArray[i].docId
             })
           }
+        }
+        // default value of artist name and Instagram is Not Available
+        // to not confuse the user
+        if (this.artist_name === undefined)
+        {
+          this.artist_name = 'N/A'
+        }
+        if (this.instagram === undefined)
+        {
+          this.instagram = 'N/A'
         }
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         this.dialog = true
@@ -278,6 +454,11 @@
             this.art_being_replied = myArray[i];
           }
         }
+      }
+    },
+    watch: {
+      page: function (val) {
+       this.populateSubmissions(val, this.submissions)
       }
     },
 
