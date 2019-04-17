@@ -1311,17 +1311,17 @@ exports.businessTopCategories = functions.https.onRequest((request, response) =>
       users.forEach(function (doc) {
         // console.log('in for each ')
         if (doc.data().categories != undefined) {
-          abstract.push({ count: doc.data().categories[categories[0]].responded, value: doc.id, full_data: doc.data() })
-          blackandwhite.push({ count: doc.data().categories[categories[1]].responded, value: doc.id, full_data: doc.data() })
-          threeD.push({ count: doc.data().categories[categories[2]].responded, value: doc.id, full_data: doc.data() })
-          design.push({ count: doc.data().categories[categories[3]].responded, value: doc.id, full_data: doc.data() })
-          drawing.push({ count: doc.data().categories[categories[4]].responded, value: doc.id, full_data: doc.data() })
-          multimedia.push({ count: doc.data().categories[categories[5]].responded, value: doc.id, full_data: doc.data() })
-          painting.push({ count: doc.data().categories[categories[6]].responded, value: doc.id, full_data: doc.data() })
-          portrait.push({ count: doc.data().categories[categories[7]].responded, value: doc.id, full_data: doc.data() })
-          psychedelic.push({ count: doc.data().categories[categories[8]].responded, value: doc.id, full_data: doc.data() })
-          realism.push({ count: doc.data().categories[categories[9]].responded, value: doc.id, full_data: doc.data() })
-          sculpting.push({ count: doc.data().categories[categories[10]].responded, value: doc.id, full_data: doc.data() })
+          abstract.push({ numberResponded: doc.data().categories[categories[0]].numberResponded, value: doc.id, full_data: doc.data() })
+          blackandwhite.push({ numberResponded: doc.data().categories[categories[1]].numberResponded, value: doc.id, full_data: doc.data() })
+          threeD.push({ numberResponded: doc.data().categories[categories[2]].numberResponded, value: doc.id, full_data: doc.data() })
+          design.push({ numberResponded: doc.data().categories[categories[3]].numberResponded, value: doc.id, full_data: doc.data() })
+          drawing.push({ numberResponded: doc.data().categories[categories[4]].numberResponded, value: doc.id, full_data: doc.data() })
+          multimedia.push({ numberResponded: doc.data().categories[categories[5]].numberResponded, value: doc.id, full_data: doc.data() })
+          painting.push({ numberResponded: doc.data().categories[categories[6]].numberResponded, value: doc.id, full_data: doc.data() })
+          portrait.push({ numberResponded: doc.data().categories[categories[7]].numberResponded, value: doc.id, full_data: doc.data() })
+          psychedelic.push({ numberResponded: doc.data().categories[categories[8]].numberResponded, value: doc.id, full_data: doc.data() })
+          realism.push({ numberResponded: doc.data().categories[categories[9]].numberResponded, value: doc.id, full_data: doc.data() })
+          sculpting.push({ numberResponded: doc.data().categories[categories[10]].numberResponded, value: doc.id, full_data: doc.data() })
 
         }
         // console.log('finishing one instance of for each')
@@ -1330,37 +1330,37 @@ exports.businessTopCategories = functions.https.onRequest((request, response) =>
       // console.log(sculpting)
 
       abstract.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       blackandwhite.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       threeD.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       design.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       drawing.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       multimedia.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       painting.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       portrait.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       psychedelic.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       realism.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
       sculpting.sort(function (a, b) {
-        return a["count"] - b["count"]
+        return a["numberResponded"] - b["numberResponded"]
       })
 
       // Now we want to store the results into firebase. 
@@ -1403,52 +1403,52 @@ exports.businessTopCategories = functions.https.onRequest((request, response) =>
         //let userID = currentCategory.value
         batch.set(catRef, {
           user1: {
-            count: currentCategory[9].count,
+            numberResponded: currentCategory[9].numberResponded,
             userID: currentCategory[9].value,
             userData: currentCategory[9].full_data
           },
           user2: {
-            count: currentCategory[8].count,
+            numberResponded: currentCategory[8].numberResponded,
             userID: currentCategory[8].value,
             userData: currentCategory[8].full_data
           },
           user3: {
-            count: currentCategory[7].count,
+            numberResponded: currentCategory[7].numberResponded,
             userID: currentCategory[7].value,
             userData: currentCategory[7].full_data
           },
           user4: {
-            count: currentCategory[6].count,
+            numberResponded: currentCategory[6].numberResponded,
             userID: currentCategory[6].value,
             userData: currentCategory[6].full_data
           },
           user5: {
-            count: currentCategory[5].count,
+            numberResponded: currentCategory[5].numberResponded,
             userID: currentCategory[5].value,
             userData: currentCategory[5].full_data
           },
           user6: {
-            count: currentCategory[4].count,
+            numberResponded: currentCategory[4].numberResponded,
             userID: currentCategory[4].value,
             userData: currentCategory[4].full_data
           },
           user7: {
-            count: currentCategory[3].count,
+            numberResponded: currentCategory[3].numberResponded,
             userID: currentCategory[3].value,
             userData: currentCategory[3].full_data
           },
           user8: {
-            count: currentCategory[2].count,
+            numberResponded: currentCategory[2].numberResponded,
             userID: currentCategory[2].value,
             userData: currentCategory[2].full_data
           },
           user9: {
-            count: currentCategory[1].count,
+            numberResponded: currentCategory[1].numberResponded,
             userID: currentCategory[1].value,
             userData: currentCategory[1].full_data
           },
           userten: {
-            count: currentCategory[0].count,
+            numberResponded: currentCategory[0].numberResponded,
             userID: currentCategory[0].value,
             userData: currentCategory[0].full_data
           }
