@@ -160,14 +160,14 @@
             </v-flex>
             
           </v-layout>
-          <!-- <v-container>
+          <v-container>
             <div class="text-xs-center mb-5">
               <v-pagination
                 v-model="page"
-                :length="Math.ceil(submissions.length / 4)"
+                :length="Math.ceil(arts.length / 4)"
               ></v-pagination>
             </div>
-          </v-container> -->
+          </v-container>
         </v-tab-item>
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
