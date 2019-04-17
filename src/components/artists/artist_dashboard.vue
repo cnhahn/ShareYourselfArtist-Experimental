@@ -54,8 +54,8 @@
             <v-flex xs3> </v-flex>
 
             <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
-              <v-card mt-3>
-                <v-card-media img :src="art.url" height="450px">
+              <v-card  dark mt-3>
+                <v-card-media class="white" img :src="art.url" height="450px">
                 </v-card-media>
 
                 <v-card-title primary-title>
@@ -76,9 +76,9 @@
                 </v-card-title>
 
                 <v-card-actions>
-                  <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
+                  <v-btn flat @click="clicked_art(art.upload_date)" color="white">View</v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
+                  <v-btn flat @click="set_art_to_delete(art,index)" color="white">Delete</v-btn>
                   <div class="text-xs-center">
                     <v-dialog v-model="dialog" width="30%">
                       <v-card>
@@ -100,7 +100,7 @@
                   </div>
 
                   <v-spacer></v-spacer>
-                  <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
+                  <v-btn flat  color="white" @click="submit_art(art)">Submit this piece</v-btn>
 
                 </v-card-actions>
 
