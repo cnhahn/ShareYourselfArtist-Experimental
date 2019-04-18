@@ -53,16 +53,9 @@
 
             <v-flex xs3> </v-flex>
 
-<<<<<<< HEAD
             <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
               <v-card  dark mt-3>
                 <v-card-media class="white" img :src="art.url" height="450px">
-=======
-            <!-- <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'> -->
-            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in section" :key='art.id'>
-              <v-card mt-3>
-                <v-card-media img :src="art.url" height="450px">
->>>>>>> cdbe4c1c1f75764e9ae364c336cfc85417382b5f
                 </v-card-media>
 
                 <v-card-title primary-title>
@@ -179,7 +172,7 @@
 
       <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
         <v-tab-item>
-            <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
+            <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
             <v-container>
               <v-layout row >
                 <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
