@@ -1986,11 +1986,11 @@ export const store = new Vuex.Store({
 
             // doc.data() is never undefined for query doc snapshots
             let docData = doc.data()
-            console.log('doc.data: ' + docData)
-            console.log('doc.id: ' + doc.id)
+            // console.log('doc.data: ' + docData)
+            // console.log('doc.id: ' + doc.id)
             docData.docId = doc.id
 
-            console.log('doc.data: ' + docData.docId)
+            // console.log('doc.data: ' + docData.docId)
             commit('set_submissions_for_this_business', docData)
           })
         })
