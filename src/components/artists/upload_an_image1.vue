@@ -47,16 +47,6 @@
                 Image size is too large! Please reduce the image size
               </v-alert>
               <!--<img :src="image_url" height="550"></img>-->
-              <!--uncomment below to get preview as actual size if image not too big-->
-              <!--<div v-if="image_too_big == false">
-                <img :src="image_url"
-                    :style="{
-                      width: resized_width + 'px',
-                      height: resized_height + 'px'
-                    }"
-                ></img>
-              </div>
-               <div v-else>-->
                  <div v-if="image_is_landscape">
                     <img :src="image_url"
                       :style="{
@@ -71,7 +61,6 @@
                       }"
                     ></img>
                  </div>  
-               <!--</div>-->
             </v-flex>
           </div>
 
