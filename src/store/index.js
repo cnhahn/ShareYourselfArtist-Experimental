@@ -19,6 +19,7 @@ export const store = new Vuex.Store({
   state: {
     users_top_category : '' ,
     top_ten_category: [],
+    top_ten_rec_businesses : [],
     check_image_c: true,
     image_uploaded: false,
     art_uploaded: null,
@@ -225,6 +226,10 @@ export const store = new Vuex.Store({
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
       state.top_ten_category = payload
+    },
+    set_top_ten_rec_businesses(state, payload){
+      state.top_ten_rec_businesses = [],
+      state.top_ten_rec_businesses = payload
     },
     set_viewed_art_image_info(state, payload) {
       state.viewed_art_image_info = [],
@@ -615,12 +620,37 @@ export const store = new Vuex.Store({
           for (i = 0; i < jsonSize; i++) {
             console.log("Item is ", myJson.body[i])
             commit('set_recently_responded_arts', myJson.body[i])
-            
+      
           }
           console.log('recently_responded_arts is ' , state.recently_responded_arts)
         })
     },
+    retrieve_recommended_businesses({commit,state,getters}, payload){
+      console.log("in retrieve stuff for bussiness")
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getRecommendedBusinesses'
+      console.log("In retrieve responded businesses ")
+      if (!('fetch' in window)) {
+        return
+      } else {
+      }
 
+      fetch(proxyUrl + targetUrl)
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (myJson) {
+        console.log(" i really hope thats not it ",( myJson[1]))
+        let top_ten_businesses = []
+        for(let user in myJson[1]){
+          // console.log('grabbed useburs top ten recommended artists ' , key)
+          top_ten_businesses.push(myJson[1][user].userData)
+        }
+
+        console.log("top ten business is ",top_ten_businesses)
+        commit('set_top_ten_rec_businesses' , top_ten_businesses)
+      })
+    },
     retrieve_recommended_arts({commit,state,getters}, payload){
       console.log('in retrieve recommended arts')
       //Get current user's id and find their top submitted category.
@@ -3280,6 +3310,9 @@ export const store = new Vuex.Store({
     },
     get_top_ten_category(state){
       return state.top_ten_category
+    },
+    get_top_ten_rec_businesses(state){
+      return state.top_ten_rec_businesses;
     },
     get_image_uploaded(state){
       console.log('in get image uploaded and value is ' , state.image_uploaded)

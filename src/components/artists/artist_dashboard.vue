@@ -178,23 +178,24 @@
                 <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
                   <v-card elevation>
                     <v-list three-line class= "changePointer"  >
-                      <template v-for="art,index in top_ten_category"  >
+                      <template v-for="business,index in top_ten_rec_businesses"  >
                           <v-divider></v-divider>
                           <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
                     
                               <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                                <img v-if="art.full_data.profileUrl != undefined && art.full_data.profileUrl != null" v-bind:src="art.full_data.profileUrl" alt="avatar">
-                                <div v-else>
+                                <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
+                                 <div v-else>
                                   <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                    <span style="color: white;" class = "display-3"> {{art.full_data.name.charAt(0).toUpperCase()}} </span>
+                                    <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
                                   </v-avatar>
-                                </div>
+                                </div> 
                               </v-avatar>
                               
                               <v-list-tile >
                                 <div class = "text-xs-center headline">
                                   <v-list-title-content>
-                                    <v-list-tile-title class ="pb-5" > {{art.full_data.name }}</v-list-tile-title>
+                                    <v-list-tile-title class ="pb-5" > {{business.business_name }}</v-list-tile-title>
+                                    <v-list-tile-sub-title> About: {{business.about}}</v-list-tile-sub-title>
                                   </v-list-title-content>
                                 </div>
                               </v-list-tile>
@@ -202,7 +203,7 @@
                               <v-list-tile>
                                 <div class = "text-xs-center">
                                   <v-list-title-content >
-                                    <v-list-tile-title class ="text-xs-center headline pb-5">  {{art.full_data.email}} </v-list-tile-title>
+                                    <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.email}} </v-list-tile-title>
                                   </v-list-title-content>
                                 </div>
                               </v-list-tile>
@@ -282,6 +283,7 @@
     },
     mounted(){
       this.respondedArts()
+      this.recommendedBusinesses()
     },
     computed: {
       users_top_category(){
@@ -289,6 +291,9 @@
       },
       top_ten_category(){
         return this.$store.getters.get_top_ten_category;
+      },
+      top_ten_rec_businesses(){
+        return this.$store.getters.get_top_ten_rec_businesses;
       },
       recently_responded_arts(){
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
@@ -353,6 +358,9 @@
       },
       respondedArts(){
         this.$store.dispatch('retrieve_recently_responded_arts')
+      },
+      recommendedBusinesses(){
+        this.$store.dispatch('retrieve_recommended_businesses')
       },
       recommendedArts(){
         this.$store.dispatch('retrieve_recommended_arts')
