@@ -1,7 +1,7 @@
 <template>
   <v-container class ="container">
 
-    <v-toolbar
+    <!--<v-toolbar
       dark
       color="primary"
     >
@@ -22,7 +22,7 @@
       <v-btn icon>
         <v-icon>more_vert</v-icon>
       </v-btn>
-    </v-toolbar>
+    </v-toolbar>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
@@ -183,72 +183,7 @@
         nameKey: '',
         rules: [v => v.length > 50 || 'Min 50 characters'],
         page: 1,
-        loading_submissions: false,
-        loading: false,
-        items: [],
-        search: null,
-        select: null,
-        states: [
-          'Alabama',
-          'Alaska',
-          'American Samoa',
-          'Arizona',
-          'Arkansas',
-          'California',
-          'Colorado',
-          'Connecticut',
-          'Delaware',
-          'District of Columbia',
-          'Federated States of Micronesia',
-          'Florida',
-          'Georgia',
-          'Guam',
-          'Hawaii',
-          'Idaho',
-          'Illinois',
-          'Indiana',
-          'Iowa',
-          'Kansas',
-          'Kentucky',
-          'Louisiana',
-          'Maine',
-          'Marshall Islands',
-          'Maryland',
-          'Massachusetts',
-          'Michigan',
-          'Minnesota',
-          'Mississippi',
-          'Missouri',
-          'Montana',
-          'Nebraska',
-          'Nevada',
-          'New Hampshire',
-          'New Jersey',
-          'New Mexico',
-          'New York',
-          'North Carolina',
-          'North Dakota',
-          'Northern Mariana Islands',
-          'Ohio',
-          'Oklahoma',
-          'Oregon',
-          'Palau',
-          'Pennsylvania',
-          'Puerto Rico',
-          'Rhode Island',
-          'South Carolina',
-          'South Dakota',
-          'Tennessee',
-          'Texas',
-          'Utah',
-          'Vermont',
-          'Virgin Island',
-          'Virginia',
-          'Washington',
-          'West Virginia',
-          'Wisconsin',
-          'Wyoming'
-        ]     
+        loading_submissions: false
       }
     },
     beforeMount() {
@@ -273,16 +208,6 @@
             console.log('section arr:', this.section)
           }
 
-        },
-        querySelections (v) {
-          this.loading = true
-          // Simulated ajax query
-          setTimeout(() => {
-            this.items = this.states.filter(e => {
-              return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
-            })
-            this.loading = false
-          }, 500)
         },
         // search the most recent page with the selected art title
         findPage(title, submissions)
@@ -578,11 +503,8 @@
     watch: {
       page: function (val) {
        this.populateSubmissions(val, this.submissions)
-      },
-
-      search (val) {
-        val && val !== this.select && this.querySelections(val)
       }
+
     },
 
       /* This component just got created, fetch some data here using an action */
