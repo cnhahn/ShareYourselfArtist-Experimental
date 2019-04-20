@@ -170,53 +170,98 @@
           </v-container>
         </v-tab-item>
 
-      <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
+      <v-tab @click="recommendedArts()"> Recommended Businesses </v-tab>
         <v-tab-item>
             <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
             <v-container>
               <v-layout row >
                 <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                  <v-card elevation>
-                    <v-list three-line class= "changePointer"  >
-                      <template v-for="business,index in top_ten_rec_businesses"  >
-                          <v-divider></v-divider>
-                          <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
-                    
-                              <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                                <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
-                                 <div v-else>
-                                  <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                    <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
-                                  </v-avatar>
-                                </div> 
-                              </v-avatar>
-                              
-                              <v-list-tile >
-                                <div class = "text-xs-center headline">
-                                  <v-list-title-content>
-                                    <v-list-tile-title class ="pb-5" > {{business.business_name }}</v-list-tile-title>
-                                    <v-list-tile-sub-title> About: {{business.about}}</v-list-tile-sub-title>
-                                  </v-list-title-content>
-                                </div>
-                              </v-list-tile>
-                            
-                              <v-list-tile>
-                                <div class = "text-xs-center">
-                                  <v-list-title-content >
-                                    <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.email}} </v-list-tile-title>
-                                  </v-list-title-content>
-                                </div>
-                              </v-list-tile>
-
-                          </v-flex> 
-                        
-                          <v-divider></v-divider>
-                      </template>
-                    </v-list>
-                  </v-card>
+                  <v-list three-line class= "changePointer"  >
+                    <v-container fluid grid-list-xs>
+                      <v-layout row wrap>
+                        <template v-for="business,index in top_ten_rec_businesses"  >
+                          <v-divider> </v-divider>
+                              <v-flex xs12>
+                                <v-card  class="white-text">
+                                  <v-layout row>
+                                    <v-flex xs7>
+                                      <v-card-title primary-title>
+                                        <div>
+                                          <div class ="headline">{{business.business_name }}</div>
+                                          <div>  {{business.about}} </div>
+                                          <div> Joined 2 yrs ago </div>
+                                        </div>
+                                      </v-card-title>
+                                    </v-flex>
+                                    <v-flex xs3>
+                                    </v-flex>
+                                    <v-flex xs2>
+                                      <v-flex xs2>
+                                        <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                                          <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
+                                          <div v-else>
+                                            <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                              <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
+                                            </v-avatar>
+                                          </div> 
+                                        </v-avatar>
+                                      </v-flex>
+                                      <v-flex xs2 >
+                                        <div> hello </div>
+                                      </v-flex>
+                                    </v-flex>
+                                  </v-layout>
+                                  <v-divider light> </v-divider>
+                                  <v-card-actions class ="pa-3">
+                                    Email us at {{business.email}}
+                                    <v-spacer> </v-spacer>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-flex>
+                              <v-divider> </v-divider>
+                        </template>
+                      </v-layout>
+                    </v-container>    
+                  </v-list>
                 </v-flex>
               </v-layout>
-            </v-container>       
+            </v-container>  
+            <!--                   
+
+                            
+                            <v-list-tile >
+                              <div class = "text-xs-center headline">
+                                <v-list-title-content>
+                                  <v-list-tile-title class ="pb-5" > </v-list-tile-title>
+                                  <v-list-tile-sub-title> </v-list-tile-sub-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>
+                          
+                            <v-list-tile>
+                              <div class = "text-xs-center">
+                                <v-list-title-content >
+                                  <v-list-tile-title class ="text-xs-center headline pb-5">   </v-list-tile-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>
+
+                            <v-list-tile>
+                              <div class = "text-xs-center">
+                                <v-list-title-content >
+                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.follower_count}} </v-list-tile-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>      
+
+                            
+                            <v-list-tile>
+                              <div class = "text-xs-center">
+                                <v-list-title-content >
+                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.upload_date}} </v-list-tile-title>
+                                </v-list-title-content>
+                              </div>
+                            </v-list-tile>   -->     
         </v-tab-item>
 
       <v-tab > Responded Art Pieces </v-tab>
