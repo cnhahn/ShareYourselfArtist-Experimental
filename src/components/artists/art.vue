@@ -1,9 +1,9 @@
-
+<!--
 <template>
   <v-container fluid>
     <v-layout row wrap>
 
-      <!-- <v-flex xs12 fill-height> <v-flex xs12 sm6 offset-sm3 fill-height>  -->
+      <!-- <v-flex xs12 fill-height> <v-flex xs12 sm6 offset-sm3 fill-height>  -/->
       <v-flex xs12 sm8 offset-sm3 fill-height> 
 
           <v-card>
@@ -66,88 +66,84 @@
     </v-layout>
   </v-container>
 </template>            
+-->
 
-
-<!-- 
+<!--This is the main template that will contain both layouts for the image and the text-->
 <template>
+  <!--This is the main container that will contain both the layouts for the image and the text-->
   <v-container fluid>
-    
-
-      <!-- <v-flex xs12 fill-height> <v-flex xs12 sm6 offset-sm3 fill-height>  -->
+    <!--This is the layouts for the everything (nothing is put here because the v-flex will hold of the styleing options)-->
+    <v-layout>
+      <!--This v-flex handles the size (hieght/width/dementions) of the image that it will contain-->
+      <!-- refer [https://vuetifyjs.com/en/framework/grid] to for more information on the changes that can be implemented within v-flex-->   
+      <v-flex xs12 sm12 md8 offset-sm1 row fill-height> 
+        <v-card>
+          <v-flex> 
+            <v-img> 
+              <img :src="this.$store.state.viewed_art_image_info.url" alt=""  width="100%" height="100%">
+            </v-img>
+          </v-flex> 
+        <!--end of the v-card for image-->
+        </v-card>
+      <!--end of the v-flex for image and small icons-->
+      </v-flex>
       
-
-        <!-- added for row to workout -/->
-        <v-layout row xs12 wrap>
-
-          <v-card>
-            <v-flex xs12 sm6 offset-sm2 fill-height> 
-              <v-img> 
-                <img :src="this.$store.state.viewed_art_image_info.url" alt=""  width="100%" height="100%">
-              </v-img>
-            </v-flex> 
-
-          <!-- second layout attempt -/->
-          </v-card>
-      
-
-
-        <v-layout row xs12 wrap>
-          <v-card>
-            <v-flex xs12 sm6 offset-sm3 fill-height> 
+      <!--This v-flex handles the size (hieght/width/dementions) of the text based stuff that it will contain-->
+      <!-- refer [https://vuetifyjs.com/en/framework/grid] to for more information on the changes that can be implemented within v-flex--> 
+      <v-flex xs12 sm5 offset-sm1 row fill-height>
+        <!--This v-card houses the text based stuff below it.-->
+        <v-card>
+          <v-flex> 
             <v-card-title primary-title>
+            <div>
+              <div class="headline mb-0">
+                <h2>
+                  {{this.$store.state.viewed_art_image_info.art_title}}
+                </h2>
+              </div>
+
               <div>
-                <div class="headline mb-0">
-                  <h2>
-                    
-                    {{this.$store.state.viewed_art_image_info.art_title}}
-                  </h2>
-                </div>
-
-                <div>
-                  <p class="text-sm-left">
-                    {{this.$store.state.viewed_art_image_info.description}}
-                  </p>
-                </div>
+                <p class="text-sm-left">
+                  {{this.$store.state.viewed_art_image_info.description}}
+                </p>
               </div>
-            </v-card-title>
+            </div>
+           </v-card-title>
+          </v-flex>
+            
+          <v-container fluid>
+            <v-layout  align-center wrap>
+              <v-select :items="items"
+                        attach
+                        chips
+                        name='updatedCategories'
+                        id='updatedCategories'
+                        label='add categories'
+                        v-model='categories'
+                        required
+                        multiple>
+              </v-select>
+            </v-layout>
+          </v-container>
 
-            <v-flex>
-              
-              <v-container fluid>
-                <v-layout  align-center wrap>
-                  <v-select :items="items"
-                            attach
-                            chips
-                            name='updatedCategories'
-                            id='updatedCategories'
-                            label='add categories'
-                            v-model='categories'
-                            required
-                            multiple>
-                  </v-select>
-                </v-layout>
-              </v-container>
+          <div mb-5 class="small-container-btn">
+            <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">
+              Add Categories
+            </v-btn>
+            <v-btn depressed small dark color="black" @click="back">
+              Back
+            </v-btn>
+          </div>
+        <!--end of the v-card for text based stuff-->
+        </v-card>
+      <!--end of the v-flex for text based stuff-->  
+      </v-flex>
 
-              <div mb-5 class="small-container-btn">
-                <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">
-                  Add Categories
-                </v-btn>
-                <v-btn depressed small dark color="black" @click="back">
-                  Back
-                </v-btn>
-              </div>
-            </v-flex>
-          </v-flex>  
-          </v-card>
-
-        </v-layout>
-        <!-- added for row to workout -/->
-</v-layout>
-
+    </v-layout>
 
   </v-container>
 </template>    
- -->
+
 
 <!--
   <v-container mt-3>
