@@ -182,40 +182,45 @@
                         <template v-for="business,index in top_ten_rec_businesses"  >
                           <v-divider> </v-divider>
                               <v-flex xs12>
-                                <v-card  class="white-text">
-                                  <v-layout row>
-                                    <v-flex xs7>
+                                <v-card  >
+                                  <v-layout row class ="grey darken-1 white--text">
+                                    <v-flex xs7 >
                                       <v-card-title primary-title>
-                                        <div>
-                                          <div class ="headline">{{business.business_name }}</div>
+                                        <div class>
+                                          <div class ="headline py-3">{{business.business_name }}</div>
                                           <div>  {{business.about}} </div>
                                           <div> Joined 2 yrs ago </div>
                                         </div>
                                       </v-card-title>
                                     </v-flex>
-                                    <v-flex xs3>
-                                    </v-flex>
                                     <v-flex xs2>
-                                      <v-flex xs2>
-                                        <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                                          <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
-                                          <div v-else>
-                                            <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                              <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
-                                            </v-avatar>
-                                          </div> 
-                                        </v-avatar>
-                                      </v-flex>
-                                      <v-flex xs2 >
-                                        <div> hello </div>
-                                      </v-flex>
+                                    </v-flex>
+                                    <v-flex xs3>
+                                      <!-- <v-flex xs3> -->
+                                        <div class = "text-xs-center">
+                                          <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                                            <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
+                                            <div v-else>
+                                              <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                                <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
+                                              </v-avatar>
+                                            </div> 
+                                          </v-avatar>
+                                        </div>
+                                      <!-- </v-flex> -->
+                                      <!-- <v-flex xs3 > -->
+                                        <div class = "text-xs-center"> Followers : {{ business.follower_count }}  </div>
+                                      <!-- </v-flex> -->
                                     </v-flex>
                                   </v-layout>
-                                  <v-divider light> </v-divider>
-                                  <v-card-actions class ="pa-3">
-                                    Email us at {{business.email}}
+                                 
+                                  <v-card-actions class ="pa-3 grey lighten-4 black--text">
+                                    <div class="subheading" > Contact : {{business.email}} </div>
                                     <v-spacer> </v-spacer>
+                                      <v-btn block color="primary" dark> Submit To This Blog </v-btn>
                                   </v-card-actions>
+                                                                     
+                                  <!-- <v-divider light> </v-divider> -->
                                 </v-card>
                               </v-flex>
                               <v-divider> </v-divider>
