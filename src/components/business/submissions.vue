@@ -24,6 +24,40 @@
       </v-btn>
     </v-toolbar>-->
 
+    <v-toolbar
+      dark
+      color="primary"
+    >
+      <v-toolbar-title>Search submissions</v-toolbar-title>
+      <!--<v-select
+        v-model="select"
+        :loading="loading"
+        :items="items"
+        :search-input.sync="search"
+        class="mx-3"
+        flat
+        hide-details
+        label="Search by art title"
+        solo-inverted
+      ></v-select>-->
+      <v-select
+        v-model="selected"
+        :search-input.sync="searchInput"
+        :items="items"
+        class="mx-3"
+        flat
+        hide-details
+        label="Search by art title"
+        solo-inverted
+        
+      ></v-select> <!--autocomplete-->
+      <v-btn icon>
+        <v-icon>more_vert</v-icon>
+      </v-btn>
+    </v-toolbar>
+
+    <!--<p>Selected: {{selected}}</p>-->
+
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
@@ -183,7 +217,75 @@
         nameKey: '',
         rules: [v => v.length > 50 || 'Min 50 characters'],
         page: 1,
-        loading_submissions: false
+        loading_submissions: false,
+        /*loading: false,
+        items: [],
+        search: null,
+        select: null,
+        states: [
+          'Alabama',
+          'Alaska',
+          'American Samoa',
+          'Arizona',
+          'Arkansas',
+          'California',
+          'Colorado',
+          'Connecticut',
+          'Delaware',
+          'District of Columbia',
+          'Federated States of Micronesia',
+          'Florida',
+          'Georgia',
+          'Guam',
+          'Hawaii',
+          'Idaho',
+          'Illinois',
+          'Indiana',
+          'Iowa',
+          'Kansas',
+          'Kentucky',
+          'Louisiana',
+          'Maine',
+          'Marshall Islands',
+          'Maryland',
+          'Massachusetts',
+          'Michigan',
+          'Minnesota',
+          'Mississippi',
+          'Missouri',
+          'Montana',
+          'Nebraska',
+          'Nevada',
+          'New Hampshire',
+          'New Jersey',
+          'New Mexico',
+          'New York',
+          'North Carolina',
+          'North Dakota',
+          'Northern Mariana Islands',
+          'Ohio',
+          'Oklahoma',
+          'Oregon',
+          'Palau',
+          'Pennsylvania',
+          'Puerto Rico',
+          'Rhode Island',
+          'South Carolina',
+          'South Dakota',
+          'Tennessee',
+          'Texas',
+          'Utah',
+          'Vermont',
+          'Virgin Island',
+          'Virginia',
+          'Washington',
+          'West Virginia',
+          'Wisconsin',
+          'Wyoming'
+        ]*/
+        items: ['Foo', 'Bar', 'Fizz', 'Buzz'],
+        selected: null,
+        searchInput: ""
       }
     },
     beforeMount() {
@@ -208,6 +310,29 @@
             console.log('section arr:', this.section)
           }
 
+        },
+        /*querySelections (v) {
+          this.loading = true
+          // Simulated ajax query
+          setTimeout(() => {
+            this.items = this.states.filter(e => {
+              return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+            })
+            this.loading = false
+          }, 500)
+        },*/
+        titleLoad(submissions)
+        {
+          let titles = []
+          for (let i = 0; i < submissions.length; i++)
+          {
+            if (submissions[i].art.art_title != undefined)
+            {
+              //console.log('pushing title ', submissions[i].art.art_title)
+              titles.push(submissions[i].art.art_title)
+            }
+          }
+          return titles
         },
         // search the most recent page with the selected art title
         findPage(title, submissions)
@@ -302,6 +427,8 @@
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
 
+          this.items = this.titleLoad(this.submissions)
+
           let temp = []
           for(let i = 0; this.submissions[i] !== null && i < 4; i++)
           {
@@ -309,9 +436,6 @@
           }
           this.section = temp
           console.log('submissions arr len', this.submissions.length)
-
-          //this.page = this.findPage('Street at Night', this.submissions)
-          //this.populateSubmissions(this.page, this.submissions)
 
           }, error => {
             console.error("Reached error in mounted function " , error)
@@ -368,6 +492,8 @@
           this.populateSubmissions(this.page, this.submissions)
         }*/
 
+        this.items = this.titleLoad(this.submissions)
+
         // reset the page to 1 every time a new tab is selected
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -387,6 +513,8 @@
 
         this.loading_submissions = false
 
+        this.items = this.titleLoad(this.submissions)
+
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
       },
@@ -400,6 +528,8 @@
         })
 
         this.loading_submissions = false
+
+        this.items = this.titleLoad(this.submissions)
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -503,8 +633,19 @@
     watch: {
       page: function (val) {
        this.populateSubmissions(val, this.submissions)
+      },
+      /*search (val) {
+        val && val !== this.select && this.querySelections(val)
+      }*/
+      searchInput(val) {
+        //console.log('search input: ', val)
+        //alert(val)
+      },
+      selected(val) {
+        console.log('selected: ', val)
+        this.page = this.findPage(val, this.submissions)
+        this.populateSubmissions(this.page, this.submissions)
       }
-
     },
 
       /* This component just got created, fetch some data here using an action */
