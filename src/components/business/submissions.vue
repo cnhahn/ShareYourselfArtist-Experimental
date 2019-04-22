@@ -49,7 +49,7 @@
         hide-details
         label="Search by art title"
         solo-inverted
-        
+
       ></v-select> <!--autocomplete-->
       <v-btn icon>
         <v-icon>more_vert</v-icon>
@@ -285,7 +285,9 @@
         ]*/
         items: ['Foo', 'Bar', 'Fizz', 'Buzz'],
         selected: null,
-        searchInput: ""
+        searchInput: "",
+
+        saved_submissions: []
       }
     },
     beforeMount() {
@@ -321,7 +323,8 @@
             this.loading = false
           }, 500)
         },*/
-        titleLoad(submissions)
+        // load title options
+        titleOptionsLoad(submissions)
         {
           let titles = []
           for (let i = 0; i < submissions.length; i++)
@@ -334,8 +337,27 @@
           }
           return titles
         },
+        // display new group of pages when searching by art title
+        // displays every art that has the same art title
+        filterByTitle(title, submissions)
+        {
+          this.loading_submissions = true
+
+          //let searchResult = []
+
+          /*searchResult*/ this.submissions = this.submissions.filter((review) => {
+            return review.art.art_title === title
+          })
+
+          this.loading_submissions = false
+
+          //console.log('search result length: ', searchResult.length)
+          console.log('new sub length: ', this.submissions.length)
+
+          //return searchResult
+        },
         // search the most recent page with the selected art title
-        findPage(title, submissions)
+        /*findPage(title, submissions)
         {
           let currPage = 1
 
@@ -352,7 +374,7 @@
               }
             }
           }
-        },
+        },*/
         convert_date(submitted_on)
         {
           let sub_date = parseInt(submitted_on, 10)
@@ -427,7 +449,9 @@
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
 
-          this.items = this.titleLoad(this.submissions)
+          this.items = this.titleOptionsLoad(this.submissions)
+          // save the whole list of submissions because we want to search using this list
+          this.saved_submissions = this.submissions
 
           let temp = []
           for(let i = 0; this.submissions[i] !== null && i < 4; i++)
@@ -492,7 +516,8 @@
           this.populateSubmissions(this.page, this.submissions)
         }*/
 
-        this.items = this.titleLoad(this.submissions)
+        this.items = this.titleOptionsLoad(this.submissions)
+        this.saved_submissions = this.submissions
 
         // reset the page to 1 every time a new tab is selected
         this.page = 1
@@ -513,7 +538,8 @@
 
         this.loading_submissions = false
 
-        this.items = this.titleLoad(this.submissions)
+        this.items = this.titleOptionsLoad(this.submissions)
+        this.saved_submissions = this.submissions
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -529,7 +555,8 @@
 
         this.loading_submissions = false
 
-        this.items = this.titleLoad(this.submissions)
+        this.items = this.titleOptionsLoad(this.submissions)
+        this.saved_submissions = this.submissions
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
@@ -637,13 +664,22 @@
       /*search (val) {
         val && val !== this.select && this.querySelections(val)
       }*/
-      searchInput(val) {
+      /*searchInput(val) {
         //console.log('search input: ', val)
         //alert(val)
-      },
+      },*/
       selected(val) {
+        // set submissions back to the initial list of submissions
+        this.submissions = this.saved_submissions
+
         console.log('selected: ', val)
-        this.page = this.findPage(val, this.submissions)
+        //this.page = this.findPage(val, this.submissions)
+       
+        // search for the selected title
+        /*let filteredSubmissions =*/ this.filterByTitle(val, this.submissions)
+        // reset the page to 1 when user selects an option
+        this.page = 1
+        //this.populateSubmissions(this.page, filteredSubmissions)
         this.populateSubmissions(this.page, this.submissions)
       }
     },
