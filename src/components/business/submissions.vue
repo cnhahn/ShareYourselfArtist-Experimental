@@ -47,7 +47,7 @@
         class="mx-3"
         flat
         hide-details
-        label="Search by art title"
+        :label="hint"
         solo-inverted
 
       ></v-select> <!--autocomplete-->
@@ -79,14 +79,14 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
         <v-card>
-          <v-list dense>
+          <v-list> <!--dense-->
             <v-list-tile
-              v-for="notification in clickOptions"
-              :key="notification"
-              @click=""
+              v-for="item in clickOptions"
+              :key="item"
+              @click="switchSearchOption(item)"
             >
               <v-list-tile-title
-                v-text="notification"
+                v-text="item"
               />
             </v-list-tile>
           </v-list>
@@ -379,10 +379,11 @@
           { title: 'Click Me' },
           { title: 'Click Me' },
           { title: 'Click Me 2' }*/
-          'Click Me',
-          'Click Me 2',
-          'Click Me 3'
-        ]
+          'Search by art title',
+          'Search by artist name',
+        ],
+        hint: 'Search by art title',
+        searchingByTitle: true
       }
     },
     beforeMount() {
@@ -418,6 +419,20 @@
             this.loading = false
           }, 500)
         },*/
+        // change searchbar hint if search option is changed
+        switchSearchOption(option)
+        {
+          if (option === 'Search by art title')
+          {
+            this.hint = 'Search by art title'
+            this.searchingByTitle = true
+          }
+          else
+          {
+            this.hint = 'Search by artist name'
+            this.searchingByTitle = false
+          }
+        },
         // load title options
         titleOptionsLoad(submissions)
         {
