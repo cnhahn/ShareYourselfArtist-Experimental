@@ -28,7 +28,7 @@
 
 
 
-    <v-tabs light grow>
+    <v-tabs v-model = "active" light grow>
       <v-tab >  Dashboard </v-tab>
         <v-tab-item :value="dashboard-tab">
           <v-layout pa-4 row wrap justify-center>
@@ -174,99 +174,69 @@
         <v-tab-item>
             <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
             <v-container>
-              <v-layout row >
-                <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
+              <v-layout row fill-height>
+                <v-flex xs12 lg10 offset-sm1 mt-5 mr-5>
                   <v-list three-line class= "changePointer"  >
-                    <v-container fluid grid-list-xs>
-                      <v-layout row wrap>
-                        <template v-for="business,index in top_ten_rec_businesses"  >
-                          <v-divider> </v-divider>
-                              <v-flex xs12>
-                                <v-card  >
-                                  <v-layout row class ="grey darken-1 white--text">
-                                    <v-flex xs7 >
-                                      <v-card-title primary-title>
-                                        <div class>
-                                          <div class ="headline py-3">{{business.business_name }}</div>
-                                          <div>  {{business.about}} </div>
-                                          <div> Joined 2 yrs ago </div>
-                                        </div>
-                                      </v-card-title>
-                                    </v-flex>
-                                    <v-flex xs2>
-                                    </v-flex>
-                                    <v-flex xs3>
-                                      <!-- <v-flex xs3> -->
-                                        <div class = "text-xs-center">
-                                          <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                                            <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
-                                            <div v-else>
-                                              <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                                <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
-                                              </v-avatar>
-                                            </div> 
-                                          </v-avatar>
-                                        </div>
-                                      <!-- </v-flex> -->
-                                      <!-- <v-flex xs3 > -->
-                                        <div class = "text-xs-center"> Followers : {{ business.follower_count }}  </div>
-                                      <!-- </v-flex> -->
-                                    </v-flex>
-                                  </v-layout>
-                                 
-                                  <v-card-actions class ="pa-3 grey lighten-4 black--text">
-                                    <div class="subheading" > Contact : {{business.email}} </div>
-                                    <v-spacer> </v-spacer>
-                                      <v-btn block color="primary" dark> Submit To This Blog </v-btn>
-                                  </v-card-actions>
-                                                                     
-                                  <!-- <v-divider light> </v-divider> -->
-                                </v-card>
-                              </v-flex>
-                              <v-divider> </v-divider>
-                        </template>
-                      </v-layout>
-                    </v-container>    
+                    <template v-for="business,index in top_ten_rec_businesses"  >
+                      <v-layout row child-flex pb-3>
+                        <v-card class = "elevation-6">
+                          <v-card-title class ="grey darken-1 white--text">
+                            <v-flex xs7 >
+                              <v-card-title primary-title>
+                                <div class>
+                                  <div class ="pt-1 pb-1 headline py-3">{{business.business_name }}</div>
+                                  <div class ="pt-1 pb-1">  {{business.about}} </div>
+                                  <div class ="pt-1 pb-1"> Joined : {{business.upload_date}}</div>
+                                </div>
+                              </v-card-title>
+                            </v-flex>
+                            <v-flex xs2>
+                            </v-flex>
+                            <v-flex xs3>
+                              <!-- <v-flex xs3> -->
+                                <div class = "text-xs-center">
+                                  <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                                    <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
+                                    <div v-else>
+                                      <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                        <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
+                                      </v-avatar>
+                                    </div> 
+                                  </v-avatar>
+                                </div>
+                              <!-- </v-flex> -->
+                              <!-- <v-flex xs3 > -->
+                                <div class = "text-xs-center"> Followers : {{ business.follower_count }}  </div>
+                              <!-- </v-flex> -->
+                            </v-flex>
+                          </v-card-title>
+                          <v-card-actions class ="pa-2 grey lighten-4 black--text">
+                            <!-- <v-container grid-list-sm text-xs-center> -->
+                              <!-- <v-layout row wrap> -->
+                                <v-flex xs8>
+                                  <div class="subheading" > Submissions Received: {{business.total_submissions}} </div>
+                                  <div class="subheading" > Submissions Replied: {{business.replied_submissions}} </div>
+                                  <div class="subheading" > Rate of response: {{Math.round(business.replied_submissions*100.0/business.total_submissions)}} % </div>
+                                </v-flex>
+                                <v-flex xs4>
+                                  <v-btn
+                                    @click='clicked_business({
+                                      userId: business.userId,
+                                      business_email: business.email,
+                                      business_name: business.business_name
+                                    })' 
+                                  block color="primary" dark> Submit To This Blog </v-btn>
+                                </v-flex>
+                              <!-- </v-layout> -->
+                            <!-- </v-container> -->
+                          </v-card-actions>
+                        </v-card>  
+                      </v-layout>                    
+                    </template>
                   </v-list>
                 </v-flex>
               </v-layout>
             </v-container>  
-            <!--                   
-
-                            
-                            <v-list-tile >
-                              <div class = "text-xs-center headline">
-                                <v-list-title-content>
-                                  <v-list-tile-title class ="pb-5" > </v-list-tile-title>
-                                  <v-list-tile-sub-title> </v-list-tile-sub-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
-                          
-                            <v-list-tile>
-                              <div class = "text-xs-center">
-                                <v-list-title-content >
-                                  <v-list-tile-title class ="text-xs-center headline pb-5">   </v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
-
-                            <v-list-tile>
-                              <div class = "text-xs-center">
-                                <v-list-title-content >
-                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.follower_count}} </v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>      
-
-                            
-                            <v-list-tile>
-                              <div class = "text-xs-center">
-                                <v-list-title-content >
-                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{business.upload_date}} </v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>   -->     
         </v-tab-item>
 
       <v-tab > Responded Art Pieces </v-tab>
@@ -315,6 +285,7 @@
         currentArtToDelete : null,
         currentArtIndex : null,
         y: 'top',
+        active: null,
         x: null,
         mode: '',
         timeout: 6000,
@@ -480,7 +451,19 @@
         }
 
       },
-
+      clicked_business(userId){
+        //this.$store.commit('set_art_being_submitted_is_selected', true)
+        this.$store.commit('clear_businesses_being_submitted')
+        this.$store.commit('set_business_being_submitted',{businessId:userId, date: Date.now()})
+        this.$store.commit('set_business_being_submitted_is_selected',true)
+        this.$store.commit('set_businesses_being_submitted', [userId])
+        console.log("art being submitted " + this.$store.state.art_being_submitted_is_selected )
+        this.$store.commit('set_art_being_submitted_is_selected', true)
+        console.log("art being submitted should be true " , this.$store.getters.get_art_being_submitted_is_selected)
+        if(this.$store.getters.get_art_being_submitted_is_selected === true){
+          this.active = "0"
+        }
+      },
       filterCategories(filterCategories, artCategories, def, art) {
           return filterCategories.every(function (value) {
             if(artCategories.indexOf(value) >= 0){
