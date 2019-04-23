@@ -51,12 +51,98 @@
         solo-inverted
 
       ></v-select> <!--autocomplete-->
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
+      <!--<template v-slot:activator="{ on }">
+        <v-btn
+          icon
+          
+        >
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-tile
+          v-for="(item, i) in clickOptions"
+          :key="i"
+          @click=""
+        >
+          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+        </v-list-tile>
+      </v-list>-->
+      <v-menu
+      offset-y
+      content-class="dropdown-menu"
+      transition="slide-y-transition">
+        <v-btn
+            icon
+            slot="activator"
+          >
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+        <v-card>
+          <v-list dense>
+            <v-list-tile
+              v-for="notification in clickOptions"
+              :key="notification"
+              @click=""
+            >
+              <v-list-tile-title
+                v-text="notification"
+              />
+            </v-list-tile>
+          </v-list>
+        </v-card>
+      </v-menu>
     </v-toolbar>
 
     <!--<p>Selected: {{selected}}</p>-->
+
+    <!--<div class="text-xs-center">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            color="primary"
+            v-on="on"
+          >
+            Dropdown
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-tile
+            v-for="(item, index) in clickOptions"
+            :key="index"
+            @click=""
+          >
+            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+    </div>-->
+
+    <!--<v-menu
+      offset-y
+      content-class="dropdown-menu"
+      transition="slide-y-transition">
+      <v-btn
+        slot="activator"
+        color="success"
+      >
+      <v-icon left>fa-search</v-icon>
+        Dropdown
+      </v-btn>
+      <v-card>
+        <v-list dense>
+          <v-list-tile
+            v-for="notification in clickOptions"
+            :key="notification"
+            @click=""
+          >
+            <v-list-tile-title
+              v-text="notification"
+            />
+          </v-list-tile>
+        </v-list>
+      </v-card>
+    </v-menu>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
@@ -283,11 +369,20 @@
           'Wisconsin',
           'Wyoming'
         ]*/
-        items: ['Foo', 'Bar', 'Fizz', 'Buzz'],
+        items: ['Foo', 'Bar', 'Fizz', 'Buzz'],  // if you see these, loading drop down menu is too slow
         selected: null,
         searchInput: "",
 
-        saved_submissions: []
+        saved_submissions: [],
+        clickOptions: [
+          /*{ title: 'Click Me' },
+          { title: 'Click Me' },
+          { title: 'Click Me' },
+          { title: 'Click Me 2' }*/
+          'Click Me',
+          'Click Me 2',
+          'Click Me 3'
+        ]
       }
     },
     beforeMount() {
@@ -352,7 +447,7 @@
           this.loading_submissions = false
 
           //console.log('search result length: ', searchResult.length)
-          console.log('new sub length: ', this.submissions.length)
+          console.log('title results length: ', this.submissions.length)
 
           //return searchResult
         },
