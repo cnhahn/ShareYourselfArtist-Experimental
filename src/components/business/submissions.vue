@@ -431,9 +431,20 @@
           {
             this.hint = 'Search by artist name'
             this.searchingByTitle = false
+            //console.log('searching by artist')
           }
+
+          // change options in drop-down that user can select
+          /*if (this.searchingByTitle === true)
+          {
+            this.items = this.titleOptionsLoad(this.saved_submissions)
+          }
+          else
+          {
+            this.items = this.artistOptionsLoad(this.saved_submissions)
+          }*/
         },
-        // load title options
+        // load title options in drop-down
         titleOptionsLoad(submissions)
         {
           let titles = []
@@ -446,6 +457,20 @@
             }
           }
           return titles
+        },
+        // load artist options
+        artistOptionsLoad(submissions)
+        {
+          let artists = []
+          for (let i = 0; i < submissions.length; i++)
+          {
+            if (submissions[i].art.artist_name != undefined)
+            {
+              //console.log('pushing artist ', submissions[i].art.artist_name)
+              artists.push(submissions[i].art.artist_name)
+            }
+          }
+          return artists
         },
         // display new group of pages when searching by art title
         // displays every art that has the same art title
@@ -462,7 +487,7 @@
           this.loading_submissions = false
 
           //console.log('search result length: ', searchResult.length)
-          console.log('title results length: ', this.submissions.length)
+          //console.log('title results length: ', this.submissions.length)
 
           //return searchResult
         },
@@ -559,7 +584,16 @@
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
 
-          this.items = this.titleOptionsLoad(this.submissions)
+          // display list of options in drop-down, may change depending on current tab
+          if (this.searchingByTitle === true)
+          {
+            this.items = this.titleOptionsLoad(this.submissions)
+          }
+          else
+          {
+            this.items = this.artistOptionsLoad(this.submissions)
+            console.log('artists')
+          }
           // save the whole list of submissions because we want to search using this list
           this.saved_submissions = this.submissions
 
@@ -626,7 +660,15 @@
           this.populateSubmissions(this.page, this.submissions)
         }*/
 
-        this.items = this.titleOptionsLoad(this.submissions)
+        if (this.searchingByTitle === true)
+        {
+          this.items = this.titleOptionsLoad(this.submissions)
+        }
+        else
+        {
+          this.items = this.artistOptionsLoad(this.submissions)
+          console.log('artists')
+        }
         this.saved_submissions = this.submissions
 
         // reset the page to 1 every time a new tab is selected
@@ -648,7 +690,15 @@
 
         this.loading_submissions = false
 
-        this.items = this.titleOptionsLoad(this.submissions)
+        if (this.searchingByTitle === true)
+        {
+          this.items = this.titleOptionsLoad(this.submissions)
+        }
+        else
+        {
+          this.items = this.artistOptionsLoad(this.submissions)
+          console.log('artists')
+        }
         this.saved_submissions = this.submissions
 
         this.page = 1
@@ -665,7 +715,15 @@
 
         this.loading_submissions = false
 
-        this.items = this.titleOptionsLoad(this.submissions)
+        if (this.searchingByTitle === true)
+        {
+          this.items = this.titleOptionsLoad(this.submissions)
+        }
+        else
+        {
+          this.items = this.artistOptionsLoad(this.submissions)
+          console.log('artists')
+        }
         this.saved_submissions = this.submissions
 
         this.page = 1
