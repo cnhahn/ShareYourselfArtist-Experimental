@@ -49,7 +49,7 @@
         hide-details
         :label="hint"
         solo-inverted
-
+        
       ></v-select> <!--autocomplete-->
       <!--<template v-slot:activator="{ on }">
         <v-btn
@@ -435,14 +435,14 @@
           }
 
           // change options in drop-down that user can select
-          /*if (this.searchingByTitle === true)
+          if (this.searchingByTitle === true)
           {
             this.items = this.titleOptionsLoad(this.saved_submissions)
           }
           else
           {
             this.items = this.artistOptionsLoad(this.saved_submissions)
-          }*/
+          }
         },
         // load title options in drop-down
         titleOptionsLoad(submissions)
@@ -490,6 +490,21 @@
           //console.log('title results length: ', this.submissions.length)
 
           //return searchResult
+        },
+        // display new group of pages when searching by art title
+        // displays every art that has the same art title
+        filterByArtist(artist, submissions)
+        {
+          this.loading_submissions = true
+
+            this.submissions = this.submissions.filter((review) => {
+            return review.art.artist_name === artist
+          })
+
+          this.loading_submissions = false
+
+          console.log('artist results length: ', this.submissions.length)
+
         },
         // search the most recent page with the selected art title
         /*findPage(title, submissions)
@@ -843,8 +858,16 @@
         console.log('selected: ', val)
         //this.page = this.findPage(val, this.submissions)
        
-        // search for the selected title
-        /*let filteredSubmissions =*/ this.filterByTitle(val, this.submissions)
+        // search for the selected title or artist
+        if (this.searchingByTitle === true)
+        {
+          /*let filteredSubmissions =*/ this.filterByTitle(val, this.submissions)
+        }
+        else
+        {
+          this.filterByArtist(val, this.submissions)
+        }
+
         // reset the page to 1 when user selects an option
         this.page = 1
         //this.populateSubmissions(this.page, filteredSubmissions)
