@@ -599,7 +599,11 @@
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
 
-          // display list of options in drop-down, may change depending on current tab
+          // reset selected item to null on initial load and also every new tab
+          this.selected = null
+          //console.log('Selected begins with value: ', this.selected)
+
+          // display list of items in drop-down, may change depending on current tab
           if (this.searchingByTitle === true)
           {
             this.items = this.titleOptionsLoad(this.submissions)
@@ -675,6 +679,8 @@
           this.populateSubmissions(this.page, this.submissions)
         }*/
 
+        this.selected = null
+
         if (this.searchingByTitle === true)
         {
           this.items = this.titleOptionsLoad(this.submissions)
@@ -705,6 +711,8 @@
 
         this.loading_submissions = false
 
+        this.selected = null
+
         if (this.searchingByTitle === true)
         {
           this.items = this.titleOptionsLoad(this.submissions)
@@ -729,6 +737,8 @@
         })
 
         this.loading_submissions = false
+
+        this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -868,7 +878,7 @@
           this.filterByArtist(val, this.submissions)
         }
 
-        // reset the page to 1 when user selects an option
+        // reset the page to 1 when user selects an item
         this.page = 1
         //this.populateSubmissions(this.page, filteredSubmissions)
         this.populateSubmissions(this.page, this.submissions)
