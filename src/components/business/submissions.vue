@@ -471,7 +471,7 @@
         this.loading_submissions = false
 
         // reset selected item to null every time a new tab is selected
-        this.selected = null
+        //this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -502,7 +502,7 @@
 
         this.loading_submissions = false
 
-        this.selected = null
+        //this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -528,7 +528,7 @@
 
         this.loading_submissions = false
 
-        this.selected = null
+        //this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -640,13 +640,14 @@
     },
     watch: {
       page: function (val) {
+        console.log('watched page ', val)
        this.populateSubmissions(val, this.submissions)
       },
       selected(val) {
         // set submissions back to the initial list of submissions
         this.submissions = this.saved_submissions
 
-        //console.log('selected: ', val)
+        console.log('selected: ', val)
         //this.page = this.findPage(val, this.submissions)
        
         // search for the selected title or artist
