@@ -1,33 +1,37 @@
 <template>
   <v-container>
-<div>
-    <v-alert
-      v-model="alert"
-      color="error"
-      icon="warning"
-      dismissible
-      outline
-    >
-     Your transaction has been canceled. Your account has not been charged.
-    </v-alert>
-  </div>
-  <div>
-    <v-alert
-      v-model="alert2"
-      color="success"
-      icon="check_circle"
-      dismissible
-      outline
-    >
-     Success! Your Account has been updated.
-    </v-alert>
-  </div>
+    
+    <div>
+      <v-alert
+          v-model="alert"
+          color="error"
+          icon="warning"
+          dismissible
+          outline
+      >
+        Your transaction has been canceled. Your account has not been charged.
+      </v-alert>
+    </div>
 
-  
+    <div>
+      <v-alert
+        v-model="alert2"
+        color="success"
+        icon="check_circle"
+        dismissible
+        outline
+      >
+        Success! Your Account has been updated.
+      </v-alert>
+    </div>
+
     <v-content class="body">
       <v-layout column class="titles">
-        <h2 class="title-1">Get More Credits<br><br></h2>
+        <h2 class="title-1">Get More Credits<br></h2>
       </v-layout>
+
+      <br>
+
       <v-layout row wrap>
         <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[0].title}}: {{plans[0].price}}<br>{{plans[0].credit}}</p>
@@ -36,63 +40,54 @@
             <input type="hidden" name="hosted_button_id" value="FT6D5N2GMYKV6">
             <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-        </form>
-
-
+          </form>
         </v-flex>
+
         <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[1].title}}: {{plans[1].price}}<br>{{plans[1].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="X6XUZBK5V74E4">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-
-          
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="X6XUZBK5V74E4">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
         </v-flex>
-
       </v-layout>
-<br><br>
-      <v-layout row wrap>
 
-                <v-flex xs12 md6 lg3 class="plan">
+    
+      <v-layout row wrap>
+        <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[2].title}}: {{plans[2].price}}<br>{{plans[2].credit}}</p>
           <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="X6XUZBK5V74E4">
             <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribe_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-        </form>
-
+          </form>
         </v-flex>
+
         <v-flex xs12 md6 lg3 class="plan">
           <p mb2 class="text-1">{{plans[3].title}}: {{plans[3].price}}<br>{{plans[3].credit}}</p>
-       <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="DYZRWS2WSSFUY">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-
-      </v-flex>
-      
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+              <input type="hidden" name="cmd" value="_s-xclick">
+              <input type="hidden" name="hosted_button_id" value="DYZRWS2WSSFUY">
+              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+              <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+        </v-flex>
       </v-layout>
 
       <v-layout>
-
-        <v-flex xs12 md6 lg3 class="plan">
-        
+        <v-flex xs12 md6 lg3 class="plan">        
           <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=4DJJEZZSYCLJS">
-<img src="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif" BORDER="0">
-</a>
-      </v-flex>
+            <img src="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif" BORDER="0">
+          </a>
+        </v-flex>
       </v-layout>
 
-      
-      <v-layout column class="text-2">
-        <h2 class="title-2"><strong><br>Why use premium credits?</strong></h2>
-        <p class="text-1">
+      <v-layout column align-left justify-center class="text-2">
+        <h2 class="title-2"><strong><br>Why use premium credits?<br></strong></h2>
+        <p class="text-1"><br>
           Premium credits help to ensure that blogs actually view and respond to submissions in a timely
           manner.<br>
           Here are some of their benefits:<br>
@@ -101,16 +96,18 @@
           <strong>{{index + 1}}.</strong> {{text}}<br>
         </v-flex>
       </v-layout>
+      
       <v-layout column class="text-2">
         <v-flex>
           <p class="text-1">
-            <br>
+          <br>
             * If the above conditions are not met after 48 hours, you get your credit back!<br>
             ** Premium credits are roughly 1 USD each, with discounts if you buy more. For example, you can use five
             credits to send one submission to five different bloggers.<br>
           </p>
         </v-flex>
       </v-layout>
+
     </v-content>
   </v-container>
 </template>
@@ -204,23 +201,25 @@
     margin: 25px;
   }
   .title-1 {
-    margin-left: 300px;
+    /*margin-left: 300px;*/
     font-family: 'Raleway', sans-serif;
-    font-size: 1.3em;
+    font-size: 5em;
   }
   .title-2 {
     font-weight: bold;
     font-family: 'Raleway', sans-serif;
-    font-size: 1em;
+    font-size: 2em;
   }
   .text-1 {
     margin: 0px;
+    font-size: 1.4em;
   }
   .text-2 {
-    margin-left: 300px;
+    /*margin-left: 300px;*/
+    font-size: 1.3em;
   }
   .plan {
-    margin-left: 300px;
+    /*margin-left: 300px;*/
     
   }
   .headline {
