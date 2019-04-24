@@ -1,18 +1,6 @@
 <template>
   <v-container ml-3>
   <v-layout class = "main-container" wrap>
-    <div class = "main-container">
-    <h2>{{this.art.art_title}}</h2>
-    <p>{{this.art.description}}</p>
-    </div>
-
-    <!--<p v-for="comment_field in new_comments_field"
-    :key="comment_field.comment">
-    <pre>
-    {{comment_field.from}} says: {{comment_field.comment}}
-    </pre> 
-    </p>
-    <v-spacer></v-spacer>-->
 
     <v-list two-line>
     <template v-for="comment_field in new_comments_field">
@@ -20,21 +8,41 @@
     :key="comment_field.comment"
     class="resize_list"
     >
-      <v-list-tile-content >
+
+      <v-list-tile-content>
         <v-list-tile-title class="t" v-html="comment_field.from"></v-list-tile-title>
         <v-list-tile-sub-title class="b" v-html="comment_field.comment"></v-list-tile-sub-title>
       </v-list-tile-content>
     </v-list-tile>
     </template>
     </v-list>
-    
-    <v-spacer></v-spacer>
 
+    <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
+
+    <v-spacer></v-spacer>
+    
+    <div class = "main-container" id="titling">
+    <h2>{{this.art.art_title}} </h2>
+    <h2 id="authorname">by {{this.art.artist_name}}</h2>
+    <p>{{this.art.description}}</p>
+    </div>
+
+  
     <div class = "small-container">
-      <v-text-field
-          label="Comment"
-          single-line
-          v-model="comment"
+      <v-divider class = "dividing"></v-divider>
+      <v-avatar size="100px" class="avatarStyle" v-bind:cpriolor="black">
+        <img v-if="fetchUserProfilePicture" v-bind:src="fetchUserProfilePicture" alt="avatar">
+        <div v-else>
+          <span style="font-size: 10em; color: white;">{{initial()}}</span>
+        </div>
+      </v-avatar>
+
+      <v-text-field 
+        solo
+        class="commenting"
+        label="Add Comment.."
+        single-line
+        v-model="comment"
       ></v-text-field>
     </div>
 
@@ -43,7 +51,6 @@
       <v-btn v-else depressed  dark large color="primary" @click="save_comment(art)">Send</v-btn>
       <v-btn  depressed dark large color="black" @click="back">Back</v-btn>
     </div>
-    <img mt-5 :src="this.art.url" alt="" width="80%" height=100%>
   </v-layout>
   <v-snackbar
       v-model="snackbar"
@@ -65,7 +72,6 @@
       </v-btn>
     </v-snackbar>
   </v-container>
-
 </template>
 
 <script>
@@ -75,32 +81,38 @@ import * as firebase from 'firebase'
     mounted: function() {
       this.load_comments(this.art)
     },
-        data() {
-      return {
-        snackbar: false,
-        y: 'top',
-        x: null,
-        mode: '',
-        timeout: 13000,
-        text: 'Thanks! Your comment has been submitted.',
-        comment:'',
-        art:{
-          url: localStorage.getItem('url'),
-          art_title: localStorage.getItem('art_title'),
-          description: localStorage.getItem('description'),
-          upload_date: localStorage.getItem('upload_date'),
-          newComment:''
-        },
+      data() {
+        return {
+          snackbar: false,
+          y: 'top',
+          x: null,
+          mode: '',
+          timeout: 13000,
+          text: 'Thanks! Your comment has been submitted.',
+          comment:'',
+          art:{
+            url: localStorage.getItem('url'),
+            art_title: localStorage.getItem('art_title'),
+            artist_name: localStorage.getItem('artist_name'),
+            description: localStorage.getItem('description'),
+            upload_date: localStorage.getItem('upload_date'),
+            newComment:''
+          },
 
-        new_comments_field: []
-    }
+          new_comments_field: []
+        }
         },
-    methods:{
+    computed:{
+      fetchUserProfilePicture () {
+        return this.$store.getters.signed_in_user.profileUrl
+      },
+    },
+    methods: {
       snack_bar_button(){
         this.snackbar = false;
         this.$router.push({
-      path:'/artist_dashboard'
-    })
+          path:'/artist_dashboard'
+        })
 
       },
       back(){
@@ -154,12 +166,12 @@ import * as firebase from 'firebase'
           results.forEach(function (doc) {
             
             let data = doc.data()
-            let comments = data.comments
-            for (var i = 0; i < comments.length; i++)
-            {
-              //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
-              comments_field.push(comments[i])
-            }
+            // let comments = data.comments
+            // for (var i = 0; i < comments.length; i++)
+            // {
+            //   //console.log('from: ', comments[i].from, 'comm: ', comments[i].comment)
+            //   comments_field.push(comments[i])
+            // }
 
           })
         }
@@ -169,7 +181,6 @@ import * as firebase from 'firebase'
       }
     },
 
-
   }
 </script>
 <style scoped>
@@ -177,8 +188,18 @@ import * as firebase from 'firebase'
    width: 100%;
  }
  .small-container {
-   width: 80%;
+   width: 100%;
+   /* padding: 10px; */
  }
+
+  #titling {
+    margin-top: 3%;
+  }
+
+  #authorname{
+    font-size: 95%;
+    margin-bottom: 2%;
+  }
 
  .t{
     font-weight: bold
@@ -193,6 +214,12 @@ import * as firebase from 'firebase'
     height:65px;
 
   }
+  .dividing {
+    /* padding-top: 30px;
+    padding-bottom: 30px; */
+    margin-bottom: 3%;
+  }
+
 </style>
 
 

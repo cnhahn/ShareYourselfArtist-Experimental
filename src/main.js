@@ -59,7 +59,6 @@ import {
   VDialog,
   VRadioGroup,
   VPagination
-
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import VueResource from '../node_modules/vue-resource';

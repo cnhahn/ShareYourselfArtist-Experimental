@@ -1,12 +1,12 @@
-<template>
 
+<template>
   <div  v-if="loading" class="loading_holder">
     <div class="spinner_holder">
       <c-spinner></c-spinner>
     </div>
   </div>
 
-  <v-container v-else>
+  <v-container v-else grid-list-md>
     <!-- If no images are found with the selected categories, display a toast message to the user  -->
     <div v-if="noneFound">
       <v-card>
@@ -28,92 +28,86 @@
 
 
 
-    <v-tabs color="primary" light grow>
-
+    <v-tabs v-model = "active" light grow>
       <v-tab >  Dashboard </v-tab>
-        <v-spacer></v-spacer>
         <v-tab-item :value="dashboard-tab">
-        
+          <v-layout pa-4 row wrap justify-center>
 
-          <v-layout row wrap mb-5>
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5 >
-                <v-card flat id="selectbox">
-                    <v-container fluid>
-                      <v-layout xs12 lg10 offset-lg3 ml-5 align-center wrap>
-                          <v-select
-                            :items="items"
-                            attach
-                            chips
-                            name='categories'
-                            id='categories'
-                            label='categories'
-                            v-model='categories'
-                            required
-                            multiple
-                            v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
-                          ></v-select>
-                      </v-layout>
-                    </v-container>
-                  </v-card>
-              </v-flex>
-              <v-flex v-if="def.length == 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in arts" :key='art.id'>
-                <v-card mt-3>
+            <v-flex xs3> </v-flex>
 
-                  <v-card-media img :src="art.url" height="450px">
-                  </v-card-media>
+            <v-flex xs6>
+              <v-card flat >
+                <v-select
+                  :items="items"
+                  attach
+                  chips
+                  name='categories'
+                  id='categories'
+                  label='Select categories to filter by'
+                  v-model='categories'
+                  multiple
+                  v-on:blur="updateCon(categories, def, arts, noneFound, snackbar)"
+                ></v-select>
+              </v-card>
+            </v-flex>
 
-                  <v-card-title primary-title>
+            <v-flex xs3> </v-flex>
+
+            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
+              <v-card  dark mt-3>
+                <v-card-media class="white" img :src="art.url" height="450px">
+                </v-card-media>
+
+                <v-card-title primary-title>
+                  <div>
+                    <h3 class="headline mb-0">{{art.art_title}}</h3>
                     <div>
-                      <h3 class="headline mb-0">{{art.art_title}}</h3>
-                      <div>
-                        <v-chip
-                          v-for="(tag, index) in art.categories"
-                          :key='tag.id'
-                          v-model = 'art.categories[index]'
-                          class="display_chips"
-                          close
-                          @input="removeChip(art.upload_date, art.categories)"
-                        >
-                          {{art.categories[index]}} </v-chip>
-                      </div>
+                      <v-chip
+                        v-for="(tag, index) in art.categories"
+                        :key='tag.id'
+                        v-model = 'art.categories[index]'
+                        class="display_chips"
+                        close
+                        @input="removeChip(art.upload_date, art.categories)"
+                      >
+                        {{art.categories[index]}} </v-chip>
                     </div>
-                  </v-card-title>
+                  </div>
+                </v-card-title>
 
-                  <v-card-actions>
-                    <v-btn flat @click="clicked_art(art.upload_date)" color="primary">View</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
-                    <div class="text-xs-center">
-                      <v-dialog v-model="dialog" width="30%">
-                        <v-card>
+                <v-card-actions>
+                  <v-btn flat @click="clicked_art(art.upload_date)" color="white">View</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat @click="set_art_to_delete(art,index)" color="white">Delete</v-btn>
+                  <div class="text-xs-center">
+                    <v-dialog v-model="dialog" width="30%">
+                      <v-card>
 
-                          <v-card-title class="headline grey lighten-2" primary-title> Deleting Message </v-card-title>
-                          <v-card-text> Are you sure you want to delete? </v-card-text>
-                          <v-divider></v-divider>
+                        <v-card-title class="headline grey lighten-2" primary-title> Deleting Message </v-card-title>
+                        <v-card-text> Are you sure you want to delete? </v-card-text>
+                        <v-divider></v-divider>
 
-                          <v-card-actions>
+                        <v-card-actions>
 
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" @click="delete_art('art')"> Delete </v-btn>
-                            <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
+                          <v-spacer></v-spacer>
+                          <v-btn color="primary" @click="delete_art('art')"> Delete </v-btn>
+                          <v-btn color="primary" flat @click="dialog = false"> Go Back  </v-btn>
 
-                          </v-card-actions>
+                        </v-card-actions>
 
-                        </v-card>
-                      </v-dialog>
-                    </div>
+                      </v-card>
+                    </v-dialog>
+                  </div>
 
-                    <v-spacer></v-spacer>
-                    <v-btn flat  color="primary" @click="submit_art(art)">Submit this piece</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn flat  color="white" @click="submit_art(art)">Submit this piece</v-btn>
 
-                  </v-card-actions>
+                </v-card-actions>
 
-                </v-card>
-              </v-flex>
-          </v-layout>
+              </v-card>
+            </v-flex>
 
-          <v-layout row wrap mb-5>
-            <v-flex v-if="def.length != 0" xs12 lg10 offset-lg2 mt-5 mr-5 v-for="art,index in def" :key='art.id'>
+            <v-flex xs6 v-if="def.length != 0"  v-for="art,index in def" :key='art.id'>
 
               <v-card mt-3>
                 <v-card-media img :src="art.url" height="450px">
@@ -136,7 +130,7 @@
                 <v-card-actions>
                   <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/art'>View</v-btn>
                   <v-spacer></v-spacer>
-                 <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
+                  <v-btn flat @click="set_art_to_delete(art,index)" color="primary">Delete</v-btn>
                   <div class="text-xs-center">
                     <v-dialog v-model="dialog" width="30%">
                       <v-card>
@@ -164,99 +158,120 @@
 
               </v-card>
             </v-flex>
+            
           </v-layout>
-
-        </v-tab-item>
-
-      <v-tab @click="recommendedArts()"> Recommended Artists </v-tab>
-
-      <v-tab-item>
-          <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div>
           <v-container>
-            <v-layout row >
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                <v-card elevation>
-                  <v-list three-line class= "changePointer"  >
-                    <template v-for="art,index in top_ten_category"  >
-                        <v-divider></v-divider>
-                        <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index)"  >
-                  
-                            <v-avatar size="100px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
-                              <img v-if="art.full_data.profileUrl != undefined && art.full_data.profileUrl != null" v-bind:src="art.full_data.profileUrl" alt="avatar">
-                              <div v-else>
-                                <v-avatar size="100px" class="avatarStyle"  color = "primary">
-                                  <span style="color: white;" class = "display-3"> {{art.full_data.name.charAt(0).toUpperCase()}} </span>
-                                </v-avatar>
-                              </div>
-                            </v-avatar>
-                            
-                            <v-list-tile >
-                              <div class = "text-xs-center headline">
-                                <v-list-title-content>
-                                  <v-list-tile-title class ="pb-5" > {{art.full_data.name }}</v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
-                          
-                            <v-list-tile>
-                              <div class = "text-xs-center">
-                                <v-list-title-content >
-                                  <v-list-tile-title class ="text-xs-center headline pb-5">  {{art.full_data.email}} </v-list-tile-title>
-                                </v-list-title-content>
-                              </div>
-                            </v-list-tile>
-
-                        </v-flex> 
-                       
-                        <v-divider></v-divider>
-                    </template>
-                  </v-list>
-                </v-card>
-              </v-flex>
-            </v-layout>
-          </v-container>       
-      </v-tab-item>
-
-
-      <v-tab > Responded Art Pieces </v-tab>
-        <v-tab-item>
-          <v-container justify-center>
-            <v-layout row >
-              <v-flex xs12 lg10 offset-lg2 mt-5 mr-5>
-                    <template v-for="art in recently_responded_arts">
-
-                        <v-card
-                        :key='art'
-                        >
-                          <img
-                          :src="art.url"
-                          >
-                          <v-card-title primary-title>
-                            <div>
-                              <h3 class="headline mb-0">Art Title: {{art.art_title}}</h3>
-                              <p>Description: {{art.description}} </p>
-                            </div>
-                          </v-card-title>
-                          <v-card-text >
-                            <div>
-                              <p >Response from <b>{{art.business_name}}</b>, "{{art.response}}"</p>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                    </template>
-              
-              </v-flex>
-            </v-layout>
+            <div class="text-xs-center mb-5">
+              <v-pagination
+                v-model="page"
+                :length="Math.ceil(arts.length / 4)"
+              ></v-pagination>
+            </div>
           </v-container>
         </v-tab-item>
 
+      <v-tab @click="recommendedArts()"> Recommended Businesses </v-tab>
+        <v-tab-item>
+            <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
+            <v-container>
+              <v-layout row fill-height>
+                <v-flex xs12 lg10 offset-sm1 mt-5 mr-5>
+                  <v-list three-line class= "changePointer"  >
+                    <template v-for="business,index in top_ten_rec_businesses"  >
+                      <v-layout row child-flex pb-3>
+                        <v-card class = "elevation-6">
+                          <v-card-title class ="grey darken-1 white--text">
+                            <v-flex xs7 >
+                              <v-card-title primary-title>
+                                <div class>
+                                  <div class ="pt-1 pb-1 headline py-3">{{business.business_name }}</div>
+                                  <div class ="pt-1 pb-1">  {{business.about}} </div>
+                                  <div class ="pt-1 pb-1"> Joined : {{business.upload_date}}</div>
+                                </div>
+                              </v-card-title>
+                            </v-flex>
+                            <v-flex xs2>
+                            </v-flex>
+                            <v-flex xs3>
+                              <!-- <v-flex xs3> -->
+                                <div class = "text-xs-center">
+                                  <v-avatar size="125px" class="avatarStyle mt-3 mb-3" v-bind:cpriolor="black">
+                                    <img v-if="business.url != undefined && business.url != null" v-bind:src="business.url" alt="avatar">
+                                    <div v-else>
+                                      <v-avatar size="100px" class="avatarStyle"  color = "primary">
+                                        <span style="color: white;" class = "display-3"> {{business.business_name.charAt(0).toUpperCase()}} </span>
+                                      </v-avatar>
+                                    </div> 
+                                  </v-avatar>
+                                </div>
+                              <!-- </v-flex> -->
+                              <!-- <v-flex xs3 > -->
+                                <div class = "text-xs-center"> Followers : {{ business.follower_count }}  </div>
+                              <!-- </v-flex> -->
+                            </v-flex>
+                          </v-card-title>
+                          <v-card-actions class ="pa-2 grey lighten-4 black--text">
+                            <!-- <v-container grid-list-sm text-xs-center> -->
+                              <!-- <v-layout row wrap> -->
+                                <v-flex xs8>
+                                  <div class="subheading" > Submissions Received: {{business.total_submissions}} </div>
+                                  <div class="subheading" > Submissions Replied: {{business.replied_submissions}} </div>
+                                  <div class="subheading" > Rate of response: {{Math.round(business.replied_submissions*100.0/business.total_submissions)}} % </div>
+                                </v-flex>
+                                <v-flex xs4>
+                                  <v-btn
+                                    @click='clicked_business({
+                                      userId: business.userId,
+                                      business_email: business.email,
+                                      business_name: business.business_name
+                                    })' 
+                                  block color="primary" dark> Submit To This Blog </v-btn>
+                                </v-flex>
+                              <!-- </v-layout> -->
+                            <!-- </v-container> -->
+                          </v-card-actions>
+                        </v-card>  
+                      </v-layout>                    
+                    </template>
+                  </v-list>
+                </v-flex>
+              </v-layout>
+            </v-container>  
+        </v-tab-item>
+
+      <v-tab > Responded Art Pieces </v-tab>
+        <v-tab-item>
+          <v-layout pa-4 row wrap justify-center>
+            <v-flex xs6 v-for="art in recently_responded_arts">
+              <v-card :key='art' dark height="100%">
+                <v-card-media  img :src="art.url" height="450px"></v-card-media>
+              
+                <v-card-title primary-title>
+                  <div class="headline mb-0 ">
+                    <h3>  {{art.art_title}} </h3>
+                    <p>Description: {{art.description}} </p>
+                  </div>
+                </v-card-title>
+                <v-card-text >
+                  <div class ="title">
+                    <p style="text-decoration: underline;" >Response from <b>{{art.business_name}} : </b>
+                    <p> {{art.response}}</p>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-tab-item>
     </v-tabs>
+
+
 
   </v-container>
 </template>
 
 
 <script>
+
 /*  buttons for delete can be found on lines 80 and 112*/
   export default {
     /*
@@ -270,6 +285,7 @@
         currentArtToDelete : null,
         currentArtIndex : null,
         y: 'top',
+        active: null,
         x: null,
         mode: '',
         timeout: 6000,
@@ -282,11 +298,13 @@
         noneFound: false,
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
+        page: 1,
+        section: []
       }
     },
     mounted(){
       this.respondedArts()
-
+      this.recommendedBusinesses()
     },
     computed: {
       users_top_category(){
@@ -295,12 +313,16 @@
       top_ten_category(){
         return this.$store.getters.get_top_ten_category;
       },
+      top_ten_rec_businesses(){
+        return this.$store.getters.get_top_ten_rec_businesses;
+      },
       recently_responded_arts(){
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
         return recently_responded_arts
       },
       arts() {
         let arts = this.$store.getters.allArts;
+        this.populateSubmissions(this.page, arts)
 
         function compare(a, b) {
           const upload_date1 = a.upload_date
@@ -330,6 +352,22 @@
       },
     },
     methods: {
+      // populate submissions array depending on the current page selected
+      populateSubmissions(page, submissions)
+      {
+        if(submissions.length !== undefined && submissions.length !== 0)
+        {
+          let section = []
+          let startIndex = (page-1) * 4
+          for(let i = startIndex; i < (startIndex + 4) && submissions[i] !== undefined; i++)
+          {
+            section.push(submissions[i])
+          }
+
+          this.section = section
+          console.log('section arr:', this.section)
+        }
+      },
       go_to_viewed_artist_page(index){
         //const test = this.$store.getters.top_12_recent_art
         //console.log('this.items[index] $#$#%#^#^', test[index])
@@ -341,6 +379,9 @@
       },
       respondedArts(){
         this.$store.dispatch('retrieve_recently_responded_arts')
+      },
+      recommendedBusinesses(){
+        this.$store.dispatch('retrieve_recommended_businesses')
       },
       recommendedArts(){
         this.$store.dispatch('retrieve_recommended_arts')
@@ -410,7 +451,19 @@
         }
 
       },
-
+      clicked_business(userId){
+        //this.$store.commit('set_art_being_submitted_is_selected', true)
+        this.$store.commit('clear_businesses_being_submitted')
+        this.$store.commit('set_business_being_submitted',{businessId:userId, date: Date.now()})
+        this.$store.commit('set_business_being_submitted_is_selected',true)
+        this.$store.commit('set_businesses_being_submitted', [userId])
+        console.log("art being submitted " + this.$store.state.art_being_submitted_is_selected )
+        this.$store.commit('set_art_being_submitted_is_selected', true)
+        console.log("art being submitted should be true " , this.$store.getters.get_art_being_submitted_is_selected)
+        if(this.$store.getters.get_art_being_submitted_is_selected === true){
+          this.active = "0"
+        }
+      },
       filterCategories(filterCategories, artCategories, def, art) {
           return filterCategories.every(function (value) {
             if(artCategories.indexOf(value) >= 0){
@@ -463,7 +516,13 @@
             })
         }
       },
-    }
+    },
+    watch: {
+      page: function (val) {
+        let arts = this.$store.getters.allArts;
+        this.populateSubmissions(val, arts)
+      }
+    },
 }
 </script>
 <style scope>
@@ -471,9 +530,6 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
-  }
-  p {
-    word-break: break-all;
   }
   .loading_holder {
     width: 100vw;
@@ -489,17 +545,7 @@
     margin-right: 5px;
     background-color: lightgray;
   }
-  #selectbox{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    /*margin-left: 80px;*/
-    margin-left: 280px;
-  }
   .changePointer{
     cursor: pointer;
-  }
-
-  .italic{
-    font-style: italic;
   }
 </style>

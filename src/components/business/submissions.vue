@@ -260,7 +260,7 @@
             <v-btn large color="primary" @click.native='submit_response(submission_response, radios)' :disabled = "!formIsValid">Submit</v-btn>
             <v-container fluid>
 
-  </v-container>
+            </v-container>
           </v-flex>
         </v-layout>
       </v-card>

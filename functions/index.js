@@ -191,123 +191,6 @@ exports.topCategories = functions.https.onRequest((req, res) => {
     })
 })
 
-/*
-plan:
-going to use a testing account to test the if credits are working.
-code will be written as if we want to change every users free credits but for testing we will target the test account.
-*/
-
-// this is a test function
-// This is Yas's ID: QBRXqktYi0QigFboM92crKAONKn1
-// exports.weekly_free_credits = functions.https.onRequest((req, res) => {
-//   // to-do update function & compare time to limit document searches talk to Karl if you have questions 
-
-//   let db = admin.firestore()
-//   db.collection('users').get()
-//     .then(users => {
-//       users.forEach(doc => {
-//         let currentCredits
-//         if (doc.data().free_credits !== undefined) { //maybe also doc.data().exists()?
-//           currentCredits = 2
-//         }
-//         console.log(currentCredits)
-//         console.log(doc.data().userId)
-//         //const userRef = db.collection('users').doc(doc.data().userId)
-//         const userRef = db.collection('users').doc('QBRXqktYi0QigFboM92crKAONKn1')
-//         // return userRef.update({
-//         //   free_credits: 2
-//         // })
-//       })
-//       res.send('distributed')
-//     })
-//     .catch(error => {
-//       console.log(error)
-//       res.status(500).send(error)
-//     })
-// })
-
-// exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
-//   let db = admin.firestore()
-//   let artists = db.collection('users').where('role', '==', "artist").get()
-//   const promise = artists.then(function (querySnapshot) {
-//       console.log(querySnapshot)
-//       console.log('before for each')
-//       querySnapshot.forEach(function (doc) {
-//         let userId = doc.data().userId
-//         console.log(doc)
-//         console.log('userID: ' + userId)
-//         return db.collection('users').doc(userId).update({'free_credits':'2'})
-//         // return db.collection('users').doc(userId).update({
-//         //   'free_credits': '2'
-//         // })
-//       })
-//     }).then(()=>{response.send("Document updated")}) 
-//   .catch(function (error) {
-//     console.log('error getting documents yas: ', error)
-//     response.send(error)
-//   })
-
-
-// })
-
-// exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
-//   let db = admin.firestore()
-//   let artists = db.collection('users').where('role', '==', "artist").get()
-//   const promise = artists.then(function (querySnapshot) {
-//       console.log('before for each')
-//       querySnapshot.forEach(function (doc) {
-//         let userId = doc.data().userId
-//         console.log('userID: ' + userId)
-//         return db.collection('users').doc(userId).update({
-//           'free_credits': '2'
-//         })
-//       })
-//       response.send("Document updated")
-//     })
-//   .catch(function (error) {
-//     console.log('error getting documents yas: ', error)
-//     response.send(error)
-//   })
-// })
-
-/*Lets outline our work right here
-
-Timing: 
-- If an artists uses credits, we mark that exact date. Then check the lastspentcreditdate and compare it to the current day the users next login.
-Recognizing when User Signs In
-If user already has maximum credits - run function, still update lastRanTime
-
-*/
-
-
-// Will only update credits when user signs in
-// exports.updateCreditsWeekly = functions.https.onRequest((request, response) => {
-//     let userId = request.body
-//     let freeCredits, creditsUpdatedOn, newCreditsUpdateDate
-//     let user = admin.firestore().collection('users').doc(userId).get()
-//         .then(userObject =>{
-//             if(userObject.exists && userObject.free_credits !== undefined && userObject.free_credits == 2){
-//                 freeCredits = 2
-//             }
-//             if(userObject.exists && userObject.lastUpdated !== undefined){
-
-//             }
-//         })
-//         .catch(error => {
-//             console.log(error)
-//             res.status(500).send(error)
-//         })
-// })
-
-
-/*
-  This function will update each artists free credit amount to 2 each week. It is hooked up
-  to a AWS CloudWatch CRON job so that it runs weekly
-
-  FUTURE TODO: The batch update used here can only do a maximum of 500 writes. As of writing
-  this function there are only 432 artists so everything is fine. Later on we will have to do 
-  multiple batch writes if there are greater than 500 artists.
-*/
 
 exports.updateUserCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
@@ -720,14 +603,22 @@ exports.recommendArtwork = functions.https.onRequest((request, response) => {
 
 })
 
-exports.giveBusinessCategories = functions.https.onRequest((request, response) => {
+/*
+giveBusinessCategories:
+A function meant to RUN ONCE in order to update a specific business in the 
+'user' collection so that they have these new entries. All new businesses should either have these 
+fields by default when creating their account, or the fields will be created when they receive/respond (to) a review-request.
+
+Use this to reset a business back to default. Please only use this for very special debugging cases such as resetting a 
+admin test business account. There should be no real reason to reset an actual customer
+*/
+exports.resetBusinessCategories = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   let person = db.collection('users').doc('yekGAvzU5fZKh49e6w0tJuRmFFg1')
 
   let transaction = db.runTransaction(t => {
     return t.get(person)
       .then(doc => {
-        // Add one person to the city population
         let categoryObj = {
           drawing : {
             totalReceived : 0,
@@ -797,6 +688,95 @@ exports.giveBusinessCategories = functions.https.onRequest((request, response) =
   });
 })
 
+exports.giveAllBusinessesCategories = functions.https.onRequest((request, response) => {
+  let batch = admin.firestore().batch()
+  let db = admin.firestore()
+  let categoryObj = {
+    drawing : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0                  
+    },
+    painting : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    sculpting:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    design:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    threeD : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    multimedia : {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    blackandwhite :{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    psychedelic:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    portrait:{
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    realism: {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    },
+    abstract: {
+      totalReceived : 0,
+      numberAccepted : 0,
+      numberResponded : 0   
+    }
+  }
+  
+  let users = db.collection('users').where('role', '==', 'business').get()
+    .then(snapshot => {
+      let promises = []
+      snapshot.forEach(doc =>{
+        promises.push(doc)
+        console.log('current snapshot: ', snapshot)
+      })
+      return Promise.all(promises)
+    })
+    .then(businesses => {
+      console.log('LIST OF PROMISES:')
+      console.log(businesses)
+      businesses.forEach(business=>{
+        let ID = business.data().userId
+        console.log('Current business to update: ', ID)
+        let bRef = db.collection('users').doc(ID)
+        batch.set(bRef, {categories: categoryObj}, {merge: true})
+      })
+      return batch.commit()
+    })
+    .then(r => {
+      response.send('All businesses updated')
+    })
+    .catch(error =>{
+      response.send(error)
+    })
+
+})
 // This function is triggerred when an artist uploads artwork to their dashboard. We track 
 // which category of artwork the artist chose so that we can recommend them artists/artwork according to
 // their most popular categorie(s)
@@ -967,20 +947,33 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
   const artistToUpdate = request.body[2];
   const businessToUpdate = request.body[1];
   const categoriesToUpdate = request.body[0];
-  console.log('Artist to update is ', artistToUpdate)
+  const radios = request.body[3];  // accepted or declined radios
+  let accepted = false;
+  console.log("Accepted status", radios);
+  if(radios === 'accepted' || radios === 'Accepted'){
+    accepted = true;
+  }
+  else{
+    accepted = false;
+  }
+  console.log("Radios is typeOF", typeof(radios));
+
   //which collection should this go to?
   const artistRef = db.collection('users').doc(artistToUpdate);
   const businessRef = db.collection('users').doc(businessToUpdate);
 
   console.log('Artist to update is ', artistToUpdate)
   console.log('Business to update is', businessToUpdate)
-  //function updateArtist(){
-    // return new Promise((resolve, reject) =>{
-      const currentArtist = db.collection('users').doc(artistToUpdate).get()
+  // If the business hit 'accept' when sending their response, we update both artist and business values.
+  // If the business hit 'decline' we only update the businesses values.
+
+  if(accepted){
+    const currentArtist = db.collection('users').doc(artistToUpdate).get()
       .then(user => {
         let person = db.collection('users').doc(artistToUpdate)
         let currentCategories = user.data().categories
-        //console.log('type of currentCategories: ' + typeof currentCategories)
+        console.log('type of currentCategories: ' + typeof currentCategories)
+        console.log('currentCategories\n', currentCategories)
         console.log(JSON.stringify(currentCategories))
 
         for (let i = 0; i < categoriesToUpdate.length; i++) {
@@ -1097,401 +1090,271 @@ exports.updateAcceptedStats = functions.https.onRequest((request, response) => {
                     count: user.data().categories.portrait.count,
                     responded: currentCategories[categoriesToUpdate[i]].responded,
                     //totalSubmitted: user.data().categories.portrait.totalSubmitted
-                    }
                   }
-                }, {merge:true})
-                break;
-              case 'realism':
-                console.log('matched with realism')
-                batch.set(artistRef, {
-                  categories: {
-                    realism: {
-                      count: user.data().categories.realism.count,
-                      responded: currentCategories[categoriesToUpdate[i]].responded,
-                      //totalSubmitted: user.data().categories.realism.totalSubmitted
-                    }
+                }
+              }, { merge: true })
+              break;
+            case 'realism':
+              console.log('matched with realism')
+              batch.set(artistRef, {
+                categories: {
+                  realism: {
+                    count: user.data().categories.realism.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded,
+                    //totalSubmitted: user.data().categories.realism.totalSubmitted
                   }
-                }, {merge:true})
-                break;
-              case 'abstract':
-                console.log('matched with abstract')
-                batch.set(artistRef, {
-                  categories: {
-                    abstract: {
-                      count: user.data().categories.abstract.count,
-                      responded: currentCategories[categoriesToUpdate[i]].responded,
-                      //totalSubmitted: user.data().categories.abstract.totalSubmitted
-                    }
+                }
+              }, { merge: true })
+              break;
+            case 'abstract':
+              console.log('matched with abstract')
+              batch.set(artistRef, {
+                categories: {
+                  abstract: {
+                    count: user.data().categories.abstract.count,
+                    responded: currentCategories[categoriesToUpdate[i]].responded,
+                    //totalSubmitted: user.data().categories.abstract.totalSubmitted
                   }
-                }, {merge:true})
-                break;
+                }
+              }, { merge: true })
+              break;
 
-              default:
-                console.log('no cases matched')
-            }
+            default:
+              console.log('no cases matched')
           }
-          return batch.commit()
-        })
+        }
+        return batch.commit()
+      })
       .then(function () {
-          console.log('artist updated')
-          response.send('artist updated')
-          //const status = 1
-          //resolve();
-          //response.send('artist updated')
+        // now update the business
+        let transaction = db.runTransaction(t => {
+          return t.get(businessRef)
+            .then(doc => {
+              console.log("Now entering the artist + business transaction")
+              if (doc.data() != undefined && doc.data().categories != undefined) {
+                let currCategories = doc.data().categories;  // the state of the users current categories before modification
+                console.log("Business to update: ", businessToUpdate);
+                console.log("Type of currCategories is", typeof(currCategories));
+                console.log("currCategories is \n",currCategories)
+                console.log("categories to update: \n", categoriesToUpdate )
+                for (var cat in categoriesToUpdate) {
+                  console.log('cat is ', categoriesToUpdate[cat])
+                  console.log("cat is typeOf", typeof(cat));
+                  console.log("currCategories[cat] is:", currCategories[cat] )    //this is undefined, incorrect access
+                  currCategories[categoriesToUpdate[cat]].numberAccepted++;
+                  currCategories[categoriesToUpdate[cat]].numberResponded++;
+                }
+                t.update(businessRef, { categories: currCategories });
+              }
+            });
         })
-        .catch(error => {
-          console.log('error updating artist', error)
-          const status = 0
+        .then(() => {
+          response.send('Updates complete')
+        })
+        .catch((error) =>{
+          console.log(error)
+          console.log("There was an error updating the business")
           response.send(error)
-          //reject();
-          //response.send(error)
         })
-    // })
-  //}
-  // function updateBusiness(){
-  //   return new Promise((resolve, reject) =>{
-  //     const currentBusiness = db.collection('users').doc(businessToUpdate).get()
-  //     .then(user => {
-  //       // let person = db.collection('users').doc(userId)
-  //       let currentCategories = user.data().categories
-  //       //console.log('type of currentCategories: ' + typeof currentCategories)
-  //       console.log(JSON.stringify(currentCategories))
-
-  //       for (let i = 0; i < categoriesToUpdate.length; i++) {
-  //         //console.log('currentCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-  //         //currentCategories[categoriesToUpdate[i]].count++
-  //         //console.log('updatedCount of: ', categoriesToUpdate[i], ' is ', currentCategories[categoriesToUpdate[i]].count)
-  //         switch (categoriesToUpdate[i]) {
-  //           case 'painting':
-  //             console.log('matched with painting')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 painting: {
-  //                   totalReceived : user.data().categories.painting.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.painting.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'threeD':
-  //             console.log('matched with threeD')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 threeD: {
-  //                   totalReceived : user.data().categories.threeD.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.threeD.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'drawing':
-  //             console.log('matched with drawing')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 drawing: {
-  //                   totalReceived : user.data().categories.drawing.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.drawing.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'sculpting':
-  //             console.log('matched with sculpting')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 sculpting: {
-  //                   totalReceived : user.data().categories.sculpting.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.sculpting.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'design':
-  //             console.log('matched with design')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 design: {
-  //                   totalReceived : user.data().categories.design.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.design.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'multimedia':
-  //             console.log('matched with multimedia')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 multimedia: {
-  //                   totalReceived : user.data().categories.multimedia.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.multimedia.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'blackandwhite':
-  //             console.log('matched with blackandwhite')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 blackandwhite: {
-  //                   totalReceived : user.data().categories.blackandwhite.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.blackandwhite.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'psychedelic':
-  //             console.log('matched with psychedelic')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 psychedelic: {
-  //                   totalReceived : user.data().categories.psychedelic.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.psychedelic.numberResponded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'portrait':
-  //             console.log('matched with portrait')
-  //             batch.set(businessRef, {
-  //               categories: {
-  //                 portrait: {
-  //                   totalReceived : user.data().categories.portrait.totalReceived,
-  //                   numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                   numberResponded : user.data().categories.portrait.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'realism':
-  //               console.log('matched with realism')
-  //               batch.set(businessRef, {
-  //                 categories: {
-  //                   realism: {
-  //                     totalReceived : user.data().categories.realism.totalReceived,
-  //                     numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                     numberResponded : user.data().categories.realism.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'abstract':
-  //               console.log('matched with abstract')
-  //               batch.set(businessRef, {
-  //                 categories: {
-  //                   abstract: {
-  //                     totalReceived : user.data().categories.abstract.totalReceived,
-  //                     numberAccepted : currentCategories[categoriesToUpdate[i]].numberAccepted++,
-  //                     numberResponded : user.data().categories.abstract.numberResponded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-
-  //             default:
-  //               console.log('no cases matched')
-  //           }
-  //         }
-  //         return 
-  //         //return response.send("These categories were updated ", JSON.stringify(currentCategories))
-  //       })
-  //     .then(function () {
-  //       console.log('business updated')
-  //       const status = 1
-  //       resolve();
-  //       //response.send('artist updated')
-  //     })
-  //     .catch(error => {
-  //       console.log('error updating business', error)
-  //       const status = 0
-  //       reject();
-  //       //response.send(error)
-  //     })
-  //   })
-  // }
-  // updateArtist()
-  //   .then(artStatus =>{
-  //     // return updateBusiness()
-  //     console.log('In the first .then of updateArtist')
-  //     updateBusiness()
-  //       .then(function(status){
-  //         console.log('in the first .then of updateBusiness')
-  //         return batch.commit()
-  //       })
-  //       .then(function(){
-  //         console.log('Business and Artists updated')
-  //         response.send('Business and Artists updated')
-  //       })
-  //   })
-
-
-    // .then(function(){
-    //   //return batch.commit()
-    // })
-    // .then(function(){
-    //   console.log('Businesses and Artists updated?')
-    //   response.send('Businesses and Artists updated?')
-    // })
-    // .catch(status => {
-    //   response.send('There was an error in the updateArtist call')
-    // })
-
+      })
+      .catch(error => {
+        console.log('error updating artist', error)
+        const status = 0
+        response.send(error)
+        //reject();
+        //response.send(error)
+      })
+  }
+  //The business did not hit 'accept', so we only update the businesses values.
+  else{
+    let transaction = db.runTransaction(t => {
+      return t.get(businessRef)
+        .then(doc => {
+          if (doc.data() != undefined && doc.data().categories != undefined) {
+            let currCategories = doc.data().categories;  // the state of the users current categories before modification
+            for (var cat in categoriesToUpdate) {
+              console.log('cat is ', categoriesToUpdate[cat])
+              console.log("cat is typeOf", typeof(cat));
+              console.log("currCategories[cat] is:", currCategories[cat] )    //this is undefined, incorrect access
+              currCategories[categoriesToUpdate[cat]].numberAccepted++;
+              currCategories[categoriesToUpdate[cat]].numberResponded++;
+            }
+            t.update(businessRef, { categories: currCategories });
+          }
+        });
+    })
+    .then(result => {
+      response.send("Artist and Business Transaction success")
+    })
+    .catch(err =>{
+      response.send(err);
+    })
+  }
 })
 
- // let transaction = db.runTransaction(t => {
-  //   return t.get(artistRef)
-  //     .then(doc => {
-  //       for(let i = 0; i < categoryToUpdate.length; i++){
-  //         switch (categoriesToUpdate[i]) {
-  //           case 'painting':
-  //             console.log('matched with painting')
-  //             batch.set(person, {
-  //               categories: {
-  //                 painting: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.painting.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'threeD':
-  //             console.log('matched with threeD')
-  //             batch.set(person, {
-  //               categories: {
-  //                 threeD: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.threeD.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'drawing':
-  //             console.log('matched with drawing')
-  //             batch.set(person, {
-  //               categories: {
-  //                 drawing: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.drawing.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'sculpting':
-  //             console.log('matched with sculpting')
-  //             batch.set(person, {
-  //               categories: {
-  //                 sculpting: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.sculpting.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'design':
-  //             console.log('matched with design')
-  //             batch.set(person, {
-  //               categories: {
-  //                 design: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.design.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'multimedia':
-  //             console.log('matched with multimedia')
-  //             batch.set(person, {
-  //               categories: {
-  //                 multimedia: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.multimedia.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'blackandwhite':
-  //             console.log('matched with blackandwhite')
-  //             batch.set(person, {
-  //               categories: {
-  //                 blackandwhite: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.blackandwhite.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'psychedelic':
-  //             console.log('matched with psychedelic')
-  //             batch.set(person, {
-  //               categories: {
-  //                 psychedelic: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.psychedelic.responded
-  //                 }
-  //               }
-  //             }, { merge: true })
-  //             break;
-  //           case 'portrait':
-  //             console.log('matched with portrait')
-  //             batch.set(person, {
-  //               categories: {
-  //                 portrait: {
-  //                   count: currentCategories[categoriesToUpdate[i]].count++,
-  //                   responded: user.data().categories.portrait.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'realism':
-  //               console.log('matched with realism')
-  //               batch.set(person, {
-  //                 categories: {
-  //                   realism: {
-  //                     count: currentCategories[categoriesToUpdate[i]].count++,
-  //                     responded: user.data().categories.realism.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  //             case 'abstract':
-  //               console.log('matched with abstract')
-  //               batch.set(person, {
-  //                 categories: {
-  //                   abstract: {
-  //                     count: currentCategories[categoriesToUpdate[i]].count++,
-  //                     responded: user.data().categories.abstract.responded
-  //                   }
-  //                 }
-  //               }, {merge:true})
-  //               break;
-  
-  //             default:
-  //               console.log('no cases matched')
-  //         }
-  //       }
-  //       // Add one to the artist 'accepted' stat
-  //       let newArtistStat = doc.data().categories.category.acceptedAmount + 1;
-  //       t.update(artistRef, {acceptedAmount: newArtistStat});
-  //       // We should also keep track of how many responses the business has made
-  //       let newBusinessStat = doc.data().acceptedAmount + 1;
-  //       t.update(businessRef, {acceptedAmount: newBusinessStat});
-        
-  //     });
-  // })
-  // .then(result => {
-  //   console.log('Transaction success!');
-  //   response.status(200).send("Artist's accepted stat updated.")
-  // })
-  // .catch(err => {
-  //   console.log('Transaction failure:', err);
-  // });
+// runs once per day. Updates the topBusinesses collection which keeps track of each business in the 
+exports.businessTopCategories = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  let search_users = db.collection('users').where('role', '==', 'business').get()
+    .then(function (users) {
+      let categories = ['abstract', 'blackandwhite', 'threeD', 'design', 'drawing', 'multimedia', 'painting', 'portrait', 'psychedelic', 'realism', 'sculpting']
+      let abstract = [], blackandwhite = [], threeD = [], design = [], drawing = [], multimedia = [], painting = [], portrait = [], psychedelic = [], realism = [], sculpting = [];
+
+      users.forEach(function (doc) {
+        // console.log('in for each ')
+        if (doc.data().categories != undefined) {
+          abstract.push({ numberResponded: doc.data().categories[categories[0]].numberResponded, value: doc.id, full_data: doc.data() })
+          blackandwhite.push({ numberResponded: doc.data().categories[categories[1]].numberResponded, value: doc.id, full_data: doc.data() })
+          threeD.push({ numberResponded: doc.data().categories[categories[2]].numberResponded, value: doc.id, full_data: doc.data() })
+          design.push({ numberResponded: doc.data().categories[categories[3]].numberResponded, value: doc.id, full_data: doc.data() })
+          drawing.push({ numberResponded: doc.data().categories[categories[4]].numberResponded, value: doc.id, full_data: doc.data() })
+          multimedia.push({ numberResponded: doc.data().categories[categories[5]].numberResponded, value: doc.id, full_data: doc.data() })
+          painting.push({ numberResponded: doc.data().categories[categories[6]].numberResponded, value: doc.id, full_data: doc.data() })
+          portrait.push({ numberResponded: doc.data().categories[categories[7]].numberResponded, value: doc.id, full_data: doc.data() })
+          psychedelic.push({ numberResponded: doc.data().categories[categories[8]].numberResponded, value: doc.id, full_data: doc.data() })
+          realism.push({ numberResponded: doc.data().categories[categories[9]].numberResponded, value: doc.id, full_data: doc.data() })
+          sculpting.push({ numberResponded: doc.data().categories[categories[10]].numberResponded, value: doc.id, full_data: doc.data() })
+
+        }
+        // console.log('finishing one instance of for each')
+      })
+
+      // console.log(sculpting)
+
+      abstract.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      blackandwhite.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      threeD.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      design.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      drawing.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      multimedia.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      painting.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      portrait.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      psychedelic.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      realism.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+      sculpting.sort(function (a, b) {
+        return a["numberResponded"] - b["numberResponded"]
+      })
+
+      // Now we want to store the results into firebase. 
+
+
+      //res.send('done?')
+      // let top_ten_users = []
+      // // Now that we have all users, we will get the top 10 for this category
+      // for (var tenUsers = 0; tenUsers < 10; tenUsers++) {
+      //   //Now push into the top 10 category array
+      //   top_ten_users.push(top_users[top_users.length - 1 - tenUsers])
+
+      // }
+      // console.log(' top ten users are ', top_ten_users)
+
+      // commit('set_top_ten_category', top_ten_users)
+      let object = {
+        abstract: abstract.slice(abstract.length - 10, abstract.length),
+        blackandwhite: blackandwhite.slice(blackandwhite.length - 10, blackandwhite.length),
+        threeD: threeD.slice(threeD.length - 10, threeD.length),
+        design: design.slice(design.length - 10, design.length),
+        drawing: drawing.slice(drawing.length - 10, drawing.length),
+        multimedia: multimedia.slice(multimedia.length - 10, multimedia.length),
+        painting: painting.slice(painting.length - 10, painting.length),
+        portrait: portrait.slice(portrait.length - 10, portrait.length),
+        psychedelic: psychedelic.slice(psychedelic.length - 10, psychedelic.length),
+        realism: realism.slice(realism.length - 10, realism.length),
+        sculpting: sculpting.slice(sculpting.length - 10, sculpting.length)
+      }
+      //  console.log('object here is: ', object)
+      return object
+    })
+    .then(categoryList => {
+      console.log('in the next .then()')
+      let batch = db.batch()
+      for (let key in categoryList) {
+        var catRef = db.collection('business_stats').doc(key);
+        var currentCategory = categoryList[key]
+        console.log('Current sculpting category is ', currentCategory)
+        //let userID = currentCategory.value
+        batch.set(catRef, {
+          user1: {
+            numberResponded: currentCategory[9].numberResponded,
+            userID: currentCategory[9].value,
+            userData: currentCategory[9].full_data
+          },
+          user2: {
+            numberResponded: currentCategory[8].numberResponded,
+            userID: currentCategory[8].value,
+            userData: currentCategory[8].full_data
+          },
+          user3: {
+            numberResponded: currentCategory[7].numberResponded,
+            userID: currentCategory[7].value,
+            userData: currentCategory[7].full_data
+          },
+          user4: {
+            numberResponded: currentCategory[6].numberResponded,
+            userID: currentCategory[6].value,
+            userData: currentCategory[6].full_data
+          },
+          user5: {
+            numberResponded: currentCategory[5].numberResponded,
+            userID: currentCategory[5].value,
+            userData: currentCategory[5].full_data
+          },
+          user6: {
+            numberResponded: currentCategory[4].numberResponded,
+            userID: currentCategory[4].value,
+            userData: currentCategory[4].full_data
+          },
+          user7: {
+            numberResponded: currentCategory[3].numberResponded,
+            userID: currentCategory[3].value,
+            userData: currentCategory[3].full_data
+          },
+          user8: {
+            numberResponded: currentCategory[2].numberResponded,
+            userID: currentCategory[2].value,
+            userData: currentCategory[2].full_data
+          },
+          user9: {
+            numberResponded: currentCategory[1].numberResponded,
+            userID: currentCategory[1].value,
+            userData: currentCategory[1].full_data
+          },
+          userten: {
+            numberResponded: currentCategory[0].numberResponded,
+            userID: currentCategory[0].value,
+            userData: currentCategory[0].full_data
+          }
+        })
+      }
+      return batch.commit();
+    })
+    .then(() => {
+      response.send('finished');
+    })
+    .catch(error => {
+      response.send(error);
+    })
+})
 
 exports.weeklyFreeCredits = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
@@ -1664,6 +1527,27 @@ exports.getUserAvatar = functions.https.onRequest((request, response) => {
     .catch(error => {
       console.log(error)
       //response.send(error)
+    })
+})
+exports.getRecommendedBusinesses = functions.https.onRequest((req, res) => {
+  // Loads the business_stats collection to populate the recommended tab
+  const db = admin.firestore()
+  
+  const data = db.collection('business_stats').get()
+    .then(snapshot => {
+      let arr = []
+      snapshot.forEach(item => {
+        console.log('item is ', item.data())
+        arr.push(item.data())   
+      })
+      return arr
+    })
+    .then(obj => {
+      return res.send(obj)
+    })
+    .catch(error => {
+      console.log('there was an error')
+      res.send(error)
     })
 })
 
@@ -1854,223 +1738,6 @@ exports.replyConfirmation = functions.firestore
 
 //function to resize images on firebase storage
 
-
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
-
-/*
-This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
-We utilize cronjobs to be able to call this function every 48 hours automatically
 
 /*
 This function refunds an artist based on a submission that has not been replied to for atleast 48 hours
