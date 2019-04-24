@@ -1,45 +1,11 @@
 <template>
   <v-container class ="container">
 
-    <!--<v-toolbar
-      dark
-      color="primary"
-    >
-      <v-toolbar-title>Search submissions</v-toolbar-title>
-      <v-autocomplete
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        cache-items
-        class="mx-3"
-        flat
-        hide-no-data
-        hide-details
-        label="Search by art title"
-        solo-inverted
-      ></v-autocomplete>
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
-    </v-toolbar>-->
-
     <v-toolbar
       dark
       color="primary"
     >
       <v-toolbar-title>Search submissions</v-toolbar-title>
-      <!--<v-select
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        class="mx-3"
-        flat
-        hide-details
-        label="Search by art title"
-        solo-inverted
-      ></v-select>-->
       <v-select
         v-model="selected"
         :search-input.sync="searchInput"
@@ -51,23 +17,6 @@
         solo-inverted
         
       ></v-select> <!--autocomplete-->
-      <!--<template v-slot:activator="{ on }">
-        <v-btn
-          icon
-          
-        >
-          <v-icon>more_vert</v-icon>
-        </v-btn>
-      </template>
-      <v-list>
-        <v-list-tile
-          v-for="(item, i) in clickOptions"
-          :key="i"
-          @click=""
-        >
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile>
-      </v-list>-->
       <v-menu
       offset-y
       content-class="dropdown-menu"
@@ -79,7 +28,7 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
         <v-card>
-          <v-list> <!--dense-->
+          <v-list>
             <v-list-tile
               v-for="item in clickOptions"
               :key="item"
@@ -95,54 +44,6 @@
     </v-toolbar>
 
     <!--<p>Selected: {{selected}}</p>-->
-
-    <!--<div class="text-xs-center">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            v-on="on"
-          >
-            Dropdown
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-tile
-            v-for="(item, index) in clickOptions"
-            :key="index"
-            @click=""
-          >
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
-    </div>-->
-
-    <!--<v-menu
-      offset-y
-      content-class="dropdown-menu"
-      transition="slide-y-transition">
-      <v-btn
-        slot="activator"
-        color="success"
-      >
-      <v-icon left>fa-search</v-icon>
-        Dropdown
-      </v-btn>
-      <v-card>
-        <v-list dense>
-          <v-list-tile
-            v-for="notification in clickOptions"
-            :key="notification"
-            @click=""
-          >
-            <v-list-tile-title
-              v-text="notification"
-            />
-          </v-list-tile>
-        </v-list>
-      </v-card>
-    </v-menu>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
@@ -304,81 +205,12 @@
         rules: [v => v.length > 50 || 'Min 50 characters'],
         page: 1,
         loading_submissions: false,
-        /*loading: false,
         items: [],
-        search: null,
-        select: null,
-        states: [
-          'Alabama',
-          'Alaska',
-          'American Samoa',
-          'Arizona',
-          'Arkansas',
-          'California',
-          'Colorado',
-          'Connecticut',
-          'Delaware',
-          'District of Columbia',
-          'Federated States of Micronesia',
-          'Florida',
-          'Georgia',
-          'Guam',
-          'Hawaii',
-          'Idaho',
-          'Illinois',
-          'Indiana',
-          'Iowa',
-          'Kansas',
-          'Kentucky',
-          'Louisiana',
-          'Maine',
-          'Marshall Islands',
-          'Maryland',
-          'Massachusetts',
-          'Michigan',
-          'Minnesota',
-          'Mississippi',
-          'Missouri',
-          'Montana',
-          'Nebraska',
-          'Nevada',
-          'New Hampshire',
-          'New Jersey',
-          'New Mexico',
-          'New York',
-          'North Carolina',
-          'North Dakota',
-          'Northern Mariana Islands',
-          'Ohio',
-          'Oklahoma',
-          'Oregon',
-          'Palau',
-          'Pennsylvania',
-          'Puerto Rico',
-          'Rhode Island',
-          'South Carolina',
-          'South Dakota',
-          'Tennessee',
-          'Texas',
-          'Utah',
-          'Vermont',
-          'Virgin Island',
-          'Virginia',
-          'Washington',
-          'West Virginia',
-          'Wisconsin',
-          'Wyoming'
-        ]*/
-        items: ['Foo', 'Bar', 'Fizz', 'Buzz'],  // if you see these, loading drop down menu is too slow
         selected: null,
         searchInput: "",
 
         saved_submissions: [],
         clickOptions: [
-          /*{ title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me 2' }*/
           'Search by art title',
           'Search by artist name',
         ],
@@ -409,16 +241,6 @@
           }
 
         },
-        /*querySelections (v) {
-          this.loading = true
-          // Simulated ajax query
-          setTimeout(() => {
-            this.items = this.states.filter(e => {
-              return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
-            })
-            this.loading = false
-          }, 500)
-        },*/
         // change searchbar hint if search option is changed
         switchSearchOption(option)
         {
@@ -431,10 +253,9 @@
           {
             this.hint = 'Search by artist name'
             this.searchingByTitle = false
-            //console.log('searching by artist')
           }
 
-          // change options in drop-down that user can select
+          // change items in drop-down that user can select
           if (this.searchingByTitle === true)
           {
             this.items = this.titleOptionsLoad(this.saved_submissions)
@@ -444,7 +265,7 @@
             this.items = this.artistOptionsLoad(this.saved_submissions)
           }
         },
-        // load title options in drop-down
+        // load title options, aka items, in drop-down
         titleOptionsLoad(submissions)
         {
           let titles = []
@@ -452,7 +273,6 @@
           {
             if (submissions[i].art.art_title != undefined)
             {
-              //console.log('pushing title ', submissions[i].art.art_title)
               titles.push(submissions[i].art.art_title)
             }
           }
@@ -466,7 +286,6 @@
           {
             if (submissions[i].art.artist_name != undefined)
             {
-              //console.log('pushing artist ', submissions[i].art.artist_name)
               artists.push(submissions[i].art.artist_name)
             }
           }
@@ -478,21 +297,15 @@
         {
           this.loading_submissions = true
 
-          //let searchResult = []
-
-          /*searchResult*/ this.submissions = this.submissions.filter((review) => {
+            this.submissions = this.submissions.filter((review) => {
             return review.art.art_title === title
           })
 
           this.loading_submissions = false
 
-          //console.log('search result length: ', searchResult.length)
-          //console.log('title results length: ', this.submissions.length)
-
-          //return searchResult
         },
-        // display new group of pages when searching by art title
-        // displays every art that has the same art title
+        // display new group of pages when searching by artist
+        // displays every art that the artist has submitted
         filterByArtist(artist, submissions)
         {
           this.loading_submissions = true
@@ -502,8 +315,6 @@
           })
 
           this.loading_submissions = false
-
-          console.log('artist results length: ', this.submissions.length)
 
         },
         // search the most recent page with the selected art title
@@ -592,16 +403,12 @@
           console.log("Submissions is ", this.submissions)
           // order by most recent upload date
           this.sortByDate(this.submissions)
-          // sort doesn't order correctly,
+          // sortByDate doesn't order all submissions correctly,
           // this sorts by checking every submission but is very slow
           this.checkSortByDate(this.submissions)
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
           this.loading_submissions = false
-
-          // reset selected item to null on initial load and also every new tab
-          this.selected = null
-          //console.log('Selected begins with value: ', this.selected)
 
           // display list of items in drop-down, may change depending on current tab
           if (this.searchingByTitle === true)
@@ -611,7 +418,6 @@
           else
           {
             this.items = this.artistOptionsLoad(this.submissions)
-            console.log('artists')
           }
           // save the whole list of submissions because we want to search using this list
           this.saved_submissions = this.submissions
@@ -664,21 +470,7 @@
         }
         this.loading_submissions = false
 
-        /* Uncomment if you want to display same page every tab,
-        and reset to page 1 if page exceeds actual number of pages.
-        Used in
-        fetch_submissions, submissions_unreplied_submissions, and
-        submissions_replied_submissions
-        if (this.page <= Math.ceil(this.submissions.length / 4))
-        {
-          this.populateSubmissions(this.page, this.submissions)
-        }
-        else
-        {
-          this.page = 1
-          this.populateSubmissions(this.page, this.submissions)
-        }*/
-
+        // reset selected item to null every time a new tab is selected
         this.selected = null
 
         if (this.searchingByTitle === true)
@@ -688,7 +480,6 @@
         else
         {
           this.items = this.artistOptionsLoad(this.submissions)
-          console.log('artists')
         }
         this.saved_submissions = this.submissions
 
@@ -720,7 +511,6 @@
         else
         {
           this.items = this.artistOptionsLoad(this.submissions)
-          console.log('artists')
         }
         this.saved_submissions = this.submissions
 
@@ -747,7 +537,6 @@
         else
         {
           this.items = this.artistOptionsLoad(this.submissions)
-          console.log('artists')
         }
         this.saved_submissions = this.submissions
 
@@ -765,7 +554,6 @@
         this.submissions = new_subs
         console.log('nameKey is ' , nameKey , ' submissions is ' , new_subs)
         this.$store.commit('set_response', {response: response, radios:  radios })
-        // this.$store.commit('dec_num_submissions_for_this_business')
         this.$store.dispatch('submit_submission_response', {categories: this.categories, art: this.art_being_replied} )
         this.dialog = false
       },
@@ -854,24 +642,17 @@
       page: function (val) {
        this.populateSubmissions(val, this.submissions)
       },
-      /*search (val) {
-        val && val !== this.select && this.querySelections(val)
-      }*/
-      /*searchInput(val) {
-        //console.log('search input: ', val)
-        //alert(val)
-      },*/
       selected(val) {
         // set submissions back to the initial list of submissions
         this.submissions = this.saved_submissions
 
-        console.log('selected: ', val)
+        //console.log('selected: ', val)
         //this.page = this.findPage(val, this.submissions)
        
         // search for the selected title or artist
         if (this.searchingByTitle === true)
         {
-          /*let filteredSubmissions =*/ this.filterByTitle(val, this.submissions)
+          this.filterByTitle(val, this.submissions)
         }
         else
         {
@@ -880,7 +661,6 @@
 
         // reset the page to 1 when user selects an item
         this.page = 1
-        //this.populateSubmissions(this.page, filteredSubmissions)
         this.populateSubmissions(this.page, this.submissions)
       }
     },
