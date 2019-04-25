@@ -15,8 +15,8 @@
         hide-details
         :label="hint"
         solo-inverted
-        
-      ></v-select> <!--autocomplete-->
+        autocomplete
+      ></v-select>  <!--Using autocomplete will produce tons of warnings-->
       <v-menu
       offset-y
       content-class="dropdown-menu"
@@ -487,9 +487,6 @@
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
 
-        // reset selected item to null every time a new tab is selected
-        //this.selected = null
-
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
         })
@@ -519,8 +516,6 @@
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
-
-        //this.selected = null
       },
 
       /* Retrieves review requests that have already been responded to */
@@ -547,8 +542,6 @@
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
-
-        //this.selected = null
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
