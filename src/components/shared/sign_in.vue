@@ -3,164 +3,174 @@
   <v-parallax src="/static/images/12.jpg" height="100%">
     <center>
       <div class="card mt-5 mb-5 pt-4 pb-4 pl-4 pr-4" style="max-width: 700px;background-color: #f9f9fa">
-        <v-card class="elevation-0">
+        <v-card  class="elevation-0">
           <h6 class="title pt-4 ml-4 mr-4" style="color: #FF7D27;">Get Your Art Seen today – guaranteed a response.</h6>
-          <v-card-text style="margin-top: -15px;">
-            
-              <form @submit.prevent="onSignin">
+            <v-card-text style="margin-top: -15px;">
+                <form @submit.prevent="onSignin">
+                  <v-layout row wrap mt-3>
+                    <v-flex lg6 md6 sm6 xs12>
+                      <div class="text-xs-center">
+                        <v-btn color="info"  class="googleButton"
+                          @click.prevent="onSigninGoogle">
+                          <v-icon style="margin-right: 10px; margin-left: -10px;">fab fa-google</v-icon>
+                          <span slot="loader" class="custom-loader">
+                            <v-icon light>cached</v-icon>
+                          </span>
+                          Log in with Google
+                        </v-btn>
+                      </div>
+                    </v-flex>
 
-                      <v-layout row wrap mt-3>
+                    <v-flex lg6 md6 sm6 xs12>
+                      <div class="text-xs-center">
+                        <v-btn  class="facebookButton"
+                          @click.prevent="onSigninFacebook">
+                          <v-icon style="margin-left: 5px; margin-right: 10px;">fab fa-facebook</v-icon>
+                          <span slot="loader" class="custom-loader">
+                            <v-icon light>cached</v-icon>
+                          </span>
+                          Log in with Facebook
+                        </v-btn>
+                      </div>
+                    </v-flex>
 
-                        <v-flex lg6 md6 sm6 xs12>
-                          <div class="text-xs-center">
-                            <v-btn color="info"  class="googleButton"
-                              @click.prevent="onSigninGoogle">
-                              <v-icon style="margin-right: 10px; margin-left: -10px;">fab fa-google</v-icon>
-                              <span slot="loader" class="custom-loader">
-                                <v-icon light>cached</v-icon>
-                              </span>
-                              Log in with Google
-                            </v-btn>
-                          </div>
-                        </v-flex>
+                  </v-layout>
 
-                        <v-flex lg6 md6 sm6 xs12>
-                          <div class="text-xs-center">
-                            <v-btn  class="facebookButton"
-                              @click.prevent="onSigninFacebook">
-                              <v-icon style="margin-left: 5px; margin-right: 10px;">fab fa-facebook</v-icon>
-                              <span slot="loader" class="custom-loader">
-                                <v-icon light>cached</v-icon>
-                              </span>
-                              Log in with Facebook
-                            </v-btn>
-                          </div>
-                        </v-flex>
+                  <v-layout row wrap mt-4>
 
-                      </v-layout>
+                    <v-flex lg12 xs12>
+                      <v-text-field
+                        name="email"
+                        label="Email"
+                        id="email"
+                        v-model="email"
+                        type="email"
+                          @keyup.native.enter = "onSignin"
+                        required
+                      >
+                      </v-text-field>
+                    </v-flex>
 
-                      <v-layout row wrap mt-4>
+                    <v-flex lg12 xs12>
+                      <v-text-field
+                        name="password"
+                        label="Password"
+                        id="password"
+                        v-model="password"
+                        type="password"
+                        required
+                        @keyup.native.enter = "onSignin">
+                      </v-text-field>
+                    </v-flex>
 
-                        <v-flex lg12 xs12>
-                          <v-text-field
-                            name="email"
-                            label="Email"
-                            id="email"
-                            v-model="email"
-                            type="email"
-                             @keyup.native.enter = "onSignin"
-                            required
-                          >
-                          </v-text-field>
-                        </v-flex>
+                  </v-layout>
 
-                        <v-flex lg12 xs12>
-                          <v-text-field
-                            name="password"
-                            label="Password"
-                            id="password"
-                            v-model="password"
-                            type="password"
-                            required
-                            @keyup.native.enter = "onSignin">
-                          </v-text-field>
-                        </v-flex>
+                  <v-layout row>
 
-                      </v-layout>
+                    <v-flex>
 
-                      <v-layout row>
+                      <v-btn
+                        depressed
+                        large
+                        color="primary"
+                        @click="onSignin"
+                        style="width: 210px"
+                      >
+                        Sign in
+                      </v-btn>
 
-                        <v-flex>
+                    </v-flex>
+                  </v-layout>
 
-                          <v-btn
-                            depressed
-                            large
-                            color="primary"
-                            @click="onSignin"
-                            style="width: 210px"
-                          >
-                            Sign in
-                          </v-btn>
+                  <v-layout row wrap mt-4>
 
-                        </v-flex>
-                      </v-layout>
+                    <v-flex xs12>
+                      <p 
+                        class="body-2" 
+                        style="cursor: pointer; width:120px;"
+                        v-on:click="modal2"
+                      >
+                        Forgot Password?
+                      </p>
+                    </v-flex>
 
-                      <v-layout row wrap mt-4>
+                    <v-flex>
+                      <p 
+                        class="body-2" 
+                        style="cursor: pointer; width:120px;"
+                        v-on:click="joinOrCreate()"
+                      >
+                        Business Sign Up
+                      </p>
+                    </v-flex>
 
-                        <v-flex xs12>
-                          <p 
-                            class="body-2" 
-                            style="cursor: pointer; width:120px;"
-                            v-on:click="modal2"
-                          >
-                            Forgot Password?
-                          </p>
-                        </v-flex>
+                    <v-flex>
+                      <p 
+                        class="body-2" 
+                        style="cursor: pointer;width:120px;"
+                        v-on:click="$router.push('/artist_signup')"
+                      >
+                        Artist Sign Up
+                      </p>
+                    </v-flex>
 
-                        <v-flex>
-                          <p 
-                            class="body-2" 
-                            style="cursor: pointer; width:120px;"
-                            v-on:click="$router.push('/business_signup')"
-                          >
-                            Business Sign Up
-                          </p>
-                        </v-flex>
+                  </v-layout>
 
-                        <v-flex>
-                          <p 
-                            class="body-2" 
-                            style="cursor: pointer;width:120px;"
-                            v-on:click="$router.push('/artist_signup')"
-                          >
-                            Artist Sign Up
-                          </p>
-                        </v-flex>
+                </form>
+                <v-dialog v-model="dialog2" max-width="490" >
+                  <v-card>
+                    <h6 class="title pt-4 ml-4 mr-4" style="color: #FF7D27">Reset Password</h6>
+                    <h6 class="body-2 pt-4 ml-4 mr-4" style="color: black;">Enter the email account that is associated with Share Yourself Artists.</h6>
+                  
+                  <v-card-actions>
+                    
+                    <v-layout row>
 
-                      </v-layout>
+                      <v-flex xs12 ml-2>
+                        <v-text-field
+                          name="email" 
+                          label="Email" 
+                          id="email" 
+                          v-model="email" 
+                          type="email"
+                          required
+                        >
+                      </v-text-field>
+                      </v-flex>
+                  
+                    </v-layout>
 
-                    </form>
-
-                    <v-dialog v-model="dialog2" max-width="490" >
-                     <v-card>
-                       <h6 class="title pt-4 ml-4 mr-4" style="color: #FF7D27">Reset Password</h6>
-                       <h6 class="body-2 pt-4 ml-4 mr-4" style="color: black;">Enter the email account that is associated with Share Yourself Artists.</h6>
-                      <v-card-actions>
-                        <v-layout row>
-
-                          <v-flex xs12 ml-2>
-                            <v-text-field
-                              name="email" 
-                              label="Email" 
-                              id="email" 
-                              v-model="email" 
-                              type="email"
-                              required
-                            >
-                          </v-text-field>
-                         </v-flex>
-                      
-                       </v-layout>
-
-                        <v-btn
-                          color="green darken-1"
-                          flat="flat" 
-                          @click="reset_password"
-                          >
-                            Reset
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-            
-          </v-card-text>
-        
+                    <v-btn
+                      color="green darken-1"
+                      flat="flat" 
+                      @click="reset_password"
+                      >
+                        Reset
+                      </v-btn>
+                   
+                    </v-card-actions>
+                  
+                  </v-card>
+                  
+                </v-dialog>
+                <v-dialog v-model="joinOrCreateDialog" max-width="490">
+                  <v-card>
+                    <v-card-title class="headline">Choose a service</v-card-title>
+                    <v-card-text>
+                      If you have an access code, click "Join a Business". If you would like to create a new account for your business, click "Create a new Business"
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="primary" flat @click="$router.push('/joinBusiness_signup')">Join a Business</v-btn>
+                      <v-btn color="primary" flat @click="$router.push('/business_signup')">Create a new Business</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+            </v-card-text>
         </v-card>
       </div>
     </center>
   </v-parallax>
-
-
 
   <!--
   <div v-bind:class="classObject">
@@ -315,6 +325,7 @@
           signInMobileHolder: this.mobile
         },
         */
+        joinOrCreateDialog: false,
         email: '',
         password: '',
         dialog2: false,
@@ -355,6 +366,10 @@
         this.textObject.headline = !this.mobile;
       },
       */
+      joinOrCreate(){
+        this.joinOrCreateDialog = true;
+
+      },
       onSigninGoogle() {
         this.$store.dispatch('signUserInGoogle')
       },

@@ -22,14 +22,14 @@
       <v-stepper-content step="1" >
        <form class="form white--text">
            
-          <v-text-field
-                            name='business_name'
-                            label= 'Business Name'
-                            id= 'business_name'
-                            v-model='business_name'
-                            :rules="nameRules"
-                            required
-                            >
+        <v-text-field
+          name='business_name'
+          label= 'Business Name'
+          id= 'business_name'
+          v-model='business_name'
+          :rules="nameRules"
+          required
+          >
         </v-text-field>
         <v-text-field
                             name='email'
@@ -48,15 +48,15 @@
                             :type="show1 ? 'text' : 'password'"
                             required
                             >
-                            </v-text-field>
+        </v-text-field>
     <v-text-field
-                            name='password_retype'
-                            id='password_retype'
-                            label= 'Confirm Password'
-                            v-model='password_retype'
-                            :type="show2 ? 'text' : 'password'"
-                            required
-                            >
+      name='password_retype'
+      id='password_retype'
+      label= 'Confirm Password'
+      v-model='password_retype'
+      :type="show2 ? 'text' : 'password'"
+      required
+      >
     </v-text-field>
   </form>
        <img v-if='uploaded_image' :src="image_url" width="50%" height="auto">

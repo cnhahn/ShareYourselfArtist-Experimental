@@ -22,6 +22,7 @@ import blogs2 from "@/components/business/blogs2"
 import business_signup from "@/components/business/business_signup"
 import business_signup2 from "@/components/business/business_signup2"
 import business_signup3 from "@/components/business/business_signup3"
+import joinBusiness_signup from "@/components/business/joinBusiness_signup"
 import business_dashboard from "@/components/business/business_dashboard"
 import submissions from "@/components/business/submissions"
 import submissionsEmpty from '@/components/business/submissions_empty'
@@ -81,6 +82,11 @@ export default new Router({
       path: "/artist_signup",
       name: "artist_signup",
       component: artist_signup
+    },
+    {
+      path: "/joinBusiness_signup",
+      name: "joinBusiness_signup",
+      component: joinBusiness_signup
     },
     {
       path: "/artist_dashboard",
