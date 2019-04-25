@@ -471,7 +471,7 @@
         this.loading_submissions = false
 
         // reset selected item to null every time a new tab is selected
-        //this.selected = null
+        this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -486,6 +486,9 @@
         // reset the page to 1 every time a new tab is selected
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
+
+        // reset selected item to null every time a new tab is selected
+        //this.selected = null
 
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
@@ -502,7 +505,7 @@
 
         this.loading_submissions = false
 
-        //this.selected = null
+        this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -516,6 +519,8 @@
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
+
+        //this.selected = null
       },
 
       /* Retrieves review requests that have already been responded to */
@@ -528,7 +533,7 @@
 
         this.loading_submissions = false
 
-        //this.selected = null
+        this.selected = null
 
         if (this.searchingByTitle === true)
         {
@@ -542,6 +547,8 @@
 
         this.page = 1
         this.populateSubmissions(this.page, this.submissions)
+
+        //this.selected = null
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
@@ -644,25 +651,28 @@
        this.populateSubmissions(val, this.submissions)
       },
       selected(val) {
-        // set submissions back to the initial list of submissions
-        this.submissions = this.saved_submissions
-
-        console.log('selected: ', val)
-        //this.page = this.findPage(val, this.submissions)
-       
-        // search for the selected title or artist
-        if (this.searchingByTitle === true)
+        if (val != null)
         {
-          this.filterByTitle(val, this.submissions)
-        }
-        else
-        {
-          this.filterByArtist(val, this.submissions)
-        }
+          // set submissions back to the initial list of submissions
+          this.submissions = this.saved_submissions
 
-        // reset the page to 1 when user selects an item
-        this.page = 1
-        this.populateSubmissions(this.page, this.submissions)
+          console.log('selected: ', val)
+          //this.page = this.findPage(val, this.submissions)
+        
+          // search for the selected title or artist
+          if (this.searchingByTitle === true)
+          {
+            this.filterByTitle(val, this.submissions)
+          }
+          else
+          {
+            this.filterByArtist(val, this.submissions)
+          }
+
+          // reset the page to 1 when user selects an item
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }
       }
     },
 
