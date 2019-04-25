@@ -96,14 +96,14 @@
           <v-flex> 
             <v-card-title primary-title>
             <div>
-              <div class="headline mb-0">
+              <div class="title mb-0">
                 <h2>
                   {{this.$store.state.viewed_art_image_info.art_title}}
                 </h2>
               </div>
 
               <div>
-                <p class="text-sm-left">
+                <p class="body-1 text-sm-left">
                   {{this.$store.state.viewed_art_image_info.description}}
                 </p>
               </div>

@@ -145,13 +145,13 @@
           <v-flex> 
             <v-card-title primary-title>
               <div>
-                <div class="headline mb-0">
+                <div class="title mb-0 text-sm-left">
                   <h2>
                     {{this.art.art_title}}
                   </h2>
                 </div>
                 <div>
-                  <p class="text-sm-left">
+                  <p class="body-1 text-sm-left">
                     {{this.art.description}}
                   </p>
                 </div>
