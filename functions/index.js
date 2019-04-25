@@ -28,6 +28,61 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
+  // let input = req.body
+  // let name = input[0]
+  // let email = input[1]
+  // let business = input[2]
+  // let verifyCode = input[3]
+  // let code = ''
+  // let input = req.body
+  let name = 'KS'
+  let email = 'grouptest@gmail.com'
+  let business = 'test'
+  let verifyCode = '12345'
+  let code = '12345'
+  const db = admin.firestore()
+  const businessRef = db.collection('business_groups').doc(business).get()
+    .then(account => {
+      code = account.data().accessCode
+    })
+    .catch(error => {
+      console.log('There was an error retrieving the access code', error)
+      res.send('There was an error retrieving the access code', error)
+    })
+  if (code !== '' && verifyCode === code){
+    admin.auth().createUser({
+      email: email,
+      emailVerified: false,
+    })
+    .then(userRecord => {
+      console.log('User created successfully')
+      const newUser = db.collection('business_groups').doc(business).set({
+        name: name ,
+        email: email
+      })
+      .then(() => {
+        console.log('User added to db')
+        res.send('User created and added to the db')
+      })
+      .catch(error => {
+        console.log("There was an error setting the user data in firestore", error)
+        res.send('There was an error setting user data in the db ')
+      })
+      //res.send('User created successfully')
+    })
+    .catch(error => {
+      console.log("There was an error creating the user", error)
+      res.send('There was an error creating the user')
+    })
+  }
+  else{
+    res.status(401).send("Verification Code Did Not Match!")
+  }
+
+})
+
+
 exports.topCategories = functions.https.onRequest((req, res) => {
   const db = admin.firestore()
   let search_users = db.collection('users').where('role', '==', 'artist').get()
