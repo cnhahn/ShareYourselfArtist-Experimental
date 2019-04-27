@@ -28,9 +28,18 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+exports.createNewBusiness = functions.https.onRequest((request, response) => {
+  /*
+    Called when a new business group is created.
+    1) Create user in Auth() if they have not already been created, clarify with Yas
+    2) Add the business in the db
+    3) Hash the businesses verification code and store that in the db.
+  */
+})
+
 exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   /*
-    Called when a new user is attempting to join a 
+    Called when a new user is attempting to join an already existing 
   */
   // let input = req.body
   // let name = input[0]
@@ -50,6 +59,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
 
   const businessRef = db.collection('business_groups').doc(business).get()
     .then(account => {
+      // We'll need to compare the users code with the hashed code in the db
       code = account.data().accessCode
     })
     .catch(error => {
