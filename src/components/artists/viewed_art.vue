@@ -1,106 +1,4 @@
 
-<!--
-<template>
-  <v-container>
-
-    <v-layout >
-      <!-- sm6  -/->
-      <!-- <v-flex xs12 fill-height>
-        <v-flex xs12 sm6 offset-sm3 fill-height>  -/->
-      <v-flex xs12 sm8 offset-sm3 row fill-height> 
-
-        <v-card>
-        
-          <v-flex> 
-            <v-img> 
-              <img :src="this.art.url" width="100%" height="100%">
-            </v-img>
-          </v-flex> 
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            
-            <v-btn icon>
-              <v-icon>favorite</v-icon>
-            </v-btn>
-            <v-btn icon>
-              <v-icon>bookmark</v-icon>
-            </v-btn>
-            <v-btn icon>
-              <v-icon>share</v-icon>
-            </v-btn>
-          </v-card-actions>
-
-          <v-card-title primary-title>
-            <div>
-              <div class="title mb-1">
-                <h2>
-                  {{this.art.art_title}}
-                </h2>
-              </div>
-
-            <div>
-              <div class="mb-2">
-                <h3>
-                    by {{this.art.artist_name}}
-                </h3>
-              </div>
-            </div>
-
-              <div>
-                <p class="text-sm-left">
-                  {{this.art.description}}
-                </p>
-              </div>
-            </div>
-          </v-card-title>
-
-          <v-flex>
-            <v-card>
-              <v-list two-line>
-                <template v-for="comment_field in new_comments_field">
-                  <v-list-tile :key="comment_field.comment" class="resize_list">
-                    <v-list-tile-content>
-                      <v-list-tile-title class="t" v-html="comment_field.from"></v-list-tile-title>
-                      <v-list-tile-sub-title class="b" v-html="comment_field.comment"></v-list-tile-sub-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </template>
-              </v-list>
-
-              <div class = "small-container my-2">
-                <v-text-field 
-                  solo
-                  class="commenting"
-                  label="Add Comment.."
-                  single-line
-                  v-model="comment"
-                ></v-text-field>
-              </div>
-              
-              <div class="small-container-btn my-2">
-                <v-btn v-if= "!this.comment.length" disabled small>
-                  Send
-                </v-btn>
-                <v-btn v-else depressed small dark color="black" @click="save_comment(art)">
-                  Send
-                </v-btn>
-                <v-btn depressed small dark color="black" @click="back">
-                  Back
-                </v-btn>
-              </div>
-            </v-card>
-          </v-flex>  
-
-        </v-card>
- 
-      </v-flex>
-
-    </v-layout>
-  </v-container>
-</template>
--->
-
 <!--This is the main template that will contain both layouts for the image and the text-->
 <template>
   <!--This is the main container that will contain both the layouts for the image and the text-->
@@ -111,13 +9,18 @@
       <!-- refer [https://vuetifyjs.com/en/framework/grid] to for more information on the changes that can be implemented within v-flex--> 
       <v-flex xs12 sm12 md8 offset-md1 row fill-height> 
         <!--This v-card houses the image and the small icons below it.-->
+          <v-btn color="orange darken-2" dark>
+            <v-icon dark left>arrow_back</v-icon>
+            Prev Image
+          </v-btn>   
+          <v-btn color="orange darken-2" dark @click="fetchNextImage()" >
+              Next Image
+             <v-icon dark right>arrow_forward</v-icon>   
+          </v-btn>        
         <v-card>
           <v-flex > 
-            <v-img> 
               <img :src="this.art.url" width="100%" height="100%">
-            </v-img>
           </v-flex> 
-
           <!-- added this v-card-actions which are icons as place-holders of things we could add for each image -->
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -315,7 +218,7 @@ import * as firebase from 'firebase'
     mounted: function() {
       this.load_comments(this.art)
     },
-        data() {
+    data() {
       return {
         snackbar: false,
         y: 'top',
@@ -377,7 +280,9 @@ import * as firebase from 'firebase'
       {
         this.comment =''
       },
-
+      fetchNextImage(){
+        console.log("fethcing next image")
+      },
       load_comments(art)
       {
         let comments_field = this.new_comments_field

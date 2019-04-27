@@ -24,6 +24,7 @@ import business_signup2 from "@/components/business/business_signup2"
 import business_signup3 from "@/components/business/business_signup3"
 import joinBusiness_signup from "@/components/business/joinBusiness_signup"
 import business_dashboard from "@/components/business/business_dashboard"
+import group_business_dashboard from "@/components/business/group_business_dashboard"
 import submissions from "@/components/business/submissions"
 import submissionsEmpty from '@/components/business/submissions_empty'
 import report from "@/components/business/report"
@@ -229,6 +230,11 @@ export default new Router({
         requiresAuth: true
       }
     },
+    {
+      path: "/group_business_dashboard",
+      name: "group_business_dashboard",
+      component: group_business_dashboard,
+    },   
     {
       path: "/upload_an_image",
       name: "upload_an_image",
