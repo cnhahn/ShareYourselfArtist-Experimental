@@ -29,7 +29,6 @@ const nodemailer = require('nodemailer');
 var DOMAIN = 'www.shareyourselfartists.com';
 
 
-
 exports.createNewBusiness = functions.https.onRequest((request, response) => {
   /*
     Called when a new business group is created.
@@ -37,12 +36,55 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     2) Add the business in the db
     3) Hash the businesses verification code and store that in the db.
   */
-  let name = 'KS'
-  let email = 'grouptest@gmail.com'
-  let business = 'test'
-  let verifyCode = '12345'
-  let code = '12345'
+
+
+  function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  let name = 'testing10'
+  let email = 'tester10@gmail.com'
+  let business = 'tester10'
+  let code = makeid(8)
   const db = admin.firestore()
+  
+    admin.auth().createUser({
+      email: email,
+      name: name,
+    })
+    .then(() => {
+      console.log('New user created. Now adding admin claims...')
+      // Set their role to be admin
+      admin.auth().setCustomUserClaims(email, {admin: true})
+      .then(() => {
+        console.log('Admin claims added.')
+        console.log('Now adding to the db...')
+        const newUser = db.collection('business_groups').doc(business).set({
+          business: business,
+          name: name,
+          email: email,
+          verificationCode: code
+        })
+      })
+      .then(() => {
+          console.log('User created and added to the database')
+          response.send('User created and added to the database')
+      })
+      .catch(error => {
+        console.log("There was an error setting the user data in firestore", error)
+        response.send('There was an error setting user data in the db ')
+      })
+    })
+    .catch(error => {
+      console.log("There was an error", error)
+      response.send("There was an error")
+    })
   
 })
 
@@ -58,22 +100,21 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   // let code = ''
   // let input = req.body
   let name = 'KS'
-  let email = 'grouptest@gmail.com'
-  let business = 'test'
+  let email = 'grouptester6@gmail.com'
+  let business = 'testing6'
   let verifyCode = '12345'
   const db = admin.firestore()
 
   // In the future use bcrypt.
   let code = '12345'
-
-  
   
   // Might need to rewrite this and use transactions instead.
 
   const businessRef = db.collection('business_groups').doc(business).get()
     .then(account => {
       // We'll need to compare the users code with the hashed code in the db
-      code = account.data().accessCode
+      code = verifyCode
+      // code = account.data().accessCode
     })
     .catch(error => {
       console.log('There was an error retrieving the access code', error)
@@ -87,22 +128,23 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
     .then(userRecord => {
       console.log('User created successfully')
       console.log('Now adding user to the db...')
+      // newUser = businessRef.doc(userID).set()
+      // members{}
       const newUser = db.collection('business_groups').doc(business).set({
         name: name,
         email: email
       })
-      .then(()=> {
+      .then(() =>{
         admin.auth().setCustomUserClaims(email, {admin: false})
       })
-      .then(() => {
-        console.log('User added to db')
+      .then(user =>{
+        console.log('User created and added to the db')
         res.send('User created and added to the db')
       })
       .catch(error => {
         console.log("There was an error setting the user data in firestore", error)
         res.send('There was an error setting user data in the db ')
       })
-      //res.send('User created successfully')
     })
     .catch(error => {
       console.log("There was an error creating the user", error)
@@ -110,7 +152,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
     })
   }
   else{
-    res.status(401).send("Verification Code Did Not Match!")
+    res.status(401).send("Verification code did not match, please try again.")
   }
 
 })
