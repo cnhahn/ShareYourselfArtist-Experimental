@@ -29,6 +29,9 @@ const nodemailer = require('nodemailer');
 var DOMAIN = 'www.shareyourselfartists.com';
 
 exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
+  /*
+    Called when a new user is attempting to join a 
+  */
   // let input = req.body
   // let name = input[0]
   // let email = input[1]
@@ -42,6 +45,9 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   let verifyCode = '12345'
   let code = '12345'
   const db = admin.firestore()
+
+  // Might need to rewrite this and use transactions instead.
+
   const businessRef = db.collection('business_groups').doc(business).get()
     .then(account => {
       code = account.data().accessCode
@@ -57,9 +63,13 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
     })
     .then(userRecord => {
       console.log('User created successfully')
+      console.log('Now adding user to the db...')
       const newUser = db.collection('business_groups').doc(business).set({
-        name: name ,
+        name: name,
         email: email
+      })
+      .then(()=> {
+
       })
       .then(() => {
         console.log('User added to db')
