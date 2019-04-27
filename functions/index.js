@@ -28,6 +28,8 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+
+
 exports.createNewBusiness = functions.https.onRequest((request, response) => {
   /*
     Called when a new business group is created.
@@ -35,6 +37,13 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     2) Add the business in the db
     3) Hash the businesses verification code and store that in the db.
   */
+  let name = 'KS'
+  let email = 'grouptest@gmail.com'
+  let business = 'test'
+  let verifyCode = '12345'
+  let code = '12345'
+  const db = admin.firestore()
+  
 })
 
 exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
@@ -52,9 +61,13 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   let email = 'grouptest@gmail.com'
   let business = 'test'
   let verifyCode = '12345'
-  let code = '12345'
   const db = admin.firestore()
 
+  // In the future use bcrypt.
+  let code = '12345'
+
+  
+  
   // Might need to rewrite this and use transactions instead.
 
   const businessRef = db.collection('business_groups').doc(business).get()
@@ -79,7 +92,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
         email: email
       })
       .then(()=> {
-
+        admin.auth().setCustomUserClaims(email, {admin: false})
       })
       .then(() => {
         console.log('User added to db')
