@@ -28,6 +28,8 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+// For encrypting/decrypting business group codes
+const bcrypt = require('bcrypt')
 
 exports.createNewBusiness = functions.https.onRequest((request, response) => {
   /*
@@ -46,13 +48,17 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     }
     return result;
   }
-
+  const saltRounds = 10;
   let name = 'testing10'
   let email = 'tester10@gmail.com'
   let business = 'tester10'
   let code = makeid(8)
   const db = admin.firestore()
   const auth = admin.auth()
+  let password = 'password'
+  bcrypt.hash(password, saltRounds, function(err, hash){
+    
+  })
 
   function addToUserPool(){
     return new Promise(async (resolve, reject) => {
@@ -109,40 +115,6 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     }
   }
   makeUser();
-
-  
-    // admin.auth().createUser({
-    //   email: email,
-    //   name: name,
-    // })
-    // .then(() => {
-    //   console.log('New user created. Now adding admin claims...')
-    //   // Set their role to be admin
-    //   admin.auth().setCustomUserClaims(email, {admin: true})
-    //   .then(() => {
-    //     console.log('Admin claims added.')
-    //     console.log('Now adding to the db...')
-    //     const newUser = db.collection('business_groups').doc(business).set({
-    //       business: business,
-    //       name: name,
-    //       email: email,
-    //       verificationCode: code
-    //     })
-    //   })
-    //   .then(() => {
-    //       console.log('User created and added to the database')
-    //       response.send('User created and added to the database')
-    //   })
-    //   .catch(error => {
-    //     console.log("There was an error setting the user data in firestore", error)
-    //     response.send('There was an error setting user data in the db ')
-    //   })
-    // })
-    // .catch(error => {
-    //   console.log("There was an error", error)
-    //   response.send("There was an error")
-    // })
-  
 })
 
 exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
