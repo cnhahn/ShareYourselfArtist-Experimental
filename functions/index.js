@@ -37,7 +37,6 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     3) Hash the businesses verification code and store that in the db.
   */
 
-
   function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -53,38 +52,96 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
   let business = 'tester10'
   let code = makeid(8)
   const db = admin.firestore()
-  
-    admin.auth().createUser({
-      email: email,
-      name: name,
-    })
-    .then(() => {
-      console.log('New user created. Now adding admin claims...')
-      // Set their role to be admin
-      admin.auth().setCustomUserClaims(email, {admin: true})
-      .then(() => {
-        console.log('Admin claims added.')
-        console.log('Now adding to the db...')
-        const newUser = db.collection('business_groups').doc(business).set({
-          business: business,
-          name: name,
-          email: email,
-          verificationCode: code
+  const auth = admin.auth()
+
+  function addToUserPool(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Might not need to worry about creating the user if Yas does this already 
+        let user = await auth.createUser({
+          email: 'async@gmail.com',
+          displayName: 'await',
         })
-      })
-      .then(() => {
-          console.log('User created and added to the database')
-          response.send('User created and added to the database')
-      })
-      .catch(error => {
-        console.log("There was an error setting the user data in firestore", error)
-        response.send('There was an error setting user data in the db ')
-      })
+        console.log("User added to user pool")
+        console.log("Now adding custom claims...")
+        // setting custom claims must be done whether or not Yas initially creates the account
+        await auth.setCustomUserClaims(user.uid,{admin: true})
+        console.log('Claims added!')
+        let finishedUser = await auth.getUser(user.uid)
+        console.log("Finished adding userdata to userpool")
+        resolve(finishedUser);
+      } catch (error) {
+        console.log('There was an error creating the user. It is likely they already exist')
+        reject(error);
+      }
     })
-    .catch(error => {
-      console.log("There was an error", error)
-      response.send("There was an error")
+  }
+
+  function addToDB(userData){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('business_groups').add({
+          email: userData.email,
+          business: business,
+          admin: name,
+          members: {}
+        })
+        console.log("User added to database!")
+        console.log(user)
+        resolve(user);
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
     })
+  }
+
+  async function makeUser(){
+    try {
+      let newUser = await addToUserPool()
+      console.log('User Data After Account Creation: ', newUser)
+      let user = await addToDB(newUser)
+      response.send('User created')
+    } catch (error) {
+      console.log('User not created?')
+      console.log(error)
+      response.send('User not created?')
+    }
+  }
+  makeUser();
+
+  
+    // admin.auth().createUser({
+    //   email: email,
+    //   name: name,
+    // })
+    // .then(() => {
+    //   console.log('New user created. Now adding admin claims...')
+    //   // Set their role to be admin
+    //   admin.auth().setCustomUserClaims(email, {admin: true})
+    //   .then(() => {
+    //     console.log('Admin claims added.')
+    //     console.log('Now adding to the db...')
+    //     const newUser = db.collection('business_groups').doc(business).set({
+    //       business: business,
+    //       name: name,
+    //       email: email,
+    //       verificationCode: code
+    //     })
+    //   })
+    //   .then(() => {
+    //       console.log('User created and added to the database')
+    //       response.send('User created and added to the database')
+    //   })
+    //   .catch(error => {
+    //     console.log("There was an error setting the user data in firestore", error)
+    //     response.send('There was an error setting user data in the db ')
+    //   })
+    // })
+    // .catch(error => {
+    //   console.log("There was an error", error)
+    //   response.send("There was an error")
+    // })
   
 })
 
