@@ -207,7 +207,8 @@
     },
 
     mounted: function() {
-      console.log("Entered mounted")
+      //console.log("Entered mounted")
+      //console.log('entered art')
       if (this.$store.getters.categories == undefined){
             this.categories = []
       }else{

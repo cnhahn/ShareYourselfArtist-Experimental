@@ -219,6 +219,7 @@ import * as firebase from 'firebase'
   export default {
 
     mounted: function() {
+      //console.log('entered viewed_art')
       this.load_comments(this.art)
     },
     data() {
@@ -272,7 +273,7 @@ import * as firebase from 'firebase'
             duplicate_search.push(temp_arts[arti].upload_date)
           }
         }
-        console.log('This is the art array after we remove the delted arts ', removed_deleted_art)
+        console.log('This is the art array after we remove the deleted arts ', removed_deleted_art)
 
         return removed_deleted_art;
       },
