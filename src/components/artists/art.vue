@@ -6,7 +6,7 @@
     <v-layout>
 
       <v-flex>
-        <v-btn color="orange darken-2" dark @click="fetchPrevImage()">
+        <v-btn color="orange darken-2" dark @click="fetchPrevImage()" router to='/art'>
           <v-icon dark left>arrow_back</v-icon>Prev Image
         </v-btn> 
       </v-flex>
@@ -16,9 +16,7 @@
       <v-flex xs12 sm12 md8 offset-sx1 row fill-height> 
         <v-card>
           <v-flex> 
-            <v-img> 
               <img :src="this.$store.state.viewed_art_image_info.url" alt=""  width="100%" height="100%">
-            </v-img>
           </v-flex> 
         <!--end of the v-card for image-->
         </v-card>
@@ -77,7 +75,7 @@
       </v-flex>
 
       <v-flex>
-        <v-btn color="orange darken-2" dark @click="fetchNextImage()">
+        <v-btn color="orange darken-2" dark @click="fetchNextImage()" router to='/art'>
           Next Image<v-icon dark right>arrow_forward</v-icon>   
         </v-btn>  
       </v-flex>
@@ -194,6 +192,9 @@
         var removed_deleted_art = [];
         var duplicate_search = [];
 
+        let prevArt = 0;
+        let nextArt = 0;
+
         for (arti = 0 ; arti < temp_arts.length; arti++){
           if( (temp_arts[arti].delete != true) &&  (duplicate_search.indexOf(temp_arts[arti].upload_date) == -1) ){
             removed_deleted_art.push(temp_arts[arti])
@@ -201,7 +202,7 @@
           }
         }
 
-       var start = 0
+        var start = 0
         var end = removed_deleted_art.length - 1
         console.log ('Current url image on viewed_art: ', this.$store.state.viewed_art_image_info.url)
         console.log ('Real Array of Art url: ', removed_deleted_art[0].url)
@@ -213,8 +214,8 @@
           
           if(removed_deleted_art.length == 1)
           {
-            let prevArt = removed_deleted_art[0].upload_date
-            let nextArt = removed_deleted_art[0].upload_date
+            prevArt = removed_deleted_art[0].upload_date
+            nextArt = removed_deleted_art[0].upload_date
 
             console.log('artist has one art piece belonging to them so prevArt and nextArt are the same.')
           }
@@ -224,8 +225,8 @@
           {
             if(n == end)
             {
-              let prevArt = removed_deleted_art[n-1].upload_date
-              let nextArt = removed_deleted_art[start].upload_date
+              prevArt = removed_deleted_art[n-1].upload_date
+              nextArt = removed_deleted_art[start].upload_date
 
               console.log ('when n == end')
               console.log ('previous art id', prevArt)
@@ -233,8 +234,8 @@
             }
             else if(n == start)
             {
-              let prevArt = removed_deleted_art[end].upload_date
-              let nextArt = removed_deleted_art[n+1].upload_date
+              prevArt = removed_deleted_art[end].upload_date
+              nextArt = removed_deleted_art[n+1].upload_date
               
 
               
@@ -244,8 +245,8 @@
             } 
             else
             {
-              let prevArt = removed_deleted_art[n-1].upload_date
-              let nextArt = removed_deleted_art[n+1].upload_date
+              prevArt = removed_deleted_art[n-1].upload_date
+              nextArt = removed_deleted_art[n+1].upload_date
               
 
               console.log ('normal')
@@ -258,6 +259,33 @@
         console.log("All Art Array", this.$store.state.arts)
         console.log("Real Array of Art", removed_deleted_art)
         console.log("fethcing next image")
+
+        //
+        this.$store.commit('set_clicked_art', nextArt)
+        localStorage.setItem('clicked_art', nextArt)
+        const arts= removed_deleted_art
+        var art = {}
+        console.log('art_unique_timestamp', prevArt)
+        for (var i=0; i < arts.length; i++) {
+          if (arts[i].upload_date === nextArt) {
+           console.log('art in loop',arts[i])
+           art = arts[i]
+           console.log('art in loop',arts[i].art_title)
+           localStorage.setItem('art_title',arts[i].art_title)
+           localStorage.setItem('description',arts[i].description)
+           this.$store.state.signed_in_user.instagram
+           localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('upload_date', arts[i].upload_date)
+           this.$store.commit('set_viewed_art_image_info' , arts[i] )
+           this.$store.commit('set_categories', arts[i].categories)
+           console.log('art_title',localStorage.getItem('art_title'))
+           break
+          }
+        }
+        this.$router.push({
+          name: 'art'
+        })
+
       },
       fetchPrevImage(){
         //console.log("How to get the All Art array", this.$store.state.arts)
@@ -283,6 +311,8 @@
         let arti = 0
         var removed_deleted_art = [];
         var duplicate_search = [];
+        let prevArt = 0;
+        let nextArt = 0;
 
         for (arti = 0 ; arti < temp_arts.length; arti++){
           if( (temp_arts[arti].delete != true) &&  (duplicate_search.indexOf(temp_arts[arti].upload_date) == -1) ){
@@ -303,8 +333,8 @@
           
           if(removed_deleted_art.length == 1)
           {
-            let prevArt = removed_deleted_art[0].upload_date
-            let nextArt = removed_deleted_art[0].upload_date
+            prevArt = removed_deleted_art[0].upload_date
+            nextArt = removed_deleted_art[0].upload_date
 
             console.log('artist has one art piece belonging to them so prevArt and nextArt are the same.')
           }
@@ -314,8 +344,8 @@
           {
             if(n == end)
             {
-              let prevArt = removed_deleted_art[n-1].upload_date
-              let nextArt = removed_deleted_art[start].upload_date
+              prevArt = removed_deleted_art[n-1].upload_date
+              nextArt = removed_deleted_art[start].upload_date
 
               console.log ('when n == end')
               console.log ('previous art id', prevArt)
@@ -323,8 +353,8 @@
             }
             else if(n == start)
             {
-              let prevArt = removed_deleted_art[end].upload_date
-              let nextArt = removed_deleted_art[n+1].upload_date
+              prevArt = removed_deleted_art[end].upload_date
+              nextArt = removed_deleted_art[n+1].upload_date
               
 
               
@@ -335,8 +365,8 @@
             else
             {
               console.log ('entered search')
-              let prevArt = removed_deleted_art[n-1].upload_date
-              let nextArt = removed_deleted_art[n+1].upload_date
+              prevArt = removed_deleted_art[n-1].upload_date
+              nextArt = removed_deleted_art[n+1].upload_date
               
 
               console.log ('normal')
@@ -349,6 +379,33 @@
         console.log("All Art Array", this.$store.state.arts)
         console.log("Real Array of Art", removed_deleted_art)
         console.log("fethcing previous image")
+
+                //
+        this.$store.commit('set_clicked_art', prevArt)
+        localStorage.setItem('clicked_art', prevArt)
+        const arts= removed_deleted_art
+        var art = {}
+        console.log('art_unique_timestamp', prevArt)
+        for (var i=0; i < arts.length; i++) {
+          if (arts[i].upload_date === prevArt) {
+           console.log('art in loop',arts[i])
+           art = arts[i]
+           console.log('art in loop',arts[i].art_title)
+           localStorage.setItem('art_title',arts[i].art_title)
+           localStorage.setItem('description',arts[i].description)
+           this.$store.state.signed_in_user.instagram
+           localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('upload_date', arts[i].upload_date)
+           this.$store.commit('set_viewed_art_image_info' , arts[i] )
+           this.$store.commit('set_categories', arts[i].categories)
+           console.log('art_title',localStorage.getItem('art_title'))
+           break
+          }
+        }
+        this.$router.push({
+          name: 'art'
+        })
+
       },
 
 
