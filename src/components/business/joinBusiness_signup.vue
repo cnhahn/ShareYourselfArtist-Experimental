@@ -141,7 +141,7 @@ export default {
     },
     watch: {
       user (value) {
-        if (value !== null && value !== undefined) {
+        /*if (value !== null && value !== undefined) {
           this.$router.push('/artist_dashboard')
           this.$store.dispatch('create_a_new_artist', 
             {
@@ -151,7 +151,7 @@ export default {
                 email:this.email,
                 upload_date: Date.now()
             })
-        }
+        }*/
       }
     },
     methods:{
@@ -161,8 +161,10 @@ export default {
             //If it is correct, we will tell the user and re-direct
             //Else, we will tell the user that the access code was wrong. 
             this.checkAccessCode = false;
+            console.log(this.email)
+            console.log(this.password)
             // accessCode = false;
-        // this.$store.dispatch('signUserUp', {email: this.email, password: this.password, user_role: 'artist'})
+        this.$store.dispatch('signUserUp', {email: this.email, password: this.password, user_role: 'business_group'})
             this.$router.push('/group_business_dashboard')
         },
         onDismissed(){

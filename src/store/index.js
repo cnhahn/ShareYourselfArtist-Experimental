@@ -1817,6 +1817,9 @@ export const store = new Vuex.Store({
             commit('set_free_credits', doc.data().free_credits)
           } else {
             console.log('No such document!')
+            router.push({
+              name: 'group_business_dashboard'
+            })
           }
         })
         .catch(function (error) {
@@ -2763,6 +2766,8 @@ export const store = new Vuex.Store({
                     // TODO: I need to call the existing arts for this user and push in to this array
                     arts: []
                   }
+                  console.log('User role: ', firebase.auth().currentUser.user_role)
+                  console.log('display name: ', firebase.auth().currentUser.displayName)
                   commit('setUser', newUser)
                   console.log('userId is this')
                   localStorage.setItem('userId', 1000)
@@ -2805,12 +2810,18 @@ export const store = new Vuex.Store({
                             name: 'artist_dashboard'
                           })
                         }
-                        if (doc.data().role == 'business') {
+                        else if (doc.data().role == 'business') {
                           commit('setUrl', doc.data().url)
                           router.push({
                             name: 'business_dashboard'
                           })
                         }
+                        /*else if (doc.data().role == 'group_business') {
+                          commit('setUrl', doc.data().url)
+                          router.push({
+                            name: 'group_business_dashboard'
+                          })
+                        }*/
                       })
                     })
                     .catch(function (error) {
