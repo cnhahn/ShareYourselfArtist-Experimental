@@ -48,26 +48,34 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     }
     return result;
   }
+  
   const saltRounds = 10;
-  let name = 'testing10'
-  let email = 'tester10@gmail.com'
-  let business = 'tester10'
+  let name = request.body[0] // refers to users actual name
+  let email = request.body[1] // refers to email
+  let business = request.body[2]  // refers to business name
+  let admin = request.body[3]  // refer to userID of admin
+  let password = request.body[4] //refers to the password the admin supplied when attempting to create account
+
   let code = makeid(8)
   const db = admin.firestore()
   const auth = admin.auth()
-  let password = 'password'
-  bcrypt.hash(password, saltRounds, function(err, hash){
+  
+  let userID
+  // bcrypt.hash(password, saltRounds, function(err, hash){
     
-  })
+  // })
+  
 
   function addToUserPool(){
     return new Promise(async (resolve, reject) => {
       try {
         // Might not need to worry about creating the user if Yas does this already 
         let user = await auth.createUser({
-          email: 'async@gmail.com',
-          displayName: 'await',
+          email: email,
+          displayName: name,
+          password: password
         })
+        userID = user.uid
         console.log("User added to user pool")
         console.log("Now adding custom claims...")
         // setting custom claims must be done whether or not Yas initially creates the account
@@ -86,11 +94,12 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
   function addToDB(userData){
     return new Promise(async (resolve, reject) => {
       try {
-        let user = await db.collection('business_groups').add({
+        let user = await db.collection('business_groups').doc(userID).set({
           email: userData.email,
           business: business,
           admin: name,
-          members: {}
+          members: {},
+          code: code
         })
         console.log("User added to database!")
         console.log(user)
@@ -132,6 +141,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   let email = 'grouptester6@gmail.com'
   let business = 'testing6'
   let verifyCode = '12345'
+  let password = 'password'
   const db = admin.firestore()
 
   // In the future use bcrypt.
@@ -150,19 +160,27 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
       res.send('There was an error retrieving the access code', error)
     })
   if (code !== '' && verifyCode === code){
+    console.log("Creating user...")
     admin.auth().createUser({
       email: email,
       emailVerified: false,
+      password: password
     })
     .then(userRecord => {
+      let userID = userRecord.uid
       console.log('User created successfully')
+      console.log('Here is the new userID', userID)
       console.log('Now adding user to the db...')
       // newUser = businessRef.doc(userID).set()
       // members{}
-      const newUser = db.collection('business_groups').doc(business).set({
-        name: name,
-        email: email
-      })
+      const newUser = db.collection('business_groups').doc('shareyourselfartist').set({
+        Members: {
+          [userID]: {
+            email: email,
+            name: name
+          }
+        }
+      }, {merge: true})
       .then(() =>{
         admin.auth().setCustomUserClaims(email, {admin: false})
       })
