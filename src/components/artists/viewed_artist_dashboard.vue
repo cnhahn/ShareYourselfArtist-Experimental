@@ -82,9 +82,6 @@
             duplicate_search.push(temp_arts[arti].upload_date)
           }
         }
-
-
-
         console.log('This is the art array after we remove the delted arts ', removed_deleted_art)
 
         return removed_deleted_art;
