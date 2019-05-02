@@ -153,14 +153,25 @@ exports.signUpGroupMemberv2 = functions.https.onRequest((req, res) => {
   let name = 'KS'
   let email = 'grouptester6@gmail.com'
   let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
-  //let verifyCode = '12345'
   let password = 'password'
   const db = admin.firestore()
   let verifyCode
   // In the future use bcrypt.
   let code = 'FtDSfg0C'
+  const businessRef
 
-  
+  return new Promise(async (resolve, reject) => {
+    try {
+      businessRef = await db.collection('business_groups').doc(business).get()
+      verifyCode = account.data().accessCode
+      resolve(verifyCode)
+      
+    } catch (error) {
+      console.log("There was an error in retrieving the access code in the db", error)
+      reject(error)
+    }
+
+  })
 
 })
 
