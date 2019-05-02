@@ -4,11 +4,19 @@
       <c-spinner></c-spinner>
     </div>
   </div>
-  <v-container class="container" v-else>
-      <div> hello! </div>
+  <v-container grid-list-sm text-xs-center v-else>
+    <v-layout column wrap fill-height>
 
-    <div> hello! </div>
-    <v-layout row mt-5 justify-space-between>
+      <v-flex xs4>
+        <div> Hello World! </div>
+      </v-flex>
+
+      <v-flex xs8>
+        <div> Hello World! </div>
+      </v-flex>
+
+    </v-layout>
+    <!-- <v-layout row mt-5 justify-space-between>
       <img :src="`${'https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/BY8KZZD5eMMvaNAOaGuDVqhCTuw1%2Flogo%2FyekGAvzU5fZKh49e6w0tJuRmFFg1_profile_white_sand_beach-56d50c955f9b5879cc92cc5c.jpg?alt=media&token=58e27b97-e6eb-4318-87ef-7ef2a8ad1c21'}`" height="200px" alt="">
       <v-spacer></v-spacer>
     </v-layout>
@@ -22,7 +30,7 @@
     </v-layout>
     <v-layout row>
       <p class="caption">Email: {{ 'test@gmail.com' }}</p>
-    </v-layout>
+    </v-layout> -->
 
     <!-- <v-layout row mt-5 justify-space-between>
       <img :src="`${user_info.url}`" height="200px" alt="">
