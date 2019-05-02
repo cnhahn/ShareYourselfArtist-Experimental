@@ -1827,6 +1827,33 @@ export const store = new Vuex.Store({
         })
     },
 
+    // temp test get admin business info
+    get_admin_info({ commit }, payload)
+    {
+      //let infoArr = []
+
+      const db = firebase.firestore()
+      const collectionRef = db
+        .collection('users')
+        .doc(payload)
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            console.log('url:', doc.data().url)
+            console.log('business name:', doc.data().business_name)
+            console.log('email:', doc.data().email)
+            //infoArr.push(doc.data().url)
+            //infoArr.push(doc.data().business_name)
+            //infoArr.push(doc.data().email)
+            commit('set_info_array', infoArr)
+          } else {
+            console.log('Fail')
+          }
+        })
+        .catch(function (error) {
+          console.log('Error getting user document:', error)
+        })
+    },
 
     reset_password({ commit }, payload) {
       console.log(payload)

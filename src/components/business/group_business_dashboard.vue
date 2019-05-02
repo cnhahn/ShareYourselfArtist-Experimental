@@ -6,16 +6,34 @@
   </div>
   <v-container class="container" v-else>
       <div> hello! </div>
+
+    <div> hello! </div>
+    <v-layout row mt-5 justify-space-between>
+      <img :src="`${'https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/BY8KZZD5eMMvaNAOaGuDVqhCTuw1%2Flogo%2FyekGAvzU5fZKh49e6w0tJuRmFFg1_profile_white_sand_beach-56d50c955f9b5879cc92cc5c.jpg?alt=media&token=58e27b97-e6eb-4318-87ef-7ef2a8ad1c21'}`" height="200px" alt="">
+      <v-spacer></v-spacer>
+    </v-layout>
+    <v-layout>
+      <div class="text-xs-center">
+        <v-btn large depressed color="primary" router to="/submissions">All Submissions</v-btn>
+      </div>
+    </v-layout>
+    <v-layout row wrap mt-5>
+      <p class="title">{{ 'test' }}</p>
+    </v-layout>
+    <v-layout row>
+      <p class="caption">Email: {{ 'test@gmail.com' }}</p>
+    </v-layout>
+
     <!-- <v-layout row mt-5 justify-space-between>
       <img :src="`${user_info.url}`" height="200px" alt="">
       <v-spacer></v-spacer>
     </v-layout>
     <v-layout>
       <div class="text-xs-center">
-        <v-btn large depressed color="primary" router to="/submissions">Your Submissions</v-btn>
+        <v-btn large depressed color="primary" router to="/submissions">All Submissions</v-btn>
       </div>
-
     </v-layout>
+
     <v-layout row wrap mt-5>
       <p class="title">{{ user_info.business_name }}</p>
     </v-layout>
@@ -67,11 +85,19 @@
         show_facebook:false,
         show_instagram:false,
         show_tumblr:false
+
+        //,user_info: {business_name: null, email: null, url: null}
       }
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
     },
+    mounted: function()
+    {
+      //console.log('Signed in user: ', this.$store.getters.signed_in_user)
+      this.$store.dispatch('get_admin_info', 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1')
+      //console.log('admin business info: ', this.$store.getters.infoArray)
+    },  
     computed: {
       user_info() {
         let myArray=this.$store.getters.signed_in_user
