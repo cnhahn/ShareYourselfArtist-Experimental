@@ -15,7 +15,7 @@ export default (to, from, next) =>
     {
         next('sign_in')
     }
-    else if (key === 'business' && loginKey >= 0) {
+    else if ((key === 'business' || key === 'business_member') && loginKey >= 0) {
         next()
     }
     // otherwise, route them to page not found page
