@@ -597,12 +597,6 @@ export const store = new Vuex.Store({
     set_artist_settings_artist(state, payload) {
       state.artist_settings_artist = payload.obj
     }
-
-    // test admin business info
-    ,set_info_array(state, payload)
-    {
-      state.infoArray = payload
-    }
   },
   actions: {
     retrieve_recently_responded_arts({ commit, dispatch, state }, payload) {
@@ -1851,7 +1845,7 @@ export const store = new Vuex.Store({
             //infoArr.push(doc.data().url)
             //infoArr.push(doc.data().business_name)
             //infoArr.push(doc.data().email)
-            commit('set_info_array', infoArr)
+            //commit('set_info_array', infoArr)
           } else {
             console.log('Fail')
           }
