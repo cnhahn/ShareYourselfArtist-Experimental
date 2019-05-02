@@ -170,7 +170,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
       let userID = userRecord.uid
       console.log('User created successfully')
       console.log('Here is the new userID', userID)
-      console.log('Now adding user to the db...')
+      console.log('Now adding user to the business groups db...')
       // newUser = businessRef.doc(userID).set()
       // members{}
       const newUser = db.collection('business_groups').doc('shareyourselfartist').set({
@@ -181,6 +181,16 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
           }
         }
       }, {merge: true})
+      .then(() => {
+        console.log('finished')
+        console.log('now adding to the users db')
+        const user = db.collection('users').doc(userID).set({
+          name: name,
+          business_group: business,
+          email: email,
+          role: business_member
+        }, {merge: true})
+      })
       .then(() =>{
         admin.auth().setCustomUserClaims(email, {admin: false})
       })
