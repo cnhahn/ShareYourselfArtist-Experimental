@@ -5,14 +5,34 @@
     </div>
   </div>
   <v-container grid-list-sm text-xs-center v-else>
-    <v-layout column wrap fill-height>
+    <v-layout  column wrap fill-height>
 
-      <v-flex xs4>
-        <div> Hello World! </div>
+      <v-flex xs5>
+        <v-layout align-center row wrap justify-center fill-height> 
+ 
+          <pre> <img :src="`${'https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/BY8KZZD5eMMvaNAOaGuDVqhCTuw1%2Flogo%2FyekGAvzU5fZKh49e6w0tJuRmFFg1_profile_white_sand_beach-56d50c955f9b5879cc92cc5c.jpg?alt=media&token=58e27b97-e6eb-4318-87ef-7ef2a8ad1c21'}`" height="300px" alt="">
+          
+          <img class='icon' src="/static/images/facebook-logo.png" height="75px"> <img class='icon' src="/static/images/instagram-logo.png" height="75px"> <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
+          </pre>
+   
+          <!-- <a v-if="show_instagram" :href="user_info.instagram_url" target="_blank">
+            <img class='icon' src="/static/images/instagram-logo.png">
+          </a>
+          <a v-if="show_tumblr" :href="user_info.tumblr_url" target="_blank">
+          <img class='icon' src="/static/images/tumblr-logo-2.png">
+          </a> -->
+        </v-layout>
       </v-flex>
 
-      <v-flex xs8>
-        <div> Hello World! </div>
+      <v-flex xs5>
+        <v-layout  align-center row wrap fill-height>
+          <v-flex xs6>
+            <div> Hello World! </div>
+          </v-flex>
+          <v-flex xs6>
+            <div> Hello World! </div>
+          </v-flex>
+        </v-layout>
       </v-flex>
 
     </v-layout>
@@ -128,22 +148,6 @@
 <style scoped>
   .container {
     height: 100vh;
-  }
-
-  .divbottomline {
-    border-bottom: 1px solid #e0e0e0;
-  }
-  .loading_holder {
-    width: 100vw;
-    height: 100vh;
-  }
-  .spinner_holder {
-    height: 82vh;
-    padding-top: 39vh;
-    margin-left: 47vw;
-  }
-  .icon{
-    height:50px
   }
 </style>
 
