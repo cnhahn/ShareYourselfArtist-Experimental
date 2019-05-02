@@ -50,11 +50,17 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
   }
   
   const saltRounds = 10;
-  let name = request.body[0] // refers to users actual name
-  let email = request.body[1] // refers to email
-  let business = request.body[2]  // refers to business name
-  let admin = request.body[3]  // refer to userID of admin
-  let password = request.body[4] //refers to the password the admin supplied when attempting to create account
+  // let name = request.body[0] // refers to users actual name
+  // let email = request.body[1] // refers to email
+  // let business = request.body[2]  // refers to business name
+  // let admin = request.body[3]  // refer to userID of admin
+  // let password = request.body[4] //refers to the password the admin supplied when attempting to create account
+
+  let name = "someName"
+  let email = 'hello@gmail.com'
+  let business = 'Google'
+  let administrator = name
+  let password = '123456'
 
   let code = makeid(8)
   const db = admin.firestore()
@@ -91,7 +97,7 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     })
   }
 
-  function addToDB(userData){
+  function addToGroupDB(userData){
     return new Promise(async (resolve, reject) => {
       try {
         let user = await db.collection('business_groups').doc(userID).set({
@@ -99,7 +105,7 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
           business: business,
           admin: name,
           members: {},
-          code: code
+          accessCode: code
         })
         console.log("User added to database!")
         console.log(user)
@@ -110,12 +116,29 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
       }
     })
   }
+  // function addToUserDB(){
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       let user = await db.collection('user').doc(userID).set({
+  //         name: name,
+  //         email: userData.email,
+  //         members: {},
+  //         accessCode: code
+  //       })
+  //       console.log("User added to database!")
+  //       console.log(user)
+  //       resolve(user);
+  //     } catch (error) {
+        
+  //     }
+  //   })
+  // }
 
   async function makeUser(){
     try {
       let newUser = await addToUserPool()
       console.log('User Data After Account Creation: ', newUser)
-      let user = await addToDB(newUser)
+      let user = await addToGroupDB(newUser)
       response.send('User created')
     } catch (error) {
       console.log('User not created?')
@@ -124,6 +147,21 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     }
   }
   makeUser();
+})
+
+exports.signUpGroupMemberv2 = functions.https.onRequest((req, res) => {
+  let name = 'KS'
+  let email = 'grouptester6@gmail.com'
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  //let verifyCode = '12345'
+  let password = 'password'
+  const db = admin.firestore()
+  let verifyCode
+  // In the future use bcrypt.
+  let code = 'FtDSfg0C'
+
+  
+
 })
 
 exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
@@ -139,78 +177,80 @@ exports.signUpGroupMember = functions.https.onRequest((req, res)=>{
   // let input = req.body
   let name = 'KS'
   let email = 'grouptester6@gmail.com'
-  let business = 'testing6'
-  let verifyCode = '12345'
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  //let verifyCode = '12345'
   let password = 'password'
   const db = admin.firestore()
-
+  let verifyCode
   // In the future use bcrypt.
-  let code = '12345'
+  let code = 'FtDSfg0C'
   
   // Might need to rewrite this and use transactions instead.
 
   const businessRef = db.collection('business_groups').doc(business).get()
     .then(account => {
       // We'll need to compare the users code with the hashed code in the db
-      code = verifyCode
+      verifyCode = account.data().accessCode
+      console.log('verifyCode = ', verifyCode)
+      //code = verifyCode
       // code = account.data().accessCode
+      if (code !== '' && verifyCode === code){
+        console.log("Creating user...")
+        admin.auth().createUser({
+          email: email,
+          emailVerified: false,
+          password: password
+        })
+        .then(userRecord => {
+          let userID = userRecord.uid
+          console.log('User created successfully')
+          console.log('Here is the new userID', userID)
+          console.log('Now adding user to the business groups db...')
+          // newUser = businessRef.doc(userID).set()
+          // members{}
+          const newUser = db.collection('business_groups').doc('shareyourselfartist').set({
+            members: {
+              [userID]: {
+                email: email,
+                name: name
+              }
+            }
+          }, {merge: true})
+          .then(() => {
+            console.log('finished')
+            console.log('now adding to the users db')
+            const user = db.collection('users').doc(userID).set({
+              name: name,
+              business_group: business,
+              email: email,
+              role: 'business_member'
+            }, {merge: true})
+          })
+          .then(() =>{
+            admin.auth().setCustomUserClaims(email, {admin: false})
+          })
+          .then(user =>{
+            console.log('User created and added to the db')
+            return res.send('User created and added to the db')
+          })
+          .catch(error => {
+            console.log("There was an error setting the user data in firestore", error)
+            return res.send('There was an error setting user data in the db ')
+          })
+        })
+        .catch(error => {
+          console.log("There was an error creating the user", error)
+          res.send('There was an error creating the user')
+        })
+      }
+      else{
+        res.status(401).send("Verification code did not match, please try again.")
+      }
     })
     .catch(error => {
       console.log('There was an error retrieving the access code', error)
       res.send('There was an error retrieving the access code', error)
     })
-  if (code !== '' && verifyCode === code){
-    console.log("Creating user...")
-    admin.auth().createUser({
-      email: email,
-      emailVerified: false,
-      password: password
-    })
-    .then(userRecord => {
-      let userID = userRecord.uid
-      console.log('User created successfully')
-      console.log('Here is the new userID', userID)
-      console.log('Now adding user to the business groups db...')
-      // newUser = businessRef.doc(userID).set()
-      // members{}
-      const newUser = db.collection('business_groups').doc('shareyourselfartist').set({
-        Members: {
-          [userID]: {
-            email: email,
-            name: name
-          }
-        }
-      }, {merge: true})
-      .then(() => {
-        console.log('finished')
-        console.log('now adding to the users db')
-        const user = db.collection('users').doc(userID).set({
-          name: name,
-          business_group: business,
-          email: email,
-          role: business_member
-        }, {merge: true})
-      })
-      .then(() =>{
-        admin.auth().setCustomUserClaims(email, {admin: false})
-      })
-      .then(user =>{
-        console.log('User created and added to the db')
-        res.send('User created and added to the db')
-      })
-      .catch(error => {
-        console.log("There was an error setting the user data in firestore", error)
-        res.send('There was an error setting user data in the db ')
-      })
-    })
-    .catch(error => {
-      console.log("There was an error creating the user", error)
-      res.send('There was an error creating the user')
-    })
-  }
-  else{
-    res.status(401).send("Verification code did not match, please try again.")
-  }
 
 })
 
