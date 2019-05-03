@@ -25,12 +25,22 @@
       </v-flex>
 
       <v-flex xs5>
-        <v-layout  align-center row wrap fill-height>
+        <v-layout  align-center row wrap>
           <v-flex xs6>
-            <div> Hello World! </div>
+            <div class="display-2 pt-3"> 
+              <div class="pb-3 "style=" text-decoration: underline;" > Business Info </div>
+              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3"> Hello World! </div>
+            </div>
           </v-flex>
           <v-flex xs6>
-            <div> Hello World! </div>
+            <div class="display-2 pt-3"> 
+              <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
+              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3"> Hello World! </div>
+            </div>
           </v-flex>
         </v-layout>
       </v-flex>
