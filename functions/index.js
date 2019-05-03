@@ -31,6 +31,30 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
+exports.getBusinessGroup = functions.https.onRequest((request, response) => {
+  let businessID
+  //let userID = request.body[0]
+  let userID = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
+
+  //let businessID = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  const db = admin.firestore()
+  async function getGroup(){
+    try {
+      let user = await db.collection('users').doc(userID).get()
+      businessID = user.data().business_group
+      let group = await db.collection('business_groups').doc(businessID).get()
+      console.log('Here is the groups data', group.data())
+      response.send(group.data())
+    } catch (error) {
+      console.log('Unable to return groups information', error)
+      response.status(401).send('Unable to return the groups information')
+    }
+  }
+  getGroup();
+
+})
+
+
 exports.createNewBusiness = functions.https.onRequest((request, response) => {
   /*
     Called when a new business group is created.
