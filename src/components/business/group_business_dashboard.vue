@@ -10,10 +10,16 @@
       <v-flex xs5>
         <v-layout align-center row wrap justify-center fill-height> 
  
-          <pre> <img :src="`${'https://firebasestorage.googleapis.com/v0/b/sya-app.appspot.com/o/BY8KZZD5eMMvaNAOaGuDVqhCTuw1%2Flogo%2FyekGAvzU5fZKh49e6w0tJuRmFFg1_profile_white_sand_beach-56d50c955f9b5879cc92cc5c.jpg?alt=media&token=58e27b97-e6eb-4318-87ef-7ef2a8ad1c21'}`" height="300px" alt="">
+      <img v-bind:src="this.business_info.url" />
           
           <img class='icon' src="/static/images/facebook-logo.png" height="75px"> <img class='icon' src="/static/images/instagram-logo.png" height="75px"> <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
-          </pre>
+          
+          
+          <div class="text-xs-center">
+          <v-btn large depressed color="primary" router to="/submissions">All Submissions</v-btn>
+          </div>
+          
+     
    
           <!-- <a v-if="show_instagram" :href="user_info.instagram_url" target="_blank">
             <img class='icon' src="/static/images/instagram-logo.png">
