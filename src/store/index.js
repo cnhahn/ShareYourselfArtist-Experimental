@@ -17,6 +17,7 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    business_info : {},
     users_top_category : '' ,
     top_ten_category: [],
     top_ten_rec_businesses : [],
@@ -224,6 +225,9 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_business_info(state,payload){
+      state.business_info = payload;
+    },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
       state.top_ten_category = payload
@@ -1831,24 +1835,32 @@ export const store = new Vuex.Store({
     get_admin_info({ commit }, payload)
     {
       //let infoArr = []
-
+      //First get the admin id for the logged in business member.
+      let admin_id;
+      console.log("in get admin info")
       const db = firebase.firestore()
       const collectionRef = db
-        .collection('users')
-        .doc(payload)
+        .collection('business_groups')
+        .doc('shareyourselfartist')
         .get()
         .then(function (doc) {
           if (doc.exists) {
-            console.log('url:', doc.data().url)
-            console.log('business name:', doc.data().business_name)
-            console.log('email:', doc.data().email)
-            //infoArr.push(doc.data().url)
-            //infoArr.push(doc.data().business_name)
-            //infoArr.push(doc.data().email)
-            //commit('set_info_array', infoArr)
+            console.log("doc does exists it is : " , doc.data());
+            admin_id = doc.data().Admin;
+            return admin_id;
           } else {
             console.log('Fail')
           }
+        }).then(function (result) {
+          //Once we get the admin id for the business member, we should query the business details based off the admin user account.
+          console.log("Admin id is ", result);
+          const business_info = db.collection('users').where('userId', '==' , result)
+          .get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+              commit('set_business_info' , doc.data());
+            })
+          })
         })
         .catch(function (error) {
           console.log('Error getting user document:', error)
@@ -3156,6 +3168,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    get_business_info(state){
+      return state.business_info;
+    },
     //for spinner
     get_check_image_c(state)
     {

@@ -29,9 +29,12 @@
           <v-flex xs6>
             <div class="display-2 pt-3"> 
               <div class="pb-3 "style=" text-decoration: underline;" > Business Info </div>
-              <div class="pb-3"> Hello World! </div>
-              <div class="pb-3"> Hello World! </div>
-              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3"> Name {{this.business_info.business_name}}</div>
+              <div class="pb-3">  About {{this.business_info.about}} </div>
+              <div class="pb-3"> Email {{this.business_info.email}} </div>
+              <div class="pb-3"> Publication {{this.business_info.publication}} </div>
+              <div class="pb-3"> Worth Knowing {{this.business_info.worth_knowing}} </div>
+              <div class="pb-3"> Additional Notes {{this.business_info.additional_notes}} </div>
             </div>
           </v-flex>
           <v-flex xs6>
@@ -122,8 +125,7 @@
         number_of_submissions: this.$store.state.submissions_for_this_business.length,
         show_facebook:false,
         show_instagram:false,
-        show_tumblr:false
-
+        show_tumblr:false,
         //,user_info: {business_name: null, email: null, url: null}
       }
     },
@@ -137,6 +139,11 @@
       //console.log('admin business info: ', this.$store.getters.infoArray)
     },  
     computed: {
+      business_info(){
+        this.$store.getters.get_business_info;
+        console.log("business info is " , this.$store.getters.get_business_info);
+        return  this.$store.getters.get_business_info;
+      },
       user_info() {
         let myArray=this.$store.getters.signed_in_user
         if(myArray.facebook_url != "")
