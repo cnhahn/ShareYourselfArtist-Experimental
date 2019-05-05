@@ -304,81 +304,12 @@
         rules: [v => v.length > 50 || 'Min 50 characters'],
         page: 1,
         loading_submissions: false,
-        /*loading: false,
         items: [],
-        search: null,
-        select: null,
-        states: [
-          'Alabama',
-          'Alaska',
-          'American Samoa',
-          'Arizona',
-          'Arkansas',
-          'California',
-          'Colorado',
-          'Connecticut',
-          'Delaware',
-          'District of Columbia',
-          'Federated States of Micronesia',
-          'Florida',
-          'Georgia',
-          'Guam',
-          'Hawaii',
-          'Idaho',
-          'Illinois',
-          'Indiana',
-          'Iowa',
-          'Kansas',
-          'Kentucky',
-          'Louisiana',
-          'Maine',
-          'Marshall Islands',
-          'Maryland',
-          'Massachusetts',
-          'Michigan',
-          'Minnesota',
-          'Mississippi',
-          'Missouri',
-          'Montana',
-          'Nebraska',
-          'Nevada',
-          'New Hampshire',
-          'New Jersey',
-          'New Mexico',
-          'New York',
-          'North Carolina',
-          'North Dakota',
-          'Northern Mariana Islands',
-          'Ohio',
-          'Oklahoma',
-          'Oregon',
-          'Palau',
-          'Pennsylvania',
-          'Puerto Rico',
-          'Rhode Island',
-          'South Carolina',
-          'South Dakota',
-          'Tennessee',
-          'Texas',
-          'Utah',
-          'Vermont',
-          'Virgin Island',
-          'Virginia',
-          'Washington',
-          'West Virginia',
-          'Wisconsin',
-          'Wyoming'
-        ]*/
-        items: ['Foo', 'Bar', 'Fizz', 'Buzz'],  // if you see these, loading drop down menu is too slow
         selected: null,
         searchInput: "",
 
         saved_submissions: [],
         clickOptions: [
-          /*{ title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me' },
-          { title: 'Click Me 2' }*/
           'Search by art title',
           'Search by artist name',
         ],
@@ -409,16 +340,6 @@
           }
 
         },
-        /*querySelections (v) {
-          this.loading = true
-          // Simulated ajax query
-          setTimeout(() => {
-            this.items = this.states.filter(e => {
-              return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
-            })
-            this.loading = false
-          }, 500)
-        },*/
         // change searchbar hint if search option is changed
         switchSearchOption(option)
         {
@@ -829,13 +750,6 @@
       page: function (val) {
        this.populateSubmissions(val, this.submissions)
       },
-      /*search (val) {
-        val && val !== this.select && this.querySelections(val)
-      }*/
-      /*searchInput(val) {
-        //console.log('search input: ', val)
-        //alert(val)
-      },*/
       selected(val) {
         // set submissions back to the initial list of submissions
         this.submissions = this.saved_submissions
@@ -844,7 +758,7 @@
         //this.page = this.findPage(val, this.submissions)
        
         // search for the selected title
-        /*let filteredSubmissions =*/ this.filterByTitle(val, this.submissions)
+        this.filterByTitle(val, this.submissions)
         // reset the page to 1 when user selects an option
         this.page = 1
         //this.populateSubmissions(this.page, filteredSubmissions)

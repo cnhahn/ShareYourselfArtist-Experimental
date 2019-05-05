@@ -46,9 +46,10 @@
           <v-flex xs6>
             <div class="display-2 pt-3"> 
               <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
-              <div class="pb-3"> Hello World! </div>
-              <div class="pb-3"> Hello World! </div>
-              <div class="pb-3"> Hello World! </div>
+              <div class="pb-3" v-for="member in this.business_members" :key="member.Name">
+                {{member.Name}}
+                <!--{{member.Email}}-->
+              </div>
             </div>
           </v-flex>
         </v-layout>
@@ -131,8 +132,7 @@
         number_of_submissions: this.$store.state.submissions_for_this_business.length,
         show_facebook:false,
         show_instagram:false,
-        show_tumblr:false,
-        //,user_info: {business_name: null, email: null, url: null}
+        show_tumblr:false
       }
     },
     beforeCreate: async function () {
@@ -141,14 +141,21 @@
     mounted: function()
     {
       //console.log('Signed in user: ', this.$store.getters.signed_in_user)
-      this.$store.dispatch('get_admin_info', 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1')
-      //console.log('admin business info: ', this.$store.getters.infoArray)
+      // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+      // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
+      this.$store.dispatch('get_admin_info', 'shareyourselfartist')
+      this.$store.dispatch('get_business_members', 'shareyourselfartist')
     },  
     computed: {
       business_info(){
         this.$store.getters.get_business_info;
         console.log("business info is " , this.$store.getters.get_business_info);
         return  this.$store.getters.get_business_info;
+      },
+      business_members(){
+        this.$store.getters.get_business_members;
+        console.log("business members is " , this.$store.getters.get_business_memebrs)
+        return this.$store.getters.get_business_members
       },
       user_info() {
         let myArray=this.$store.getters.signed_in_user

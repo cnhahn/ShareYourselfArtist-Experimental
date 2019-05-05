@@ -18,6 +18,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
+    business_members: {},
     users_top_category : '' ,
     top_ten_category: [],
     top_ten_rec_businesses : [],
@@ -227,6 +228,9 @@ export const store = new Vuex.Store({
   mutations: {
     set_business_info(state,payload){
       state.business_info = payload;
+    },
+    set_business_members(state,payload){
+      state.business_members = payload
     },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
@@ -1831,17 +1835,17 @@ export const store = new Vuex.Store({
         })
     },
 
-    // temp test get admin business info
+    // get admin business info
     get_admin_info({ commit }, payload)
     {
-      //let infoArr = []
       //First get the admin id for the logged in business member.
       let admin_id;
       console.log("in get admin info")
+      // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
         .collection('business_groups')
-        .doc('shareyourselfartist')
+        .doc(payload)
         .get()
         .then(function (doc) {
           if (doc.exists) {
@@ -1849,7 +1853,7 @@ export const store = new Vuex.Store({
             admin_id = doc.data().Admin;
             return admin_id;
           } else {
-            console.log('Fail')
+            console.log('Doc does not exist')
           }
         }).then(function (result) {
           //Once we get the admin id for the business member, we should query the business details based off the admin user account.
@@ -1864,6 +1868,34 @@ export const store = new Vuex.Store({
         })
         .catch(function (error) {
           console.log('Error getting user document:', error)
+        })
+    },
+
+    // get business members
+    get_business_members({ commit }, payload)
+    {
+      // First get the info of members in the business group.
+      let members = null;
+      //console.log("in get business members")
+      // payload default is 'shareyourselfartist'
+      const db = firebase.firestore()
+      const collectionRef = db
+        .collection('business_groups')
+        .doc(payload)
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            //console.log("doc does exist it is : " , doc.data())
+            members = doc.data().Members
+            commit('set_business_members' , members)
+            // console.log("members info: " , members)
+            // return members
+          } else {
+            console.log('Doc does not exist')
+          }
+        })
+        .catch(function (error) {
+          console.log('Error getting business members document:', error)
         })
     },
 
@@ -3170,6 +3202,9 @@ export const store = new Vuex.Store({
   getters: {
     get_business_info(state){
       return state.business_info;
+    },
+    get_business_members(state){
+      return state.business_members
     },
     //for spinner
     get_check_image_c(state)
