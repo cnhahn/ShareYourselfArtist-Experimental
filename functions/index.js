@@ -36,20 +36,44 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   let reviewIds = request.body[1] //array of reviewId's
 
   function getReviews(reviewIds){
-    
+
   }
   
 
 })
 
-exports.getAllBusinessReviewRequests = functions.https.onRequest((request, response) => {
-  let business = request.body[0]
+exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request, response) => {
+  /*
+    Given a business ID, retrieve all review requests sent to that business.
+  */
+
+  // let business = request.body[0]
+  let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
   const db = admin.firestore()
 
   // Wonder if this works.
-  let reviews = db.collection('review_requests').where('business', '==', business)
-  Promise.all([reviews.get()])
-  
+  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
+      })
+      return Promise.all(promises)
+    })
+    .then(reviews => {
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
+      
+      response.send(payload)
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
 })
 
 exports.getBusinessGroup = functions.https.onRequest((request, response) => {
