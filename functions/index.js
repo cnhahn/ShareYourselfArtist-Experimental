@@ -31,6 +31,27 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
+exports.reserveReview = functions.https.onRequest((request, response) => {
+  let user = request.body[0]
+  let reviewIds = request.body[1] //array of reviewId's
+
+  function getReviews(reviewIds){
+    
+  }
+  
+
+})
+
+exports.getAllBusinessReviewRequests = functions.https.onRequest((request, response) => {
+  let business = request.body[0]
+  const db = admin.firestore()
+
+  // Wonder if this works.
+  let reviews = db.collection('review_requests').where('business', '==', business)
+  Promise.all([reviews.get()])
+  
+})
+
 exports.getBusinessGroup = functions.https.onRequest((request, response) => {
   let businessID
   //let userID = request.body[0]
@@ -44,6 +65,7 @@ exports.getBusinessGroup = functions.https.onRequest((request, response) => {
       businessID = user.data().business_group
       let group = await db.collection('business_groups').doc(businessID).get()
       console.log('Here is the groups data', group.data())
+      // might need to convert to JSON before sending the data back to the client
       response.send(group.data())
     } catch (error) {
       console.log('Unable to return groups information', error)
