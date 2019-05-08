@@ -1,0 +1,17 @@
+"[businessID]":{
+    "accessCode": "someCode",
+    "admin": "name_of_business_admin",
+    "business": "name of business",
+    "email": "email",
+    "members":{
+        "[memberID]":{
+            "email": "email",
+            "name": "name",
+            "reviews":{
+                "reserved": ,  //array of reviewID's or object with reviewrequest objects
+                "responded": , //array of reviewID's respondedTo
+
+            }
+        }
+    }
+};
