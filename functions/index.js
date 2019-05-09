@@ -32,14 +32,95 @@ var DOMAIN = 'www.shareyourselfartists.com';
 const bcrypt = require('bcrypt')
 
 exports.reserveReview = functions.https.onRequest((request, response) => {
+  /*
+    Given a businessMembers ID, and an array of reviews they would like to reserve, 
+    add those reviewID's to the member's review{} and mark the review as reserved in the review_request table
+  */
   let user = request.body[0]
-  let reviewIds = request.body[1] //array of reviewId's
+  //let reviewIds = request.body[1] //array of reviewId's
+  let reviewIds = ['1', '2', '3']
+  //let business = request.body[2] //business Id
+  let db = admin.firestore()
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  let userId = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
+  // let userData = db.collection('business_groups').doc('8ZpDyQGFCyfczXwh7rBDyLxRvvZ2').get()
+  //   .then(some =>{
+  //     let data = some.data()
+  //     let members = some.data().members
+  //     console.log('Data: ')
+  //     console.log(data)
+  //     console.log('Members: ')
+  //     console.log(members)
+  //     let a = members['lgAfi1JDvYcqdNZKGpR7I1clWrC2']
+  //     console.log(a)
+  //     response.send('Done')
+  //   })
+  //   .catch(error =>{
+  //     console.log(error)
+  //     response.send('there was an error')
+  //   })
+  function addReserves(reviewIds){
+    let userRef = db.collection('business_groups').doc(business)
+    let transaction = db.runTransaction(t => {
+      return t.get(userRef)
+        .then(doc => {
+          let currentReserved = []
+          let businessData = doc.data()
+          let businessMembers
+          if (businessData.members != undefined){
 
-  function getReviews(reviewIds){
+            businessMembers = businessData.members
+            let currentUser = businessMembers[userId]
 
+            if(currentUser.reserved != undefined){
+              currentReserved = currentUser.reserved
+              console.log('currentReserved before adding new data: ', currentReserved)
+              reviewIds.forEach(review => {
+                currentReserved.push(review)
+              })
+            } else{
+              currentReserved = reviewIds
+            }
+          } else {
+            console.log('There are no members in this business...')
+            response.status(400).send('There are no members in this business...')
+          }
+          t.set(userRef, {
+            members: {
+              [userId]: {
+                reserved: currentReserved
+              }
+            }
+          }, {merge: true})
+
+          console.log('members:')
+          console.log(members)
+        })
+    })
+    .then(status => {
+      console.log('transaction completed')
+      response.send('complete')
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.send(error)
+    })
   }
-  
+addReserves();
 
+  // function addReviewsToMember(reviewIds){
+  //   return new Promise(async (resolve, reject) =>{
+  //     let batch = db.batch()
+  //     reviewIds.forEach(id =>{
+  //       batch.set(business,{
+  //         members:{
+
+  //         }
+  //       }, {merge: true})
+  //     })
+  //   })
+  // }
+  
 })
 
 exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request, response) => {
@@ -74,6 +155,43 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
       console.log('There was an error', error)
       response.status(400).send(error)
     })
+})
+
+exports.modifyReviewRequestCollection = functions.https.onRequest((request, response) => {
+  // TODO:
+  //pull the entire reviewRequest collection, grab businessId object and create a new field
+  // called businessAdmin: 
+  const db = admin.firestore()
+  function getReviewCollection(){
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let obj = {}
+        let table = await db.collection('review_requests').get()
+        table.forEach(doc => {
+          obj[doc.id] = doc.data()
+        })
+        resolve(obj)
+      } catch (error) {
+        console.log('There was an error getting the collection', error)
+        reject(error)
+      }       
+    })
+  }
+
+  async function caller(){
+    try {
+      
+      let data = await getReviewCollection()
+      console.log("Here is the data")
+      console.log(data)
+      response.
+      response.send(data)
+    } catch (error) {
+      console.log('Error2', error )
+      response.send('Error')
+    }
+  }
+  caller();
 })
 
 exports.getBusinessGroup = functions.https.onRequest((request, response) => {
