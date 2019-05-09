@@ -338,13 +338,18 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
 })
 
 exports.signUpGroupMember = functions.https.onRequest((req, res) => {
-  let name = 'KS2'
-  let email = 'grouptester7@gmail.com'
-  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
-  let password = 'password'
+  // let name = 'KS2'
+  // let email = 'grouptester7@gmail.com'
+  // let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  // let password = 'password'
+  
+  let name = request.body[0]
+  let email = request.body[1]
+  let password = request.body[2]
+  let code = request.body[3]
+
   const db = admin.firestore()
   // In the future use bcrypt.
-  let code = 'FtDSfg0C'
   let userID
   
   /*
