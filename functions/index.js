@@ -31,6 +31,74 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
+exports.legacy_addExistingBusinessesToGroupDB = functions.https.onRequest((request, response) => {
+  // Importing old businesses into business_groups collection
+  const db = admin.firestore()
+  const batch = db.batch()
+
+  function getExistingBusinesses(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let promises= []
+        let businesses = await db.collection('users').where('role', '==', 'business').get()
+        businesses.forEach(business => {
+          promises.push(business)
+        })
+        resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving all businesses')
+        console.log(error)
+        reject(error)
+      }
+    })
+  }
+
+
+  function addToBatch(businesses){
+    return new Promise(async (resolve, reject) => {
+      try {
+        businesses.forEach(business => {
+          console.log('Current Business: ', business.data())
+          console.log('THEIR USERID: ', business.data().userId)
+          
+          let businessId = business.data().userId
+          let businessData = business.data()
+          let businessRef = db.collection('business_groups').doc(businessId)
+
+          batch.set(businessRef, {
+            business_name: businessData.business_name,
+            about: businessData.about,
+            additional_notes: businessData.additional_notes,
+            email: businessData.email,
+            userId: businessData.userId, 
+            members: {},
+            accessCode: ""
+          }, {merge: true})
+        })
+        resolve()
+      } catch (error) {
+        console.log('error adding businesses to db', error)
+        reject(error)
+      }
+    })
+  }
+
+  async function caller(){
+    try {
+      let businesses = await getExistingBusinesses()
+      console.log('HERE ARE THE BUSINESSES: ', businesses)
+      await addToBatch(businesses)
+      await batch.commit()
+      console.log('finished')
+      response.status(200).send('finished')
+    } catch (error) {
+      console.log('There was an error', error)
+      response.status(400).send('There was an error')
+    }
+  }
+  caller()
+})
+
 exports.reserveReview = functions.https.onRequest((request, response) => {
   /*
     Given a businessMembers ID, and an array of reviews they would like to reserve, 
@@ -128,11 +196,10 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
     Given a business ID, retrieve all review requests sent to that business.
   */
 
-  // let business = request.body[0]
-  let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  let business = request.body[0]
+  //let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
   const db = admin.firestore()
 
-  // Wonder if this works.
   let reviews = db.collection('review_requests').where('businessAdmin', '==', business).get()
     .then(snapshot =>{
       let promises = []
@@ -149,7 +216,7 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
         console.log('review: ', review.data())
       })
       
-      response.send(payload)
+      response.status(200).send(payload)
     })
     .catch(error => {
       console.log('There was an error', error)
@@ -343,11 +410,16 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
   // let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   // let password = 'password'
   
-  let name = request.body[0]
-  let email = request.body[1]
-  let password = request.body[2]
-  let code = request.body[3]
-
+  let name = req.body[0]
+  let email = req.body[1]
+  let password = req.body[2]
+  let code = req.body[3]
+  let business = req.body[4]
+  // console.log('name: ', name)
+  // console.log('email: ', email)
+  // console.log('password: ', password)
+  // console.log('code: ', code)
+  // console.log('business: ', business)
   const db = admin.firestore()
   // In the future use bcrypt.
   let userID
@@ -363,6 +435,9 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
     return new Promise(async (resolve, reject) => {
       try {
         const businessRef = await db.collection('business_groups').doc(business).get()
+        //let businessData = businessRef.data()
+        console.log(businessRef)
+        console.log(businessRef.data())
         let accessCode = businessRef.data().accessCode
         resolve(accessCode)
         
@@ -422,7 +497,8 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
           name: name,
           business_group: business, // admin uid
           email: email,
-          role: 'business_member'           
+          role: 'business_member',
+          userId: userID          
         })
         resolve()
       } catch (error) {
@@ -442,7 +518,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
         console.log('User added to group database')
         await addToUserDB()
         console.log("User added to the user collection of database")
-        res.send('User successfully created and added to both collections.')
+        res.status(200).send('User successfully created and added to both collections.')
       }
       else{
         res.status(401).send("Verification code did not match, please try again.")
