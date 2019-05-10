@@ -111,67 +111,20 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   let db = admin.firestore()
   let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   let userId = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
-  // let userData = db.collection('business_groups').doc('8ZpDyQGFCyfczXwh7rBDyLxRvvZ2').get()
-  //   .then(some =>{
-  //     let data = some.data()
-  //     let members = some.data().members
-  //     console.log('Data: ')
-  //     console.log(data)
-  //     console.log('Members: ')
-  //     console.log(members)
-  //     let a = members['lgAfi1JDvYcqdNZKGpR7I1clWrC2']
-  //     console.log(a)
-  //     response.send('Done')
-  //   })
-  //   .catch(error =>{
-  //     console.log(error)
-  //     response.send('there was an error')
-  //   })
-  function addReserves(reviewIds){
-    let userRef = db.collection('business_groups').doc(business)
-    let transaction = db.runTransaction(t => {
-      return t.get(userRef)
-        .then(doc => {
-          let currentReserved = []
-          let businessData = doc.data()
-          let businessMembers
-          if (businessData.members != undefined){
-
-            businessMembers = businessData.members
-            let currentUser = businessMembers[userId]
-
-            if(currentUser.reserved != undefined){
-              currentReserved = currentUser.reserved
-              console.log('currentReserved before adding new data: ', currentReserved)
-              reviewIds.forEach(review => {
-                currentReserved.push(review)
-              })
-            } else{
-              currentReserved = reviewIds
-            }
-          } else {
-            console.log('There are no members in this business...')
-            response.status(400).send('There are no members in this business...')
-          }
-          t.set(userRef, {
-            members: {
-              [userId]: {
-                reserved: currentReserved
-              }
-            }
-          }, {merge: true})
-
-          console.log('members:')
-          console.log(members)
-        })
-    })
-    .then(status => {
-      console.log('transaction completed')
-      response.send('complete')
-    })
-    .catch(error => {
-      console.log('There was an error', error)
-      response.send(error)
+  
+  let businessRef = db.collection('business_groups').doc(business)
+  function getCurrentReserved(reviewIds){
+    return new Promise(async (resolve, reject) => {
+      let userToUpdate, members
+      let businessData = await businessRef.get()
+      if (businessData.data().members != undefined && (businessData.data().members.keys().length) > 0){
+        members = businessData.data().members
+        userToUpdate = members[userId]
+        
+      }
+      else{
+        reject('The requested business has no members')
+      }
     })
   }
 addReserves();
@@ -476,7 +429,9 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
           members: {
             [userID]: {
               email: email,
-              name: name
+              name: name,
+              reserved_requests: [],
+              replied_requests: []
             }
           }
         }, {merge: true})
