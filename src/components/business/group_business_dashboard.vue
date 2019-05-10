@@ -143,7 +143,7 @@
       //console.log('Signed in user: ', this.$store.getters.signed_in_user)
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
-      this.$store.dispatch('get_admin_info', 'shareyourselfartist')
+      this.$store.dispatch('get_admin_info')
       this.$store.dispatch('get_business_members', 'shareyourselfartist')
     },  
     computed: {

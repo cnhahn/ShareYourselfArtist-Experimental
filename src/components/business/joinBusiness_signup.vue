@@ -162,8 +162,7 @@ export default {
             //Else, we will tell the user that the access code was wrong. 
             this.checkAccessCode = false;
             // accessCode = false;
-        this.$store.dispatch('signUserUp', {email: this.email, password: this.password, user_role: 'business_group'})
-            this.$router.push('/group_business_dashboard')
+            this.$store.dispatch('signBusinessMemberUp', {name: this.name, email: this.email, password: this.password, accessCode: this.accessCode})
         },
         onDismissed(){
             this.$store.commit('setError', null)

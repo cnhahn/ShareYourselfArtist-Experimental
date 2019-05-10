@@ -9,6 +9,7 @@ import 'firebase/firestore'
 import config from '../config'
 import router from '../router'
 import VueGoogleCharts from 'vue-google-charts'
+import { access } from 'fs';
 
 firebase.initializeApp(config)
 Vue.use(Vuex)
@@ -19,6 +20,7 @@ export const store = new Vuex.Store({
   state: {
     business_info : {},
     business_members: {},
+    group_business_id : '',
     users_top_category : '' ,
     top_ten_category: [],
     top_ten_rec_businesses : [],
@@ -550,6 +552,9 @@ export const store = new Vuex.Store({
     image_being_uploaded(state, payload) {
       //console.log('resizedURL and file in store: ', payload)
       state.image_being_uploaded = payload
+    },
+    set_group_business_id(state,payload){
+      state.group_business_id = payload;
     },
     set_user_email(state) {
       state.art_being_submitted.artist_email = firebase.auth().currentUser.email
@@ -1836,39 +1841,18 @@ export const store = new Vuex.Store({
     },
 
     // get admin business info
-    get_admin_info({ commit }, payload)
+    get_admin_info({ commit,getters }, payload)
     {
-      //First get the admin id for the logged in business member.
-      let admin_id;
-      console.log("in get admin info")
-      // payload default is 'shareyourselfartist'
+
       const db = firebase.firestore()
-      const collectionRef = db
-        .collection('business_groups')
-        .doc(payload)
-        .get()
-        .then(function (doc) {
-          if (doc.exists) {
-            console.log("doc does exists it is : " , doc.data());
-            admin_id = doc.data().Admin;
-            return admin_id;
-          } else {
-            console.log('Doc does not exist')
-          }
-        }).then(function (result) {
-          //Once we get the admin id for the business member, we should query the business details based off the admin user account.
-          console.log("Admin id is ", result);
-          const business_info = db.collection('users').where('userId', '==' , result)
-          .get()
-          .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              commit('set_business_info' , doc.data());
-            })
-          })
+      console.log("in get - admin - info and business email is " , getters.get_group_business_id) 
+      const business_info = db.collection('users').where('email', '==' , getters.get_group_business_id)
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+          commit('set_business_info' , doc.data());
         })
-        .catch(function (error) {
-          console.log('Error getting user document:', error)
-        })
+      })
     },
 
     // get business members
@@ -2200,6 +2184,7 @@ export const store = new Vuex.Store({
                   artist_id: firebase.auth().currentUser.uid
                 }
 
+                
                 let dataCategory = {}
                 dataCategory[0] = art.categories
                 dataCategory[1] = art.artist_id
@@ -2733,6 +2718,61 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
+    signBusinessMemberUp({ commit } , payload){
+      
+      //Grab the user name, email, password, and access code
+      let name = payload.name;
+      let email = payload.email;
+      let password = payload.password;
+      let accessCode = payload.accessCode;
+      let business = '';
+
+
+      let dataCategory = {}
+
+      dataCategory[0] = name;
+      dataCategory[1] = email;
+      dataCategory[2] = password;
+      dataCategory[3] = accessCode;
+    
+
+      let db = firebase.firestore()
+      let user = db
+        .collection('business_groups')
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            if(doc.data().accessCode != undefined){
+              if(doc.data().accessCode == accessCode){
+                console.log("in query function")
+                console.log("checking each access Code : " , doc.data().accessCode)
+                console.log("business should be " , doc.id)
+                dataCategory[4] = doc.id
+                commit('set_group_business_id', doc.data().email)
+                let categoryJson = JSON.stringify(dataCategory)
+                let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+                let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/signUpGroupMember'
+          
+                fetch(proxyUrl + targetUrl, {
+                  method: 'post',
+                  headers: {
+                    'Content-type': 'application/json'
+                  },
+                  body: categoryJson
+                }).then(function (doc) {
+                  router.push({
+                    name: 'group_business_dashboard'
+                  })
+                })          
+              }
+            }
+          })
+        })
+        .catch(function (error) {
+          console.log('Error getting documents: ', error)
+        })
+
+    },
     /*
     Sign up/Sign in flow
     Register user with Firebase Authentication
@@ -2830,6 +2870,8 @@ export const store = new Vuex.Store({
                     name: 'Home'
                   })
                 } else {
+                  console.log('User that we are currently checking is :  ', firebase.auth().currentUser)
+                  
                   const newUser = {
                     id: firebase.auth().currentUser.uid,
                     name: firebase.auth().currentUser.displayName,
@@ -2837,10 +2879,9 @@ export const store = new Vuex.Store({
                     // TODO: I need to call the existing arts for this user and push in to this array
                     arts: []
                   }
-                  console.log('User role: ', firebase.auth().currentUser.user_role)
-                  console.log('display name: ', firebase.auth().currentUser.displayName)
+
                   commit('setUser', newUser)
-                  console.log('userId is this')
+
                   localStorage.setItem('userId', 1000)
                   let db = firebase.firestore()
                   let user = db
@@ -2872,6 +2913,22 @@ export const store = new Vuex.Store({
                         commit('signed_in_user', doc.data())
                         commit('set_free_credits', doc.data().free_credits)
 
+                        if(doc.data().business_group != undefined){
+                          //Query by business email not group id.
+                          let dataBase = firebase.firestore()
+                          let businessEmail = dataBase.collection('business_groups').doc(doc.data().business_group).get()
+                          .then(function (results) {
+                            console.log('we are in business Email ' , results.data().email)
+                            commit('set_group_business_id', results.data().email)
+                            if (doc.data().role == 'business_member') {
+                              console.log("about to change to group business dashboard")
+                              router.push({
+                                name: 'group_business_dashboard'
+                              })
+                            }
+                          })
+                        }
+
                         // check current user's role to see if they're allowed to enter
                         console.log('current role at this instance: ' + doc.data().role)
                         localStorage.setItem('role', doc.data().role)
@@ -2887,12 +2944,6 @@ export const store = new Vuex.Store({
                             name: 'business_dashboard'
                           })
                         }
-                        /*else if (doc.data().role == 'group_business') {
-                          commit('setUrl', doc.data().url)
-                          router.push({
-                            name: 'group_business_dashboard'
-                          })
-                        }*/
                       })
                     })
                     .catch(function (error) {
@@ -3429,7 +3480,10 @@ export const store = new Vuex.Store({
       console.log('entered get_image_uploaded --- index.js')
       console.log('in get image uploaded and value is ' , state.image_uploaded)
       return state.image_uploaded
-    }
+    },
+    get_group_business_id(state){
+      return state.group_business_id;
+    },
   }
 })
 
