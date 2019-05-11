@@ -31,6 +31,89 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
+exports.getReservedReviews = functions.https.onRequest(async (request, response) => {
+  /*
+    Given a business members id, pull and return all review requests that they have reserved
+  */
+  const db = admin.firestore()
+  let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  let business
+
+  if(request.body[1] !== undefined && request.body[1] !== ''){
+    business = request.body[1]
+  }
+  else{
+    console.log('BusinessID was not provided, looking up businessID')
+    business = await getBusiness(userId)
+    console.log('BusinessID is ', business)
+  }
+
+  let businessRef = db.collection('business_groups').doc(business)
+  
+  function getBusiness(userID){
+    // in case the request did not come with a business_id, go get the business_id that a 
+    // member is associated with
+    return new Promise(async (resolve, reject) => {
+      try {
+        let member = await db.collection('users').doc(userID).get()
+        let groupID = member.data().business_group
+        resolve(groupID)
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  function getCurrentReserved(){
+    return new Promise(async (resolve, reject) => {
+      let userToUpdate, members, reservedReviews
+      let businessData = await businessRef.get()
+      if (businessData.data().members != undefined && Object.entries(businessData.data().members).length > 0){
+        members = businessData.data().members
+        userToUpdate = members[userId]
+        reservedReviews = userToUpdate['reserved']
+        console.log('reservedReviews', reservedReviews)
+        resolve(reservedReviews)
+      }
+      else{
+        reject(-1)
+      }
+    })
+  }
+
+  function getReviewRequests(reviewIds){
+    return new Promise(async (resolve, reject) => {
+      let payload = {}
+      reviewIds.forEach(async id => {
+        try {
+          let reviewRequest = await db.collection('review_requests').doc(id)
+          payload[id] = reviewRequest.data()
+        } catch (error) {
+          console.log('error retrieving the request with id ', id)
+          console.log(error)
+          reject(error)
+        }
+      })
+      resolve(payload)
+    })
+  }
+  
+  async function caller(){
+    try {
+      let usersReserved = await getCurrentReserved()
+      let payload = await getReviewRequests
+      JSON.stringify(payload)
+      response.status(200).send(payload)
+    } catch (error) {
+      response.status(400).send('You have failed at everything again')
+    }
+  }
+  caller();
+
+
+  
+})
+
 exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   const batch = db.batch()
@@ -190,6 +273,8 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   /*
     Given a businessMembers ID, and an array of reviews they would like to reserve, 
     add those reviewID's to the member's review{} and mark the review as reserved in the review_request table
+
+    TODO: mark each request as reserved in the review_requests 
   */
   let user = request.body[0]
   //let reviewIds = request.body[1] //array of reviewId's
@@ -197,24 +282,64 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   //let business = request.body[2] //business Id
   let db = admin.firestore()
   let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
-  let userId = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
+  let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  // let userId = 'FbQ3AUCY3cVds8z276nkqi2I8Cn1'
   
   let businessRef = db.collection('business_groups').doc(business)
-  function getCurrentReserved(reviewIds){
+  
+  function getCurrentReserved(){
     return new Promise(async (resolve, reject) => {
-      let userToUpdate, members
+      let userToUpdate, members, oldReviews, reservedReviews, respondedReviews
       let businessData = await businessRef.get()
-      if (businessData.data().members != undefined && (businessData.data().members.keys().length) > 0){
+      if (businessData.data().members != undefined && Object.entries(businessData.data().members).length > 0){
         members = businessData.data().members
         userToUpdate = members[userId]
-        
+        respondedReviews = userToUpdate['responded']
+        reservedReviews = userToUpdate['reserved']
+        console.log('respondedReviews', respondedReviews)
+        console.log('reservedReviews', reservedReviews)
+        resolve(reservedReviews)
       }
       else{
-        reject('The requested business has no members')
+        reject(-1)
       }
     })
   }
-addReserves();
+
+  function updateReserved(reserved){
+    return new Promise(async (resolve, reject) => {
+      reviewIds.forEach(id => {
+        reserved.push(id)
+      })
+      try {
+        let business = await businessRef.set({
+          members: {
+            [userId]: {
+              reserved: reserved
+            }
+          }
+        }, {merge: true})
+        resolve()
+      } catch (error) {
+        console.log('There was an error', error)
+        reject(-2)
+      }
+    })
+  }
+
+  async function caller(){
+    try {
+      let result = await getCurrentReserved()
+      let updateResult = await updateReserved(result)
+      response.status(200).send('success')
+    }
+    catch(error){
+      console.log('There was an error', error)
+      response.status(400).send('There was an error in caller')
+    }
+    
+  }
+  caller();
 
   // function addReviewsToMember(reviewIds){
   //   return new Promise(async (resolve, reject) =>{
@@ -307,7 +432,7 @@ exports.modifyReviewRequestCollection = functions.https.onRequest((request, resp
 exports.getBusinessGroup = functions.https.onRequest((request, response) => {
   let businessID
   //let userID = request.body[0]
-  let userID = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
+  let userID = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
 
   //let businessID = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   const db = admin.firestore()
@@ -458,11 +583,7 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
   let password = req.body[2]
   let code = req.body[3]
   let business = req.body[4]
-  // console.log('name: ', name)
-  // console.log('email: ', email)
-  // console.log('password: ', password)
-  // console.log('code: ', code)
-  // console.log('business: ', business)
+
   const db = admin.firestore()
   // In the future use bcrypt.
   let userID
@@ -520,8 +641,8 @@ exports.signUpGroupMember = functions.https.onRequest((req, res) => {
             [userID]: {
               email: email,
               name: name,
-              reserved_requests: [],
-              replied_requests: []
+              reserved: [],
+              responded: []
             }
           }
         }, {merge: true})
