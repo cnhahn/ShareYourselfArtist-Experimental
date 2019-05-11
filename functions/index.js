@@ -31,6 +31,57 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
+exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  const batch = db.batch()
+
+  // Get the old review requests
+  function getOldRequests(){
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let promises = []
+        let currentReviews = db.collection('review_requests').get()
+        currentReviews.forEach(review => {
+          promises.push(review)
+      })
+      console.log('retrieved all review requests')
+      resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving old reviews', error)
+        reject(error)
+      }
+    })
+  }
+
+  function updateReviewRequests(requests){
+    return new Promise((resolve, reject) => {
+      try {
+        requests.forEach(review => {
+          let currentData = review.data()
+          let businessId = currentData.businessId
+          let reviewId = review.id
+          let reviewRef = db.collection('review_requests').doc(reviewId)
+          batch.update(reviewRef, {
+            businessAdmin: businessId
+          })
+        })
+        resolve();
+      } catch (error) {
+        console.log('THERE WAS AN ERROR', error)
+        reject(error);
+      }
+    })
+  }
+
+  async function caller(){
+    let currentReviews = await getOldRequests();
+    console.log('Got the old review requests')
+    await updateReviewRequests(currentReviews);
+
+  }
+  caller()
+})
+
 exports.legacy_addExistingBusinessesToGroupDB = functions.https.onRequest((request, response) => {
   // Importing old businesses into business_groups collection
   const db = admin.firestore()
@@ -151,6 +202,7 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
 
   let business = request.body[0]
   //let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  console.log('businessID: ', business)
   const db = admin.firestore()
 
   let reviews = db.collection('review_requests').where('businessAdmin', '==', business).get()
@@ -168,7 +220,9 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
         console.log('reviewID', review.id)
         console.log('review: ', review.data())
       })
-      
+      JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
       response.status(200).send(payload)
     })
     .catch(error => {
