@@ -494,37 +494,38 @@
         initialImageLoad() {
           this.loading_submissions = true
           this.$store.dispatch('fetch_all_Submissions').then(response => {
-          this.submissions = this.$store.getters.submissions_for_this_business
-          console.log("Submissions is ", this.submissions)
-          // order by most recent upload date
-          this.sortByDate(this.submissions)
-          // sort doesn't order correctly,
-          // this sorts by checking every submission but is very slow
-          this.checkSortByDate(this.submissions)
+            
+              this.submissions = this.$store.getters.submissions_for_this_business
+              console.log("Submissions is ", this.submissions)
+              // order by most recent upload date
+              this.sortByDate(this.submissions)
+              // sort doesn't order correctly,
+              // this sorts by checking every submission but is very slow
+              this.checkSortByDate(this.submissions)
 
-          this.master_submissions = this.$store.getters.submissions_for_this_business
-          this.loading_submissions = false
+              this.master_submissions = this.$store.getters.submissions_for_this_business
+              this.loading_submissions = false
 
-          // display list of options in drop-down, may change depending on current tab
-          if (this.searchingByTitle === true)
-          {
-            this.items = this.titleOptionsLoad(this.submissions)
-          }
-          else
-          {
-            this.items = this.artistOptionsLoad(this.submissions)
-            console.log('artists')
-          }
-          // save the whole list of submissions because we want to search using this list
-          this.saved_submissions = this.submissions
+              // display list of options in drop-down, may change depending on current tab
+              if (this.searchingByTitle === true)
+              {
+                this.items = this.titleOptionsLoad(this.submissions)
+              }
+              else
+              {
+                this.items = this.artistOptionsLoad(this.submissions)
+                console.log('artists')
+              }
+              // save the whole list of submissions because we want to search using this list
+              this.saved_submissions = this.submissions
 
-          let temp = []
-          for(let i = 0; this.submissions[i] !== null && i < 4; i++)
-          {
-            temp.push(this.submissions[i])
-          }
-          this.section = temp
-          console.log('submissions arr len', this.submissions.length)
+              let temp = []
+              for(let i = 0; this.submissions[i] !== null && i < 4; i++)
+              {
+                temp.push(this.submissions[i])
+              }
+              this.section = temp
+              console.log('submissions arr len', this.submissions.length)
 
           }, error => {
             console.error("Reached error in mounted function " , error)
@@ -546,7 +547,9 @@
         this.$store.dispatch('fetch_all_Submissions').then(response => {
           console.log('here are submissions: ' + this.submissions)
           console.log('here are master submissions: ' + this.master_submissions)
+
           this.submissions = this.$store.getters.submissions_for_this_business
+      
           this.sortByDate(this.submissions)
 
           this.checkSortByDate(this.submissions)

@@ -16,7 +16,7 @@
           
           
           <div class="text-xs-center">
-          <v-btn large depressed color="primary" router to="/submissions">All Submissions</v-btn>
+          <v-btn large depressed color="primary" @click="all_submissions()">All Submissions</v-btn>
           </div>
           
      
@@ -173,6 +173,13 @@
         return this.$store.getters.loading;
       }
     },
+    methods:{
+      all_submissions(){
+        console.log("We are in all submissions")
+        localStorage.setItem('role' , 'business');
+        this.$router.push('/submissions')
+      }
+    }
   }
 
 </script>
