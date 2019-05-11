@@ -28,6 +28,266 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+// For encrypting/decrypting business group codes
+const bcrypt = require('bcrypt')
+
+exports.getBusinessGroup = functions.https.onRequest((request, response) => {
+  let businessID
+  //let userID = request.body[0]
+  let userID = 'lgAfi1JDvYcqdNZKGpR7I1clWrC2'
+
+  //let businessID = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  const db = admin.firestore()
+  async function getGroup(){
+    try {
+      let user = await db.collection('users').doc(userID).get()
+      businessID = user.data().business_group
+      let group = await db.collection('business_groups').doc(businessID).get()
+      console.log('Here is the groups data', group.data())
+      response.send(group.data())
+    } catch (error) {
+      console.log('Unable to return groups information', error)
+      response.status(401).send('Unable to return the groups information')
+    }
+  }
+  getGroup();
+
+})
+
+
+exports.createNewBusiness = functions.https.onRequest((request, response) => {
+  /*
+    Called when a new business group is created.
+    1) Create user in Auth() if they have not already been created, clarify with Yas
+    2) Add the business in the db
+    3) Hash the businesses verification code and store that in the db.
+  */
+
+  function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  
+  const saltRounds = 10;
+  // let name = request.body[0] // refers to users actual name
+  // let email = request.body[1] // refers to email
+  // let business = request.body[2]  // refers to business name
+  // let admin = request.body[3]  // refer to userID of admin
+  // let password = request.body[4] //refers to the password the admin supplied when attempting to create account
+
+  let name = "someName"
+  let email = 'hello@gmail.com'
+  let business = 'Google'
+  let administrator = name
+  let password = '123456'
+
+  let code = makeid(8)
+  const db = admin.firestore()
+  const auth = admin.auth()
+  
+  let userID
+  // bcrypt.hash(password, saltRounds, function(err, hash){
+    
+  // })
+  
+
+  function addToUserPool(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Might not need to worry about creating the user if Yas does this already 
+        let user = await auth.createUser({
+          email: email,
+          displayName: name,
+          password: password
+        })
+        userID = user.uid
+        console.log("User added to user pool")
+        console.log("Now adding custom claims...")
+        // setting custom claims must be done whether or not Yas initially creates the account
+        await auth.setCustomUserClaims(user.uid,{admin: true})
+        console.log('Claims added!')
+        let finishedUser = await auth.getUser(user.uid)
+        console.log("Finished adding userdata to userpool")
+        resolve(finishedUser);
+      } catch (error) {
+        console.log('There was an error creating the user. It is likely they already exist')
+        reject(error);
+      }
+    })
+  }
+
+  function addToGroupDB(userData){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('business_groups').doc(userID).set({
+          email: userData.email,
+          business: business,
+          admin: name,
+          members: {},
+          accessCode: code
+        })
+        console.log("User added to database!")
+        console.log(user)
+        resolve(user);
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+  // function addToUserDB(){
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       let user = await db.collection('user').doc(userID).set({
+  //         name: name,
+  //         email: userData.email,
+  //         members: {},
+  //         accessCode: code
+  //       })
+  //       console.log("User added to database!")
+  //       console.log(user)
+  //       resolve(user);
+  //     } catch (error) {
+        
+  //     }
+  //   })
+  // }
+
+  async function makeUser(){
+    try {
+      let newUser = await addToUserPool()
+      console.log('User Data After Account Creation: ', newUser)
+      let user = await addToGroupDB(newUser)
+      response.send('User created')
+    } catch (error) {
+      console.log('User not created?')
+      console.log(error)
+      response.send('User not created?')
+    }
+  }
+  makeUser();
+})
+
+exports.signUpGroupMember = functions.https.onRequest((req, res) => {
+  let name = 'KS2'
+  let email = 'grouptester7@gmail.com'
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  let password = 'password'
+  const db = admin.firestore()
+  // In the future use bcrypt.
+  let code = 'FtDSfg0C'
+  let userID
+  
+  /*
+      1) Get verification code
+      2) Check if the verification code matches the inputted one
+      3) Create business account and put in business group collection
+      4) Create user in user collection
+  */
+
+  function getVerificationCode(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        const businessRef = await db.collection('business_groups').doc(business).get()
+        let accessCode = businessRef.data().accessCode
+        resolve(accessCode)
+        
+      } catch (error) {
+        console.log("There was an error in retrieving the access code in the db", error)
+        reject(error)
+      }
+
+    })
+  }
+  
+  function addToUserPool(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await admin.auth().createUser({
+          email: email,
+          emailVerified: false,
+          password: password,
+          displayName: name
+        })
+        userID = user.uid
+        await admin.auth().setCustomUserClaims(userID, {admin: false})
+        console.log('User created and claims added')
+        resolve(user)
+      } catch (error){
+        console.log("There was an error in adding the user to the user pool", error)
+        reject(error)
+      }
+    })
+  }
+  
+  function addToGroupDB(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('business_groups').doc(business).set({
+          members: {
+            [userID]: {
+              email: email,
+              name: name
+            }
+          }
+        }, {merge: true})
+        console.log("User added to business group collection!")
+        console.log(user)
+        resolve();
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+
+  function addToUserDB(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('users').doc(userID).set({
+          name: name,
+          business_group: business, // admin uid
+          email: email,
+          role: 'business_member'           
+        })
+        resolve()
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+
+  async function createUser(){
+    try {
+      let accessCode = await getVerificationCode()
+      if(code !== '' && accessCode === code){
+        let user = await addToUserPool()
+        console.log('User created. Here is there data: ', user)
+        await addToGroupDB()
+        console.log('User added to group database')
+        await addToUserDB()
+        console.log("User added to the user collection of database")
+        res.send('User successfully created and added to both collections.')
+      }
+      else{
+        res.status(401).send("Verification code did not match, please try again.")
+      }
+    
+    } catch (error) {
+      console.log("There was an error signing up the business group member into the database.")
+      res.status(401).send("There was an error signing up the business group member into the database.")
+    }
+  }
+  createUser();
+
+})
+
 exports.topCategories = functions.https.onRequest((req, res) => {
   const db = admin.firestore()
   let search_users = db.collection('users').where('role', '==', 'artist').get()
