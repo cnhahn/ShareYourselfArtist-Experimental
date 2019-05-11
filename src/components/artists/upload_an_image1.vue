@@ -60,7 +60,11 @@
                       height: max_pre_height + 'px'
                       }"
                     ></img>
+<<<<<<< HEAD
                  </div>  
+=======
+                 </div>
+>>>>>>> DashFilterFixMichael
             </v-flex>
           </div>
 
