@@ -494,7 +494,7 @@
         initialImageLoad() {
           this.loading_submissions = true
           this.$store.dispatch('fetch_all_Submissions').then(response => {
-            
+
               this.submissions = this.$store.getters.submissions_for_this_business
               console.log("Submissions is ", this.submissions)
               // order by most recent upload date
@@ -549,7 +549,7 @@
           console.log('here are master submissions: ' + this.master_submissions)
 
           this.submissions = this.$store.getters.submissions_for_this_business
-      
+
           this.sortByDate(this.submissions)
 
           this.checkSortByDate(this.submissions)
