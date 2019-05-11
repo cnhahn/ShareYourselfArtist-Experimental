@@ -493,8 +493,13 @@
         },
         initialImageLoad() {
           this.loading_submissions = true
-          this.$store.dispatch('fetch_all_Submissions').then(response => {
+          let business_member = false;
+          if(this.$store.getters.user_role == 'business_member'){
+            business_member = true;
+          }
+  
 
+          this.$store.dispatch('fetch_all_Submissions', business_member).then(response => {
               this.submissions = this.$store.getters.submissions_for_this_business
               console.log("Submissions is ", this.submissions)
               // order by most recent upload date

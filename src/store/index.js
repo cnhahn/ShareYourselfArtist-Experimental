@@ -2068,88 +2068,100 @@ export const store = new Vuex.Store({
           console.log('Error with submissions: ', error)
         })
     },
-    async fetch_all_Submissions({ commit, getters }) {
+    async fetch_all_Submissions({ commit, getters }, payload) {
       return new Promise((resolve, reject) => {
         console.log("Entered fetch all submissions")
         commit('clear_submissions_for_this_business_array')
         const db = firebase.firestore()
         console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
+        console.log('payload is ' , payload)
   
         // start cloud
-        
-        let reviewRequests = {}
-        //We want to access the business info state and extract the id.
-        let business_id  = getters.get_business_info.userId;
-        console.log("The business id is " , business_id)
-        reviewRequests[0] = business_id;  //this.getters.get_business_info.userId
-  
-        let reviewRequestsJSON = JSON.stringify(reviewRequests) 
-        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
-        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getAllBusinessReviewRequests'
-  
-        console.log('In get all business review reqs about to call fetch')
-        fetch(proxyUrl + targetUrl, {
-          method: 'post',
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: reviewRequestsJSON 
-        })
-        .then(function (response) {
-          console.log('response is ', response)
-          return response.json()
-        })
-        .then(function (myJson) {
-          console.log('my json is ', myJson)
-          let rev_req = [];
-          for (var key in myJson) {
-            if (myJson.hasOwnProperty(key)) {
-                console.log(key + " -> " + myJson[key]);
-                myJson[key].review_request = key;
-                rev_req.push(myJson[key]);
-                // myJson[key].push({review_request : key});
-            }
-        }
-  
-        for(var i = 0 ; i < rev_req.length; i++)
-        commit('set_submissions_for_this_business', rev_req[i])
-  
-        })
-        .then(function (response) {
-          console.log("we should leave the function now nothing should happen before")
-          resolve(response) 
-        })
-        .catch(function (error) {
-          console.error('Error getting cloud: ', error)
-          reject(error)
-        })
-  
-        // console.log('leaving the cloud')
-        
-        // end cloud
-  
-        // const collectionRef = await db
-        //   .collection('review_requests')
-        //   .where('businessId.userId', '==', getters.user.id)
-        //   .get()
-        //   .then(function (querySnapshot) {
-        //     querySnapshot.forEach(function (doc) {
-  
-        //       // doc.data() is never undefined for query doc snapshots
-        //       let docData = doc.data()
-        //       // console.log('doc.data: ' + docData)
-        //       // console.log('doc.id: ' + doc.id)
-        //       docData.docId = doc.id
-  
-        //       // console.log('doc.data: ' + docData.docId)
-        //       console.log("docData is : " , docData)
-        //       // commit('set_submissions_for_this_business', docData)
-        //     })
-        //   })
-        //   .catch(function (error) {
-        //     console.log("Error of fetch all submissions")
-        //     console.log('Error getting submissions: ', error)
-        //   })
+          console.log("business member")
+          let reviewRequests = {}
+          //We want to access the business info state and extract the id.
+          let business_id;
+          if(payload){
+             business_id  = getters.get_business_info.userId;
+          }else{
+            business_id  = getters.user.id
+          }
+      
+          console.log("The business id is " , business_id)
+          reviewRequests[0] = business_id;  //this.getters.get_business_info.userId
+    
+          let reviewRequestsJSON = JSON.stringify(reviewRequests) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getAllBusinessReviewRequests'
+    
+          console.log('In get all business review reqs about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: reviewRequestsJSON 
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            return response.json()
+          })
+          .then(function (myJson) {
+            console.log('my json is ', myJson)
+            let rev_req = [];
+            for (var key in myJson) {
+              if (myJson.hasOwnProperty(key)) {
+                  console.log(key + " -> " + myJson[key]);
+                  myJson[key].review_request = key;
+                  rev_req.push(myJson[key]);
+                  // myJson[key].push({review_request : key});
+              }
+          }
+    
+          for(var i = 0 ; i < rev_req.length; i++)
+          commit('set_submissions_for_this_business', rev_req[i])
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+    
+          // console.log('leaving the cloud')
+          
+          // end cloud
+
+          // const collectionRef = await  db
+          //  .collection('review_requests')
+          //  .where('businessId.userId', '==', getters.user.id)
+          //  .get()
+          //  .then(function (querySnapshot) {
+          //    querySnapshot.forEach(function (doc) {
+   
+          //      // doc.data() is never undefined for query doc snapshots
+          //      let docData = doc.data()
+          //      // console.log('doc.data: ' + docData)
+          //      // console.log('doc.id: ' + doc.id)
+          //      docData.docId = doc.id
+   
+          //      // console.log('doc.data: ' + docData.docId)
+          //      console.log("docData is : " , docData)
+          //      // commit('set_submissions_for_this_business', docData)
+          //    })
+          //  })
+          //  .then(function (response) {
+          //    resolve(response)
+          //  })
+          //  .catch(function (error) {
+          //    console.log("Error of fetch all submissions")
+          //    console.log('Error getting submissions: ', error)
+          //    reject(error)
+          //  })
+
       })
 
     },
