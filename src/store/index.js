@@ -2074,6 +2074,75 @@ export const store = new Vuex.Store({
       const db = firebase.firestore()
       console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
 
+      //console.log('user id is ', getters.user.id)
+      //getters.user.id = this.getters.get_business_info.userId //'b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1'
+      //console.log('user id after getting admin id is ', getters.user.id)
+
+      // start cloud
+      
+      let reviewRequests = {}
+      reviewRequests[0] = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1' //this.getters.get_business_info.userId
+
+      let reviewRequestsJSON = JSON.stringify(reviewRequests) 
+      //console.log('review requests is ', reviewRequests)
+      //console.log('review requests as str is ', reviewRequestsJSON)
+      //  Send API request to get all business review requests
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getAllBusinessReviewRequests'
+
+      if (!('fetch' in window)) {
+        return
+      } else {
+        //console.log('fetch good')
+      }
+      
+      console.log('In get all business review reqs about to call fetch')
+      fetch(proxyUrl + targetUrl, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: reviewRequestsJSON 
+      })
+
+      .then(function (response) {
+        console.log('response is ', response)
+        return response.json()
+      })
+      // .then(res => res.text())          // convert to plain text
+      // .then(text => console.log('text is ', text))  // then log it out
+
+        .then(function (myJson) {
+          // let jsonSize = myJson.length
+          // let i = 0
+          // console.log("jsonSize is " , jsonSize)
+          // for ( i = 0; i < jsonSize; i++) {
+          //   //console.log("Entering for loop")
+          //   let object = myJson[i]
+          //   console.log("object is ", object)
+          // }
+
+          console.log('my json is ', myJson)
+
+          console.log('body is ', myJson.body)
+          let jsonSize = Object.keys(myJson.body).length
+          let i = 0
+          for (i = 0; i < jsonSize; i++) {
+            console.log("Item is ", myJson.body[i])
+            //commit('set_submissions_for_this_business', myJson.body[i])
+          }
+          // console.log('submissions for this business is ' , state.submissions_for_this_business)
+        })
+
+      .catch(function (error) {
+        console.error('Error getting cloud: ', error)
+      })
+
+      console.log('leaving the cloud')
+      
+      
+      // end cloud
+
       const collectionRef = await db
         .collection('review_requests')
         .where('businessId.userId', '==', getters.user.id)
@@ -2879,7 +2948,8 @@ export const store = new Vuex.Store({
                     // TODO: I need to call the existing arts for this user and push in to this array
                     arts: []
                   }
-
+                  //console.log('User role: ', firebase.auth().currentUser.user_role)
+                  //console.log('display name: ', firebase.auth().currentUser.displayName)
                   commit('setUser', newUser)
 
                   localStorage.setItem('userId', 1000)

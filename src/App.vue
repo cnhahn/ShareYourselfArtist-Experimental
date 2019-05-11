@@ -269,13 +269,13 @@
 
     <main>
       <v-layout row>
-      <v-flex v-if="userIsAuthanticated" xs9>
+      <v-flex v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs9>
         <router-view ></router-view>
       </v-flex>
       <v-flex v-else xs12>
         <router-view ></router-view>
       </v-flex>
-       <v-flex hidden-md-and-down v-if="userIsAuthanticated" xs3>
+       <v-flex hidden-md-and-down v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs3>
   <!-- recently submitted -->
         <v-card  flat v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'">
           <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 130px;">Recently Submitted Artists</p>

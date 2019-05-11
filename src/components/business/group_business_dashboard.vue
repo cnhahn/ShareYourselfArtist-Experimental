@@ -31,22 +31,22 @@
       </v-flex>
 
       <v-flex xs5>
-        <v-layout  align-center row wrap>
+        <v-layout  align-start row wrap>
           <v-flex xs6>
             <div class="display-2 pt-3"> 
-              <div class="pb-3 "style=" text-decoration: underline;" > Business Info </div>
-              <div class="pb-3"> Name {{this.business_info.business_name}}</div>
-              <div class="pb-3">  About {{this.business_info.about}} </div>
-              <div class="pb-3"> Email {{this.business_info.email}} </div>
-              <div class="pb-3"> Publication {{this.business_info.publication}} </div>
-              <div class="pb-3"> Worth Knowing {{this.business_info.worth_knowing}} </div>
-              <div class="pb-3"> Additional Notes {{this.business_info.additional_notes}} </div>
+              <div class="pb-3" style=" text-decoration: underline;" > Business Info </div>
+              <div class="display-1 pa-2"> <b>Name:</b> {{this.business_info.business_name}}</div>
+              <div class="display-1 pa-2">  <b>About:</b> {{this.business_info.about}} </div>
+              <div class="display-1 pa-2"> <b>Email:</b> {{this.business_info.email}} </div>
+              <div class="display-1 pa-2"> <b>Publication:</b> {{this.business_info.publication}} </div>
+              <div class="display-1 pa-2"> <b>Worth Knowing:</b> {{this.business_info.worth_knowing}} </div>
+              <div class="display-1 pa-2"> <b>Additional Notes:</b> {{this.business_info.additional_notes}} </div>
             </div>
           </v-flex>
           <v-flex xs6>
             <div class="display-2 pt-3"> 
               <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
-              <div class="pb-3" v-for="member in this.business_members" :key="member.Name">
+              <div class="display-1 pa-2" v-for="member in this.business_members" :key="member.Name">
                 {{member.Name}}
                 <!--{{member.Email}}-->
               </div>
@@ -141,6 +141,7 @@
     mounted: function()
     {
       //console.log('Signed in user: ', this.$store.getters.signed_in_user)
+      //console.log('User role: ', this.$store.getters.user_role)
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
@@ -154,7 +155,7 @@
       },
       business_members(){
         this.$store.getters.get_business_members;
-        console.log("business members is " , this.$store.getters.get_business_memebrs)
+        console.log("business members is " , this.$store.getters.get_business_members)
         return this.$store.getters.get_business_members
       },
       user_info() {
