@@ -1,13 +1,14 @@
 <!--This is the main template that will contain both layouts for the image and the text-->
 <template>
   <!--This is the main container that will contain both the layouts for the image and the text-->
-  <v-container fluid>
+  <v-container fill-height>
+
     <!--This is the layouts for the everything (nothing is put here because the v-flex will hold of the styleing options)-->
-    <v-layout>
+    <v-layout align-center>
 
       <v-flex>
         <v-btn color="orange darken-2" dark @click="fetchPrevImage()" router to='/art'>
-          <v-icon dark left>arrow_back</v-icon>Prev Image
+          <v-icon dark left>arrow_back</v-icon>
         </v-btn> 
       </v-flex>
 
@@ -76,7 +77,7 @@
 
       <v-flex>
         <v-btn color="orange darken-2" dark @click="fetchNextImage()" router to='/art'>
-          Next Image<v-icon dark right>arrow_forward</v-icon>   
+          <v-icon dark right>arrow_forward</v-icon>
         </v-btn>  
       </v-flex>
 

@@ -2,14 +2,15 @@
 <!--This is the main template that will contain both layouts for the image and the text-->
 <template>
   <!--This is the main container that will contain both the layouts for the image and the text-->
-  <v-container fluid>
+  <v-container fill-height>
+
     <!--This is the layouts for the everything (nothing is put here because the v-flex will hold of the styleing options)-->
-    <v-layout>
+    <v-layout align-center>
 
       <v-flex>
-        <v-btn color="orange darken-2" dark @click="fetchPrevImage()" >
-          <v-icon dark left>arrow_back</v-icon>Prev Image
-        </v-btn> 
+        <v-btn color="orange darken-2" dark @click="fetchPrevImage()" >    
+          <v-icon dark left>arrow_back</v-icon>
+        </v-btn>
       </v-flex>
 
       <!--This v-flex handles the size (hieght/width/dementions) of the image that it will contain-->
@@ -24,13 +25,13 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             
-            <v-btn icon>
+            <v-btn flat icon color="red">
               <v-icon>favorite</v-icon>
             </v-btn>
-            <v-btn icon>
+            <v-btn flat icon color="black">
               <v-icon>bookmark</v-icon>
             </v-btn>
-            <v-btn icon>
+            <v-btn flat icon color="grey">
               <v-icon>share</v-icon>
             </v-btn>
           </v-card-actions>
@@ -99,7 +100,7 @@
 
       <v-flex>
         <v-btn color="orange darken-2" dark @click="fetchNextImage()" >
-          Next Image<v-icon dark right>arrow_forward</v-icon>   
+          <v-icon dark right>arrow_forward</v-icon>
         </v-btn>  
       </v-flex>
 
