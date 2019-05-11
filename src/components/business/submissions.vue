@@ -398,7 +398,6 @@
         },
         initialImageLoad() {
           this.loading_submissions = true
-<<<<<<< HEAD
           let business_member = false;
           if(this.$store.getters.user_role == 'business_member'){
             business_member = true;
@@ -429,31 +428,6 @@
               }
               // save the whole list of submissions because we want to search using this list
               this.saved_submissions = this.submissions
-=======
-          this.$store.dispatch('fetch_all_Submissions').then(response => {
-          this.submissions = this.$store.getters.submissions_for_this_business
-          console.log("Submissions is ", this.submissions)
-          // order by most recent upload date
-          this.sortByDate(this.submissions)
-          // sortByDate doesn't order all submissions correctly,
-          // this sorts by checking every submission but is very slow
-          this.checkSortByDate(this.submissions)
-
-          this.master_submissions = this.$store.getters.submissions_for_this_business
-          this.loading_submissions = false
-
-          // display list of items in drop-down, may change depending on current tab
-          if (this.searchingByTitle === true)
-          {
-            this.items = this.titleOptionsLoad(this.submissions)
-          }
-          else
-          {
-            this.items = this.artistOptionsLoad(this.submissions)
-          }
-          // save the whole list of submissions because we want to search using this list
-          this.saved_submissions = this.submissions
->>>>>>> SearchBarByArtist
 
               let temp = []
               for(let i = 0; this.submissions[i] !== null && i < 4; i++)
@@ -679,20 +653,6 @@
        this.populateSubmissions(val, this.submissions)
       },
       selected(val) {
-<<<<<<< HEAD
-        // set submissions back to the initial list of submissions
-        this.submissions = this.saved_submissions
-
-        console.log('selected: ', val)
-        //this.page = this.findPage(val, this.submissions)
-       
-        // search for the selected title
-        this.filterByTitle(val, this.submissions)
-        // reset the page to 1 when user selects an option
-        this.page = 1
-        //this.populateSubmissions(this.page, filteredSubmissions)
-        this.populateSubmissions(this.page, this.submissions)
-=======
         if (val != null)
         {
           // set submissions back to the initial list of submissions
@@ -715,7 +675,6 @@
           this.page = 1
           this.populateSubmissions(this.page, this.submissions)
         }
->>>>>>> SearchBarByArtist
       }
     },
 
