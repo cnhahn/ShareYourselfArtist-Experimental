@@ -34,13 +34,13 @@ const bcrypt = require('bcrypt')
 exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, response) => {
   const db = admin.firestore()
   const batch = db.batch()
-
+  let badRequests = {}  //all review requests that have no businessID
   // Get the old review requests
   function getOldRequests(){
     return new Promise(async (resolve, reject) =>{
       try {
         let promises = []
-        let currentReviews = db.collection('review_requests').get()
+        let currentReviews = await db.collection('review_requests').get()
         currentReviews.forEach(review => {
           promises.push(review)
       })
@@ -53,18 +53,46 @@ exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, res
     })
   }
 
+  async function anomaly(id){
+    let document = await db.collection('review_requests').doc(id).get()
+    console.log('-----------THIS DOCUMENT IS CAUSING PROBLEMS. ADDING TO badRequests -------------')
+    console.log(document.id)
+    console.log(document.data())
+    badRequests[document.id] = document.data()
+  }
+
+  
+
   function updateReviewRequests(requests){
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
-        requests.forEach(review => {
+        requests.forEach(async review => {
           let currentData = review.data()
+          console.log("currentData: ", currentData)
           let businessId = currentData.businessId
+          console.log('businessID object', businessId)
           let theRealBusinessId = businessId.userId
+          console.log('The actual businessID: ', theRealBusinessId)
           let reviewId = review.id
-          let reviewRef = db.collection('review_requests').doc(reviewId)
-          batch.update(reviewRef, {
-            businessAdmin: theRealBusinessId
-          })
+          console.log('The uuid of this request', reviewId)
+          // let reviewRef = db.collection('review_requests').doc(reviewId)
+
+          if(Object.entries(businessId).length !== 0 && businessId.constructor === Object){
+            console.log('adding ', businessId, ' of review_request ', reviewId, ' to the batch')
+            try {
+              let documentUpdate = await db.collection('review_requests').doc(reviewId).set({
+                businessAdmin: theRealBusinessId
+            }, {merge: true})
+            
+            } catch (error) {
+              console.log('error in foreach loop', error)
+              reject(error)
+            }
+          }
+          else{
+            console.log('----------Old data ---------')
+            anomaly(reviewId)
+          }
         })
         resolve();
       } catch (error) {
@@ -73,13 +101,15 @@ exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, res
       }
     })
   }
-  
+
   async function caller(){
     try {
       let currentReviews = await getOldRequests();
       console.log('Got the old review requests')
       await updateReviewRequests(currentReviews);
       console.log('finished')
+      console.log('HERE ARE THE REQUESTS THAT COULD NOT BE UPDATED')
+      console.log(badRequests)
       response.status(200).send('It fucking worked')
     } catch (error) {
       response.status(400).send('You have failed at everything')
