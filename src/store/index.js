@@ -43,7 +43,8 @@ export const store = new Vuex.Store({
         title: 'Dashboard',
         icon: 'dashboard',
         link: '/artist_dashboard'
-      },      {
+      },
+      {
         //title: 'My Profile',
         title: 'My Profile',
         icon: 'home',

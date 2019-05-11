@@ -16,7 +16,8 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" router to='/viewed_art'>View</v-btn>
+            <v-btn flat @click="clicked_art(art.upload_date)" color="primary" >View</v-btn>
+            <!--router to='/viewed_art'-->
             <v-spacer></v-spacer>
           </v-card-actions>
         </v-card>
@@ -40,6 +41,7 @@
     },
     mounted: function () {
         console.log('in in statement of mounted function')
+        //console.log('entered viewed_artist_Dashboard')
         this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.value).then(response => {
         })
   
@@ -92,6 +94,7 @@
     },
     methods: {
       clicked_art(art_unique_timestamp) {
+        //console.log('clicked view in viewed artists dash')
         this.$store.commit('set_clicked_art', art_unique_timestamp)
         localStorage.setItem('clicked_art', art_unique_timestamp)
         console.log("this.$store.getters.viewed_artist_data",this.$store.getters.viewed_artist_data)
@@ -110,6 +113,9 @@
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
            console.log('art_title',localStorage.getItem('art_title'))
+
+           console.log('Routing')
+           this.$router.push('/viewed_art')
            break
           }
         }
