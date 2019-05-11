@@ -46,9 +46,9 @@
           <v-flex xs6>
             <div class="display-2 pt-3"> 
               <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
-              <div class="display-1 pa-2" v-for="member in this.business_members" :key="member.Name">
-                {{member.Name}}
-                <!--{{member.Email}}-->
+              <div class="display-1 pa-2" v-for="member in this.business_members" :key="member.name">
+                {{member.name}}
+                {{member.email}}
               </div>
             </div>
           </v-flex>
@@ -145,7 +145,7 @@
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
-      this.$store.dispatch('get_business_members', 'shareyourselfartist')
+      this.$store.dispatch('get_business_members', 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1')
     },  
     computed: {
       business_info(){
