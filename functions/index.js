@@ -59,10 +59,11 @@ exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, res
         requests.forEach(review => {
           let currentData = review.data()
           let businessId = currentData.businessId
+          let theRealBusinessId = businessId.userId
           let reviewId = review.id
           let reviewRef = db.collection('review_requests').doc(reviewId)
           batch.update(reviewRef, {
-            businessAdmin: businessId
+            businessAdmin: theRealBusinessId
           })
         })
         resolve();
@@ -72,12 +73,17 @@ exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, res
       }
     })
   }
-
+  
   async function caller(){
-    let currentReviews = await getOldRequests();
-    console.log('Got the old review requests')
-    await updateReviewRequests(currentReviews);
-
+    try {
+      let currentReviews = await getOldRequests();
+      console.log('Got the old review requests')
+      await updateReviewRequests(currentReviews);
+      console.log('finished')
+      response.status(200).send('It fucking worked')
+    } catch (error) {
+      response.status(400).send('You have failed at everything')
+    }
   }
   caller()
 })
