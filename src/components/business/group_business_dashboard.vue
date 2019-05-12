@@ -12,8 +12,15 @@
  
       <img v-bind:src="this.business_info.url" />
           
-          <img class='icon' src="/static/images/facebook-logo.png" height="75px"> <img class='icon' src="/static/images/instagram-logo.png" height="75px"> <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
-          
+          <a href="http://www.facebook.com" target="_blank">
+          <img class='icon' src="/static/images/facebook-logo.png" height="75px">
+          </a>
+          <a href="http://www.instagram.com" target="_blank">
+          <img class='icon' src="/static/images/instagram-logo.png" height="75px"> 
+           </a>
+           <a href="http://www.tumblr.com" target="_blank">
+          <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
+          </a>
           
           <div class="text-xs-center">
           <v-btn large depressed color="primary" @click="all_submissions()">All Submissions</v-btn>
@@ -48,7 +55,9 @@
               <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
               <div class="display-1 pa-2" v-for="member in this.business_members" :key="member.name">
                 {{member.name}}
-                {{member.email}}
+                  <div>
+                  {{member.email}}
+                  </div>
               </div>
             </div>
           </v-flex>
