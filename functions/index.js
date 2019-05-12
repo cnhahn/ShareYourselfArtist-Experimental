@@ -36,9 +36,10 @@ exports.getReservedReviews = functions.https.onRequest(async (request, response)
     Given a business members id, pull and return all review requests that they have reserved
   */
   const db = admin.firestore()
-  let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  //let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  let userId = request.body[0]
   let business
-  let payload = {}
+  //let payload = {}
   // if(request.body[1] !== undefined && request.body[1] !== ''){
   //   business = request.body[1]
   // }
@@ -238,13 +239,15 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
 
     TODO: mark each request as reserved in the review_requests 
   */
-  let user = request.body[0]
+  let userId = request.body[0]
+  let business = request.body[1]
+  let reviewIds = request.body[2]
   //let reviewIds = request.body[1] //array of reviewId's
-  let reviewIds = ['PEcAU2Xl5kH85r2QDRJv', 'mBVn7ebaixqUtuWMMzCM', 'xk6HwfJIXqnPikSCPFj7']
+  //let reviewIds = ['PEcAU2Xl5kH85r2QDRJv', 'mBVn7ebaixqUtuWMMzCM', 'xk6HwfJIXqnPikSCPFj7']
   //let business = request.body[2] //business Id
   let db = admin.firestore()
-  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
-  let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  //let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
   // let userId = 'FbQ3AUCY3cVds8z276nkqi2I8Cn1'
   let batch = db.batch()
   let businessRef = db.collection('business_groups').doc(business)
@@ -337,8 +340,8 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
 })
 
 exports.getRespondedReviewRequests = functions.https.onRequest(async (request, response) => {
-  // let business = request.body[0]
-  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  let business = request.body[0]
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   const db = admin.firestore()
 
   let reviews = db.collection('review_requests').where('businessAdmin', '==', business).where('replied', '==', true).get()
@@ -372,9 +375,9 @@ exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request,
     Given a business ID, retrieve all review requests sent to that business.
   */
 
-  // let business = request.body[0]
+  let business = request.body[0]
   // let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
-  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   console.log('businessID: ', business)
   const db = admin.firestore()
 
@@ -443,8 +446,8 @@ exports.modifyReviewRequestCollection = functions.https.onRequest((request, resp
 
 exports.getBusinessGroup = functions.https.onRequest((request, response) => {
   let businessID
-  //let userID = request.body[0]
-  let userID = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  let userID = request.body[0]
+  //let userID = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
 
   //let businessID = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   const db = admin.firestore()
