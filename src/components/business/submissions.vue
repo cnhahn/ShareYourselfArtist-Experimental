@@ -144,10 +144,12 @@
       </v-card>
     </v-menu>-->
 
+    <v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>
+
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
-    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
+    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn> 
 
     <!-- <v-layout row wrap justify-center>
     <v-flex xs12 md12 sm6>
@@ -201,7 +203,18 @@
               <v-btn icon @click.native="clicked_art(submission.art.upload_date, submission.docId)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
+
+
+
               <v-spacer></v-spacer>
+
+              <v-checkbox
+              v-model="ex4"
+              color="red"
+              :value="submission.review_request"
+              hide-details
+            ></v-checkbox>
+
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
           </v-btn>
@@ -314,7 +327,9 @@
           'Search by artist name',
         ],
         hint: 'Search by art title',
-        searchingByTitle: true
+        searchingByTitle: true,
+
+        ex4: []
       }
     },
     beforeMount() {
@@ -323,6 +338,11 @@
       this.initialImageLoad()
     },
     methods:{
+        checkBox()
+        {
+          console.log('box check ', this.ex4)
+          // call Kevin's function
+        },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
