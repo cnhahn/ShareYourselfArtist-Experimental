@@ -145,7 +145,7 @@
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
-      this.$store.dispatch('get_business_members', 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1')
+      this.$store.dispatch('get_business_members')
     },  
     computed: {
       business_info(){

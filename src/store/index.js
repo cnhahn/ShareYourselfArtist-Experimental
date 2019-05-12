@@ -19,7 +19,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
-    business_members: {},
+    business_members: [],
     group_business_id : '',
     users_top_category : '' ,
     top_ten_category: [],
@@ -232,7 +232,7 @@ export const store = new Vuex.Store({
       state.business_info = payload;
     },
     set_business_members(state,payload){
-      state.business_members = payload
+      state.business_members.push(payload)
     },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
@@ -1856,23 +1856,27 @@ export const store = new Vuex.Store({
     },
 
     // get business members
-    get_business_members({ commit }, payload)
+    get_business_members({ commit, getters })
     {
       // First get the info of members in the business group.
       let members = null;
-      //console.log("in get business members")
+      console.log("in get business members")
+      console.log('ID IS ', getters.get_business_info.userId)
+      console.log('USER ID IS ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
         .collection('business_groups')
-        .doc(payload)
+        .doc(getters.get_business_info.userId)
         .get()
         .then(function (doc) {
           if (doc.exists) {
             //console.log("doc does exist it is : " , doc.data())
+            //console.log('user info id is ', this.getters.get_business_info.userId)
+            
             members = doc.data().members
             commit('set_business_members' , members)
-            // console.log("members info: " , members)
+            console.log("members info: " , members)
             // return members
           } else {
             console.log('Doc does not exist')
