@@ -12,13 +12,13 @@
  
       <img v-bind:src="this.business_info.url" />
           
-          <a href="http://www.facebook.com" target="_blank">
+          <a :href="business_info.facebook" target="_blank">
           <img class='icon' src="/static/images/facebook-logo.png" height="75px">
           </a>
-          <a href="http://www.instagram.com" target="_blank">
+          <a :href="business_info.instagram" target="_blank">
           <img class='icon' src="/static/images/instagram-logo.png" height="75px"> 
            </a>
-           <a href="http://www.tumblr.com" target="_blank">
+           <a :href="business_info.tumblr" target="_blank">
           <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
           </a>
           
