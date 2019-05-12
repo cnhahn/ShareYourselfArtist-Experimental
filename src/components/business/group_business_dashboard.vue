@@ -145,7 +145,6 @@
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
-      this.$store.dispatch('get_business_members')
     },  
     computed: {
       business_info(){
@@ -156,7 +155,7 @@
       business_members(){
         this.$store.getters.get_business_members;
         console.log("business members is " , this.$store.getters.get_business_members)
-        return this.$store.getters.get_business_members
+        return this.$store.getters.get_business_members[0]
       },
       user_info() {
         let myArray=this.$store.getters.signed_in_user

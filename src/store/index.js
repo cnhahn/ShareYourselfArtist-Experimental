@@ -19,6 +19,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
+    business_info_set : false,
     business_members: [],
     group_business_id : '',
     users_top_category : '' ,
@@ -230,6 +231,7 @@ export const store = new Vuex.Store({
   mutations: {
     set_business_info(state,payload){
       state.business_info = payload;
+      state.business_info_set = true;
     },
     set_business_members(state,payload){
       state.business_members.push(payload)
@@ -1841,9 +1843,8 @@ export const store = new Vuex.Store({
     },
 
     // get admin business info
-    get_admin_info({ commit,getters }, payload)
+    get_admin_info({ commit,getters,dispatch }, payload)
     {
-
       const db = firebase.firestore()
       console.log("in get - admin - info and business email is " , getters.get_group_business_id) 
       const business_info = db.collection('users').where('email', '==' , getters.get_group_business_id)
@@ -1852,6 +1853,8 @@ export const store = new Vuex.Store({
         querySnapshot.forEach(function (doc) {
           commit('set_business_info' , doc.data());
         })
+        console.log("finished get_admin_info")
+        dispatch('get_business_members')
       })
     },
 
