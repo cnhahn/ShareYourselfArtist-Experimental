@@ -38,80 +38,41 @@ exports.getReservedReviews = functions.https.onRequest(async (request, response)
   const db = admin.firestore()
   let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
   let business
+  let payload = {}
+  // if(request.body[1] !== undefined && request.body[1] !== ''){
+  //   business = request.body[1]
+  // }
+  // else{
+  //   console.log('BusinessID was not provided, looking up businessID')
+  //   business = await getBusiness(userId)
+  //   console.log('BusinessID is ', business)
+  // }
 
-  if(request.body[1] !== undefined && request.body[1] !== ''){
-    business = request.body[1]
-  }
-  else{
-    console.log('BusinessID was not provided, looking up businessID')
-    business = await getBusiness(userId)
-    console.log('BusinessID is ', business)
-  }
-
-  let businessRef = db.collection('business_groups').doc(business)
-  
-  function getBusiness(userID){
-    // in case the request did not come with a business_id, go get the business_id that a 
-    // member is associated with
-    return new Promise(async (resolve, reject) => {
-      try {
-        let member = await db.collection('users').doc(userID).get()
-        let groupID = member.data().business_group
-        resolve(groupID)
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-
-  function getCurrentReserved(){
-    return new Promise(async (resolve, reject) => {
-      let userToUpdate, members, reservedReviews
-      let businessData = await businessRef.get()
-      if (businessData.data().members != undefined && Object.entries(businessData.data().members).length > 0){
-        members = businessData.data().members
-        userToUpdate = members[userId]
-        reservedReviews = userToUpdate['reserved']
-        console.log('reservedReviews', reservedReviews)
-        resolve(reservedReviews)
-      }
-      else{
-        reject(-1)
-      }
-    })
-  }
-
-  function getReviewRequests(reviewIds){
-    return new Promise(async (resolve, reject) => {
-      let payload = {}
-      reviewIds.forEach(async id => {
-        try {
-          let reviewRequest = await db.collection('review_requests').doc(id)
-          payload[id] = reviewRequest.data()
-        } catch (error) {
-          console.log('error retrieving the request with id ', id)
-          console.log(error)
-          reject(error)
-        }
+  let reviews = db.collection('review_requests').where('reserved_by', '==', userId).where('replied', '==', false).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
       })
-      resolve(payload)
+      return Promise.all(promises)
     })
-  }
-  
-  async function caller(){
-    try {
-      let usersReserved = await getCurrentReserved()
-      let payload = await getReviewRequests
+    .then(reviews => {
+      console.log('reviews: ', reviews)
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
       JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
       response.status(200).send(payload)
-    } catch (error) {
-      response.status(400).send('You have failed at everything again')
-    }
-  }
-  caller();
-
-
-  
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
 })
 
 exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, response) => {
@@ -164,7 +125,8 @@ exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, res
             console.log('adding ', businessId, ' of review_request ', reviewId, ' to the batch')
             try {
               let documentUpdate = await db.collection('review_requests').doc(reviewId).set({
-                businessAdmin: theRealBusinessId
+                //businessAdmin: theRealBusinessId,
+                reserved_by: ''
             }, {merge: true})
             
             } catch (error) {
@@ -278,13 +240,13 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   */
   let user = request.body[0]
   //let reviewIds = request.body[1] //array of reviewId's
-  let reviewIds = ['1', '2', '3']
+  let reviewIds = ['PEcAU2Xl5kH85r2QDRJv', 'mBVn7ebaixqUtuWMMzCM', 'xk6HwfJIXqnPikSCPFj7']
   //let business = request.body[2] //business Id
   let db = admin.firestore()
   let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
   // let userId = 'FbQ3AUCY3cVds8z276nkqi2I8Cn1'
-  
+  let batch = db.batch()
   let businessRef = db.collection('business_groups').doc(business)
   
   function getCurrentReserved(){
@@ -306,6 +268,22 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
     })
   }
 
+  function markAsReserved(reserved){
+    return new Promise((resolve, reject) =>{
+      try {
+        reserved.forEach(id => {
+          let reviewRef = db.collection('review_requests').doc(id)
+          batch.update(reviewRef, {
+            reserved_by: userId
+          })
+        })
+        resolve(1)
+      } catch (error) {
+        reject(error)
+      }
+      
+    })
+  }
   function updateReserved(reserved){
     return new Promise(async (resolve, reject) => {
       reviewIds.forEach(id => {
@@ -331,6 +309,8 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
     try {
       let result = await getCurrentReserved()
       let updateResult = await updateReserved(result)
+      await markAsReserved(reviewIds)
+      await batch.commit()
       response.status(200).send('success')
     }
     catch(error){
@@ -356,17 +336,49 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   
 })
 
+exports.getRespondedReviewRequests = functions.https.onRequest(async (request, response) => {
+  // let business = request.body[0]
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  const db = admin.firestore()
+
+  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).where('replied', '==', true).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
+      })
+      return Promise.all(promises)
+    })
+    .then(reviews => {
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
+      JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
+      response.status(200).send(payload)
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
+})
+
 exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request, response) => {
   /*
     Given a business ID, retrieve all review requests sent to that business.
   */
 
-  let business = request.body[0]
-  //let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  // let business = request.body[0]
+  // let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
   console.log('businessID: ', business)
   const db = admin.firestore()
 
-  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).get()
+  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).where('reserved_by', '==', "").where('replied', '==', false).get()
     .then(snapshot =>{
       let promises = []
       snapshot.forEach(review =>{
