@@ -144,9 +144,12 @@
       </v-card>
     </v-menu>-->
 
-    <v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>
+    <!--<v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
+    <v-layout justify-end>
+      <v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>
+    </v-layout>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
     <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn> 
@@ -209,8 +212,8 @@
               <v-spacer></v-spacer>
 
               <v-checkbox
-              v-model="ex4"
-              color="red"
+              v-model="reserved"
+              color="primary"
               :value="submission.review_request"
               hide-details
             ></v-checkbox>
@@ -329,7 +332,7 @@
         hint: 'Search by art title',
         searchingByTitle: true,
 
-        ex4: []
+        reserved: []
       }
     },
     beforeMount() {
@@ -340,7 +343,7 @@
     methods:{
         checkBox()
         {
-          console.log('box check ', this.ex4)
+          console.log('box check ', this.reserved)
           // call Kevin's function
         },
         // populate submissions array depending on the current page selected
