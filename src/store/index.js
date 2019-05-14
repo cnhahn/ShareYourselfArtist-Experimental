@@ -1864,8 +1864,8 @@ export const store = new Vuex.Store({
       // First get the info of members in the business group.
       let members = null;
       console.log("in get business members")
-      console.log('ID IS ', getters.get_business_info.userId)
-      console.log('USER ID IS ', getters.user.id)
+      console.log('admin id is ', getters.get_business_info.userId)
+      console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
@@ -2095,7 +2095,7 @@ export const store = new Vuex.Store({
           }
       
           console.log("The business id is " , business_id)
-          reviewRequests[0] = business_id;  //this.getters.get_business_info.userId
+          reviewRequests[0] = business_id;
     
           let reviewRequestsJSON = JSON.stringify(reviewRequests) 
           let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
@@ -2190,6 +2190,139 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log('Error getting documents: ', error)
         })
+    },
+
+    async reserve_selected_submissions({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered reserve selected submissions")
+        const db = firebase.firestore()
+        //console.log('reserve payload is ' , payload)
+  
+        // reserveReview: https://us-central1-sya-app.cloudfunctions.net/reserveReview
+        // input: userId (id of the business_member), businessId (id of the business the member is associated with),
+        // reviewIds (an array of review_request document ids that the group member is attempting to reserve).
+        // output: status code of 200 for success, 400 for failure or bad request
+
+          let reserveIDs = {}
+          //We want to access the business info state and extract the id.
+          let business_id
+          if(payload){
+             business_id  = getters.get_business_info.userId
+          }else{
+            business_id  = getters.user.id
+          }
+
+          let user_id = getters.user.id
+      
+          console.log("The business id is " , business_id)
+          console.log("The user id is " , user_id)
+          reserveIDs[0] = user_id
+          reserveIDs[1] = business_id
+          reserveIDs[2] = payload
+    
+          let reserveIDsJSON = JSON.stringify(reserveIDs) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/reserveReview'
+    
+          console.log('In reserve submissions about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: reserveIDsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            // return response.json()
+          })
+          .then(function (myJson) {
+            // console.log('my json is ', myJson)
+            // // let rev_req = []
+            // for (var key in myJson) {
+            //   if (myJson.hasOwnProperty(key)) {
+            //       console.log(key + " -> " + myJson[key])
+            //       myJson[key].review_request = key
+            //       // rev_req.push(myJson[key])
+            //   }
+            // }
+    
+          // for(var i = 0 ; i < rev_req.length; i++)
+          // commit('set_submissions_for_this_business', rev_req[i])
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the reserve selected function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
+    },
+
+    async get_reserved_reviews({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered get reserved review")
+        const db = firebase.firestore()
+        //console.log('get reserved payload is ' , payload)
+        console.log('group members id is ' , payload)
+  
+        // getReservedReviews: https://us-central1-sya-app.cloudfunctions.net/getReservedReviews
+        // input: a group members userID
+        // response: JSON of all review_requests reserved by given business_member
+
+          let reservedReviews = {}
+          
+          reservedReviews[0] = payload
+    
+          let reservedReviewsJSON = JSON.stringify(reservedReviews) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getReservedReviews'
+    
+          console.log('In get reserved reviews about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: reservedReviewsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            return response.json()
+          })
+          .then(function (myJson) {
+            console.log('my json is ', myJson)
+            let revs = []
+            for (var key in myJson) {
+              if (myJson.hasOwnProperty(key)) {
+                  console.log(key + " -> " + myJson[key])
+                  myJson[key].review_request = key
+                  reservedRevs.push(myJson[key])
+              }
+            }
+            
+          console.log('got reserved reviews: ', revs)
+
+          // for(var i = 0 ; i < rev_req.length; i++)
+          // commit('set_submissions_for_this_business', rev_req[i])
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the get reserved function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
     },
 
     // Styled by Jin. No modification on code.

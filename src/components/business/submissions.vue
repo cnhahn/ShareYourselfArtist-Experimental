@@ -144,11 +144,11 @@
       </v-card>
     </v-menu>-->
 
-    <!--<v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>-->
+    <v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
-      <v-btn @click="checkBox" color="primary">Reserve Submissions</v-btn>
+      <v-btn @click="reserveSubmissions" color="primary">Reserve Submissions</v-btn>
     </v-layout>
     <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
@@ -341,10 +341,15 @@
       this.initialImageLoad()
     },
     methods:{
-        checkBox()
+        reserveSubmissions()
         {
-          console.log('box check ', this.reserved)
+          console.log('reserved submissions: ', this.reserved)
           // call Kevin's function
+          this.$store.dispatch('reserve_selected_submissions', this.reserved)
+        },
+        getReservedReviews()
+        {
+          this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id)
         },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
