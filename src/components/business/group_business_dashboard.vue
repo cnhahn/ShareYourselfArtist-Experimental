@@ -151,6 +151,7 @@
     {
       //console.log('Signed in user: ', this.$store.getters.signed_in_user)
       //console.log('User role: ', this.$store.getters.user_role)
+      console.log('real role: ', this.$store.state.user_role)
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
