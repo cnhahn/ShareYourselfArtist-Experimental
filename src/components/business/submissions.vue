@@ -1,45 +1,11 @@
 <template>
   <v-container class ="container">
 
-    <!--<v-toolbar
-      dark
-      color="primary"
-    >
-      <v-toolbar-title>Search submissions</v-toolbar-title>
-      <v-autocomplete
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        cache-items
-        class="mx-3"
-        flat
-        hide-no-data
-        hide-details
-        label="Search by art title"
-        solo-inverted
-      ></v-autocomplete>
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
-    </v-toolbar>-->
-
     <v-toolbar
       dark
       color="primary"
     >
       <v-toolbar-title>Search submissions</v-toolbar-title>
-      <!--<v-select
-        v-model="select"
-        :loading="loading"
-        :items="items"
-        :search-input.sync="search"
-        class="mx-3"
-        flat
-        hide-details
-        label="Search by art title"
-        solo-inverted
-      ></v-select>-->
       <v-select
         v-model="selected"
         :search-input.sync="searchInput"
@@ -50,24 +16,7 @@
         :label="hint"
         solo-inverted
 
-      ></v-select> <!--autocomplete-->
-      <!--<template v-slot:activator="{ on }">
-        <v-btn
-          icon
-          
-        >
-          <v-icon>more_vert</v-icon>
-        </v-btn>
-      </template>
-      <v-list>
-        <v-list-tile
-          v-for="(item, i) in clickOptions"
-          :key="i"
-          @click=""
-        >
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile>
-      </v-list>-->
+      ></v-select>
       <v-menu
       offset-y
       content-class="dropdown-menu"
@@ -79,7 +28,7 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
         <v-card>
-          <v-list> <!--dense-->
+          <v-list>
             <v-list-tile
               v-for="item in clickOptions"
               :key="item"
@@ -94,65 +43,18 @@
       </v-menu>
     </v-toolbar>
 
-    <!--<p>Selected: {{selected}}</p>-->
-
-    <!--<div class="text-xs-center">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="primary"
-            v-on="on"
-          >
-            Dropdown
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-tile
-            v-for="(item, index) in clickOptions"
-            :key="index"
-            @click=""
-          >
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
-    </div>-->
-
-    <!--<v-menu
-      offset-y
-      content-class="dropdown-menu"
-      transition="slide-y-transition">
-      <v-btn
-        slot="activator"
-        color="success"
-      >
-      <v-icon left>fa-search</v-icon>
-        Dropdown
-      </v-btn>
-      <v-card>
-        <v-list dense>
-          <v-list-tile
-            v-for="notification in clickOptions"
-            :key="notification"
-            @click=""
-          >
-            <v-list-tile-title
-              v-text="notification"
-            />
-          </v-list-tile>
-        </v-list>
-      </v-card>
-    </v-menu>-->
-
     <v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
       <v-btn @click="reserveSubmissions" color="primary">Reserve Submissions</v-btn>
     </v-layout>
-    <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
+    <v-btn flat @click="fetch_submissions">Available Submissions</v-btn>
+    <v-btn flat @click="submissions_unreplied_submissions">Reserved Submissions</v-btn>
+    <v-btn flat @click="submissions_replied_submissions">Responded Submissions</v-btn> 
+    <!--<v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
-    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn> 
+    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn> -->
 
     <!-- <v-layout row wrap justify-center>
     <v-flex xs12 md12 sm6>
@@ -349,7 +251,12 @@
         },
         getReservedReviews()
         {
-          this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id)
+          this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
+
+              console.log('reserved submissions in test getters is ', this.$store.getters.reserved_submissions)
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
         },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
@@ -440,25 +347,6 @@
 
           //return searchResult
         },
-        // search the most recent page with the selected art title
-        /*findPage(title, submissions)
-        {
-          let currPage = 1
-
-          if(submissions.length !== undefined && submissions.length !== 0)
-          {
-            for (let i = 0; i < submissions.length && submissions[i] !== undefined; i++)
-            {
-              currPage = Math.floor(i / 4) + 1
-              //console.log('current page: ', currPage)
-              if (submissions[i].art.art_title === title)
-              {
-                //console.log('found ', title, ' at page ', currPage)
-                return currPage
-              }
-            }
-          }
-        },*/
         convert_date(submitted_on)
         {
           let sub_date = parseInt(submitted_on, 10)
@@ -602,21 +490,6 @@
         }
         this.loading_submissions = false
 
-        /* Uncomment if you want to display same page every tab,
-        and reset to page 1 if page exceeds actual number of pages.
-        Used in
-        fetch_submissions, submissions_unreplied_submissions, and
-        submissions_replied_submissions
-        if (this.page <= Math.ceil(this.submissions.length / 4))
-        {
-          this.populateSubmissions(this.page, this.submissions)
-        }
-        else
-        {
-          this.page = 1
-          this.populateSubmissions(this.page, this.submissions)
-        }*/
-
         if (this.searchingByTitle === true)
         {
           this.items = this.titleOptionsLoad(this.submissions)
@@ -640,26 +513,52 @@
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
         this.loading_submissions = true
+        this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
 
-        this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == undefined || review.replied == false
-        })
+              console.log('reserved submissions in getters is ', this.$store.getters.reserved_submissions)
+              this.submissions = this.$store.getters.reserved_submissions
 
-        this.loading_submissions = false
+              this.loading_submissions = false
 
-        if (this.searchingByTitle === true)
-        {
-          this.items = this.titleOptionsLoad(this.submissions)
-        }
-        else
-        {
-          this.items = this.artistOptionsLoad(this.submissions)
-          console.log('artists')
-        }
-        this.saved_submissions = this.submissions
+              if (this.searchingByTitle === true)
+              {
+                this.items = this.titleOptionsLoad(this.submissions)
+              }
+              else
+              {
+                this.items = this.artistOptionsLoad(this.submissions)
+              }
+              this.saved_submissions = this.submissions
 
-        this.page = 1
-        this.populateSubmissions(this.page, this.submissions)
+              this.page = 1
+              this.populateSubmissions(this.page, this.submissions)
+
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+            this.loading_submissions = false
+          })
+          
+        // this.loading_submissions = true
+
+        // this.submissions = this.master_submissions.filter((review) => {
+        //   return review.replied == undefined || review.replied == false
+        // })
+
+        // this.loading_submissions = false
+
+        // if (this.searchingByTitle === true)
+        // {
+        //   this.items = this.titleOptionsLoad(this.submissions)
+        // }
+        // else
+        // {
+        //   this.items = this.artistOptionsLoad(this.submissions)
+        //   console.log('artists')
+        // }
+        // this.saved_submissions = this.submissions
+
+        // this.page = 1
+        // this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Retrieves review requests that have already been responded to */

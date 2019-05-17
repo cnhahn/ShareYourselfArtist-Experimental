@@ -181,6 +181,7 @@ export const store = new Vuex.Store({
     },
     replied_requests_for_report_datePicker: [],
     submissions_for_this_business: [],
+    reserved_submissions: [],
     submissions_for_month: [],
     submissions_for_year: [],
     epochFirstDayOfMonthArray: [], // aortizoj
@@ -235,6 +236,12 @@ export const store = new Vuex.Store({
     },
     set_business_members(state,payload){
       state.business_members.push(payload)
+    },
+    set_reserved_submissions(state, payload) {
+      state.reserved_submissions.push(payload)
+    },
+    clear_submissions_for_this_reserved_array(state) {
+      state.reserved_submissions = []
     },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
@@ -2267,6 +2274,8 @@ export const store = new Vuex.Store({
     async get_reserved_reviews({ commit, getters }, payload) {
       return new Promise((resolve, reject) => {
         console.log("Entered get reserved review")
+        commit('clear_submissions_for_this_reserved_array')
+        console.log('cleared reserved array submissions')
         const db = firebase.firestore()
         //console.log('get reserved payload is ' , payload)
         console.log('group members id is ' , payload)
@@ -2302,14 +2311,16 @@ export const store = new Vuex.Store({
               if (myJson.hasOwnProperty(key)) {
                   console.log(key + " -> " + myJson[key])
                   myJson[key].review_request = key
-                  reservedRevs.push(myJson[key])
+                  revs.push(myJson[key])
               }
             }
             
           console.log('got reserved reviews: ', revs)
 
-          // for(var i = 0 ; i < rev_req.length; i++)
-          // commit('set_submissions_for_this_business', rev_req[i])
+          for(let i = 0 ; i < revs.length; i++)
+          {
+            commit('set_reserved_submissions', revs[i])
+          }
     
           })
           .then(function (response) {
@@ -3466,6 +3477,10 @@ export const store = new Vuex.Store({
     },
     get_business_members(state){
       return state.business_members
+    },
+    reserved_submissions(state)
+    {
+      return state.reserved_submissions
     },
     //for spinner
     get_check_image_c(state)
