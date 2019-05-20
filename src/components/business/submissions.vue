@@ -113,14 +113,14 @@
 
               <v-spacer></v-spacer>
 
-              <div v-if="submission.replied == undefined || submission.replied == false">
+              <!--<div v-if="submission.replied == undefined || submission.replied == false">-->
                 <v-checkbox
                 v-model="reserved"
                 color="primary"
                 :value="submission.review_request"
                 hide-details
                 ></v-checkbox>
-              </div>
+              <!--</div>-->
 
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
@@ -465,7 +465,13 @@
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
         this.loading_submissions = true
-        this.$store.dispatch('fetch_all_Submissions').then(response => {
+
+        let business_member = false
+        if(this.$store.getters.user_role == 'business_member'){
+          business_member = true;
+        }
+
+        this.$store.dispatch('fetch_all_Submissions', business_member).then(response => {
           console.log('here are submissions: ', this.submissions)
           console.log('here are master submissions: ', this.master_submissions)
 
