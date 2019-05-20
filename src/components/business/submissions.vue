@@ -43,7 +43,7 @@
       </v-menu>
     </v-toolbar>
 
-    <v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>
+    <!--<v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
@@ -249,15 +249,15 @@
           // call Kevin's function
           this.$store.dispatch('reserve_selected_submissions', this.reserved)
         },
-        getReservedReviews()
-        {
-          this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
+        // getReservedReviews()
+        // {
+        //   this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
 
-              console.log('reserved submissions in test getters is ', this.$store.getters.reserved_submissions)
-          }, error => {
-            console.error("Reached error in mounted function " , error)
-          })
-        },
+        //       console.log('reserved submissions in test getters is ', this.$store.getters.reserved_submissions)
+        //   }, error => {
+        //     console.error("Reached error in mounted function " , error)
+        //   })
+        // },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
@@ -334,9 +334,7 @@
         {
           this.loading_submissions = true
 
-          //let searchResult = []
-
-          /*searchResult*/ this.submissions = this.submissions.filter((review) => {
+          this.submissions = this.submissions.filter((review) => {
             return review.art.art_title === title
           })
 
@@ -466,8 +464,8 @@
       fetch_submissions: function () {
         this.loading_submissions = true
         this.$store.dispatch('fetch_all_Submissions').then(response => {
-          console.log('here are submissions: ' + this.submissions)
-          console.log('here are master submissions: ' + this.master_submissions)
+          console.log('here are submissions: ', this.submissions)
+          console.log('here are master submissions: ', this.master_submissions)
 
           this.submissions = this.$store.getters.submissions_for_this_business
 
@@ -477,8 +475,8 @@
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
-          console.log('now here is submissions: ' + this.submissions)
-          console.log('and here is master submissions: ', this.master_submissions[0].businessId)
+          // console.log('now here is submissions: ', this.submissions)
+          // console.log('and here is master submissions: ', this.master_submissions[0].businessId)
 
         if (this.submissions === null) {
           console.log("submission numbero uno is null")
