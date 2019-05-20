@@ -113,12 +113,14 @@
 
               <v-spacer></v-spacer>
 
-              <v-checkbox
-              v-model="reserved"
-              color="primary"
-              :value="submission.review_request"
-              hide-details
-            ></v-checkbox>
+              <div v-if="submission.replied == undefined || submission.replied == false">
+                <v-checkbox
+                v-model="reserved"
+                color="primary"
+                :value="submission.review_request"
+                hide-details
+                ></v-checkbox>
+              </div>
 
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
