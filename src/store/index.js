@@ -2336,6 +2336,71 @@ export const store = new Vuex.Store({
 
     },
 
+    async get_responded_review_requests({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered get responded")
+        //commit('clear_submissions_for_this_reserved_array')
+        //console.log('cleared reserved array submissions')
+        const db = firebase.firestore()
+        //console.log('get reserved payload is ' , payload)
+        console.log('business id in payload is ' , payload)
+  
+        // getRespondedReviewRequests: https://us-central1-sya-app.cloudfunctions.net/getRespondedReviewRequests
+        // input: id of the *business*
+        // output: all review_requests of a given business that the business (or a member of the business) has responded to
+
+          let respondedRequests = {}
+          
+          respondedRequests[0] = payload
+    
+          let respondedRequestsJSON = JSON.stringify(respondedRequests) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getRespondedReviewRequests'
+    
+          console.log('In get responded about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: respondedRequestsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            return response.json()
+          })
+          .then(function (myJson) {
+            console.log('my json is ', myJson)
+            let reqs = []
+            for (var key in myJson) {
+              if (myJson.hasOwnProperty(key)) {
+                  console.log(key + " -> " + myJson[key])
+                  myJson[key].review_request = key
+                  reqs.push(myJson[key])
+              }
+            }
+            
+          console.log('got responded requests: ', reqs)
+
+          // for(let i = 0 ; i < revs.length; i++)
+          // {
+          //   commit('set_reserved_submissions', revs[i])
+          // }
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the get responded function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
+    },
+
     // Styled by Jin. No modification on code.
     uploadImage({ commit, getters }, payload) {
 

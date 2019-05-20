@@ -44,6 +44,7 @@
     </v-toolbar>
 
     <!--<v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>-->
+    <v-btn @click="getRespondedRequests" color="error">Test Get Responded Review Requests</v-btn>
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
@@ -260,6 +261,16 @@
         //     console.error("Reached error in mounted function " , error)
         //   })
         // },
+        getRespondedRequests()
+        {
+          //getters.get_business_info.userId
+          this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
+
+              //console.log('responded requests in test getters is ', this.$store.getters.reserved_submissions)
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
+        },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
