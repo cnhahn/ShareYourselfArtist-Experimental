@@ -182,6 +182,7 @@ export const store = new Vuex.Store({
     replied_requests_for_report_datePicker: [],
     submissions_for_this_business: [],
     reserved_submissions: [],
+    responded_submissions: [],
     submissions_for_month: [],
     submissions_for_year: [],
     epochFirstDayOfMonthArray: [], // aortizoj
@@ -242,6 +243,12 @@ export const store = new Vuex.Store({
     },
     clear_submissions_for_this_reserved_array(state) {
       state.reserved_submissions = []
+    },
+    set_responded_submissions(state, payload) {
+      state.responded_submissions.push(payload)
+    },
+    clear_submissions_for_this_responded_array(state) {
+      state.responded_submissions = []
     },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
@@ -2339,8 +2346,8 @@ export const store = new Vuex.Store({
     async get_responded_review_requests({ commit, getters }, payload) {
       return new Promise((resolve, reject) => {
         console.log("Entered get responded")
-        //commit('clear_submissions_for_this_reserved_array')
-        //console.log('cleared reserved array submissions')
+        commit('clear_submissions_for_this_responded_array')
+        console.log('cleared responded array submissions')
         const db = firebase.firestore()
         //console.log('get reserved payload is ' , payload)
         console.log('business id in payload is ' , payload)
@@ -2380,12 +2387,12 @@ export const store = new Vuex.Store({
               }
             }
             
-          console.log('got responded requests: ', reqs)
+          //console.log('got responded requests: ', reqs)
 
-          // for(let i = 0 ; i < revs.length; i++)
-          // {
-          //   commit('set_reserved_submissions', revs[i])
-          // }
+          for(let i = 0 ; i < reqs.length; i++)
+          {
+            commit('set_responded_submissions', reqs[i])
+          }
     
           })
           .then(function (response) {
@@ -3546,6 +3553,10 @@ export const store = new Vuex.Store({
     reserved_submissions(state)
     {
       return state.reserved_submissions
+    },
+    responded_submissions(state)
+    {
+      return state.responded_submissions
     },
     //for spinner
     get_check_image_c(state)
