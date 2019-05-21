@@ -28,6 +28,692 @@ const nodemailer = require('nodemailer');
 //save for future reference
 var DOMAIN = 'www.shareyourselfartists.com';
 
+// For encrypting/decrypting business group codes
+const bcrypt = require('bcrypt')
+
+exports.getReservedReviews = functions.https.onRequest(async (request, response) => {
+  /*
+    Given a business members id, pull and return all review requests that they have reserved
+  */
+  const db = admin.firestore()
+  //let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  let userId = request.body[0]
+  let business
+  //let payload = {}
+  // if(request.body[1] !== undefined && request.body[1] !== ''){
+  //   business = request.body[1]
+  // }
+  // else{
+  //   console.log('BusinessID was not provided, looking up businessID')
+  //   business = await getBusiness(userId)
+  //   console.log('BusinessID is ', business)
+  // }
+
+  let reviews = db.collection('review_requests').where('reserved_by', '==', userId).where('replied', '==', false).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
+      })
+      return Promise.all(promises)
+    })
+    .then(reviews => {
+      console.log('reviews: ', reviews)
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
+      JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
+      response.status(200).send(payload)
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
+})
+
+exports.legacy_updateOldReviewRequests = functions.https.onRequest((request, response) => {
+  const db = admin.firestore()
+  const batch = db.batch()
+  let badRequests = {}  //all review requests that have no businessID
+  // Get the old review requests
+  function getOldRequests(){
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let promises = []
+        let currentReviews = await db.collection('review_requests').get()
+        currentReviews.forEach(review => {
+          promises.push(review)
+      })
+      console.log('retrieved all review requests')
+      resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving old reviews', error)
+        reject(error)
+      }
+    })
+  }
+
+  async function anomaly(id){
+    let document = await db.collection('review_requests').doc(id).get()
+    console.log('-----------THIS DOCUMENT IS CAUSING PROBLEMS. ADDING TO badRequests -------------')
+    console.log(document.id)
+    console.log(document.data())
+    badRequests[document.id] = document.data()
+  }
+
+  
+
+  function updateReviewRequests(requests){
+    return new Promise(async (resolve, reject) => {
+      try {
+        requests.forEach(async review => {
+          let currentData = review.data()
+          console.log("currentData: ", currentData)
+          let businessId = currentData.businessId
+          console.log('businessID object', businessId)
+          let theRealBusinessId = businessId.userId
+          console.log('The actual businessID: ', theRealBusinessId)
+          let reviewId = review.id
+          console.log('The uuid of this request', reviewId)
+          // let reviewRef = db.collection('review_requests').doc(reviewId)
+
+          if(Object.entries(businessId).length !== 0 && businessId.constructor === Object){
+            console.log('adding ', businessId, ' of review_request ', reviewId, ' to the batch')
+            try {
+              let documentUpdate = await db.collection('review_requests').doc(reviewId).set({
+                //businessAdmin: theRealBusinessId,
+                reserved_by: ''
+            }, {merge: true})
+            
+            } catch (error) {
+              console.log('error in foreach loop', error)
+              reject(error)
+            }
+          }
+          else{
+            console.log('----------Old data ---------')
+            anomaly(reviewId)
+          }
+        })
+        resolve();
+      } catch (error) {
+        console.log('THERE WAS AN ERROR', error)
+        reject(error);
+      }
+    })
+  }
+
+  async function caller(){
+    try {
+      let currentReviews = await getOldRequests();
+      console.log('Got the old review requests')
+      await updateReviewRequests(currentReviews);
+      console.log('finished')
+      console.log('HERE ARE THE REQUESTS THAT COULD NOT BE UPDATED')
+      console.log(badRequests)
+      response.status(200).send('It fucking worked')
+    } catch (error) {
+      response.status(400).send('You have failed at everything')
+    }
+  }
+  caller()
+})
+
+exports.legacy_addExistingBusinessesToGroupDB = functions.https.onRequest((request, response) => {
+  // Importing old businesses into business_groups collection
+  const db = admin.firestore()
+  const batch = db.batch()
+
+  function getExistingBusinesses(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let promises= []
+        let businesses = await db.collection('users').where('role', '==', 'business').get()
+        businesses.forEach(business => {
+          promises.push(business)
+        })
+        resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving all businesses')
+        console.log(error)
+        reject(error)
+      }
+    })
+  }
+
+
+  function addToBatch(businesses){
+    return new Promise(async (resolve, reject) => {
+      try {
+        businesses.forEach(business => {
+          console.log('Current Business: ', business.data())
+          console.log('THEIR USERID: ', business.data().userId)
+          
+          let businessId = business.data().userId
+          let businessData = business.data()
+          let businessRef = db.collection('business_groups').doc(businessId)
+
+          batch.set(businessRef, {
+            business_name: businessData.business_name,
+            about: businessData.about,
+            additional_notes: businessData.additional_notes,
+            email: businessData.email,
+            userId: businessData.userId, 
+            members: {},
+            accessCode: ""
+          }, {merge: true})
+        })
+        resolve()
+      } catch (error) {
+        console.log('error adding businesses to db', error)
+        reject(error)
+      }
+    })
+  }
+
+  async function caller(){
+    try {
+      let businesses = await getExistingBusinesses()
+      console.log('HERE ARE THE BUSINESSES: ', businesses)
+      await addToBatch(businesses)
+      await batch.commit()
+      console.log('finished')
+      response.status(200).send('finished')
+    } catch (error) {
+      console.log('There was an error', error)
+      response.status(400).send('There was an error')
+    }
+  }
+  caller()
+})
+
+exports.reserveReview = functions.https.onRequest((request, response) => {
+  /*
+    Given a businessMembers ID, and an array of reviews they would like to reserve, 
+    add those reviewID's to the member's review{} and mark the review as reserved in the review_request table
+
+    TODO: mark each request as reserved in the review_requests 
+  */
+  let userId = request.body[0]
+  let business = request.body[1]
+  let reviewIds = request.body[2]
+  //let reviewIds = request.body[1] //array of reviewId's
+  //let reviewIds = ['PEcAU2Xl5kH85r2QDRJv', 'mBVn7ebaixqUtuWMMzCM', 'xk6HwfJIXqnPikSCPFj7']
+  //let business = request.body[2] //business Id
+  let db = admin.firestore()
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  //let userId = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  // let userId = 'FbQ3AUCY3cVds8z276nkqi2I8Cn1'
+  let batch = db.batch()
+  let businessRef = db.collection('business_groups').doc(business)
+  
+  function getCurrentReserved(){
+    return new Promise(async (resolve, reject) => {
+      let userToUpdate, members, oldReviews, reservedReviews, respondedReviews
+      let businessData = await businessRef.get()
+      if (businessData.data().members != undefined && Object.entries(businessData.data().members).length > 0){
+        members = businessData.data().members
+        userToUpdate = members[userId]
+        respondedReviews = userToUpdate['responded']
+        reservedReviews = userToUpdate['reserved']
+        console.log('respondedReviews', respondedReviews)
+        console.log('reservedReviews', reservedReviews)
+        resolve(reservedReviews)
+      }
+      else{
+        reject(-1)
+      }
+    })
+  }
+
+  function markAsReserved(reserved){
+    return new Promise((resolve, reject) =>{
+      try {
+        reserved.forEach(id => {
+          let reviewRef = db.collection('review_requests').doc(id)
+          batch.update(reviewRef, {
+            reserved_by: userId
+          })
+        })
+        resolve(1)
+      } catch (error) {
+        reject(error)
+      }
+      
+    })
+  }
+  function updateReserved(reserved){
+    return new Promise(async (resolve, reject) => {
+      reviewIds.forEach(id => {
+        reserved.push(id)
+      })
+      try {
+        let business = await businessRef.set({
+          members: {
+            [userId]: {
+              reserved: reserved
+            }
+          }
+        }, {merge: true})
+        resolve()
+      } catch (error) {
+        console.log('There was an error', error)
+        reject(-2)
+      }
+    })
+  }
+
+  async function caller(){
+    try {
+      let result = await getCurrentReserved()
+      let updateResult = await updateReserved(result)
+      await markAsReserved(reviewIds)
+      await batch.commit()
+      response.status(200).send('success')
+    }
+    catch(error){
+      console.log('There was an error', error)
+      response.status(400).send('There was an error in caller')
+    }
+    
+  }
+  caller();
+
+  // function addReviewsToMember(reviewIds){
+  //   return new Promise(async (resolve, reject) =>{
+  //     let batch = db.batch()
+  //     reviewIds.forEach(id =>{
+  //       batch.set(business,{
+  //         members:{
+
+  //         }
+  //       }, {merge: true})
+  //     })
+  //   })
+  // }
+  
+})
+
+exports.getRespondedReviewRequests = functions.https.onRequest(async (request, response) => {
+  let business = request.body[0]
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  const db = admin.firestore()
+
+  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).where('replied', '==', true).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
+      })
+      return Promise.all(promises)
+    })
+    .then(reviews => {
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
+      JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
+      response.status(200).send(payload)
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
+})
+
+exports.getAllBusinessReviewRequests = functions.https.onRequest(async (request, response) => {
+  /*
+    Given a business ID, retrieve all review requests sent to that business.
+  */
+
+  let business = request.body[0]
+  // let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  //let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  console.log('businessID: ', business)
+  const db = admin.firestore()
+
+  let reviews = db.collection('review_requests').where('businessAdmin', '==', business).where('reserved_by', '==', "").where('replied', '==', false).get()
+    .then(snapshot =>{
+      let promises = []
+      snapshot.forEach(review =>{
+        promises.push(review)
+      })
+      return Promise.all(promises)
+    })
+    .then(reviews => {
+      let payload = {}
+      reviews.forEach(review => {
+        payload[review.id] = review.data()
+        console.log('reviewID', review.id)
+        console.log('review: ', review.data())
+      })
+      JSON.stringify(payload)
+      console.log('Here is the requested payload: ',)
+      console.log(payload)
+      response.status(200).send(payload)
+    })
+    .catch(error => {
+      console.log('There was an error', error)
+      response.status(400).send(error)
+    })
+})
+
+exports.modifyReviewRequestCollection = functions.https.onRequest((request, response) => {
+  // TODO:
+  //pull the entire reviewRequest collection, grab businessId object and create a new field
+  // called businessAdmin: 
+  const db = admin.firestore()
+  function getReviewCollection(){
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let obj = {}
+        let table = await db.collection('review_requests').get()
+        table.forEach(doc => {
+          obj[doc.id] = doc.data()
+        })
+        resolve(obj)
+      } catch (error) {
+        console.log('There was an error getting the collection', error)
+        reject(error)
+      }       
+    })
+  }
+
+  async function caller(){
+    try {
+      
+      let data = await getReviewCollection()
+      console.log("Here is the data")
+      console.log(data)
+      response.
+      response.send(data)
+    } catch (error) {
+      console.log('Error2', error )
+      response.send('Error')
+    }
+  }
+  caller();
+})
+
+exports.getBusinessGroup = functions.https.onRequest((request, response) => {
+  let businessID
+  let userID = request.body[0]
+  //let userID = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+
+  //let businessID = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  const db = admin.firestore()
+  async function getGroup(){
+    try {
+      let user = await db.collection('users').doc(userID).get()
+      businessID = user.data().business_group
+      let group = await db.collection('business_groups').doc(businessID).get()
+      console.log('Here is the groups data', group.data())
+      // might need to convert to JSON before sending the data back to the client
+      response.send(group.data())
+    } catch (error) {
+      console.log('Unable to return groups information', error)
+      response.status(401).send('Unable to return the groups information')
+    }
+  }
+  getGroup();
+
+})
+
+
+exports.createNewBusiness = functions.https.onRequest((request, response) => {
+  /*
+    Called when a new business group is created.
+    1) Create user in Auth() if they have not already been created, clarify with Yas
+    2) Add the business in the db
+    3) Hash the businesses verification code and store that in the db.
+  */
+
+  function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  
+  const saltRounds = 10;
+  // let name = request.body[0] // refers to users actual name
+  // let email = request.body[1] // refers to email
+  // let business = request.body[2]  // refers to business name
+  // let admin = request.body[3]  // refer to userID of admin
+  // let password = request.body[4] //refers to the password the admin supplied when attempting to create account
+
+  let name = "someName"
+  let email = 'hello@gmail.com'
+  let business = 'Google'
+  let administrator = name
+  let password = '123456'
+
+  let code = makeid(8)
+  const db = admin.firestore()
+  const auth = admin.auth()
+  
+  let userID
+  // bcrypt.hash(password, saltRounds, function(err, hash){
+    
+  // })
+  
+
+  function addToUserPool(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Might not need to worry about creating the user if Yas does this already 
+        let user = await auth.createUser({
+          email: email,
+          displayName: name,
+          password: password
+        })
+        userID = user.uid
+        console.log("User added to user pool")
+        console.log("Now adding custom claims...")
+        // setting custom claims must be done whether or not Yas initially creates the account
+        await auth.setCustomUserClaims(user.uid,{admin: true})
+        console.log('Claims added!')
+        let finishedUser = await auth.getUser(user.uid)
+        console.log("Finished adding userdata to userpool")
+        resolve(finishedUser);
+      } catch (error) {
+        console.log('There was an error creating the user. It is likely they already exist')
+        reject(error);
+      }
+    })
+  }
+
+  function addToGroupDB(userData){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('business_groups').doc(userID).set({
+          email: userData.email,
+          business: business,
+          admin: name,
+          members: {},
+          accessCode: code
+        })
+        console.log("User added to database!")
+        console.log(user)
+        resolve(user);
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+  // function addToUserDB(){
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       let user = await db.collection('user').doc(userID).set({
+  //         name: name,
+  //         email: userData.email,
+  //         members: {},
+  //         accessCode: code
+  //       })
+  //       console.log("User added to database!")
+  //       console.log(user)
+  //       resolve(user);
+  //     } catch (error) {
+        
+  //     }
+  //   })
+  // }
+
+  async function makeUser(){
+    try {
+      let newUser = await addToUserPool()
+      console.log('User Data After Account Creation: ', newUser)
+      let user = await addToGroupDB(newUser)
+      response.send('User created')
+    } catch (error) {
+      console.log('User not created?')
+      console.log(error)
+      response.send('User not created?')
+    }
+  }
+  makeUser();
+})
+
+exports.signUpGroupMember = functions.https.onRequest((req, res) => {
+  // let name = 'KS2'
+  // let email = 'grouptester7@gmail.com'
+  // let business = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  // let password = 'password'
+  
+  let name = req.body[0]
+  let email = req.body[1]
+  let password = req.body[2]
+  let code = req.body[3]
+  let business = req.body[4]
+
+  const db = admin.firestore()
+  // In the future use bcrypt.
+  let userID
+  
+  /*
+      1) Get verification code
+      2) Check if the verification code matches the inputted one
+      3) Create business account and put in business group collection
+      4) Create user in user collection
+  */
+
+  function getVerificationCode(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        const businessRef = await db.collection('business_groups').doc(business).get()
+        //let businessData = businessRef.data()
+        console.log(businessRef)
+        console.log(businessRef.data())
+        let accessCode = businessRef.data().accessCode
+        resolve(accessCode)
+        
+      } catch (error) {
+        console.log("There was an error in retrieving the access code in the db", error)
+        reject(error)
+      }
+
+    })
+  }
+  
+  function addToUserPool(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await admin.auth().createUser({
+          email: email,
+          emailVerified: false,
+          password: password,
+          displayName: name
+        })
+        userID = user.uid
+        await admin.auth().setCustomUserClaims(userID, {admin: false})
+        console.log('User created and claims added')
+        resolve(user)
+      } catch (error){
+        console.log("There was an error in adding the user to the user pool", error)
+        reject(error)
+      }
+    })
+  }
+  
+  function addToGroupDB(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('business_groups').doc(business).set({
+          members: {
+            [userID]: {
+              email: email,
+              name: name,
+              reserved: [],
+              responded: []
+            }
+          }
+        }, {merge: true})
+        console.log("User added to business group collection!")
+        console.log(user)
+        resolve();
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+
+  function addToUserDB(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let user = await db.collection('users').doc(userID).set({
+          name: name,
+          business_group: business, // admin uid
+          email: email,
+          role: 'business_member',
+          userId: userID          
+        })
+        resolve()
+      } catch (error) {
+        console.log("There was an error adding the user to the db!")
+        reject(error)
+      }
+    })
+  }
+
+  async function createUser(){
+    try {
+      let accessCode = await getVerificationCode()
+      if(code !== '' && accessCode === code){
+        let user = await addToUserPool()
+        console.log('User created. Here is there data: ', user)
+        await addToGroupDB()
+        console.log('User added to group database')
+        await addToUserDB()
+        console.log("User added to the user collection of database")
+        res.status(200).send('User successfully created and added to both collections.')
+      }
+      else{
+        res.status(401).send("Verification code did not match, please try again.")
+      }
+    
+    } catch (error) {
+      console.log("There was an error signing up the business group member into the database.")
+      res.status(401).send("There was an error signing up the business group member into the database.")
+    }
+  }
+  createUser();
+
+})
+
 exports.topCategories = functions.https.onRequest((req, res) => {
   const db = admin.firestore()
   let search_users = db.collection('users').where('role', '==', 'artist').get()
