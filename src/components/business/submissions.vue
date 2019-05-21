@@ -44,7 +44,7 @@
     </v-toolbar>
 
     <!--<v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>-->
-    <v-btn @click="getRespondedRequests" color="error">Test Get Responded Review Requests</v-btn>
+    <!--<v-btn @click="getRespondedRequests" color="error">Test Get Responded Review Requests</v-btn>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
@@ -115,12 +115,14 @@
               <v-spacer></v-spacer>
 
               <!--<div v-if="submission.replied == undefined || submission.replied == false">-->
+              <div v-if="submission.replied != true && submission.reserved_by === ''">
                 <v-checkbox
                 v-model="reserved"
                 color="primary"
                 :value="submission.review_request"
                 hide-details
                 ></v-checkbox>
+              </div>
               <!--</div>-->
 
           <v-btn icon @click="show = !show">
@@ -261,15 +263,15 @@
         //     console.error("Reached error in mounted function " , error)
         //   })
         // },
-        getRespondedRequests()
-        {
-          this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
+        // getRespondedRequests()
+        // {
+        //   this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
 
-              console.log('responded requests in test getters is ', this.$store.getters.responded_submissions)
-          }, error => {
-            console.error("Reached error in mounted function " , error)
-          })
-        },
+        //       console.log('responded requests in test getters is ', this.$store.getters.responded_submissions)
+        //   }, error => {
+        //     console.error("Reached error in mounted function " , error)
+        //   })
+        // },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
@@ -553,7 +555,8 @@
             console.error("Reached error in mounted function " , error)
             this.loading_submissions = false
           })
-          
+        
+        /* previous version, unreplied submissions tab */
         // this.loading_submissions = true
 
         // this.submissions = this.master_submissions.filter((review) => {
@@ -579,51 +582,52 @@
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
-        this.loading_submissions = true
-        this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
-
-            console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
-            this.submissions = this.$store.getters.responded_submissions
-
-            this.loading_submissions = false
-
-            if (this.searchingByTitle === true)
-            {
-              this.items = this.titleOptionsLoad(this.submissions)
-            }
-            else
-            {
-              this.items = this.artistOptionsLoad(this.submissions)
-            }
-            this.saved_submissions = this.submissions
-
-            this.page = 1
-            this.populateSubmissions(this.page, this.submissions)
-
-        }, error => {
-          console.error("Reached error in mounted function " , error)
-        })
-
+        /* uncomment to have cloud fun */
         // this.loading_submissions = true
+        // this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
 
-        // this.submissions = this.master_submissions.filter((review) => {
-        //   return review.replied == true
+        //     console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
+        //     this.submissions = this.$store.getters.responded_submissions
+
+        //     this.loading_submissions = false
+
+        //     if (this.searchingByTitle === true)
+        //     {
+        //       this.items = this.titleOptionsLoad(this.submissions)
+        //     }
+        //     else
+        //     {
+        //       this.items = this.artistOptionsLoad(this.submissions)
+        //     }
+        //     this.saved_submissions = this.submissions
+
+        //     this.page = 1
+        //     this.populateSubmissions(this.page, this.submissions)
+
+        // }, error => {
+        //   console.error("Reached error in mounted function " , error)
         // })
 
-        // this.loading_submissions = false
+        this.loading_submissions = true
 
-        // if (this.searchingByTitle === true)
-        // {
-        //   this.items = this.titleOptionsLoad(this.submissions)
-        // }
-        // else
-        // {
-        //   this.items = this.artistOptionsLoad(this.submissions)
-        // }
-        // this.saved_submissions = this.submissions
+        this.submissions = this.master_submissions.filter((review) => {
+          return review.replied == true
+        })
 
-        // this.page = 1
-        // this.populateSubmissions(this.page, this.submissions)
+        this.loading_submissions = false
+
+        if (this.searchingByTitle === true)
+        {
+          this.items = this.titleOptionsLoad(this.submissions)
+        }
+        else
+        {
+          this.items = this.artistOptionsLoad(this.submissions)
+        }
+        this.saved_submissions = this.submissions
+
+        this.page = 1
+        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */

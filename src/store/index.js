@@ -2156,6 +2156,7 @@ export const store = new Vuex.Store({
           
           // end cloud
 
+          /* previous version, still usable */
           // const collectionRef = await  db
           //  .collection('review_requests')
           //  .where('businessId.userId', '==', getters.user.id)
