@@ -2098,7 +2098,6 @@ export const store = new Vuex.Store({
         console.log('payload is ' , payload)
   
         // start cloud
-          console.log("business member")
           let reviewRequests = {}
           //We want to access the business info state and extract the id.
           let business_id;
@@ -2155,36 +2154,36 @@ export const store = new Vuex.Store({
           // console.log('leaving the cloud')
           
           // end cloud
-
-          /* previous version, still usable */
-          // const collectionRef = await  db
-          //  .collection('review_requests')
-          //  .where('businessId.userId', '==', getters.user.id)
-          //  .get()
-          //  .then(function (querySnapshot) {
-          //    querySnapshot.forEach(function (doc) {
-   
-          //      // doc.data() is never undefined for query doc snapshots
-          //      let docData = doc.data()
-          //      // console.log('doc.data: ' + docData)
-          //      // console.log('doc.id: ' + doc.id)
-          //      docData.docId = doc.id
-   
-          //      // console.log('doc.data: ' + docData.docId)
-          //      console.log("docData is : " , docData)
-          //      // commit('set_submissions_for_this_business', docData)
-          //    })
-          //  })
-          //  .then(function (response) {
-          //    resolve(response)
-          //  })
-          //  .catch(function (error) {
-          //    console.log("Error of fetch all submissions")
-          //    console.log('Error getting submissions: ', error)
-          //    reject(error)
-          //  })
-
       })
+
+      /* previous version, still usable */
+      // console.log("Entered fetch all submissions")
+      // commit('clear_submissions_for_this_business_array')
+      // const db = firebase.firestore()
+      // console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
+
+      // const collectionRef = await db
+      //   .collection('review_requests')
+      //   //.where('businessId.userId', '==', getters.user.id)
+      //   .where('businessId.userId', '==', getters.get_business_info.userId)
+      //   .get()
+      //   .then(function (querySnapshot) {
+      //     querySnapshot.forEach(function (doc) {
+
+      //       // doc.data() is never undefined for query doc snapshots
+      //       let docData = doc.data()
+      //       console.log('doc.data: ' + docData)
+      //       console.log('doc.id: ' + doc.id)
+      //       docData.docId = doc.id
+
+      //       console.log('doc.data: ' + docData.docId)
+      //       commit('set_submissions_for_this_business', docData)
+      //     })
+      //   })
+      //   .catch(function (error) {
+      //     console.log("Error of fetch all submissions")
+      //     console.log('Error getting submissions: ', error)
+      //   })
 
     },
 
@@ -2577,7 +2576,7 @@ export const store = new Vuex.Store({
         body: statisticsJson
       })
     
-      
+      //console.log('got to previous version')
       const db = firebase.firestore()
       const collectionRef = db
         .collection('review_requests')
