@@ -2,6 +2,10 @@
 If you have any questions regarding the firestore functions
 You can reach me @ kagawong@ucsc.edu
 ~ Karl Wong, Undergrad C.S. UCSC Summer 2018
+
+Update Winter 2019:
+contact Kavan Samra, kssamra@ucsc.edu for questions
+~ Kavan Samra, Undergrad C.S UCSC Winter-Spring 2019
 */
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
@@ -30,6 +34,120 @@ var DOMAIN = 'www.shareyourselfartists.com';
 
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
+
+exports.unReserveReview = functions.https.onRequest((request, response) => {
+  /*
+  Called when a business member responds to the review that they had reserved.
+  The request should be marked replied, and removed as resevered. Marking the review 
+  as 'replied' is done elsewhere, so this function will just mark the 'reserved_by' field
+  to "", and then add the reviewID to the business members repliedTo array.
+  */
+
+  const db = admin.firestore()
+  let reviewID = ''
+  let businessMember
+  let admin
+
+  function updateBusinessMember(){
+    return new Promise(async(resolve, reject) => {
+      try {
+        let businessData = await db.collection('business_groups').doc(admin).get()
+        let members = businessData.data().members
+        let memberToUpdate = members[businessMember]
+        let reservedArray = memberToUpdate.reserved
+        let repliedArray = memberToUpdate.responded
+
+        repliedArray.push(reviewID)
+        let update = await db.collection('business_groups').doc(admin).set({
+          members: {
+            [businessMember]: {
+              reserved: reservedArray,
+              responded: repliedArray
+            }
+          }
+        }, {merge:true})
+        resolve()
+      } catch (error) {
+        console.log('Error, ', error)
+        reject(error)
+      }
+
+    })
+  }
+  try {
+    await updateBusinessMember()
+    response.status(200).send('success')
+  } catch (error) {
+    console.log('there was an error', error)
+    response.status().send('error')
+    
+  }
+
+})
+
+exports.legacy_updateBusinessStatistics = functions.https.onRequest((request, response) =>{
+  /*
+  TODO: 
+  The purpose of this function is to take all old review requests and update them with the 'categories' 
+  field which tracks what categories the artwork is tagged with. 
+
+  Also get the number of requests received by a business (both in total and per category)
+  */
+  const db = admin.firestore()
+  const batch = db.batch()
+  let requestsPerBusiness = {}  //all review requests that have no businessID
+  let businesObj = {}
+  function initializeBusinessObject(businesses){
+    return new Promise(async(resolve,reject) => {
+      businesses.forEach(business => {
+        businesObj[business.id] = {
+
+        }
+      })
+    })
+  }
+
+  function getBusinesses(){
+    return new Promise(async (resolve, reject) => {
+      try {
+        let promises = []
+        let businesses = await db.collection('business_groups').get()
+        businesses.forEach(review => {
+          promises.push(review)
+      })
+      console.log('retrieved all Businesses')
+      resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving old reviews', error)
+        reject(error)
+      }
+    })
+  }
+
+  function getOldRequests(){
+    return new Promise(async (resolve, reject) =>{
+      try {
+        let promises = []
+        let currentReviews = await db.collection('review_requests').get()
+        currentReviews.forEach(review => {
+          promises.push(review)
+      })
+      console.log('retrieved all review requests')
+      resolve(Promise.all(promises))
+      } catch (error) {
+        console.log('Error retrieving old reviews', error)
+        reject(error)
+      }
+    })
+  }
+
+  function partitionRequests(businesses, reviewRequests){
+    return new Promise(async (resolve, reject) =>{
+
+    })
+  }
+
+})
 
 exports.getReservedReviews = functions.https.onRequest(async (request, response) => {
   /*
@@ -242,6 +360,9 @@ exports.reserveReview = functions.https.onRequest((request, response) => {
   let userId = request.body[0]
   let business = request.body[1]
   let reviewIds = request.body[2]
+  // let userId = '2APlqFjo8ahnayOfMxI7LSnTZEr2'
+  // let business = 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
+  // let reviewIds = ['CV2aOU6oc83NTlSKFexW', 'dRKtNDsms7lVjWrdznh0']
   //let reviewIds = request.body[1] //array of reviewId's
   //let reviewIds = ['PEcAU2Xl5kH85r2QDRJv', 'mBVn7ebaixqUtuWMMzCM', 'xk6HwfJIXqnPikSCPFj7']
   //let business = request.body[2] //business Id
