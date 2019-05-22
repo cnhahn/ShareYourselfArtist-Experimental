@@ -207,6 +207,7 @@
         radios: 'declined',
         dialog: false,
         notifications: false,
+        filterReservedPictures : [],
         art_being_replied: null,
         art_title: '',
         artist_name: '',
@@ -278,6 +279,7 @@
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
+          console.log("in populate submissions");
           if(submissions.length !== undefined && submissions.length !== 0)
           {
             let section = []
@@ -289,6 +291,8 @@
 
             this.section = section
             console.log('section arr:', this.section)
+          }else{
+            this.section = [];
           }
 
           if (submissions.length === 0)
@@ -491,6 +495,7 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
+        this.section = [];
         this.loading_submissions = true
 
         let business_member = false
@@ -542,6 +547,20 @@
 
         // reset the page to 1 every time a new tab is selected
         this.page = 1
+
+        // let i = 0 ; 
+        // let reservedIndex = 0;
+        // for(i = 0 ; this.submissions.length; i++){
+        //   console.log("right here in for loop");
+        //   if(this.submissions[i].reserved_by != undefined){
+        //     }
+        //     if(this.submissions[i].reserved_by.length != 0){
+        //       console.log("if statement is true");
+        //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
+        //       reservedIndex++;
+        //     }
+
+        // }
         this.populateSubmissions(this.page, this.submissions)
 
         }, error => {
