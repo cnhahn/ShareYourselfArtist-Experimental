@@ -35,7 +35,7 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 
-exports.unReserveReview = functions.https.onRequest((request, response) => {
+exports.replyToReviewRequest = functions.https.onRequest(async(request, response) => {
   /*
   Called when a business member responds to the review that they had reserved.
   The request should be marked replied, and removed as resevered. Marking the review 
@@ -44,21 +44,31 @@ exports.unReserveReview = functions.https.onRequest((request, response) => {
   */
 
   const db = admin.firestore()
-  let reviewID = ''
-  let businessMember
-  let admin
+  // let reviewID = 'Some Review ID'
+  // let businessAdmin = '8ZpDyQGFCyfczXwh7rBDyLxRvvZ2'
+  // let businessMember = 'pmzoOIjQYPda4VrIj2GdhdcRdVM2'
+  let reviewID = request.body[0]
+  let businessAdmin = request.body[1]
+  let businessMember = request.body[2]
+  console.log('reviewID: ', reviewID)
+  console.log('admin: ', admin)
+  console.log('businessMember: ', businessMember)
 
-  function updateBusinessMember(){
+  function updateBusinessMember(businessAdmin, businessMember, reviewID){
     return new Promise(async(resolve, reject) => {
       try {
-        let businessData = await db.collection('business_groups').doc(admin).get()
+        let businessData = await db.collection('business_groups').doc(businessAdmin).get()
         let members = businessData.data().members
+        console.log('Here is members: ', members)
         let memberToUpdate = members[businessMember]
+        console.log('Here is the SPECIFIC MEMBER DATA: ', memberToUpdate)
         let reservedArray = memberToUpdate.reserved
         let repliedArray = memberToUpdate.responded
-
+        console.log('Here is the members current replied array', repliedArray)
+        
         repliedArray.push(reviewID)
-        let update = await db.collection('business_groups').doc(admin).set({
+        console.log('Here is the updated repliedArray', repliedArray)
+        let update = await db.collection('business_groups').doc(businessAdmin).set({
           members: {
             [businessMember]: {
               reserved: reservedArray,
@@ -75,11 +85,11 @@ exports.unReserveReview = functions.https.onRequest((request, response) => {
     })
   }
   try {
-    await updateBusinessMember()
+    await updateBusinessMember(businessAdmin, businessMember, reviewID)
     response.status(200).send('success')
   } catch (error) {
     console.log('there was an error', error)
-    response.status().send('error')
+    response.status(404).send('error')
     
   }
 
