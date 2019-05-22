@@ -1,0 +1,8 @@
+1) createNewBusiness
+Integrate the createNewBusiness function into the application. The old front-end
+code can create a new business but their data is not stored in the 'business_groups'
+collection. If we want to reuse the existing sign up function, then we need to modify 
+the createNewBusiness cloud function to accept the email of the newly created account (to add customClaims)
+
+2) fix the business statistic tracking. 
+   
