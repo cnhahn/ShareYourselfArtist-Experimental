@@ -653,6 +653,7 @@
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
         let myArray = this.submissions // this.$store.state.submissions_for_this_business
+        console.log("My array in clicked_art is : ", myArray);
         for (var i = 0; i < myArray.length; i++) {
           if (myArray[i].art.upload_date === nameKey && myArray[i].docId === art_unique_id) {
             this.art_being_replied = myArray[i]
@@ -671,7 +672,7 @@
             this.submitted_on = date_converted(sub_date)
 
 
-            this.docId = myArray[i].docId
+            this.docId = this.art_being_replied.review_request;
             console.log("SHIT ",this.docId);
             this.$store.commit('set_art_being_replied', {
               art_title: myArray[i].art.art_title,
@@ -680,7 +681,7 @@
               description: myArray[i].art.description,
               submitted_on: myArray[i].submitted_on,
               artist_id: myArray[i].art.artist_id,
-              docId: myArray[i].docId
+              docId: this.docId
             })
           }
         }
