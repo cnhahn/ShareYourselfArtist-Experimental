@@ -253,6 +253,9 @@
           console.log('reserved submissions: ', this.reserved)
           // call Kevin's function
           this.$store.dispatch('reserve_selected_submissions', this.reserved)
+
+          console.log('fetching submissions again')
+          this.fetch_submissions()
         },
         // getReservedReviews()
         // {
@@ -286,6 +289,12 @@
 
             this.section = section
             console.log('section arr:', this.section)
+          }
+
+          if (submissions.length === 0)
+          {
+            console.log('empty submissions')
+            this.section = []
           }
 
         },
@@ -437,6 +446,12 @@
               this.checkSortByDate(this.submissions)
 
               this.master_submissions = this.$store.getters.submissions_for_this_business
+
+              this.submissions = this.submissions.filter((review) => {
+                return review.replied != true && review.reserved_by === ''
+              })
+              console.log('here is initial filtered submissions: ', this.submissions)
+
               this.loading_submissions = false
 
               // display list of options in drop-down, may change depending on current tab
@@ -484,6 +499,7 @@
         }
 
         this.$store.dispatch('fetch_all_Submissions', business_member).then(response => {
+
           console.log('here are submissions: ', this.submissions)
           console.log('here are master submissions: ', this.master_submissions)
 
@@ -494,6 +510,11 @@
           this.checkSortByDate(this.submissions)
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
+
+          this.submissions = this.submissions.filter((review) => {
+            return review.replied != true && review.reserved_by === ''
+          })
+          console.log('here is filtered submissions: ', this.submissions)
 
           // console.log('now here is submissions: ', this.submissions)
           // console.log('and here is master submissions: ', this.master_submissions[0].businessId)
