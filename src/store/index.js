@@ -2543,7 +2543,7 @@ export const store = new Vuex.Store({
 
       // upload the artist data and the url
     },
-    submit_submission_response({ getters } , payload) {
+    submit_submission_response({ getters, dispatch } , payload) {
       
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
@@ -2575,13 +2575,20 @@ export const store = new Vuex.Store({
         },
         body: statisticsJson
       })
-    
+
+
+
+
+
       //console.log('got to previous version')
       const db = firebase.firestore()
+      console.log("Right before collectionRef line 2581");
+      console.log("The info we're passing through is: ")
+      console.log("We're passing into doc : ", getters.art_being_replied.docId);
+      console.log("We're passing in for submission_response: " ,getters.submission_response);
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-      return collectionRef
         .update({
           replied: true,
           read_byartist: false,
@@ -2589,6 +2596,14 @@ export const store = new Vuex.Store({
           replied_date: Date.now()
         })
         .then(function () {
+          console.log("doc Id is : ", getters.art_being_replied.docId  );
+          console.log("adminId is : ", getters.get_business_info.userId);
+          console.log("responderId : ", getters.user.id );
+          let responseInfo = {docId: getters.art_being_replied.docId , adminId: getters.get_business_info.userId , responderId: getters.user.id };
+          dispatch('update_business_members_response', responseInfo)
+
+        })
+        .then(function() {
           console.log('Submission successfully updated!')
         })
         .catch(function (error) {
@@ -2596,7 +2611,23 @@ export const store = new Vuex.Store({
           console.error('Error updating submission: ', error)
         })
     },
-
+    update_business_members_response({commit,getters} , payload){
+      console.log("in update_business_members and payload is " , payload)
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/replyToReviewRequest'
+      let data = {}
+      data[0] = payload.docId;
+      data[1] = payload.adminId;
+      data[2] = payload.responderId;
+      let categoryJson = JSON.stringify(data)
+      fetch(proxyUrl + targetUrl, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: categoryJson
+      })         
+    },
     update_art_category_tags({ getters }, payload) {
       const db = firebase.firestore()
       const uploadDate = parseInt(payload.upload_date, 10)
@@ -2620,6 +2651,7 @@ export const store = new Vuex.Store({
     },
 
     submit_request({ getters }) {
+      console.log("Entered submit requests with  credits");
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
         let art_being_submitted = getters.art_being_submitted
@@ -2627,6 +2659,7 @@ export const store = new Vuex.Store({
         art_being_submitted.submitted_with_free_cerdit = false
         art_being_submitted.businessId = businesses_being_submitted[i]
         art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
+        console.log("The business admin ID for credits is : " , art_being_submitted.businessAdmin );
         art_being_submitted.replied = false
         art_being_submitted.delete_byartist = false
         art_being_submitted.refunded = 0;
@@ -2639,10 +2672,9 @@ export const store = new Vuex.Store({
           .doc()
           .set(art_being_submitted)
           .then(function (docRef) {
-            console.log('School submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
+            router.push({
+              name: 'artist_dashboard' 
+            })
           })
           .catch(function (error) {
             console.error('Error adding document: ', error)
@@ -2650,6 +2682,7 @@ export const store = new Vuex.Store({
       }
     },
     submit_request_with_free_credits({ getters }) {
+      console.log("Entered submit requests with free credits");
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
         let art_being_submitted = getters.art_being_submitted
@@ -2661,6 +2694,7 @@ export const store = new Vuex.Store({
         art_being_submitted.delete_byartist = false
         art_being_submitted.businessId = businesses_being_submitted[i]
         art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
+        console.log("The business admin ID for free credits is : " , art_being_submitted.businessAdmin );
         art_being_submitted.reserved_by = ""
 
         const db = firebase.firestore()
@@ -2669,10 +2703,10 @@ export const store = new Vuex.Store({
           .doc()
           .set(art_being_submitted)
           .then(function (docRef) {
-            console.log('Submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
+            // console.log('Submission written with ID: ', docRef.id)
+            router.push({
+              name: 'artist_dashboard' 
+            })
           })
           .catch(function (error) {
             console.error('Error adding document: ', error)
