@@ -8,11 +8,8 @@
             "[memberID]":{
                 "email": "email",
                 "name": "name",
-                "reviews":{
-                    "reserved": "array of reviewID's marked as reserved", 
-                    "responded": "array of  reviewID's that have been responded to" 
-
-                }
+                "reserved": "array of reviewID's marked as reserved", 
+                "responded": "array of  reviewID's that have been responded to" 
             }
         }
     }

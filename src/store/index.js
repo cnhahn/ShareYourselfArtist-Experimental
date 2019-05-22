@@ -2626,9 +2626,13 @@ export const store = new Vuex.Store({
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = false
         art_being_submitted.businessId = businesses_being_submitted[i]
+        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
         art_being_submitted.replied = false
         art_being_submitted.delete_byartist = false
         art_being_submitted.refunded = 0;
+        art_being_submitted.reserved_by = ""
+
+
         const db = firebase.firestore()
         const collectionRef = db
           .collection('review_requests')
@@ -2656,6 +2660,9 @@ export const store = new Vuex.Store({
         art_being_submitted.replied = false
         art_being_submitted.delete_byartist = false
         art_being_submitted.businessId = businesses_being_submitted[i]
+        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
+        art_being_submitted.reserved_by = ""
+
         const db = firebase.firestore()
         const collectionRef = db
           .collection('review_requests')
