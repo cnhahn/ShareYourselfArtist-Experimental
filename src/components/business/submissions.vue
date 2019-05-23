@@ -221,7 +221,6 @@
         categories: [],
         master_submissions: [],
         submissions: [],
-        section: [],
         read_submissions: [],
         unread_submissions: [],
         sub_list: [],
@@ -250,14 +249,39 @@
       this.initialImageLoad()
     },
     methods:{
+        compare_uniqueId_reservedId(uID){
+          let i = 0;
+          for(i = 0 ; i < this.reserved.length; i++){
+            let rID = this.reserved[i]
+            console.log("uid is : " , uID, " and rID is : ", rID);
+            console.log("uID == rID : " , uID === rID)
+            if(uID === rID){
+              return true;
+            }
+          }
+          return false;
+        },
         reserveSubmissions()
         {
           console.log('reserved submissions: ', this.reserved)
           // call Kevin's function
           this.$store.dispatch('reserve_selected_submissions', this.reserved)
-
-          console.log('fetching submissions again')
-          this.fetch_submissions()
+          let current_section = this.section;
+          let i = 0 ;
+          let new_section = [];
+          console.log("current section length is : " , current_section.length)
+          console.log("the items in current section is : ", this.reserved)
+          for (i = current_section.length -1 ; i  >= 0 ; i--){
+            let unique_art_id = current_section[i].review_request;
+            if(this.compare_uniqueId_reservedId(unique_art_id)){
+              this.submissions.splice(i,1);
+              continue;
+            }
+            new_section.push(current_section[i])
+          }
+      
+          // this.$store.commit('set_submissions_for_this_business', this.submissions)
+          this.$store.commit('set_business_submission_section', new_section)
         },
         // getReservedReviews()
         // {
@@ -289,17 +313,16 @@
             {
               section.push(submissions[i])
             }
-
-            this.section = section
-            console.log('section arr:', this.section)
+            this.$store.commit('set_business_submission_section', section)
+  
           }else{
-            this.section = [];
+            this.$store.commit('set_business_submission_section', [])
           }
 
           if (submissions.length === 0)
           {
             console.log('empty submissions')
-            this.section = []
+            this.$store.commit('set_business_submission_section', [])
           }
 
         },
@@ -483,7 +506,7 @@
               {
                 temp.push(this.submissions[i])
               }
-              this.section = temp
+              this.$store.commit('set_business_submission_section', temp)
               console.log('submissions arr len', this.submissions.length)
 
           }, error => {
@@ -502,7 +525,7 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
-        this.section = [];
+         this.$store.commit('set_business_submission_section', [])
         this.loading_submissions = true
 
         let business_member = false
@@ -752,6 +775,10 @@
       }
     },
     computed:{
+      section(){
+        let section = this.$store.getters.business_submission_section
+        return section;
+      },
       format_timestamp(timestamp) {
         var date = new Date(timestamp);
         var month = date.getMonth();

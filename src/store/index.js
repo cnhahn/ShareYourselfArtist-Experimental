@@ -19,6 +19,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
+    business_submission_section : [],
     business_info_set : false,
     business_members: [],
     group_business_id : '',
@@ -232,6 +233,11 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_business_submission_section(state, payload){
+      console.log("in set_business_submission_section")
+      console.log("the payload is : " , payload)
+      state.business_submission_section = payload;
+    },
     set_business_info(state,payload){
       state.business_info = payload;
       state.business_info_set = true;
@@ -629,6 +635,10 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    update_business_submission_section({commit, dispatch, state} , payload){
+      console.log("In update business submisssion section");
+
+    },
     retrieve_recently_responded_arts({ commit, dispatch, state }, payload) {
       state.recently_responded_arts = []
       let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
@@ -3586,6 +3596,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    business_submission_section(state){
+      return state.business_submission_section;
+    },
     get_business_info(state){
       return state.business_info;
     },
