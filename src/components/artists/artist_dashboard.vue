@@ -53,7 +53,7 @@
 
             <v-flex xs3> </v-flex>
 
-            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
+            <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in section" :key='art.id'>
               <v-card  dark mt-3>
                 <v-card-media class="white" img :src="art.url" height="450px">
                 </v-card-media>
@@ -352,7 +352,7 @@
       },
     },
     methods: {
-      // populate submissions array depending on the current page selected
+      // populate art array depending on the current page selected
       populateSubmissions(page, submissions)
       {
         if(submissions.length !== undefined && submissions.length !== 0)
@@ -533,6 +533,7 @@
       },
     },
     watch: {
+      // watch the pages in pagination change
       page: function (val) {
         let arts = this.$store.getters.allArts;
         this.populateSubmissions(val, arts)
