@@ -44,7 +44,8 @@ export const store = new Vuex.Store({
         title: 'Dashboard',
         icon: 'dashboard',
         link: '/artist_dashboard'
-      },      {
+      },
+      {
         //title: 'My Profile',
         title: 'My Profile',
         icon: 'home',
@@ -2664,8 +2665,8 @@ export const store = new Vuex.Store({
         art_being_submitted.delete_byartist = false
         art_being_submitted.refunded = 0;
         art_being_submitted.reserved_by = ""
-
-
+        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId
+        
         const db = firebase.firestore()
         const collectionRef = db
           .collection('review_requests')

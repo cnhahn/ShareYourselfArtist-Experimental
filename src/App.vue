@@ -118,7 +118,7 @@
 
           <v-list-tile-content light>
             <router-link to="/chat">
-              <v-list-tile-tile @click="" >
+              <v-list-tile-tile @click="">
                 Chat
               </v-list-tile-tile>
             </router-link>
@@ -526,6 +526,7 @@ artist_instagram() {
            localStorage.setItem('description',arts[i].description)
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
+           localStorage.setItem('art_url',arts[i].url)
            localStorage.setItem('upload_date', arts[i].upload_date)
            console.log("About to commit art info array " , arts[i].art)
            this.$store.commit('set_viewed_art_image_info' , arts[i].art)
@@ -535,6 +536,15 @@ artist_instagram() {
       }
       console.log("Error before this line")
       this.art_selected_url = localStorage.getItem('url')
+
+      //this.art_selected_url = localStorage.getItem('art_url')
+      //this.art.url = localStorage.getItem('art_url')
+      //this.art.art_title = localStorage.getItem('art_title')
+      //this.art.description = localStorage.getItem('description')
+
+
+      //this.$router.push('/viewed_art')
+
       this.$router.push({
         name: 'art'
       })

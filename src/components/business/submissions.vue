@@ -15,8 +15,8 @@
         hide-details
         :label="hint"
         solo-inverted
-
-      ></v-select>
+        autocomplete
+      ></v-select>  <!--Using autocomplete will produce tons of warnings-->
       <v-menu
       offset-y
       content-class="dropdown-menu"
@@ -45,6 +45,7 @@
 
     <!--<v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>-->
     <!--<v-btn @click="getRespondedRequests" color="error">Test Get Responded Review Requests</v-btn>-->
+    <!--<p>Selected: {{selected}}</p>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
     <v-layout justify-end>
@@ -314,20 +315,19 @@
           {
             this.hint = 'Search by artist name'
             this.searchingByTitle = false
-            //console.log('searching by artist')
           }
 
-          // change options in drop-down that user can select
-          /*if (this.searchingByTitle === true)
+          // change items in drop-down that user can select
+          if (this.searchingByTitle === true)
           {
             this.items = this.titleOptionsLoad(this.saved_submissions)
           }
           else
           {
             this.items = this.artistOptionsLoad(this.saved_submissions)
-          }*/
+          }
         },
-        // load title options in drop-down
+        // load title options, aka items, in drop-down
         titleOptionsLoad(submissions)
         {
           let titles = []
@@ -335,7 +335,6 @@
           {
             if (submissions[i].art.art_title != undefined)
             {
-              //console.log('pushing title ', submissions[i].art.art_title)
               titles.push(submissions[i].art.art_title)
             }
           }
@@ -349,7 +348,6 @@
           {
             if (submissions[i].art.artist_name != undefined)
             {
-              //console.log('pushing artist ', submissions[i].art.artist_name)
               artists.push(submissions[i].art.artist_name)
             }
           }
@@ -367,10 +365,19 @@
 
           this.loading_submissions = false
 
-          //console.log('search result length: ', searchResult.length)
-          //console.log('title results length: ', this.submissions.length)
+        },
+        // display new group of pages when searching by artist
+        // displays every art that the artist has submitted
+        filterByArtist(artist, submissions)
+        {
+          this.loading_submissions = true
 
-          //return searchResult
+            this.submissions = this.submissions.filter((review) => {
+            return review.art.artist_name === artist
+          })
+
+          this.loading_submissions = false
+
         },
         convert_date(submitted_on)
         {
@@ -534,6 +541,9 @@
         }
         this.loading_submissions = false
 
+        // reset selected item to null every time a new tab is selected
+        this.selected = null
+
         if (this.searchingByTitle === true)
         {
           this.items = this.titleOptionsLoad(this.submissions)
@@ -541,7 +551,6 @@
         else
         {
           this.items = this.artistOptionsLoad(this.submissions)
-          console.log('artists')
         }
         this.saved_submissions = this.submissions
 
@@ -578,15 +587,17 @@
 
               this.loading_submissions = false
 
-              if (this.searchingByTitle === true)
-              {
-                this.items = this.titleOptionsLoad(this.submissions)
-              }
-              else
-              {
-                this.items = this.artistOptionsLoad(this.submissions)
-              }
-              this.saved_submissions = this.submissions
+        this.selected = null
+
+        if (this.searchingByTitle === true)
+        {
+          this.items = this.titleOptionsLoad(this.submissions)
+        }
+        else
+        {
+          this.items = this.artistOptionsLoad(this.submissions)
+        }
+        this.saved_submissions = this.submissions
 
               this.page = 1
               this.populateSubmissions(this.page, this.submissions)
@@ -656,6 +667,8 @@
 
         this.loading_submissions = false
 
+        this.selected = null
+
         if (this.searchingByTitle === true)
         {
           this.items = this.titleOptionsLoad(this.submissions)
@@ -680,7 +693,6 @@
         this.submissions = new_subs
         console.log('nameKey is ' , nameKey , ' submissions is ' , new_subs)
         this.$store.commit('set_response', {response: response, radios:  radios })
-        // this.$store.commit('dec_num_submissions_for_this_business')
         this.$store.dispatch('submit_submission_response', {categories: this.categories, art: this.art_being_replied} )
         this.dialog = false
       },
@@ -768,21 +780,32 @@
     },
     watch: {
       page: function (val) {
+        console.log('watched page ', val)
        this.populateSubmissions(val, this.submissions)
       },
       selected(val) {
-        // set submissions back to the initial list of submissions
-        this.submissions = this.saved_submissions
+        if (val != null)
+        {
+          // set submissions back to the initial list of submissions
+          this.submissions = this.saved_submissions
 
-        console.log('selected: ', val)
-        //this.page = this.findPage(val, this.submissions)
-       
-        // search for the selected title
-        this.filterByTitle(val, this.submissions)
-        // reset the page to 1 when user selects an option
-        this.page = 1
-        //this.populateSubmissions(this.page, filteredSubmissions)
-        this.populateSubmissions(this.page, this.submissions)
+          console.log('selected: ', val)
+          //this.page = this.findPage(val, this.submissions)
+        
+          // search for the selected title or artist
+          if (this.searchingByTitle === true)
+          {
+            this.filterByTitle(val, this.submissions)
+          }
+          else
+          {
+            this.filterByArtist(val, this.submissions)
+          }
+
+          // reset the page to 1 when user selects an item
+          this.page = 1
+          this.populateSubmissions(this.page, this.submissions)
+        }
       }
     },
 

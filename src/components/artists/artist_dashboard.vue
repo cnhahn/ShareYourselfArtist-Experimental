@@ -477,15 +477,30 @@
         if(def.length != 0){
           def.splice(0, def.length);
         }
+        // false if an art piece doesn't have every selected category
+        let hasAllCategories = true
         for(let i = 0; i<arts.length; i++){
           for (let j = 0; j<categories.length; j++){
             if (arts[i].categories != undefined) {
-              if (arts[i].categories.includes(categories[j]) && !def.includes(arts[i]))
+              // category appears in art piece and
+              // don't repeatedly show same art piece for different categories
+              if (arts[i].categories.indexOf(categories[j]) >= 0 && !def.includes(arts[i]))
               {
-                def.push(arts[i])
+                // has one of the selected categories, still a candidate to be displayed
+              }
+              // index === -1, category not in art, don't push this arts
+              else
+              {
+                hasAllCategories = false
               }
             }
           }
+          if (hasAllCategories === true)
+          {
+            def.push(arts[i])
+          }
+          // reset for next art piece
+          hasAllCategories = true
         }
         this.noneFound = false
         if(def.length == 0){
