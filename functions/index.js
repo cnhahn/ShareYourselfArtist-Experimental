@@ -34,7 +34,7 @@ var DOMAIN = 'www.shareyourselfartists.com';
 
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
-
+//
 exports.replyToReviewRequest = functions.https.onRequest(async(request, response) => {
   /*
   Called when a business member responds to the review that they had reserved.
