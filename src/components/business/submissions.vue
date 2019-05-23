@@ -634,53 +634,53 @@
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
         /* uncomment to have cloud fun */
-        // this.loading_submissions = true
-        // this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
-
-        //     console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
-        //     this.submissions = this.$store.getters.responded_submissions
-
-        //     this.loading_submissions = false
-
-        //     if (this.searchingByTitle === true)
-        //     {
-        //       this.items = this.titleOptionsLoad(this.submissions)
-        //     }
-        //     else
-        //     {
-        //       this.items = this.artistOptionsLoad(this.submissions)
-        //     }
-        //     this.saved_submissions = this.submissions
-
-        //     this.page = 1
-        //     this.populateSubmissions(this.page, this.submissions)
-
-        // }, error => {
-        //   console.error("Reached error in mounted function " , error)
-        // })
-
         this.loading_submissions = true
+        this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
 
-        this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == true
+            console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
+            this.submissions = this.$store.getters.responded_submissions
+
+            this.loading_submissions = false
+
+            if (this.searchingByTitle === true)
+            {
+              this.items = this.titleOptionsLoad(this.submissions)
+            }
+            else
+            {
+              this.items = this.artistOptionsLoad(this.submissions)
+            }
+            this.saved_submissions = this.submissions
+
+            this.page = 1
+            this.populateSubmissions(this.page, this.submissions)
+
+        }, error => {
+          console.error("Reached error in mounted function " , error)
         })
 
-        this.loading_submissions = false
+        // this.loading_submissions = true
 
-        this.selected = null
+        // this.submissions = this.master_submissions.filter((review) => {
+        //   return review.replied == true
+        // })
 
-        if (this.searchingByTitle === true)
-        {
-          this.items = this.titleOptionsLoad(this.submissions)
-        }
-        else
-        {
-          this.items = this.artistOptionsLoad(this.submissions)
-        }
-        this.saved_submissions = this.submissions
+        // this.loading_submissions = false
 
-        this.page = 1
-        this.populateSubmissions(this.page, this.submissions)
+        // this.selected = null
+
+        // if (this.searchingByTitle === true)
+        // {
+        //   this.items = this.titleOptionsLoad(this.submissions)
+        // }
+        // else
+        // {
+        //   this.items = this.artistOptionsLoad(this.submissions)
+        // }
+        // this.saved_submissions = this.submissions
+
+        // this.page = 1
+        // this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
