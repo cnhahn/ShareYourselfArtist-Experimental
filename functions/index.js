@@ -35,6 +35,75 @@ var DOMAIN = 'www.shareyourselfartists.com';
 // For encrypting/decrypting business group codes
 const bcrypt = require('bcrypt')
 //
+
+exports.updateBusinessesReceivedRequests = functions.https.onRequest((request, response) => {
+  /*
+  Run once a business receives a new review request. Depending on the categories of the artwork in the request, 
+  the businesses 'categories.totalReceived' field is incremented by one
+  */
+  const db = admin.firestore()
+  let businessID = request.body[0]
+  let reviewRequestCategories = request.body[1]
+  console.log('The businessID is ', businessID)
+  console.log('The array of categories is: ', reviewRequestCategories)
+  const businessRef = db.collection('users').doc(businessID)
+
+  function getCurrentBusinessStats(businessID){
+    return new Promise(async(resolve, reject) => {
+      try {
+        console.log('businessID = ', businessID)
+        let business = await db.collection('users').doc(businessID).get()
+        let businessData = business.data()
+        let currentCategories = businessData.categories
+        
+        resolve(currentCategories)
+      } catch (error) {
+        console.log('There was an error receiving the businesses current data', error)
+        reject(error)
+      }
+    })
+  }
+
+  function updateBusinessStats(categories, reviewRequestCategories){
+    return new Promise(async (resolve, reject)=>{
+      try {
+        let batch = db.batch()
+        reviewRequestCategories.forEach(category =>{
+          console.log("category[",category,"].totalReceieved: ",categories[category].totalReceived)
+          let newTotalReceived = categories[category].totalReceived //Assuming that this will increment
+          newTotalReceived++
+          console.log('New total Recieved: ', newTotalReceived)
+          let updater = batch.set(businessRef, {
+            categories:{
+              [category]:{
+                totalReceived: newTotalReceived
+              }
+            }
+          }, {merge: true})
+        })
+        await batch.commit()
+        resolve()
+      } catch (error) {
+        console.log('error updating the totalReceived', error)
+        reject(error)
+      }
+    })
+  }
+
+  async function caller(businessID, reviewRequestCategories){
+    try {
+      let businessCategories = await getCurrentBusinessStats(businessID)
+      let update = await updateBusinessStats(businessCategories, reviewRequestCategories)
+      response.status(200).send('Success')
+    } catch (error) {
+      console.log('ERROR', error)
+      response.send(error)
+    }
+  }
+  caller(businessID, reviewRequestCategories);
+
+})
+
 exports.replyToReviewRequest = functions.https.onRequest(async(request, response) => {
   /*
   Called when a business member responds to the review that they had reserved.
