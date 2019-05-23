@@ -167,6 +167,11 @@
           <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
         </v-avatar>
       </router-link>
+      <router-link v-else-if="userIsAuthanticated && this.$store.state.user_role == 'business_member'" to="/group_business_dashboard" tag="span" style= "cursor:pointer">
+        <v-avatar>
+          <img src="/static/images/logo.png" height="40px" alt="SYA Logo">
+        </v-avatar>
+      </router-link>
       <router-link v-else to="/" tag="span" style= "cursor:pointer">
       <v-avatar>
         <img src="/static/images/logo.png" height="40px" alt="SYA Logo">

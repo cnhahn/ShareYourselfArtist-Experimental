@@ -12,8 +12,15 @@
  
       <img v-bind:src="this.business_info.url" />
           
-          <img class='icon' src="/static/images/facebook-logo.png" height="75px"> <img class='icon' src="/static/images/instagram-logo.png" height="75px"> <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
-          
+          <a :href="business_info.facebook" target="_blank">
+          <img class='icon' src="/static/images/facebook-logo.png" height="75px">
+          </a>
+          <a :href="business_info.instagram" target="_blank">
+          <img class='icon' src="/static/images/instagram-logo.png" height="75px"> 
+           </a>
+           <a :href="business_info.tumblr" target="_blank">
+          <img class='icon' src="/static/images/tumblr-logo-2.png" height="75px">
+          </a>
           
           <div class="text-xs-center">
           <v-btn large depressed color="primary" @click="all_submissions()">All Submissions</v-btn>
@@ -48,7 +55,9 @@
               <div class="pb-3 " style=" text-decoration: underline;"> Members  </div>
               <div class="display-1 pa-2" v-for="member in this.business_members" :key="member.name">
                 {{member.name}}
-                {{member.email}}
+                  <div>
+                  {{member.email}}
+                  </div>
               </div>
             </div>
           </v-flex>
@@ -142,10 +151,10 @@
     {
       //console.log('Signed in user: ', this.$store.getters.signed_in_user)
       //console.log('User role: ', this.$store.getters.user_role)
+      console.log('real role: ', this.$store.state.user_role)
       // if need later, test version 2 id: 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1'
       // shareyourselfartists id: b8Yc6Iz0ktV6ofVC1lHgCJ3EQCn1
       this.$store.dispatch('get_admin_info')
-      this.$store.dispatch('get_business_members', 'BY8KZZD5eMMvaNAOaGuDVqhCTuw1')
     },  
     computed: {
       business_info(){
@@ -156,7 +165,7 @@
       business_members(){
         this.$store.getters.get_business_members;
         console.log("business members is " , this.$store.getters.get_business_members)
-        return this.$store.getters.get_business_members
+        return this.$store.getters.get_business_members[0]
       },
       user_info() {
         let myArray=this.$store.getters.signed_in_user

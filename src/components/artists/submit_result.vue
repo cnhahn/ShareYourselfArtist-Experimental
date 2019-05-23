@@ -47,9 +47,6 @@
             this.$store.commit('set_art_being_submitted_is_selected',false)
             this.$store.commit('set_business_being_submitted_is_selected',false)
             alert('Success! You have submitted your art using your free credits!')
-            this.$router.push({
-              name: 'artist_dashboard' 
-            })
           }
           else if(this.$store.getters.credits >= costOfBusiness ) { 
             // decrements user credits, submits the artwork, updates user credits, and removes mutations specific to the selected art and business
@@ -60,9 +57,7 @@
             this.$store.commit('set_art_being_submitted_is_selected',false)
             this.$store.commit('set_business_being_submitted_is_selected',false)
             alert('Success! You have submitted your art using your premium credits!')
-            this.$router.push({
-              name: 'artist_dashboard' 
-            })
+
           } else {
             // if the user doesn't have enough credits we urge them to buy some
             alert("Buy more credits! You have " + this.$store.getters.credits + " credits")

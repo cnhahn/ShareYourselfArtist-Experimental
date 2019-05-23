@@ -19,7 +19,8 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
-    business_members: {},
+    business_info_set : false,
+    business_members: [],
     group_business_id : '',
     users_top_category : '' ,
     top_ten_category: [],
@@ -181,6 +182,8 @@ export const store = new Vuex.Store({
     },
     replied_requests_for_report_datePicker: [],
     submissions_for_this_business: [],
+    reserved_submissions: [],
+    responded_submissions: [],
     submissions_for_month: [],
     submissions_for_year: [],
     epochFirstDayOfMonthArray: [], // aortizoj
@@ -231,9 +234,22 @@ export const store = new Vuex.Store({
   mutations: {
     set_business_info(state,payload){
       state.business_info = payload;
+      state.business_info_set = true;
     },
     set_business_members(state,payload){
-      state.business_members = payload
+      state.business_members.push(payload)
+    },
+    set_reserved_submissions(state, payload) {
+      state.reserved_submissions.push(payload)
+    },
+    clear_submissions_for_this_reserved_array(state) {
+      state.reserved_submissions = []
+    },
+    set_responded_submissions(state, payload) {
+      state.responded_submissions.push(payload)
+    },
+    clear_submissions_for_this_responded_array(state) {
+      state.responded_submissions = []
     },
     set_top_ten_category(state,payload){
       state.top_ten_category = [],
@@ -1842,9 +1858,8 @@ export const store = new Vuex.Store({
     },
 
     // get admin business info
-    get_admin_info({ commit,getters }, payload)
+    get_admin_info({ commit,getters,dispatch }, payload)
     {
-
       const db = firebase.firestore()
       console.log("in get - admin - info and business email is " , getters.get_group_business_id) 
       const business_info = db.collection('users').where('email', '==' , getters.get_group_business_id)
@@ -1853,27 +1868,33 @@ export const store = new Vuex.Store({
         querySnapshot.forEach(function (doc) {
           commit('set_business_info' , doc.data());
         })
+        console.log("finished get_admin_info")
+        dispatch('get_business_members')
       })
     },
 
     // get business members
-    get_business_members({ commit }, payload)
+    get_business_members({ commit, getters })
     {
       // First get the info of members in the business group.
       let members = null;
-      //console.log("in get business members")
+      console.log("in get business members")
+      console.log('admin id is ', getters.get_business_info.userId)
+      console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
         .collection('business_groups')
-        .doc(payload)
+        .doc(getters.get_business_info.userId)
         .get()
         .then(function (doc) {
           if (doc.exists) {
             //console.log("doc does exist it is : " , doc.data())
+            //console.log('user info id is ', this.getters.get_business_info.userId)
+            
             members = doc.data().members
             commit('set_business_members' , members)
-            // console.log("members info: " , members)
+            console.log("members info: " , members)
             // return members
           } else {
             console.log('Doc does not exist')
@@ -2078,7 +2099,6 @@ export const store = new Vuex.Store({
         console.log('payload is ' , payload)
   
         // start cloud
-          console.log("business member")
           let reviewRequests = {}
           //We want to access the business info state and extract the id.
           let business_id;
@@ -2089,7 +2109,7 @@ export const store = new Vuex.Store({
           }
       
           console.log("The business id is " , business_id)
-          reviewRequests[0] = business_id;  //this.getters.get_business_info.userId
+          reviewRequests[0] = business_id;
     
           let reviewRequestsJSON = JSON.stringify(reviewRequests) 
           let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
@@ -2135,35 +2155,36 @@ export const store = new Vuex.Store({
           // console.log('leaving the cloud')
           
           // end cloud
-
-          // const collectionRef = await  db
-          //  .collection('review_requests')
-          //  .where('businessId.userId', '==', getters.user.id)
-          //  .get()
-          //  .then(function (querySnapshot) {
-          //    querySnapshot.forEach(function (doc) {
-   
-          //      // doc.data() is never undefined for query doc snapshots
-          //      let docData = doc.data()
-          //      // console.log('doc.data: ' + docData)
-          //      // console.log('doc.id: ' + doc.id)
-          //      docData.docId = doc.id
-   
-          //      // console.log('doc.data: ' + docData.docId)
-          //      console.log("docData is : " , docData)
-          //      // commit('set_submissions_for_this_business', docData)
-          //    })
-          //  })
-          //  .then(function (response) {
-          //    resolve(response)
-          //  })
-          //  .catch(function (error) {
-          //    console.log("Error of fetch all submissions")
-          //    console.log('Error getting submissions: ', error)
-          //    reject(error)
-          //  })
-
       })
+
+      /* previous version, still usable */
+      // console.log("Entered fetch all submissions")
+      // commit('clear_submissions_for_this_business_array')
+      // const db = firebase.firestore()
+      // console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
+
+      // const collectionRef = await db
+      //   .collection('review_requests')
+      //   //.where('businessId.userId', '==', getters.user.id)
+      //   .where('businessId.userId', '==', getters.get_business_info.userId)
+      //   .get()
+      //   .then(function (querySnapshot) {
+      //     querySnapshot.forEach(function (doc) {
+
+      //       // doc.data() is never undefined for query doc snapshots
+      //       let docData = doc.data()
+      //       console.log('doc.data: ' + docData)
+      //       console.log('doc.id: ' + doc.id)
+      //       docData.docId = doc.id
+
+      //       console.log('doc.data: ' + docData.docId)
+      //       commit('set_submissions_for_this_business', docData)
+      //     })
+      //   })
+      //   .catch(function (error) {
+      //     console.log("Error of fetch all submissions")
+      //     console.log('Error getting submissions: ', error)
+      //   })
 
     },
 
@@ -2184,6 +2205,208 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log('Error getting documents: ', error)
         })
+    },
+
+    async reserve_selected_submissions({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered reserve selected submissions")
+        const db = firebase.firestore()
+        //console.log('reserve payload is ' , payload)
+  
+        // reserveReview: https://us-central1-sya-app.cloudfunctions.net/reserveReview
+        // input: userId (id of the business_member), businessId (id of the business the member is associated with),
+        // reviewIds (an array of review_request document ids that the group member is attempting to reserve).
+        // output: status code of 200 for success, 400 for failure or bad request
+
+          let reserveIDs = {}
+          //We want to access the business info state and extract the id.
+          let business_id
+          if(payload){
+             business_id  = getters.get_business_info.userId
+          }else{
+            business_id  = getters.user.id
+          }
+
+          let user_id = getters.user.id
+      
+          console.log("The business id is " , business_id)
+          console.log("The user id is " , user_id)
+          reserveIDs[0] = user_id
+          reserveIDs[1] = business_id
+          reserveIDs[2] = payload
+    
+          let reserveIDsJSON = JSON.stringify(reserveIDs) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/reserveReview'
+    
+          console.log('In reserve submissions about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: reserveIDsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            // return response.json()
+          })
+          .then(function (myJson) {
+            // console.log('my json is ', myJson)
+            // // let rev_req = []
+            // for (var key in myJson) {
+            //   if (myJson.hasOwnProperty(key)) {
+            //       console.log(key + " -> " + myJson[key])
+            //       myJson[key].review_request = key
+            //       // rev_req.push(myJson[key])
+            //   }
+            // }
+    
+          // for(var i = 0 ; i < rev_req.length; i++)
+          // commit('set_submissions_for_this_business', rev_req[i])
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the reserve selected function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
+    },
+
+    async get_reserved_reviews({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered get reserved review")
+        commit('clear_submissions_for_this_reserved_array')
+        console.log('cleared reserved array submissions')
+        const db = firebase.firestore()
+        //console.log('get reserved payload is ' , payload)
+        console.log('group members id is ' , payload)
+  
+        // getReservedReviews: https://us-central1-sya-app.cloudfunctions.net/getReservedReviews
+        // input: a group members userID
+        // response: JSON of all review_requests reserved by given business_member
+
+          let reservedReviews = {}
+          
+          reservedReviews[0] = payload
+    
+          let reservedReviewsJSON = JSON.stringify(reservedReviews) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getReservedReviews'
+    
+          console.log('In get reserved reviews about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: reservedReviewsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            return response.json()
+          })
+          .then(function (myJson) {
+            console.log('my json is ', myJson)
+            let revs = []
+            for (var key in myJson) {
+              if (myJson.hasOwnProperty(key)) {
+                  console.log(key + " -> " + myJson[key])
+                  myJson[key].review_request = key
+                  revs.push(myJson[key])
+              }
+            }
+            
+          console.log('got reserved reviews: ', revs)
+
+          for(let i = 0 ; i < revs.length; i++)
+          {
+            commit('set_reserved_submissions', revs[i])
+          }
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the get reserved function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
+    },
+
+    async get_responded_review_requests({ commit, getters }, payload) {
+      return new Promise((resolve, reject) => {
+        console.log("Entered get responded")
+        commit('clear_submissions_for_this_responded_array')
+        console.log('cleared responded array submissions')
+        const db = firebase.firestore()
+        //console.log('get reserved payload is ' , payload)
+        console.log('business id in payload is ' , payload)
+  
+        // getRespondedReviewRequests: https://us-central1-sya-app.cloudfunctions.net/getRespondedReviewRequests
+        // input: id of the *business*
+        // output: all review_requests of a given business that the business (or a member of the business) has responded to
+
+          let respondedRequests = {}
+          
+          respondedRequests[0] = payload
+    
+          let respondedRequestsJSON = JSON.stringify(respondedRequests) 
+          let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+          let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/getRespondedReviewRequests'
+    
+          console.log('In get responded about to call fetch')
+          fetch(proxyUrl + targetUrl, {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: respondedRequestsJSON
+          })
+          .then(function (response) {
+            console.log('response is ', response)
+            return response.json()
+          })
+          .then(function (myJson) {
+            console.log('my json is ', myJson)
+            let reqs = []
+            for (var key in myJson) {
+              if (myJson.hasOwnProperty(key)) {
+                  console.log(key + " -> " + myJson[key])
+                  myJson[key].review_request = key
+                  reqs.push(myJson[key])
+              }
+            }
+            
+          //console.log('got responded requests: ', reqs)
+
+          for(let i = 0 ; i < reqs.length; i++)
+          {
+            commit('set_responded_submissions', reqs[i])
+          }
+    
+          })
+          .then(function (response) {
+            console.log("we should leave the get responded function now nothing should happen before")
+            resolve(response) 
+          })
+          .catch(function (error) {
+            console.error('Error getting cloud: ', error)
+            reject(error)
+          })
+
+      })
+
     },
 
     // Styled by Jin. No modification on code.
@@ -2321,7 +2544,7 @@ export const store = new Vuex.Store({
 
       // upload the artist data and the url
     },
-    submit_submission_response({ getters } , payload) {
+    submit_submission_response({ getters, dispatch } , payload) {
       
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
@@ -2353,13 +2576,20 @@ export const store = new Vuex.Store({
         },
         body: statisticsJson
       })
-    
-      
+
+
+
+
+
+      //console.log('got to previous version')
       const db = firebase.firestore()
+      console.log("Right before collectionRef line 2581");
+      console.log("The info we're passing through is: ")
+      console.log("We're passing into doc : ", getters.art_being_replied.docId);
+      console.log("We're passing in for submission_response: " ,getters.submission_response);
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-      return collectionRef
         .update({
           replied: true,
           read_byartist: false,
@@ -2367,6 +2597,14 @@ export const store = new Vuex.Store({
           replied_date: Date.now()
         })
         .then(function () {
+          console.log("doc Id is : ", getters.art_being_replied.docId  );
+          console.log("adminId is : ", getters.get_business_info.userId);
+          console.log("responderId : ", getters.user.id );
+          let responseInfo = {docId: getters.art_being_replied.docId , adminId: getters.get_business_info.userId , responderId: getters.user.id };
+          dispatch('update_business_members_response', responseInfo)
+
+        })
+        .then(function() {
           console.log('Submission successfully updated!')
         })
         .catch(function (error) {
@@ -2374,7 +2612,23 @@ export const store = new Vuex.Store({
           console.error('Error updating submission: ', error)
         })
     },
-
+    update_business_members_response({commit,getters} , payload){
+      console.log("in update_business_members and payload is " , payload)
+      let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+      let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/replyToReviewRequest'
+      let data = {}
+      data[0] = payload.docId;
+      data[1] = payload.adminId;
+      data[2] = payload.responderId;
+      let categoryJson = JSON.stringify(data)
+      fetch(proxyUrl + targetUrl, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: categoryJson
+      })         
+    },
     update_art_category_tags({ getters }, payload) {
       const db = firebase.firestore()
       const uploadDate = parseInt(payload.upload_date, 10)
@@ -2398,15 +2652,19 @@ export const store = new Vuex.Store({
     },
 
     submit_request({ getters }) {
+      console.log("Entered submit requests with  credits");
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
         let art_being_submitted = getters.art_being_submitted
         art_being_submitted.submitted_on = Date.now()
         art_being_submitted.submitted_with_free_cerdit = false
         art_being_submitted.businessId = businesses_being_submitted[i]
+        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
+        console.log("The business admin ID for credits is : " , art_being_submitted.businessAdmin );
         art_being_submitted.replied = false
         art_being_submitted.delete_byartist = false
         art_being_submitted.refunded = 0;
+        art_being_submitted.reserved_by = ""
         art_being_submitted.businessAdmin = businesses_being_submitted[i].userId
         
         const db = firebase.firestore()
@@ -2415,10 +2673,9 @@ export const store = new Vuex.Store({
           .doc()
           .set(art_being_submitted)
           .then(function (docRef) {
-            console.log('School submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
+            router.push({
+              name: 'artist_dashboard' 
+            })
           })
           .catch(function (error) {
             console.error('Error adding document: ', error)
@@ -2426,6 +2683,7 @@ export const store = new Vuex.Store({
       }
     },
     submit_request_with_free_credits({ getters }) {
+      console.log("Entered submit requests with free credits");
       let businesses_being_submitted = getters.businesses_being_submitted
       for (let i = 0; i < businesses_being_submitted.length; i++) {
         let art_being_submitted = getters.art_being_submitted
@@ -2436,7 +2694,9 @@ export const store = new Vuex.Store({
         art_being_submitted.replied = false
         art_being_submitted.delete_byartist = false
         art_being_submitted.businessId = businesses_being_submitted[i]
-        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId
+        art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
+        console.log("The business admin ID for free credits is : " , art_being_submitted.businessAdmin );
+        art_being_submitted.reserved_by = ""
 
         const db = firebase.firestore()
         const collectionRef = db
@@ -2444,10 +2704,10 @@ export const store = new Vuex.Store({
           .doc()
           .set(art_being_submitted)
           .then(function (docRef) {
-            console.log('Submission written with ID: ', docRef.id)
-            // router.push({
-            //   name: 'submit_result'
-            // })
+            // console.log('Submission written with ID: ', docRef.id)
+            router.push({
+              name: 'artist_dashboard' 
+            })
           })
           .catch(function (error) {
             console.error('Error adding document: ', error)
@@ -3331,6 +3591,14 @@ export const store = new Vuex.Store({
     },
     get_business_members(state){
       return state.business_members
+    },
+    reserved_submissions(state)
+    {
+      return state.reserved_submissions
+    },
+    responded_submissions(state)
+    {
+      return state.responded_submissions
     },
     //for spinner
     get_check_image_c(state)

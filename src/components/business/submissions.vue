@@ -43,12 +43,20 @@
       </v-menu>
     </v-toolbar>
 
+    <!--<v-btn @click="getReservedReviews" color="success">Test Get Reserved Submissions</v-btn>-->
+    <!--<v-btn @click="getRespondedRequests" color="error">Test Get Responded Review Requests</v-btn>-->
     <!--<p>Selected: {{selected}}</p>-->
 
     <h1 style="font-weight: bold; margin-top: 5vh; margin-bottom: 1vh;">Submissions</h1>
-    <v-btn flat @click="fetch_submissions">All Submissions</v-btn>
+    <v-layout justify-end>
+      <v-btn @click="reserveSubmissions" color="primary">Reserve Submissions</v-btn>
+    </v-layout>
+    <v-btn flat @click="fetch_submissions">Available Submissions</v-btn>
+    <v-btn flat @click="submissions_unreplied_submissions">Reserved Submissions</v-btn>
+    <v-btn flat @click="submissions_replied_submissions">Responded Submissions</v-btn> 
+    <!--<v-btn flat @click="fetch_submissions">All Submissions</v-btn>
     <v-btn flat @click="submissions_unreplied_submissions">Unreplied Submissions</v-btn>
-    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn>
+    <v-btn flat @click="submissions_replied_submissions">Replied Submissions</v-btn> -->
 
     <!-- <v-layout row wrap justify-center>
     <v-flex xs12 md12 sm6>
@@ -102,7 +110,22 @@
               <v-btn icon @click.native="clicked_art(submission.art.upload_date, submission.docId)" flat color="primary" v-if="submission.replied == undefined || submission.replied == false"><v-icon>reply</v-icon></v-btn>
               <v-icon color="green" v-if="!submission.submitted_with_free_cerdit">attach_money</v-icon>
               <v-btn icon @click.native="download(submission.art.url)" flat color="primary" :href=submission.art.url><v-icon>cloud_download</v-icon></v-btn>
+
+
+
               <v-spacer></v-spacer>
+
+              <!--<div v-if="submission.replied == undefined || submission.replied == false">-->
+              <div v-if="submission.replied != true && submission.reserved_by === ''">
+                <v-checkbox
+                v-model="reserved"
+                color="primary"
+                :value="submission.review_request"
+                hide-details
+                ></v-checkbox>
+              </div>
+              <!--</div>-->
+
           <v-btn icon @click="show = !show">
             <v-icon>{{ show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
           </v-btn>
@@ -185,6 +208,7 @@
         radios: 'declined',
         dialog: false,
         notifications: false,
+        filterReservedPictures : [],
         art_being_replied: null,
         art_title: '',
         artist_name: '',
@@ -215,7 +239,9 @@
           'Search by artist name',
         ],
         hint: 'Search by art title',
-        searchingByTitle: true
+        searchingByTitle: true,
+
+        reserved: []
       }
     },
     beforeMount() {
@@ -224,9 +250,37 @@
       this.initialImageLoad()
     },
     methods:{
+        reserveSubmissions()
+        {
+          console.log('reserved submissions: ', this.reserved)
+          // call Kevin's function
+          this.$store.dispatch('reserve_selected_submissions', this.reserved)
+
+          console.log('fetching submissions again')
+          this.fetch_submissions()
+        },
+        // getReservedReviews()
+        // {
+        //   this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
+
+        //       console.log('reserved submissions in test getters is ', this.$store.getters.reserved_submissions)
+        //   }, error => {
+        //     console.error("Reached error in mounted function " , error)
+        //   })
+        // },
+        // getRespondedRequests()
+        // {
+        //   this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
+
+        //       console.log('responded requests in test getters is ', this.$store.getters.responded_submissions)
+        //   }, error => {
+        //     console.error("Reached error in mounted function " , error)
+        //   })
+        // },
         // populate submissions array depending on the current page selected
         populateSubmissions(page, submissions)
         {
+          console.log("in populate submissions");
           if(submissions.length !== undefined && submissions.length !== 0)
           {
             let section = []
@@ -238,6 +292,14 @@
 
             this.section = section
             console.log('section arr:', this.section)
+          }else{
+            this.section = [];
+          }
+
+          if (submissions.length === 0)
+          {
+            console.log('empty submissions')
+            this.section = []
           }
 
         },
@@ -297,7 +359,7 @@
         {
           this.loading_submissions = true
 
-            this.submissions = this.submissions.filter((review) => {
+          this.submissions = this.submissions.filter((review) => {
             return review.art.art_title === title
           })
 
@@ -317,25 +379,6 @@
           this.loading_submissions = false
 
         },
-        // search the most recent page with the selected art title
-        /*findPage(title, submissions)
-        {
-          let currPage = 1
-
-          if(submissions.length !== undefined && submissions.length !== 0)
-          {
-            for (let i = 0; i < submissions.length && submissions[i] !== undefined; i++)
-            {
-              currPage = Math.floor(i / 4) + 1
-              //console.log('current page: ', currPage)
-              if (submissions[i].art.art_title === title)
-              {
-                //console.log('found ', title, ' at page ', currPage)
-                return currPage
-              }
-            }
-          }
-        },*/
         convert_date(submitted_on)
         {
           let sub_date = parseInt(submitted_on, 10)
@@ -414,6 +457,12 @@
               this.checkSortByDate(this.submissions)
 
               this.master_submissions = this.$store.getters.submissions_for_this_business
+
+              this.submissions = this.submissions.filter((review) => {
+                return review.replied != true && review.reserved_by === ''
+              })
+              console.log('here is initial filtered submissions: ', this.submissions)
+
               this.loading_submissions = false
 
               // display list of options in drop-down, may change depending on current tab
@@ -453,10 +502,18 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
+        this.section = [];
         this.loading_submissions = true
-        this.$store.dispatch('fetch_all_Submissions').then(response => {
-          console.log('here are submissions: ' + this.submissions)
-          console.log('here are master submissions: ' + this.master_submissions)
+
+        let business_member = false
+        if(this.$store.getters.user_role == 'business_member'){
+          business_member = true;
+        }
+
+        this.$store.dispatch('fetch_all_Submissions', business_member).then(response => {
+
+          console.log('here are submissions: ', this.submissions)
+          console.log('here are master submissions: ', this.master_submissions)
 
           this.submissions = this.$store.getters.submissions_for_this_business
 
@@ -466,8 +523,13 @@
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
-          console.log('now here is submissions: ' + this.submissions)
-          console.log('and here is master submissions: ', this.master_submissions[0].businessId)
+          this.submissions = this.submissions.filter((review) => {
+            return review.replied != true && review.reserved_by === ''
+          })
+          console.log('here is filtered submissions: ', this.submissions)
+
+          // console.log('now here is submissions: ', this.submissions)
+          // console.log('and here is master submissions: ', this.master_submissions[0].businessId)
 
         if (this.submissions === null) {
           console.log("submission numbero uno is null")
@@ -494,6 +556,20 @@
 
         // reset the page to 1 every time a new tab is selected
         this.page = 1
+
+        // let i = 0 ; 
+        // let reservedIndex = 0;
+        // for(i = 0 ; this.submissions.length; i++){
+        //   console.log("right here in for loop");
+        //   if(this.submissions[i].reserved_by != undefined){
+        //     }
+        //     if(this.submissions[i].reserved_by.length != 0){
+        //       console.log("if statement is true");
+        //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
+        //       reservedIndex++;
+        //     }
+
+        // }
         this.populateSubmissions(this.page, this.submissions)
 
         }, error => {
@@ -504,12 +580,12 @@
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
         this.loading_submissions = true
+        this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
 
-        this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == undefined || review.replied == false
-        })
+              console.log('reserved submissions in getters is ', this.$store.getters.reserved_submissions)
+              this.submissions = this.$store.getters.reserved_submissions
 
-        this.loading_submissions = false
+              this.loading_submissions = false
 
         this.selected = null
 
@@ -523,12 +599,66 @@
         }
         this.saved_submissions = this.submissions
 
-        this.page = 1
-        this.populateSubmissions(this.page, this.submissions)
+              this.page = 1
+              this.populateSubmissions(this.page, this.submissions)
+
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+            this.loading_submissions = false
+          })
+        
+        /* previous version, unreplied submissions tab */
+        // this.loading_submissions = true
+
+        // this.submissions = this.master_submissions.filter((review) => {
+        //   return review.replied == undefined || review.replied == false
+        // })
+
+        // this.loading_submissions = false
+
+        // if (this.searchingByTitle === true)
+        // {
+        //   this.items = this.titleOptionsLoad(this.submissions)
+        // }
+        // else
+        // {
+        //   this.items = this.artistOptionsLoad(this.submissions)
+        //   console.log('artists')
+        // }
+        // this.saved_submissions = this.submissions
+
+        // this.page = 1
+        // this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
+        /* uncomment to have cloud fun */
+        // this.loading_submissions = true
+        // this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
+
+        //     console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
+        //     this.submissions = this.$store.getters.responded_submissions
+
+        //     this.loading_submissions = false
+
+        //     if (this.searchingByTitle === true)
+        //     {
+        //       this.items = this.titleOptionsLoad(this.submissions)
+        //     }
+        //     else
+        //     {
+        //       this.items = this.artistOptionsLoad(this.submissions)
+        //     }
+        //     this.saved_submissions = this.submissions
+
+        //     this.page = 1
+        //     this.populateSubmissions(this.page, this.submissions)
+
+        // }, error => {
+        //   console.error("Reached error in mounted function " , error)
+        // })
+
         this.loading_submissions = true
 
         this.submissions = this.master_submissions.filter((review) => {
@@ -575,6 +705,7 @@
         let nameKey = art_unique_timestamp
         this.nameKey = art_unique_timestamp
         let myArray = this.submissions // this.$store.state.submissions_for_this_business
+        console.log("My array in clicked_art is : ", myArray);
         for (var i = 0; i < myArray.length; i++) {
           if (myArray[i].art.upload_date === nameKey && myArray[i].docId === art_unique_id) {
             this.art_being_replied = myArray[i]
@@ -593,7 +724,7 @@
             this.submitted_on = date_converted(sub_date)
 
 
-            this.docId = myArray[i].docId
+            this.docId = this.art_being_replied.review_request;
             console.log("SHIT ",this.docId);
             this.$store.commit('set_art_being_replied', {
               art_title: myArray[i].art.art_title,
@@ -602,7 +733,7 @@
               description: myArray[i].art.description,
               submitted_on: myArray[i].submitted_on,
               artist_id: myArray[i].art.artist_id,
-              docId: myArray[i].docId
+              docId: this.docId
             })
           }
         }
