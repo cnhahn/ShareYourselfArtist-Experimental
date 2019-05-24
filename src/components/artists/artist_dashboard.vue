@@ -107,7 +107,7 @@
               </v-card>
             </v-flex>
 
-            <v-flex xs6 v-if="def.length != 0"  v-for="art,index in def" :key='art.id'>
+            <v-flex xs6 v-if="def.length != 0"  v-for="art,index in defSection" :key='art.id'>
 
               <v-card mt-3>
                 <v-card-media img :src="art.url" height="450px">
@@ -161,10 +161,17 @@
             
           </v-layout>
           <v-container>
-            <div class="text-xs-center mb-5">
+            <div v-if="def.length == 0" class="text-xs-center mb-5">
               <v-pagination
                 v-model="page"
                 :length="Math.ceil(arts.length / 4)"
+              ></v-pagination>
+            </div>
+
+            <div v-if="def.length != 0" class="text-xs-center mb-5">
+              <v-pagination
+                v-model="page"
+                :length="Math.ceil(def.length / 4)"
               ></v-pagination>
             </div>
           </v-container>
@@ -299,7 +306,9 @@
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         page: 1,
-        section: []
+        section: [],
+        saved_artwork: [],
+        defSection: []
       }
     },
     mounted(){
@@ -317,12 +326,16 @@
         return this.$store.getters.get_top_ten_rec_businesses;
       },
       recently_responded_arts(){
+        this.page = 1
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
         return recently_responded_arts
       },
       arts() {
         let arts = this.$store.getters.allArts;
         this.populateSubmissions(this.page, arts)
+        this.section_def(this.page, this.def)
+
+        this.saved_artwork = arts
 
         function compare(a, b) {
           const upload_date1 = a.upload_date
@@ -368,6 +381,20 @@
           console.log('section arr:', this.section)
         }
       },
+      section_def(page, def)
+      {
+        if(def.length !== undefined && def.length !== 0)
+        {
+          let section = []
+          let startIndex = (page-1) * 4
+          for(let i = startIndex; i < (startIndex + 4) && def[i] !== undefined; i++)
+          {
+            section.push(def[i])
+          }
+
+          this.defSection = section
+        }
+      },
       go_to_viewed_artist_page(index){
         //const test = this.$store.getters.top_12_recent_art
         //console.log('this.items[index] $#$#%#^#^', test[index])
@@ -384,6 +411,7 @@
         this.$store.dispatch('retrieve_recommended_businesses')
       },
       recommendedArts(){
+        this.page = 1
         this.$store.dispatch('retrieve_recommended_arts')
       },
       clicked_art(art_unique_timestamp) {
@@ -495,9 +523,16 @@
               }
             }
           }
+
+          if(categories.length == 0){
+            hasAllCategories = false
+            this.page = 1
+          }
+
           if (hasAllCategories === true)
           {
             def.push(arts[i])
+            this.page = 1
           }
           // reset for next art piece
           hasAllCategories = true
@@ -507,6 +542,7 @@
           if(categories.length != 0){
             this.noneFound = true
             this.snackbar = true
+            // categories here may need to be reset because no match was found
           }
         }
         console.log("value of none: " + this.noneFound)
@@ -537,6 +573,7 @@
       page: function (val) {
         let arts = this.$store.getters.allArts;
         this.populateSubmissions(val, arts)
+        this.section_def(val,this.def)
       }
     },
 }
