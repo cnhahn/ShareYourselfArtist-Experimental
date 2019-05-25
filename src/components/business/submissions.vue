@@ -240,7 +240,10 @@
         hint: 'Search by art title',
         searchingByTitle: true,
 
-        reserved: []
+        reserved: [],
+
+        inAvailableTab: false,
+        inReservedTab: false
       }
     },
     beforeMount() {
@@ -266,22 +269,32 @@
           console.log('reserved submissions: ', this.reserved)
           // call Kevin's function
           this.$store.dispatch('reserve_selected_submissions', this.reserved)
-          let current_section = this.section;
-          let i = 0 ;
-          let new_section = [];
-          console.log("current section length is : " , current_section.length)
-          console.log("the items in current section is : ", this.reserved)
-          for (i = current_section.length -1 ; i  >= 0 ; i--){
-            let unique_art_id = current_section[i].review_request;
-            if(this.compare_uniqueId_reservedId(unique_art_id)){
-              this.submissions.splice(i,1);
-              continue;
+          .then(response => {
+
+            if (this.reserved.length > 0)
+            {
+              console.log('fetching submissions again')
+              this.fetch_submissions()
             }
-            new_section.push(current_section[i])
-          }
-      
-          // this.$store.commit('set_submissions_for_this_business', this.submissions)
-          this.$store.commit('set_business_submission_section', new_section)
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
+
+          // let current_section = this.section;
+          // let i = 0 ;
+          // let new_section = [];
+          // console.log("current section length is : " , current_section.length)
+          // console.log("the items in current section is : ", this.reserved)
+          // for (i = 0; i < current_section.length; i++) {
+          // // for (i = current_section.length -1 ; i  >= 0 ; i--){
+          //   let unique_art_id = current_section[i].review_request;
+          //   if(this.compare_uniqueId_reservedId(unique_art_id)){
+          //     this.submissions.splice(i,1);
+          //     continue;
+          //   }
+          //   new_section.push(current_section[i])
+          // }
+          // this.$store.commit('set_business_submission_section', new_section)
         },
         // getReservedReviews()
         // {
@@ -525,7 +538,11 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
-         this.$store.commit('set_business_submission_section', [])
+
+        this.inAvailableTab = true
+        this.inReservedTab = false
+
+        this.$store.commit('set_business_submission_section', [])
         this.loading_submissions = true
 
         let business_member = false
@@ -603,11 +620,18 @@
 
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
+
+        this.inAvailableTab = false
+        this.inReservedTab = true
+
         this.loading_submissions = true
         this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
 
               console.log('reserved submissions in getters is ', this.$store.getters.reserved_submissions)
               this.submissions = this.$store.getters.reserved_submissions
+
+              this.sortByDate(this.submissions)
+              this.checkSortByDate(this.submissions)
 
               this.loading_submissions = false
 
@@ -666,6 +690,8 @@
             this.submissions = this.$store.getters.responded_submissions
 
             //console.log('submissions length is ', this.submissions.length)
+            this.sortByDate(this.submissions)
+            this.checkSortByDate(this.submissions)
 
             this.loading_submissions = false
 
@@ -728,7 +754,37 @@
         console.log('nameKey is ' , nameKey , ' submissions is ' , new_subs)
         this.$store.commit('set_response', {response: response, radios:  radios })
         this.$store.dispatch('submit_submission_response', {categories: this.categories, art: this.art_being_replied} )
+        .then(response => {
+            if (this.inAvailableTab === true)
+            {
+              console.log('reloading available submissions')
+              this.fetch_submissions()
+            }
+            else if (this.inReservedTab === true)
+            {
+              console.log('reloading reserved submissions')
+              this.submissions_unreplied_submissions()
+            }
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
         this.dialog = false
+
+        // let current_section = this.section
+        //   let i = 0
+        //   let new_section = []
+        //   console.log("current response section length is : " , current_section.length)
+        //   console.log("the item being responsed is : ", this.art_being_replied)
+        //   for (i = 0; i < current_section.length; i++) {
+        //     let unique_art_id = current_section[i].review_request
+        //     if(this.art_being_replied === unique_art_id){
+        //       console.log('responded art is in section')
+        //       this.submissions.splice(i,1);
+        //       continue;
+        //     }
+        //     new_section.push(current_section[i])
+        //   }
+        //   this.$store.commit('set_business_submission_section', new_section)
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
       clicked_art(art_unique_timestamp, art_unique_id) {
@@ -828,7 +884,6 @@
           this.submissions = this.saved_submissions
 
           console.log('selected: ', val)
-          //this.page = this.findPage(val, this.submissions)
         
           // search for the selected title or artist
           if (this.searchingByTitle === true)
@@ -844,7 +899,11 @@
           this.page = 1
           this.populateSubmissions(this.page, this.submissions)
         }
-      }
+      },
+      // submissions(val)
+      // {
+      //   console.log('watched submissions: ', val)
+      // }
     },
 
       /* This component just got created, fetch some data here using an action */
