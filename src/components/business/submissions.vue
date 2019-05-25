@@ -546,6 +546,7 @@
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
+          // filter submissions to display only unreplied, unreserved submissions
           this.submissions = this.submissions.filter((review) => {
             return review.replied != true && review.reserved_by === ''
           })
@@ -630,7 +631,8 @@
             this.loading_submissions = false
           })
         
-        /* previous version, unreplied submissions tab */
+        /* previous version, unreplied submissions tab 
+        Comment out above block and uncomment this to get all unreplied */
         // this.loading_submissions = true
 
         // this.submissions = this.master_submissions.filter((review) => {
@@ -656,12 +658,14 @@
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
-        /* uncomment to have cloud fun */
+        
         this.loading_submissions = true
         this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
 
             console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
             this.submissions = this.$store.getters.responded_submissions
+
+            //console.log('submissions length is ', this.submissions.length)
 
             this.loading_submissions = false
 
@@ -678,32 +682,39 @@
             this.page = 1
             this.populateSubmissions(this.page, this.submissions)
 
+            // if cloud fun fails, use the previous version
+            if (this.submissions.length === 0)
+            {
+              /* previous version, replied submissions tab */
+              console.log('using previous version to get all unreplied submissions')
+              this.loading_submissions = true
+
+              this.submissions = this.master_submissions.filter((review) => {
+                return review.replied == true
+              })
+
+              this.loading_submissions = false
+
+              this.selected = null
+
+              if (this.searchingByTitle === true)
+              {
+                this.items = this.titleOptionsLoad(this.submissions)
+              }
+              else
+              {
+                this.items = this.artistOptionsLoad(this.submissions)
+              }
+              this.saved_submissions = this.submissions
+
+              this.page = 1
+              this.populateSubmissions(this.page, this.submissions)
+            }
+
         }, error => {
           console.error("Reached error in mounted function " , error)
         })
 
-        // this.loading_submissions = true
-
-        // this.submissions = this.master_submissions.filter((review) => {
-        //   return review.replied == true
-        // })
-
-        // this.loading_submissions = false
-
-        // this.selected = null
-
-        // if (this.searchingByTitle === true)
-        // {
-        //   this.items = this.titleOptionsLoad(this.submissions)
-        // }
-        // else
-        // {
-        //   this.items = this.artistOptionsLoad(this.submissions)
-        // }
-        // this.saved_submissions = this.submissions
-
-        // this.page = 1
-        // this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
