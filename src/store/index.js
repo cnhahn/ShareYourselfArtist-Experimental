@@ -3082,11 +3082,11 @@ export const store = new Vuex.Store({
         let businessData = {}
 
         businessData[0] = payload.email
+        // businessData[1] = payload.publication
         businessData[1] = payload.business_name
         businessData[2] = payload.additional_notes
         businessData[3] = payload.about
-        businessData[4] = payload.url
-        businessData[5] = response.user.uid
+        businessData[4] = response.user.uid
   
         let businessDataJSON = JSON.stringify(businessData) 
         let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
