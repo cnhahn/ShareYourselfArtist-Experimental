@@ -2118,6 +2118,14 @@ export const store = new Vuex.Store({
         commit('clear_submissions_for_this_business_array')
         const db = firebase.firestore()
         console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
+        let check_user_null = false;
+        if(getters.user != undefined){
+          localStorage.setItem("fetch_all_submissions_userId" , getters.user.id);
+          localStorage.setItem("fetch_all_submissions_business_id", getters.get_business_info.userId)
+        }else{
+          check_user_null = true;
+        }
+
         console.log('payload is ' , payload)
   
         // start cloud
@@ -2125,9 +2133,18 @@ export const store = new Vuex.Store({
           //We want to access the business info state and extract the id.
           let business_id;
           if(payload){
-             business_id  = getters.get_business_info.userId;
+            if(check_user_null == false){
+              business_id  = getters.get_business_info.userId;
+            } else{
+              business_id = localStorage.getItem("fetch_all_submissions_business_id")
+            } 
           }else{
-            business_id  = getters.user.id
+            if(check_user_null == false){
+              business_id  = getters.user.id
+            } else{
+              business_id = localStorage.getItem("fetch_all_submissions_userId")
+            } 
+
           }
       
           console.log("The business id is " , business_id)
