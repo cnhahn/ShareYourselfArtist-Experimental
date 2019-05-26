@@ -6,10 +6,16 @@ You can reach me @ kagawong@ucsc.edu
 Update Winter 2019:
 contact Kavan Samra, kssamra@ucsc.edu for questions
 ~ Kavan Samra, Undergrad C.S UCSC Winter-Spring 2019
+
+
+PRO TIP: If you would like to know where in the codebase these functions are triggered, 
+you can searall urls
 */
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 'use strict';
+
+
 
 //used for 48 hour refund
 const secureCompare = require('secure-compare');
