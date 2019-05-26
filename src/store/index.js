@@ -1875,8 +1875,16 @@ export const store = new Vuex.Store({
     get_admin_info({ commit,getters,dispatch }, payload)
     {
       const db = firebase.firestore()
+      let business_id = getters.get_group_business_id
       console.log("in get - admin - info and business email is " , getters.get_group_business_id) 
-      const business_info = db.collection('users').where('email', '==' , getters.get_group_business_id)
+
+      if(getters.get_group_business_id == ''){
+          business_id = localStorage.getItem('business_email')
+      }else{
+        localStorage.setItem('business_email', getters.get_group_business_id)
+      }
+
+      const business_info = db.collection('users').where('email', '==' , business_id)
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
