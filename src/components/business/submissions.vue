@@ -248,9 +248,11 @@
       }
     },
     beforeMount() {
+
     },
     mounted(){
       this.initialImageLoad()
+      // this.fetch_submissions()
     },
     methods:{
         compare_uniqueId_reservedId(uID){
