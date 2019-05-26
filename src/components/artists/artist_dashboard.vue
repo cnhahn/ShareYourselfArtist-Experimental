@@ -213,9 +213,14 @@
                               <!-- <v-container grid-list-sm text-xs-center> -->
                                 <!-- <v-layout row wrap> -->
                                   <v-flex xs8>
-                                    <div class="subheading" > Submissions Received: {{business.total_submissions}} </div>
-                                    <div class="subheading" > Submissions Replied: {{business.replied_submissions}} </div>
-                                    <div class="subheading" > Rate of response: {{Math.round(business.replied_submissions*100.0/business.total_submissions)}} % </div>
+                                    <div v-if = "business.total_submissions == undefined ||business.replied_submissions == undefined">
+                                      <div class="subheading" > Statistics for {{business.business_name}} is not yet available! </div>
+                                    </div>
+                                    <div v-else>
+                                      <div class="subheading" > Submissions Received: {{business.total_submissions}} </div>
+                                      <div class="subheading" > Submissions Replied: {{business.replied_submissions}} </div>
+                                      <div class="subheading" > Rate of response: {{Math.round(business.replied_submissions*100.0/business.total_submissions)}} % </div>
+                                    </div>  
                                   </v-flex>
                                   <v-flex xs4>
                                     <v-btn
