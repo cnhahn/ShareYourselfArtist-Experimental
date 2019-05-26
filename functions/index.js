@@ -694,23 +694,24 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
   }
   
   const saltRounds = 10;
-  // let name = request.body[0] // refers to users actual name
-  // let email = request.body[1] // refers to email
-  // let business = request.body[2]  // refers to business name
-  // let admin = request.body[3]  // refer to userID of admin
-  // let password = request.body[4] //refers to the password the admin supplied when attempting to create account
-
-  let name = "someName"
-  let email = 'hello@gmail.com'
-  let business = 'Google'
-  let administrator = name
-  let password = '123456'
-
+  
+  let email = request.body[0] // refers to email
+  let business = request.body[1]  // refers to business name
+  let additional_notes = request.body[2]
+  let about = request.body[3]
+  let id = request.body[4]
+  console.log('userID is ', id)
+  // let name = "someName"
+  // let email = 'hello@gmail.com'
+  // let business = 'Google'
+  // let password = '123456'
+  // let url = ''
   let code = makeid(8)
+
   const db = admin.firestore()
   const auth = admin.auth()
   
-  let userID
+  let userID = id
   // bcrypt.hash(password, saltRounds, function(err, hash){
     
   // })
@@ -720,18 +721,14 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
     return new Promise(async (resolve, reject) => {
       try {
         // Might not need to worry about creating the user if Yas does this already 
-        let user = await auth.createUser({
-          email: email,
-          displayName: name,
-          password: password
-        })
-        userID = user.uid
+        
         console.log("User added to user pool")
         console.log("Now adding custom claims...")
         // setting custom claims must be done whether or not Yas initially creates the account
-        await auth.setCustomUserClaims(user.uid,{admin: true})
+        console.log('userID in addToUserPool() is',  userID)
+        await auth.setCustomUserClaims(userID,{admin: true})
         console.log('Claims added!')
-        let finishedUser = await auth.getUser(user.uid)
+        let finishedUser = await auth.getUser(userID)
         console.log("Finished adding userdata to userpool")
         resolve(finishedUser);
       } catch (error) {
@@ -744,11 +741,21 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
   function addToGroupDB(userData){
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('USERDATA: ',userData)
+        console.log('userID in addToGroupDB: ', userID)
+        console.log('email: ', userData.email)
+        console.log('business_name: ', business)
+        console.log('about: ', about)
+        console.log('additional_notes: ', additional_notes)
+        console.log('accessCode: ', code)
+
+  
         let user = await db.collection('business_groups').doc(userID).set({
           email: userData.email,
-          business: business,
-          admin: name,
+          business_name: business,
+          about: about,
           members: {},
+          additional_notes: additional_notes,
           accessCode: code
         })
         console.log("User added to database!")
@@ -760,23 +767,6 @@ exports.createNewBusiness = functions.https.onRequest((request, response) => {
       }
     })
   }
-  // function addToUserDB(){
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       let user = await db.collection('user').doc(userID).set({
-  //         name: name,
-  //         email: userData.email,
-  //         members: {},
-  //         accessCode: code
-  //       })
-  //       console.log("User added to database!")
-  //       console.log(user)
-  //       resolve(user);
-  //     } catch (error) {
-        
-  //     }
-  //   })
-  // }
 
   async function makeUser(){
     try {
