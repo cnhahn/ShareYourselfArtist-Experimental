@@ -1844,7 +1844,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user subscription: ', error)
         })
     },
-    get_user_credit({ commit }, payload) {
+    get_user_credit({ dispatch, commit }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1853,8 +1853,12 @@ export const store = new Vuex.Store({
         .then(function (doc) {
           if (doc.exists) {
             console.log('Credits:', doc.data().credits)
-            commit('set_credits', doc.data().credits)
-            commit('set_free_credits', doc.data().free_credits)
+            if(doc.data().credits == undefined){
+              dispatch('signUserOut')
+            }else{
+              commit('set_credits', doc.data().credits)
+              commit('set_free_credits', doc.data().free_credits)
+            }
           } else {
             console.log('No such document!')
             router.push({
@@ -3332,6 +3336,7 @@ export const store = new Vuex.Store({
     Sign user out. Set every parameter to null
     */
     signUserOut({ commit }) {
+      console.log("in sign user out index")
       commit('clearError')
       localStorage.setItem('userId', null)
       firebase
