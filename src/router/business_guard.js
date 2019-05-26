@@ -15,6 +15,7 @@ export default (to, from, next) =>
     {
         next('sign_in')
     }
+    // for both business and business_member
     else if ((key === 'business' || key === 'business_member') && loginKey >= 0) {
         next()
     }
