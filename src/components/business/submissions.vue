@@ -243,7 +243,8 @@
         reserved: [],
 
         inAvailableTab: false,
-        inReservedTab: false
+        inReservedTab: false,
+        reserving_or_responding: false
       }
     },
     beforeMount() {
@@ -273,6 +274,7 @@
 
             if (this.reserved.length > 0)
             {
+              this.reserving_or_responding = true
               console.log('fetching submissions again')
               this.fetch_submissions()
             }
@@ -582,6 +584,25 @@
         }
         this.loading_submissions = false
 
+        /*display the page the user was originally on,
+        and reset to page 1 if page exceeds actual number of pages.*/
+        console.log('reserving or responding is ', this.reserving_or_responding)
+        if (this.reserving_or_responding === true)
+        {
+          console.log('going to users current page')
+          if (this.page <= Math.ceil(this.submissions.length / 4))
+          {
+            console.log('curr page ', this.page)
+            this.populateSubmissions(this.page, this.submissions)
+          }
+          else
+          {
+            console.log('invalid page')
+            this.page = 1
+            this.populateSubmissions(this.page, this.submissions)
+          }
+        }
+
         // reset selected item to null every time a new tab is selected
         this.selected = null
 
@@ -595,23 +616,31 @@
         }
         this.saved_submissions = this.submissions
 
-        // reset the page to 1 every time a new tab is selected
-        this.page = 1
+        if (this.reserving_or_responding === false)
+        {
+          // reset the page to 1 every time a new tab is selected
+          this.page = 1
 
-        // let i = 0 ; 
-        // let reservedIndex = 0;
-        // for(i = 0 ; this.submissions.length; i++){
-        //   console.log("right here in for loop");
-        //   if(this.submissions[i].reserved_by != undefined){
-        //     }
-        //     if(this.submissions[i].reserved_by.length != 0){
-        //       console.log("if statement is true");
-        //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
-        //       reservedIndex++;
-        //     }
+          // let i = 0 ; 
+          // let reservedIndex = 0;
+          // for(i = 0 ; this.submissions.length; i++){
+          //   console.log("right here in for loop");
+          //   if(this.submissions[i].reserved_by != undefined){
+          //     }
+          //     if(this.submissions[i].reserved_by.length != 0){
+          //       console.log("if statement is true");
+          //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
+          //       reservedIndex++;
+          //     }
 
-        // }
-        this.populateSubmissions(this.page, this.submissions)
+          // }
+          this.populateSubmissions(this.page, this.submissions)
+        }
+
+        this.reserving_or_responding = false
+
+        console.log('resetting reserved array')
+        this.reserved = []
 
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
@@ -633,7 +662,25 @@
               this.sortByDate(this.submissions)
               this.checkSortByDate(this.submissions)
 
-              this.loading_submissions = false
+              this.loading_submissions =  false
+
+              /*display the page the user was originally on,
+              and reset to page 1 if page exceeds actual number of pages.*/
+              if (this.reserving_or_responding === true)
+              {
+                console.log('going to users current page')
+                if (this.page <= Math.ceil(this.submissions.length / 4))
+                {
+                  console.log('curr page ', this.page)
+                  this.populateSubmissions(this.page, this.submissions)
+                }
+                else
+                {
+                  console.log('invalid page')
+                  this.page = 1
+                  this.populateSubmissions(this.page, this.submissions)
+                }
+              }
 
         this.selected = null
 
@@ -647,8 +694,13 @@
         }
         this.saved_submissions = this.submissions
 
+            if (this.reserving_or_responding === false)
+            {
               this.page = 1
               this.populateSubmissions(this.page, this.submissions)
+            }
+
+            this.reserving_or_responding = false
 
           }, error => {
             console.error("Reached error in mounted function " , error)
@@ -757,11 +809,13 @@
         .then(response => {
             if (this.inAvailableTab === true)
             {
+              this.reserving_or_responding = true
               console.log('reloading available submissions')
               this.fetch_submissions()
             }
             else if (this.inReservedTab === true)
             {
+              this.reserving_or_responding = true
               console.log('reloading reserved submissions')
               this.submissions_unreplied_submissions()
             }
