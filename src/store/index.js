@@ -1844,7 +1844,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user subscription: ', error)
         })
     },
-    get_user_credit({ dispatch, commit }, payload) {
+    get_user_credit({ dispatch, commit, getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1853,7 +1853,7 @@ export const store = new Vuex.Store({
         .then(function (doc) {
           if (doc.exists) {
             console.log('Credits:', doc.data().credits)
-            if(doc.data().credits == undefined){
+            if(doc.data().credits == undefined && getters.user_role == 'artist'){
               dispatch('signUserOut')
             }else{
               commit('set_credits', doc.data().credits)
