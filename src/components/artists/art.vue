@@ -64,6 +64,7 @@
 
           <div mb-5 class="small-container-btn">
             <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">
+              <!--<v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.upload_date, categories)">-->
               Add Categories
             </v-btn>
             <v-btn depressed small dark color="black" @click="back">
@@ -95,6 +96,7 @@
         art_title: '',
         art_url: '',
         art_description: '',
+        upload_date: localStorage.getItem('upload_date'),
           //this.$store.getters.categories.filter(function(category){
         //   return category != false
         // }),

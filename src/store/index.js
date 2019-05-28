@@ -260,7 +260,7 @@ export const store = new Vuex.Store({
       state.top_ten_rec_businesses = payload
     },
     set_viewed_art_image_info(state, payload) {
-      state.viewed_art_image_info = [],
+      //state.viewed_art_image_info = [],
       state.viewed_art_image_info = payload
     },
     // Sign user out by setting user element to null
