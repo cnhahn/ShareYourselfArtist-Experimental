@@ -1996,11 +1996,22 @@ export const store = new Vuex.Store({
         })
     },
     async fetchUserDocument({ commit, getters }) {
-      console.log('getters.user.id' + getters.user.id)
+      let user_id
+      if (getters.user != undefined)
+      {
+        console.log(' in fetchUserDocument, getters.user.id is ', getters.user.id)
+        user_id = getters.user.id
+        //localStorage.setItem("fetch_all_submissions_userId" , getters.user.id)
+      }
+      else
+      {
+        console.log('getters.user is undefined in fetchUserDocument')
+        user_id = localStorage.getItem("fetch_all_submissions_userId")
+      }
       let db = firebase.firestore()
       let user = await db
         .collection('users')
-        .where('userId', '==', getters.user.id)
+        .where('userId', '==', user_id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
@@ -2119,35 +2130,43 @@ export const store = new Vuex.Store({
         const db = firebase.firestore()
         console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
         let check_user_null = false;
-        if(getters.user != undefined){
+        if(getters.user != undefined && getters.get_business_info.userId != undefined){
+          console.log('getting id normally')
+          console.log('in submissions user id is ', getters.user.id)
+          console.log('in submissions business info id is ', getters.get_business_info.userId)
           localStorage.setItem("fetch_all_submissions_userId" , getters.user.id);
           localStorage.setItem("fetch_all_submissions_business_id", getters.get_business_info.userId)
         }else{
+          console.log('getting id from localstorage')
           check_user_null = true;
         }
 
-        console.log('payload is ' , payload)
+        console.log('payload in fetch_all_Submissions is ' , payload)
   
         // start cloud
           let reviewRequests = {}
           //We want to access the business info state and extract the id.
           let business_id;
           if(payload){
-            if(check_user_null == false){
+            if(check_user_null === false){
+              console.log('admin id is ', getters.get_business_info.userId)
               business_id  = getters.get_business_info.userId;
             } else{
+              console.log('getting admin from localstorage ', localStorage.getItem("fetch_all_submissions_business_id"))
               business_id = localStorage.getItem("fetch_all_submissions_business_id")
             } 
           }else{
-            if(check_user_null == false){
+            if(check_user_null === false){
+              console.log('user id is ', getters.user.id)
               business_id  = getters.user.id
             } else{
+              console.log('getting user id from localstorage ', localStorage.getItem("fetch_all_submissions_userId"))
               business_id = localStorage.getItem("fetch_all_submissions_userId")
             } 
 
           }
       
-          console.log("The business id is " , business_id)
+          console.log("Before getAllBusinessReviewRequests,the business id is " , business_id)
           reviewRequests[0] = business_id;
     
           let reviewRequestsJSON = JSON.stringify(reviewRequests) 

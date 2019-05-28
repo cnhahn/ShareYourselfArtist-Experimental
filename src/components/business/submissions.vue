@@ -251,8 +251,8 @@
 
     },
     mounted(){
-      this.initialImageLoad()
-      // this.fetch_submissions()
+      // this.initialImageLoad()
+      this.fetch_submissions()
     },
     methods:{
         compare_uniqueId_reservedId(uID){
@@ -509,7 +509,6 @@
               else
               {
                 this.items = this.artistOptionsLoad(this.submissions)
-                console.log('artists')
               }
               // save the whole list of submissions because we want to search using this list
               this.saved_submissions = this.submissions
