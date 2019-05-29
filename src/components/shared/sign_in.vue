@@ -337,6 +337,9 @@
     },
     computed: {
       user() {
+        if(this.$store.getters.user != undefined){
+          console.log("some bullshit")
+        }
         return this.$store.getters.user
       },
       error() {
