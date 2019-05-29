@@ -419,7 +419,7 @@
         localStorage.setItem('clicked_art', art_unique_timestamp)
         const arts= this.$store.state.arts
         var art = {}
-        console.log('art_unique_timestamp', art_unique_timestamp)
+        console.log('clicked art art_unique_timestamp', art_unique_timestamp)
         for (var i=0; i < arts.length; i++) {
           if (arts[i].upload_date === art_unique_timestamp) {
            console.log('art in loop',arts[i])
@@ -430,6 +430,7 @@
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
            localStorage.setItem('upload_date', arts[i].upload_date)
+           console.log('upload date set in artist_dashboard is ', arts[i].upload_date)
            this.$store.commit('set_viewed_art_image_info' , arts[i] )
            this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))

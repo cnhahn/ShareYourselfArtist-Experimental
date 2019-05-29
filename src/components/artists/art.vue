@@ -63,8 +63,8 @@
           </v-container>
 
           <div mb-5 class="small-container-btn">
-            <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">
-              <!--<v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.upload_date, categories)">-->
+            <!--<v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">-->
+              <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.upload_date, categories)">
               Add Categories
             </v-btn>
             <v-btn depressed small dark color="black" @click="back">
@@ -108,6 +108,9 @@
 
     mounted: function() {
       console.log("Entered mounted")
+      console.log('getting upload date from localstorage')
+      this.upload_date = localStorage.getItem('upload_date')
+      console.log('upload date in data is ', this.upload_date)
       if (this.$store.getters.categories == undefined){
             this.categories = []
       }else{
@@ -127,6 +130,8 @@
     watch: {
       art_title: function(val) {
         console.log("watching art title change", val);
+        // console.log('watched art is ', this.$store.state.viewed_art_image_info.art)
+        // console.log('watched art upload date is ', this.$store.state.viewed_art_image_info.art.upload_date)
         // this.reviewList__unread_reviews()
       }
     },
@@ -414,6 +419,10 @@
 
 // function to update tags to firestore
       updateTags(upload_date, categories){
+        console.log('in update tags')
+        console.log('art is ', this.$store.state.viewed_art_image_info.art)
+        console.log('art upload date is ', this.$store.state.viewed_art_image_info.art.upload_date)
+        console.log('upload date in updateTags is ', upload_date)
         this.$store.commit('set_categories', categories)
         //this.$store.commit('mutationName', payload)
         this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
