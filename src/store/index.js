@@ -2607,8 +2607,11 @@ export const store = new Vuex.Store({
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
       let businessId =  this.getters.user.id
+      
       let requestedArtist =  payload.art.art.artist_id
-
+      let responder = firebase.auth().currentUser
+      let responderID = getters.user.id
+      let responderName = responder.displayName
       
       let statistics = {}
       statistics[0] = artCategories
@@ -2636,9 +2639,6 @@ export const store = new Vuex.Store({
       })
 
 
-
-
-
       //console.log('got to previous version')
       const db = firebase.firestore()
       console.log("Right before collectionRef line 2581");
@@ -2648,12 +2648,14 @@ export const store = new Vuex.Store({
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-        .update({
+        .set({
           replied: true,
           read_byartist: false,
           submission_response: getters.submission_response,
-          replied_date: Date.now()
-        })
+          replied_date: Date.now(),
+          replied_by_id: responderID,
+          replied_by_name: responderName
+        }, {merge: true})
         .then(function () {
           console.log("doc Id is : ", getters.art_being_replied.docId  );
           console.log("adminId is : ", getters.get_business_info.userId);
