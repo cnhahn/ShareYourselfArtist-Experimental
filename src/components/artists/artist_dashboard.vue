@@ -52,7 +52,7 @@
 
               <v-flex xs3> </v-flex>
 
-              <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in arts" :key='art.id'>
+              <v-flex  xs6 v-if="def.length == 0"  v-for="art,index in section" :key='art.id'>
                 <v-card  dark mt-3>
                   <v-card-media class="white" img :src="art.url" height="450px">
                   </v-card-media>
@@ -176,19 +176,6 @@
           </v-container>
         </v-tab-item>
 
-      <v-tab @click="recommendedArts()"> Recommended Businesses </v-tab>
-        <v-tab-item>
-            <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
-            <v-container>
-              <div class="text-xs-center mb-5">
-                <v-pagination
-                  v-model="page"
-                  :length="Math.ceil(arts.length / 4)"
-                ></v-pagination>
-              </div>
-            </v-container>
-          </v-tab-item>
-
         <v-tab @click="recommendedArts()"> Recommended Businesses </v-tab>
           <v-tab-item>
               <!-- <div class=" display-2 mt-5 italic"  > Based on your top category : {{this.users_top_category}} </div> -->
@@ -266,7 +253,7 @@
         <v-tab > Responded Art Pieces </v-tab>
           <v-tab-item>
             <v-layout pa-4 row wrap justify-center>
-              <v-flex xs6 v-for="art in recently_responded_arts">
+              <v-flex xs6 v-for="art in recentlyRespondedSection">
                 <v-card :key='art' dark height="100%">
                   <v-card-media  img :src="art.url" height="450px"></v-card-media>
                 
@@ -285,6 +272,16 @@
                 </v-card>
               </v-flex>
             </v-layout>
+
+            <v-container>
+            <div v-if="recently_responded_arts.length != 0" class="text-xs-center mb-5">
+              <v-pagination
+                v-model="respondedPage"
+                :length="Math.ceil(recently_responded_arts.length / 4)"
+              ></v-pagination>
+            </div>
+          </v-container>
+
           </v-tab-item>
       </v-tabs>
 
@@ -322,9 +319,12 @@
         items: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         value: ['drawing', 'painting', 'sculpting', 'design', '3D', 'multimedia', 'black&white', 'psychedelic', 'portrait', 'realism', 'abstract'],
         page: 1,
+        respondedPage: 1,
         section: [],
         saved_artwork: [],
-        defSection: []
+        defSection: [],
+        recentlyRespondedSection: [],
+        recentlyRespondedArray: []
       }
     },
     mounted(){
@@ -343,19 +343,16 @@
       },
       recently_responded_arts(){
         this.page = 1
+        this.respondedPage = 1
         let recently_responded_arts = this.$store.getters.get_recently_responded_arts;
-        console.log("IN HERE FKING NOW ");
-        // this.$store.dispatch('signUserOut')
-        // this.$store.commit('set_user_to_null')
-        //   this.$router.push({
-        //     name:'sign_in'
-        //   })
+        this.recentlyRespondedArray = recently_responded_arts
         return recently_responded_arts
       },
       arts() {
         let arts = this.$store.getters.allArts;
         this.populateSubmissions(this.page, arts)
         this.section_def(this.page, this.def)
+        this.populateRecentlyResponded(this.respondedPage, this.recentlyRespondedArray)
 
         this.saved_artwork = arts
 
@@ -389,7 +386,7 @@
     methods: {
       // populate art array depending on the current page selected
       populateSubmissions(page, submissions)
-      {
+      {        
         if(submissions.length !== undefined && submissions.length !== 0)
         {
           let section = []
@@ -400,7 +397,6 @@
           }
 
           this.section = section
-          console.log('section arr:', this.section)
         }
       },
       section_def(page, def)
@@ -415,6 +411,20 @@
           }
 
           this.defSection = section
+        }
+      },
+      populateRecentlyResponded(page, recentlyRespondedSection)
+      {
+        if(recentlyRespondedSection.length !== undefined && recentlyRespondedSection.length !== 0)
+        {
+          let section = []
+          let startIndex = (page-1) * 4
+          for(let i = startIndex; i < (startIndex + 4) && recentlyRespondedSection[i] !== undefined; i++)
+          {
+            section.push(recentlyRespondedSection[i])
+          }
+
+          this.recentlyRespondedSection = section
         }
       },
       go_to_viewed_artist_page(index){
@@ -434,6 +444,7 @@
       },
       recommendedArts(){
         this.page = 1
+        this.respondedPage = 1
         this.$store.dispatch('retrieve_recommended_arts')
       },
       clicked_art(art_unique_timestamp) {
@@ -595,7 +606,10 @@
       page: function (val) {
         let arts = this.$store.getters.allArts;
         this.populateSubmissions(val, arts)
-        this.section_def(val,this.def)
+        this.section_def(val, this.def)
+      },
+      respondedPage: function(val) {
+        this.populateRecentlyResponded(val, this.recentlyRespondedArray)
       }
     },
 }
