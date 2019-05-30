@@ -1,3 +1,4 @@
+
 <template>
 
   <v-app>
@@ -274,31 +275,34 @@
 
     <main>
       <v-layout row>
-      <v-flex v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs9>
+      <v-flex v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs10>
         <router-view ></router-view>
       </v-flex>
+      
       <v-flex v-else xs12>
         <router-view ></router-view>
       </v-flex>
-       <v-flex hidden-md-and-down v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs3>
+      
+       <v-flex hidden-md-and-down v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs1>
   <!-- recently submitted -->
+  
         <v-card  flat v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'">
-          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 130px;">Recently Submitted Artists</p>
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
               <v-layout  style="cursor: pointer">
                 <!-- Profile Picture Icon -->
-                <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
+                <v-flex xs1 @click="clicked_art(top_12_recent_art[index-1].art)" >
                   <v-avatar>
-                    <img style="position:absolute; left:130px;" :src="top_12_recent_art[index-1].art.url" >
+                    <img style="position:absolute; " :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
                 <!-- Title and Artist Name  -->
-               <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index-1)">
-                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
-                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
+               <v-flex xs12   @click="go_to_viewed_artist_page(index-1)">
+                  <p class="subheading mt-1" style=" margin-left: 40px;">{{top_12_recent_art[index-1].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px; margin-left: 40px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
                 </v-flex> 
               
             </v-layout>
@@ -329,7 +333,7 @@
             -->
 
               </v-card>
-
+      
 
 
 
@@ -425,6 +429,8 @@ computed:{
     top_12_recent_art(){
       return this.$store.getters.top_12_recent_art
     },
+    
+    
   // unread_reviews(){
   //   let Array= this.$store.state.replied_submissions
   //   let unread=0

@@ -48,9 +48,10 @@ import artistProfile from '@/components/artists/artist_profile'
 import business from "@/components/shared/business"
 import auth_guard from "./auth_guard"
 import business_guard from "./business_guard.js"
-import artist_guard from "./artist_guard.js"
 import not_dash_guard from "./not_dash_guard";
+import VueGoogleCharts from 'vue-google-charts'
 
+Vue.use(VueGoogleCharts)
 Vue.use(Router)
 
 export default new Router({
@@ -94,7 +95,7 @@ export default new Router({
       path: "/artist_dashboard",
       name: "artist_dashboard",
       component: artist_dashboard,
-      beforeEnter: artist_guard,
+      beforeEnter: auth_guard,
       meta: {
         requiresAuth: true
       }
@@ -134,6 +135,7 @@ export default new Router({
       path: "/sign_in",
       name: "sign_in",
       component: sign_in,
+      beforeEnter: not_dash_guard
     },
     {
       path: "/blogs",
@@ -234,7 +236,6 @@ export default new Router({
       path: "/group_business_dashboard",
       name: "group_business_dashboard",
       component: group_business_dashboard,
-      beforeEnter: not_dash_guard
     },   
     {
       path: "/upload_an_image",

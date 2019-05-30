@@ -17,6 +17,7 @@ import 'babel-polyfill'
 import VueAnalytics from 'vue-analytics'
 import VueTour from 'vue-tour'
 import VueAgile from 'vue-agile'
+import { GChart } from 'vue-google-charts'
 
 require('vue-tour/dist/vue-tour.css')
 
@@ -71,6 +72,7 @@ Vue.use(VueAgile)
 
 Vue.use(Vuetify, {
   components: {
+    GChart,
     FontAwesomeIcon,
     Vuetify,
     VAlert,
