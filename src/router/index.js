@@ -234,7 +234,7 @@ export default new Router({
       path: "/group_business_dashboard",
       name: "group_business_dashboard",
       component: group_business_dashboard,
-      beforeEnter: not_dash_guard
+      beforeEnter: business_guard
     },   
     {
       path: "/upload_an_image",
