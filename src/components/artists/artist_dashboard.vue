@@ -350,9 +350,6 @@
       },
       arts() {
         let arts = this.$store.getters.allArts;
-        this.populateSubmissions(this.page, arts)
-        this.section_def(this.page, this.def)
-        this.populateRecentlyResponded(this.respondedPage, this.recentlyRespondedArray)
 
         this.saved_artwork = arts
 
@@ -376,6 +373,22 @@
           }
         }
 
+        // do bubble sort to sort the upload dates from greatest to least
+        for (let x = 0; x < removed_deleted_art.length; x++){
+          for(let y = 0; y < removed_deleted_art.length - x - 1; y++){
+            if (compare(removed_deleted_art[y], removed_deleted_art[y+1]) == 1){
+              let temp = removed_deleted_art[y]
+              removed_deleted_art[y] = removed_deleted_art[y+1]
+              removed_deleted_art[y+1] = temp
+            }
+          }
+        }
+
+        console.log('removed deleted art sorted:', removed_deleted_art)
+        // this.populateSubmissions(this.page, arts)
+        this.populateSubmissions(this.page, removed_deleted_art)
+        this.section_def(this.page, this.def)
+        this.populateRecentlyResponded(this.respondedPage, this.recentlyRespondedArray)
 
         return removed_deleted_art;
       },

@@ -1,4 +1,3 @@
-<!--This is the main template that will contain both layouts for the image and the text-->
 <template>
   <!--This is the main container that will contain both the layouts for the image and the text-->
   <v-container fill-height>
