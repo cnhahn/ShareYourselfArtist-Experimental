@@ -1901,8 +1901,8 @@ export const store = new Vuex.Store({
       // First get the info of members in the business group.
       let members = null;
       console.log("in get business members")
-      console.log('admin id is ', getters.get_business_info.userId)
-      console.log('current user id is ', getters.user.id)
+      // console.log('admin id is ', getters.get_business_info.userId)
+      // console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
@@ -2607,8 +2607,11 @@ export const store = new Vuex.Store({
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
       let businessId =  this.getters.user.id
+      
       let requestedArtist =  payload.art.art.artist_id
-
+      let responder = firebase.auth().currentUser
+      let responderID = getters.user.id
+      let responderName = responder.displayName
       
       let statistics = {}
       statistics[0] = artCategories
@@ -2636,9 +2639,6 @@ export const store = new Vuex.Store({
       })
 
 
-
-
-
       //console.log('got to previous version')
       const db = firebase.firestore()
       console.log("Right before collectionRef line 2581");
@@ -2648,12 +2648,14 @@ export const store = new Vuex.Store({
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-        .update({
+        .set({
           replied: true,
           read_byartist: false,
           submission_response: getters.submission_response,
-          replied_date: Date.now()
-        })
+          replied_date: Date.now(),
+          replied_by_id: responderID,
+          replied_by_name: responderName
+        }, {merge: true})
         .then(function () {
           console.log("doc Id is : ", getters.art_being_replied.docId  );
           console.log("adminId is : ", getters.get_business_info.userId);
@@ -3107,6 +3109,8 @@ export const store = new Vuex.Store({
             }
           },
           function () {
+            console.log('hit this function here')
+
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured' + downloadURL)
@@ -3114,6 +3118,7 @@ export const store = new Vuex.Store({
               payload.userId = response.user.uid
               payload.file = ''
               const db = firebase.firestore()
+
               db.collection('users')
                 .doc(payload.userId)
                 .set(payload)
@@ -3133,6 +3138,37 @@ export const store = new Vuex.Store({
         )
         console.log('response: ', response.user.uid)
         console.log('payload: ', payload)
+
+        let businessData = {}
+
+        businessData[0] = payload.email
+        // businessData[1] = payload.publication
+        businessData[1] = payload.business_name
+        businessData[2] = payload.additional_notes
+        businessData[3] = payload.about
+        businessData[4] = response.user.uid
+  
+        let businessDataJSON = JSON.stringify(businessData) 
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/createNewBusiness'
+  
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: businessDataJSON
+        })
+        .then(function (response) {
+          console.log('response is ', response)
+          // return response.json()
+        })
+        .catch(function (error) {
+          console.error('Error getting cloud: ', error)
+          reject(error)
+        })
+
+
       } catch (e) {
         console.log('Error!', e)
       }
@@ -3140,7 +3176,7 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
-    signBusinessMemberUp({ commit } , payload){
+    signBusinessMemberUp({ commit,dispatch } , payload){
       
       //Grab the user name, email, password, and access code
       let name = payload.name;
@@ -3181,10 +3217,11 @@ export const store = new Vuex.Store({
                     'Content-type': 'application/json'
                   },
                   body: categoryJson
-                }).then(function (doc) {
-                  router.push({
-                    name: 'group_business_dashboard'
-                  })
+                  
+                }).then(function (results) {
+                  localStorage.setItem('role', 'business_member')
+                  let obj =  {email: payload.email, password: payload.password}
+                  dispatch('signUserIn',obj)
                 })          
               }
             }

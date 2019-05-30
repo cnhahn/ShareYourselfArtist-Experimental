@@ -794,6 +794,8 @@
 
       /* Saves the review entered by the business and makes accessible to the artist */
       submit_response(response, radios) {
+        
+
         let nameKey = this.nameKey
         let subs = this.submissions
         let new_subs = subs.filter((sub) => {

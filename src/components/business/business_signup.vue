@@ -257,6 +257,7 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
      website:'',
      follower_count:0,
      publication:'',
+     business_name:'',
       nameRules: [
         v => !!v || 'Name is required',
         v => (v && v.length <= 20) || 'Name must be less than 20 characters'
@@ -294,6 +295,7 @@ import { required, maxLength, email } from 'vuelidate/lib/validators'
               role:'business', 
               file:this.file,
               follower_count: this.follower_count,
+              business_name: this.business_name,
               file_name: this.file_name,
               about: this.about,  
               additional_notes: this.additional_notes, 

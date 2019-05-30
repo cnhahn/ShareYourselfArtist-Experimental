@@ -68,23 +68,6 @@
                                 Sign Up
                             </v-btn>
 
-                            <!-- Alert user if their access code matches / doesn't match -->
-                            <!-- <v-alert
-                            v-if="checkAccessCode"
-                            :value="true"
-                            type="success"
-                            >
-                                This is a success alert.
-                            </v-alert> -->
-
-                            <v-alert
-                            v-if="!checkAccessCode && checkAccessCode != null"
-                            :value="true"
-                            type="error"
-                            >
-                                This is a failure alert.
-                            </v-alert>
-
                         </v-flex>
 
                     </v-layout>
