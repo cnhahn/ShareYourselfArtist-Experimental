@@ -3107,6 +3107,8 @@ export const store = new Vuex.Store({
             }
           },
           function () {
+            console.log('hit this function here')
+
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured' + downloadURL)
@@ -3114,6 +3116,7 @@ export const store = new Vuex.Store({
               payload.userId = response.user.uid
               payload.file = ''
               const db = firebase.firestore()
+
               db.collection('users')
                 .doc(payload.userId)
                 .set(payload)
@@ -3133,6 +3136,37 @@ export const store = new Vuex.Store({
         )
         console.log('response: ', response.user.uid)
         console.log('payload: ', payload)
+
+        let businessData = {}
+
+        businessData[0] = payload.email
+        // businessData[1] = payload.publication
+        businessData[1] = payload.business_name
+        businessData[2] = payload.additional_notes
+        businessData[3] = payload.about
+        businessData[4] = response.user.uid
+  
+        let businessDataJSON = JSON.stringify(businessData) 
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/createNewBusiness'
+  
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: businessDataJSON
+        })
+        .then(function (response) {
+          console.log('response is ', response)
+          // return response.json()
+        })
+        .catch(function (error) {
+          console.error('Error getting cloud: ', error)
+          reject(error)
+        })
+
+
       } catch (e) {
         console.log('Error!', e)
       }
