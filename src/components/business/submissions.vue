@@ -221,7 +221,6 @@
         categories: [],
         master_submissions: [],
         submissions: [],
-        section: [],
         read_submissions: [],
         unread_submissions: [],
         sub_list: [],
@@ -241,23 +240,65 @@
         hint: 'Search by art title',
         searchingByTitle: true,
 
-        reserved: []
+        reserved: [],
+
+        inAvailableTab: false,
+        inReservedTab: false,
+        reserving_or_responding: false
       }
     },
     beforeMount() {
+
     },
     mounted(){
-      this.initialImageLoad()
+      // this.initialImageLoad()
+      this.fetch_submissions()
     },
     methods:{
+        compare_uniqueId_reservedId(uID){
+          let i = 0;
+          for(i = 0 ; i < this.reserved.length; i++){
+            let rID = this.reserved[i]
+            console.log("uid is : " , uID, " and rID is : ", rID);
+            console.log("uID == rID : " , uID === rID)
+            if(uID === rID){
+              return true;
+            }
+          }
+          return false;
+        },
         reserveSubmissions()
         {
           console.log('reserved submissions: ', this.reserved)
           // call Kevin's function
           this.$store.dispatch('reserve_selected_submissions', this.reserved)
+          .then(response => {
 
-          console.log('fetching submissions again')
-          this.fetch_submissions()
+            if (this.reserved.length > 0)
+            {
+              this.reserving_or_responding = true
+              console.log('fetching submissions again')
+              this.fetch_submissions()
+            }
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
+
+          // let current_section = this.section;
+          // let i = 0 ;
+          // let new_section = [];
+          // console.log("current section length is : " , current_section.length)
+          // console.log("the items in current section is : ", this.reserved)
+          // for (i = 0; i < current_section.length; i++) {
+          // // for (i = current_section.length -1 ; i  >= 0 ; i--){
+          //   let unique_art_id = current_section[i].review_request;
+          //   if(this.compare_uniqueId_reservedId(unique_art_id)){
+          //     this.submissions.splice(i,1);
+          //     continue;
+          //   }
+          //   new_section.push(current_section[i])
+          // }
+          // this.$store.commit('set_business_submission_section', new_section)
         },
         // getReservedReviews()
         // {
@@ -289,17 +330,16 @@
             {
               section.push(submissions[i])
             }
-
-            this.section = section
-            console.log('section arr:', this.section)
+            this.$store.commit('set_business_submission_section', section)
+  
           }else{
-            this.section = [];
+            this.$store.commit('set_business_submission_section', [])
           }
 
           if (submissions.length === 0)
           {
             console.log('empty submissions')
-            this.section = []
+            this.$store.commit('set_business_submission_section', [])
           }
 
         },
@@ -441,11 +481,7 @@
         },
         initialImageLoad() {
           this.loading_submissions = true
-          let business_member = false;
-          if(this.$store.getters.user_role == 'business_member'){
-            business_member = true;
-          }
-  
+          let business_member = true;
 
           this.$store.dispatch('fetch_all_Submissions', business_member).then(response => {
               this.submissions = this.$store.getters.submissions_for_this_business
@@ -473,7 +509,6 @@
               else
               {
                 this.items = this.artistOptionsLoad(this.submissions)
-                console.log('artists')
               }
               // save the whole list of submissions because we want to search using this list
               this.saved_submissions = this.submissions
@@ -483,7 +518,7 @@
               {
                 temp.push(this.submissions[i])
               }
-              this.section = temp
+              this.$store.commit('set_business_submission_section', temp)
               console.log('submissions arr len', this.submissions.length)
 
           }, error => {
@@ -502,7 +537,11 @@
       
       /* Retrieves all review requests from the server */
       fetch_submissions: function () {
-        this.section = [];
+
+        this.inAvailableTab = true
+        this.inReservedTab = false
+
+        this.$store.commit('set_business_submission_section', [])
         this.loading_submissions = true
 
         let business_member = false
@@ -523,6 +562,7 @@
 
           this.master_submissions = this.$store.getters.submissions_for_this_business
 
+          // filter submissions to display only unreplied, unreserved submissions
           this.submissions = this.submissions.filter((review) => {
             return review.replied != true && review.reserved_by === ''
           })
@@ -541,6 +581,25 @@
         }
         this.loading_submissions = false
 
+        /*display the page the user was originally on,
+        and reset to page 1 if page exceeds actual number of pages.*/
+        console.log('reserving or responding is ', this.reserving_or_responding)
+        if (this.reserving_or_responding === true)
+        {
+          console.log('going to users current page')
+          if (this.page <= Math.ceil(this.submissions.length / 4))
+          {
+            console.log('curr page ', this.page)
+            this.populateSubmissions(this.page, this.submissions)
+          }
+          else
+          {
+            console.log('invalid page')
+            this.page = 1
+            this.populateSubmissions(this.page, this.submissions)
+          }
+        }
+
         // reset selected item to null every time a new tab is selected
         this.selected = null
 
@@ -554,23 +613,31 @@
         }
         this.saved_submissions = this.submissions
 
-        // reset the page to 1 every time a new tab is selected
-        this.page = 1
+        if (this.reserving_or_responding === false)
+        {
+          // reset the page to 1 every time a new tab is selected
+          this.page = 1
 
-        // let i = 0 ; 
-        // let reservedIndex = 0;
-        // for(i = 0 ; this.submissions.length; i++){
-        //   console.log("right here in for loop");
-        //   if(this.submissions[i].reserved_by != undefined){
-        //     }
-        //     if(this.submissions[i].reserved_by.length != 0){
-        //       console.log("if statement is true");
-        //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
-        //       reservedIndex++;
-        //     }
+          // let i = 0 ; 
+          // let reservedIndex = 0;
+          // for(i = 0 ; this.submissions.length; i++){
+          //   console.log("right here in for loop");
+          //   if(this.submissions[i].reserved_by != undefined){
+          //     }
+          //     if(this.submissions[i].reserved_by.length != 0){
+          //       console.log("if statement is true");
+          //       this.filterReservedPictures[reservedIndex] = this.submissions[i];
+          //       reservedIndex++;
+          //     }
 
-        // }
-        this.populateSubmissions(this.page, this.submissions)
+          // }
+          this.populateSubmissions(this.page, this.submissions)
+        }
+
+        this.reserving_or_responding = false
+
+        console.log('resetting reserved array')
+        this.reserved = []
 
         }, error => {
           console.error('Got nothing from server. Prompt user to check internet connection and try again')
@@ -579,13 +646,38 @@
 
       /* Retrieves review requests that have not been responded to yet */
       submissions_unreplied_submissions: function () {
+
+        this.inAvailableTab = false
+        this.inReservedTab = true
+
         this.loading_submissions = true
         this.$store.dispatch('get_reserved_reviews', this.$store.getters.user.id).then(response => {
 
               console.log('reserved submissions in getters is ', this.$store.getters.reserved_submissions)
               this.submissions = this.$store.getters.reserved_submissions
 
-              this.loading_submissions = false
+              this.sortByDate(this.submissions)
+              this.checkSortByDate(this.submissions)
+
+              this.loading_submissions =  false
+
+              /*display the page the user was originally on,
+              and reset to page 1 if page exceeds actual number of pages.*/
+              if (this.reserving_or_responding === true)
+              {
+                console.log('going to users current page')
+                if (this.page <= Math.ceil(this.submissions.length / 4))
+                {
+                  console.log('curr page ', this.page)
+                  this.populateSubmissions(this.page, this.submissions)
+                }
+                else
+                {
+                  console.log('invalid page')
+                  this.page = 1
+                  this.populateSubmissions(this.page, this.submissions)
+                }
+              }
 
         this.selected = null
 
@@ -599,15 +691,21 @@
         }
         this.saved_submissions = this.submissions
 
+            if (this.reserving_or_responding === false)
+            {
               this.page = 1
               this.populateSubmissions(this.page, this.submissions)
+            }
+
+            this.reserving_or_responding = false
 
           }, error => {
             console.error("Reached error in mounted function " , error)
             this.loading_submissions = false
           })
         
-        /* previous version, unreplied submissions tab */
+        /* previous version, unreplied submissions tab 
+        Comment out above block and uncomment this to get all unreplied */
         // this.loading_submissions = true
 
         // this.submissions = this.master_submissions.filter((review) => {
@@ -633,54 +731,65 @@
 
       /* Retrieves review requests that have already been responded to */
       submissions_replied_submissions: function() {
-        /* uncomment to have cloud fun */
-        // this.loading_submissions = true
-        // this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
-
-        //     console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
-        //     this.submissions = this.$store.getters.responded_submissions
-
-        //     this.loading_submissions = false
-
-        //     if (this.searchingByTitle === true)
-        //     {
-        //       this.items = this.titleOptionsLoad(this.submissions)
-        //     }
-        //     else
-        //     {
-        //       this.items = this.artistOptionsLoad(this.submissions)
-        //     }
-        //     this.saved_submissions = this.submissions
-
-        //     this.page = 1
-        //     this.populateSubmissions(this.page, this.submissions)
-
-        // }, error => {
-        //   console.error("Reached error in mounted function " , error)
-        // })
-
+        
         this.loading_submissions = true
+        this.$store.dispatch('get_responded_review_requests', this.$store.getters.get_business_info.userId).then(response => {
 
-        this.submissions = this.master_submissions.filter((review) => {
-          return review.replied == true
+            console.log('responded requests in getters is ', this.$store.getters.responded_submissions)
+            this.submissions = this.$store.getters.responded_submissions
+
+            //console.log('submissions length is ', this.submissions.length)
+            this.sortByDate(this.submissions)
+            this.checkSortByDate(this.submissions)
+
+            this.loading_submissions = false
+
+            if (this.searchingByTitle === true)
+            {
+              this.items = this.titleOptionsLoad(this.submissions)
+            }
+            else
+            {
+              this.items = this.artistOptionsLoad(this.submissions)
+            }
+            this.saved_submissions = this.submissions
+
+            this.page = 1
+            this.populateSubmissions(this.page, this.submissions)
+
+            // if cloud fun fails, use the previous version
+            if (this.submissions.length === 0)
+            {
+              /* previous version, replied submissions tab */
+              console.log('using previous version to get all unreplied submissions')
+              this.loading_submissions = true
+
+              this.submissions = this.master_submissions.filter((review) => {
+                return review.replied == true
+              })
+
+              this.loading_submissions = false
+
+              this.selected = null
+
+              if (this.searchingByTitle === true)
+              {
+                this.items = this.titleOptionsLoad(this.submissions)
+              }
+              else
+              {
+                this.items = this.artistOptionsLoad(this.submissions)
+              }
+              this.saved_submissions = this.submissions
+
+              this.page = 1
+              this.populateSubmissions(this.page, this.submissions)
+            }
+
+        }, error => {
+          console.error("Reached error in mounted function " , error)
         })
 
-        this.loading_submissions = false
-
-        this.selected = null
-
-        if (this.searchingByTitle === true)
-        {
-          this.items = this.titleOptionsLoad(this.submissions)
-        }
-        else
-        {
-          this.items = this.artistOptionsLoad(this.submissions)
-        }
-        this.saved_submissions = this.submissions
-
-        this.page = 1
-        this.populateSubmissions(this.page, this.submissions)
       },
 
       /* Saves the review entered by the business and makes accessible to the artist */
@@ -694,7 +803,39 @@
         console.log('nameKey is ' , nameKey , ' submissions is ' , new_subs)
         this.$store.commit('set_response', {response: response, radios:  radios })
         this.$store.dispatch('submit_submission_response', {categories: this.categories, art: this.art_being_replied} )
+        .then(response => {
+            if (this.inAvailableTab === true)
+            {
+              this.reserving_or_responding = true
+              console.log('reloading available submissions')
+              this.fetch_submissions()
+            }
+            else if (this.inReservedTab === true)
+            {
+              this.reserving_or_responding = true
+              console.log('reloading reserved submissions')
+              this.submissions_unreplied_submissions()
+            }
+          }, error => {
+            console.error("Reached error in mounted function " , error)
+          })
         this.dialog = false
+
+        // let current_section = this.section
+        //   let i = 0
+        //   let new_section = []
+        //   console.log("current response section length is : " , current_section.length)
+        //   console.log("the item being responsed is : ", this.art_being_replied)
+        //   for (i = 0; i < current_section.length; i++) {
+        //     let unique_art_id = current_section[i].review_request
+        //     if(this.art_being_replied === unique_art_id){
+        //       console.log('responded art is in section')
+        //       this.submissions.splice(i,1);
+        //       continue;
+        //     }
+        //     new_section.push(current_section[i])
+        //   }
+        //   this.$store.commit('set_business_submission_section', new_section)
       },
       /* Retrieves the data for the selected artwork and allows a review to be made */
       clicked_art(art_unique_timestamp, art_unique_id) {
@@ -752,6 +893,10 @@
       }
     },
     computed:{
+      section(){
+        let section = this.$store.getters.business_submission_section
+        return section;
+      },
       format_timestamp(timestamp) {
         var date = new Date(timestamp);
         var month = date.getMonth();
@@ -790,7 +935,6 @@
           this.submissions = this.saved_submissions
 
           console.log('selected: ', val)
-          //this.page = this.findPage(val, this.submissions)
         
           // search for the selected title or artist
           if (this.searchingByTitle === true)
@@ -806,7 +950,11 @@
           this.page = 1
           this.populateSubmissions(this.page, this.submissions)
         }
-      }
+      },
+      // submissions(val)
+      // {
+      //   console.log('watched submissions: ', val)
+      // }
     },
 
       /* This component just got created, fetch some data here using an action */

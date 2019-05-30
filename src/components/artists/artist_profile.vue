@@ -338,7 +338,7 @@
   .infoContainer {
     padding: 5px;
   }
-
+/* 
   @-moz-keyframes loader {
     from {
       transform: rotate(0);
@@ -346,6 +346,6 @@
     to {
       transform: rotate(360deg);
     }
-  }
+  } */
 
 </style>
