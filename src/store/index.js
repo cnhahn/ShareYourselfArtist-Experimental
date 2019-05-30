@@ -1901,8 +1901,8 @@ export const store = new Vuex.Store({
       // First get the info of members in the business group.
       let members = null;
       console.log("in get business members")
-      console.log('admin id is ', getters.get_business_info.userId)
-      console.log('current user id is ', getters.user.id)
+      // console.log('admin id is ', getters.get_business_info.userId)
+      // console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
@@ -3174,7 +3174,7 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
-    signBusinessMemberUp({ commit } , payload){
+    signBusinessMemberUp({ commit,dispatch } , payload){
       
       //Grab the user name, email, password, and access code
       let name = payload.name;
@@ -3215,10 +3215,11 @@ export const store = new Vuex.Store({
                     'Content-type': 'application/json'
                   },
                   body: categoryJson
-                }).then(function (doc) {
-                  router.push({
-                    name: 'group_business_dashboard'
-                  })
+                  
+                }).then(function (results) {
+                  localStorage.setItem('role', 'business_member')
+                  let obj =  {email: payload.email, password: payload.password}
+                  dispatch('signUserIn',obj)
                 })          
               }
             }
