@@ -12,7 +12,7 @@
         this.$router.push({
           name: 'artist_profile'
         })
-      } else if (role === 'business') {
+      } else if (role === 'business' || role === 'business_member') {
         this.$router.push({
           // TODO: Should change this to business_profile after business_profile is found.
           name: 'business_profile'
