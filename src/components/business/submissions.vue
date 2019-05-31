@@ -251,8 +251,8 @@
 
     },
     mounted(){
-      // this.initialImageLoad()
-      this.fetch_submissions()
+      this.initialImageLoad()
+      // this.fetch_submissions()
     },
     methods:{
         compare_uniqueId_reservedId(uID){
@@ -514,7 +514,7 @@
               this.saved_submissions = this.submissions
 
               let temp = []
-              for(let i = 0; this.submissions[i] !== null && i < 4; i++)
+              for(let i = 0; this.submissions[i] !== null && this.submissions[i] !== undefined && i < 4; i++)
               {
                 temp.push(this.submissions[i])
               }
