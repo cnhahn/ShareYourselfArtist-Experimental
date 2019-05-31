@@ -2724,6 +2724,22 @@ export const store = new Vuex.Store({
         art_being_submitted.refunded = 0;
         art_being_submitted.reserved_by = ""
         art_being_submitted.businessAdmin = businesses_being_submitted[i].userId
+
+        console.log("submit request triggered")
+
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateBusinessesReceivedRequests'
+        let data = {}
+        data[0] = businesses_being_submitted[i].userId;
+        data[1] = getters.art_being_submitted.art.categories;
+        let categoryJson = JSON.stringify(data)
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: categoryJson
+        })        
         
         const db = firebase.firestore()
         const collectionRef = db
@@ -2755,6 +2771,20 @@ export const store = new Vuex.Store({
         art_being_submitted.businessAdmin = businesses_being_submitted[i].userId //new businessAdmin field
         console.log("The business admin ID for free credits is : " , art_being_submitted.businessAdmin );
         art_being_submitted.reserved_by = ""
+
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/updateBusinessesReceivedRequests'
+        let data = {}
+        data[0] = businesses_being_submitted[i].userId;
+        data[1] = getters.art_being_submitted.art.categories;
+        let categoryJson = JSON.stringify(data)
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: categoryJson
+        }) 
 
         const db = firebase.firestore()
         const collectionRef = db
