@@ -40,6 +40,9 @@
       <p class="body-1"><b>Publication: </b> {{ user_info.publication }}</p>
     </v-layout>
     <v-layout class="" row wrap>
+      <p class="body-1"><b>Access Code: </b> {{ access_code }}</p>
+    </v-layout>
+    <v-layout class="" row wrap>
       <p class="body-1"><b>About: </b> {{ user_info.about }}</p>
     </v-layout>
     <v-layout class="" row wrap>
@@ -65,15 +68,33 @@
         number_of_submissions: this.$store.state.submissions_for_this_business.length,
         show_facebook:false,
         show_instagram:false,
-        show_tumblr:false
+        show_tumblr:false,
+        code: ''
       }
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
     },
+    mounted: function()
+    {
+      // this.$store.dispatch('get_admin_info')
+      // .then(response => {
+      //   console.log("business info is " , this.$store.getters.get_business_info);
+      //   this.$store.dispatch('get_access_code')
+      // }, error => {
+      //   console.error("Reached error in mounted function " , error)
+      // })
+      this.$store.dispatch('get_access_code').then(response => {
+        console.log('access code is now ', this.$store.getters.business_access_code)
+      }, error => {
+        console.error("Reached error in mounted function " , error)
+      })
+    },
     computed: {
       user_info() {
         let myArray=this.$store.getters.signed_in_user
+        // console.log('signed in user is ', this.$store.getters.signed_in_user)
+        // console.log("business info is " , this.$store.getters.get_business_info);
         if(myArray.facebook_url != "")
           this.show_facebook=true
         if(myArray.instagram_url != "")
@@ -82,6 +103,10 @@
           this.show_tumblr=true
         
         return myArray 
+      },
+      access_code()
+      {
+        return this.$store.getters.access_code
       },
       loading() {
         return this.$store.getters.loading;
