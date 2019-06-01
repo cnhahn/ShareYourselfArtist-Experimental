@@ -84,13 +84,6 @@
     },
     mounted: function()
     {
-      // this.$store.dispatch('get_admin_info')
-      // .then(response => {
-      //   console.log("business info is " , this.$store.getters.get_business_info);
-      //   this.$store.dispatch('get_access_code')
-      // }, error => {
-      //   console.error("Reached error in mounted function " , error)
-      // })
       this.$store.dispatch('get_access_code').then(response => {
         this.code = this.$store.getters.business_access_code
         console.log('access code is now ', this.code)
@@ -102,13 +95,17 @@
       updateAccessCode()
       {
         console.log('update access code to ', this.code)
+        this.$store.dispatch('set_access_code', this.code).then(response => {
+          console.log('done setting access code')
+        }, error => {
+          console.error("Reached error in mounted function " , error)
+        })
       }
     },
     computed: {
       user_info() {
         let myArray=this.$store.getters.signed_in_user
         // console.log('signed in user is ', this.$store.getters.signed_in_user)
-        // console.log("business info is " , this.$store.getters.get_business_info);
         if(myArray.facebook_url != "")
           this.show_facebook=true
         if(myArray.instagram_url != "")

@@ -1937,8 +1937,6 @@ export const store = new Vuex.Store({
     // get admin's access code
     get_access_code({ commit, getters })
     {
-      // First get the info of members in the business group.
-      let members = null;
       console.log("in get access code")
       let user_id
       // console.log('admin id is ', getters.get_business_info.userId)
@@ -1993,6 +1991,40 @@ export const store = new Vuex.Store({
         })
         .catch(function (error) {
           console.log('Error getting access code document:', error)
+          reject(error)
+        })
+
+      })
+    },
+
+    // set admin's access code in Firebase
+    set_access_code({ commit, getters }, payload)
+    {
+      console.log("in set access code")
+      let user_id
+      if (getters.user != null)
+      {
+        localStorage.setItem('user_id', getters.user.id)
+        user_id = getters.user.id
+      }
+      else
+      {
+        user_id = localStorage.getItem('user_id')
+      }
+
+      return new Promise((resolve, reject) => {
+
+        const db = firebase.firestore()
+        const collectionRef = db
+        .collection('business_groups')
+        .doc(user_id)
+        .update({ accessCode: payload })
+        .then( response => {
+          console.log('set code to payload ', payload)
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log('Error setting access code document:', error)
           reject(error)
         })
 
