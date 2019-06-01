@@ -40,7 +40,14 @@
       <p class="body-1"><b>Publication: </b> {{ user_info.publication }}</p>
     </v-layout>
     <v-layout class="" row wrap>
-      <p class="body-1"><b>Access Code: </b> {{ code }}</p>
+      <!--<p class="body-1"><b>Access Code: </b> {{ code }}</p>-->
+      <v-flex xs12 sm6>
+            <v-text-field
+              v-model="code"
+              label="Access Code"
+              v-on:keyup.enter="updateAccessCode"
+            ></v-text-field>
+          </v-flex>
     </v-layout>
     <v-layout class="" row wrap>
       <p class="body-1"><b>About: </b> {{ user_info.about }}</p>
@@ -91,6 +98,12 @@
         console.error("Reached error in mounted function " , error)
       })
     },
+    methods: {
+      updateAccessCode()
+      {
+        console.log('update access code to ', this.code)
+      }
+    },
     computed: {
       user_info() {
         let myArray=this.$store.getters.signed_in_user
@@ -105,14 +118,10 @@
         
         return myArray 
       },
-      // access_code()
-      // {
-      //   return this.$store.getters.access_code
-      // },
       loading() {
         return this.$store.getters.loading;
       }
-    },
+    }
   }
 
 </script>
