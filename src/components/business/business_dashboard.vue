@@ -7,13 +7,8 @@
   <v-container class="container" v-else>
     <v-snackbar
       v-model="codeIsUpdated"
-      :bottom="y === 'bottom'"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :right="x === 'right'"
       :timeout="timeout"
       :top="y === 'top'"
-      :vertical="mode === 'vertical'"
     >
       {{ text }}
       <v-btn
@@ -98,8 +93,6 @@
         code: '',
         codeIsUpdated: false,
         y: 'top',
-        x: null,
-        mode: '',
         timeout: 6000,
         text: 'Your business\'s access code has been updated!'
       }
