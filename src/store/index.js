@@ -236,7 +236,7 @@ export const store = new Vuex.Store({
   },
   mutations: {
     set_business_access_code(state,payload){
-      console.log('access code payload is ', payload)
+      //console.log('access code payload is ', payload)
       state.business_access_code = payload
       // state.business_access_code_set = true
     },

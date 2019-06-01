@@ -5,6 +5,25 @@
     </div>
   </div>
   <v-container class="container" v-else>
+    <v-snackbar
+      v-model="codeIsUpdated"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="codeIsUpdated = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-layout row mt-5 justify-space-between>
       <img :src="`${user_info.url}`" height="200px" alt="">
       <v-spacer></v-spacer>
@@ -76,7 +95,13 @@
         show_facebook:false,
         show_instagram:false,
         show_tumblr:false,
-        code: ''
+        code: '',
+        codeIsUpdated: false,
+        y: 'top',
+        x: null,
+        mode: '',
+        timeout: 6000,
+        text: 'Your business\'s access code has been updated!'
       }
     },
     beforeCreate: async function () {
@@ -97,6 +122,7 @@
         console.log('update access code to ', this.code)
         this.$store.dispatch('set_access_code', this.code).then(response => {
           console.log('done setting access code')
+          this.codeIsUpdated = true
         }, error => {
           console.error("Reached error in mounted function " , error)
         })
