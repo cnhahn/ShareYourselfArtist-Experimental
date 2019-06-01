@@ -19,6 +19,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_info : {},
+    business_submission_section : [],
     business_info_set : false,
     business_members: [],
     group_business_id : '',
@@ -232,6 +233,11 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_business_submission_section(state, payload){
+      console.log("in set_business_submission_section")
+      console.log("the payload is : " , payload)
+      state.business_submission_section = payload;
+    },
     set_business_info(state,payload){
       state.business_info = payload;
       state.business_info_set = true;
@@ -629,6 +635,10 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    update_business_submission_section({commit, dispatch, state} , payload){
+      console.log("In update business submisssion section");
+
+    },
     retrieve_recently_responded_arts({ commit, dispatch, state }, payload) {
       state.recently_responded_arts = []
       let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
@@ -1834,7 +1844,7 @@ export const store = new Vuex.Store({
           console.error('Error updating updating user subscription: ', error)
         })
     },
-    get_user_credit({ commit }, payload) {
+    get_user_credit({ dispatch, commit, getters }, payload) {
       const db = firebase.firestore()
       const collectionRef = db
         .collection('users')
@@ -1843,8 +1853,12 @@ export const store = new Vuex.Store({
         .then(function (doc) {
           if (doc.exists) {
             console.log('Credits:', doc.data().credits)
-            commit('set_credits', doc.data().credits)
-            commit('set_free_credits', doc.data().free_credits)
+            if(doc.data().credits == undefined && getters.user_role == 'artist'){
+              dispatch('signUserOut')
+            }else{
+              commit('set_credits', doc.data().credits)
+              commit('set_free_credits', doc.data().free_credits)
+            }
           } else {
             console.log('No such document!')
             router.push({
@@ -1861,8 +1875,16 @@ export const store = new Vuex.Store({
     get_admin_info({ commit,getters,dispatch }, payload)
     {
       const db = firebase.firestore()
+      let business_id = getters.get_group_business_id
       console.log("in get - admin - info and business email is " , getters.get_group_business_id) 
-      const business_info = db.collection('users').where('email', '==' , getters.get_group_business_id)
+
+      if(getters.get_group_business_id == ''){
+          business_id = localStorage.getItem('business_email')
+      }else{
+        localStorage.setItem('business_email', getters.get_group_business_id)
+      }
+
+      const business_info = db.collection('users').where('email', '==' , business_id)
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
@@ -1879,8 +1901,8 @@ export const store = new Vuex.Store({
       // First get the info of members in the business group.
       let members = null;
       console.log("in get business members")
-      console.log('admin id is ', getters.get_business_info.userId)
-      console.log('current user id is ', getters.user.id)
+      // console.log('admin id is ', getters.get_business_info.userId)
+      // console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
@@ -1974,11 +1996,22 @@ export const store = new Vuex.Store({
         })
     },
     async fetchUserDocument({ commit, getters }) {
-      console.log('getters.user.id' + getters.user.id)
+      let user_id
+      if (getters.user != undefined)
+      {
+        console.log(' in fetchUserDocument, getters.user.id is ', getters.user.id)
+        user_id = getters.user.id
+        //localStorage.setItem("fetch_all_submissions_userId" , getters.user.id)
+      }
+      else
+      {
+        console.log('getters.user is undefined in fetchUserDocument')
+        user_id = localStorage.getItem("fetch_all_submissions_userId")
+      }
       let db = firebase.firestore()
       let user = await db
         .collection('users')
-        .where('userId', '==', getters.user.id)
+        .where('userId', '==', user_id)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
@@ -2096,19 +2129,44 @@ export const store = new Vuex.Store({
         commit('clear_submissions_for_this_business_array')
         const db = firebase.firestore()
         console.log("Do we get here? IF we do the  user id is :  ", (null == getters.user))
-        console.log('payload is ' , payload)
+        let check_user_null = false;
+        if(getters.user != undefined && getters.get_business_info.userId != undefined){
+          console.log('getting id normally')
+          console.log('in submissions user id is ', getters.user.id)
+          console.log('in submissions business info id is ', getters.get_business_info.userId)
+          localStorage.setItem("fetch_all_submissions_userId" , getters.user.id);
+          localStorage.setItem("fetch_all_submissions_business_id", getters.get_business_info.userId)
+        }else{
+          console.log('getting id from localstorage')
+          check_user_null = true;
+        }
+
+        console.log('payload in fetch_all_Submissions is ' , payload)
   
         // start cloud
           let reviewRequests = {}
           //We want to access the business info state and extract the id.
           let business_id;
           if(payload){
-             business_id  = getters.get_business_info.userId;
+            if(check_user_null === false){
+              console.log('admin id is ', getters.get_business_info.userId)
+              business_id  = getters.get_business_info.userId;
+            } else{
+              console.log('getting admin from localstorage ', localStorage.getItem("fetch_all_submissions_business_id"))
+              business_id = localStorage.getItem("fetch_all_submissions_business_id")
+            } 
           }else{
-            business_id  = getters.user.id
+            if(check_user_null === false){
+              console.log('user id is ', getters.user.id)
+              business_id  = getters.user.id
+            } else{
+              console.log('getting user id from localstorage ', localStorage.getItem("fetch_all_submissions_userId"))
+              business_id = localStorage.getItem("fetch_all_submissions_userId")
+            } 
+
           }
       
-          console.log("The business id is " , business_id)
+          console.log("Before getAllBusinessReviewRequests,the business id is " , business_id)
           reviewRequests[0] = business_id;
     
           let reviewRequestsJSON = JSON.stringify(reviewRequests) 
@@ -2549,8 +2607,11 @@ export const store = new Vuex.Store({
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
       let businessId =  this.getters.user.id
+      
       let requestedArtist =  payload.art.art.artist_id
-
+      let responder = firebase.auth().currentUser
+      let responderID = getters.user.id
+      let responderName = responder.displayName
       
       let statistics = {}
       statistics[0] = artCategories
@@ -2578,9 +2639,6 @@ export const store = new Vuex.Store({
       })
 
 
-
-
-
       //console.log('got to previous version')
       const db = firebase.firestore()
       console.log("Right before collectionRef line 2581");
@@ -2590,12 +2648,14 @@ export const store = new Vuex.Store({
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-        .update({
+        .set({
           replied: true,
           read_byartist: false,
           submission_response: getters.submission_response,
-          replied_date: Date.now()
-        })
+          replied_date: Date.now(),
+          replied_by_id: responderID,
+          replied_by_name: responderName
+        }, {merge: true})
         .then(function () {
           console.log("doc Id is : ", getters.art_being_replied.docId  );
           console.log("adminId is : ", getters.get_business_info.userId);
@@ -3049,6 +3109,8 @@ export const store = new Vuex.Store({
             }
           },
           function () {
+            console.log('hit this function here')
+
             // Upload completed successfully, now we can get the download URL
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('Url captured' + downloadURL)
@@ -3056,6 +3118,7 @@ export const store = new Vuex.Store({
               payload.userId = response.user.uid
               payload.file = ''
               const db = firebase.firestore()
+
               db.collection('users')
                 .doc(payload.userId)
                 .set(payload)
@@ -3075,6 +3138,37 @@ export const store = new Vuex.Store({
         )
         console.log('response: ', response.user.uid)
         console.log('payload: ', payload)
+
+        let businessData = {}
+
+        businessData[0] = payload.email
+        // businessData[1] = payload.publication
+        businessData[1] = payload.business_name
+        businessData[2] = payload.additional_notes
+        businessData[3] = payload.about
+        businessData[4] = response.user.uid
+  
+        let businessDataJSON = JSON.stringify(businessData) 
+        let proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let targetUrl = 'https://us-central1-sya-app.cloudfunctions.net/createNewBusiness'
+  
+        fetch(proxyUrl + targetUrl, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: businessDataJSON
+        })
+        .then(function (response) {
+          console.log('response is ', response)
+          // return response.json()
+        })
+        .catch(function (error) {
+          console.error('Error getting cloud: ', error)
+          reject(error)
+        })
+
+
       } catch (e) {
         console.log('Error!', e)
       }
@@ -3082,7 +3176,7 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
-    signBusinessMemberUp({ commit } , payload){
+    signBusinessMemberUp({ commit,dispatch } , payload){
       
       //Grab the user name, email, password, and access code
       let name = payload.name;
@@ -3123,10 +3217,11 @@ export const store = new Vuex.Store({
                     'Content-type': 'application/json'
                   },
                   body: categoryJson
-                }).then(function (doc) {
-                  router.push({
-                    name: 'group_business_dashboard'
-                  })
+                  
+                }).then(function (results) {
+                  localStorage.setItem('role', 'business_member')
+                  let obj =  {email: payload.email, password: payload.password}
+                  dispatch('signUserIn',obj)
                 })          
               }
             }
@@ -3352,6 +3447,7 @@ export const store = new Vuex.Store({
     Sign user out. Set every parameter to null
     */
     signUserOut({ commit }) {
+      console.log("in sign user out index")
       commit('clearError')
       localStorage.setItem('userId', null)
       firebase
@@ -3616,6 +3712,9 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    business_submission_section(state){
+      return state.business_submission_section;
+    },
     get_business_info(state){
       return state.business_info;
     },
