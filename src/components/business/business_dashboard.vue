@@ -40,7 +40,7 @@
       <p class="body-1"><b>Publication: </b> {{ user_info.publication }}</p>
     </v-layout>
     <v-layout class="" row wrap>
-      <p class="body-1"><b>Access Code: </b> {{ access_code }}</p>
+      <p class="body-1"><b>Access Code: </b> {{ code }}</p>
     </v-layout>
     <v-layout class="" row wrap>
       <p class="body-1"><b>About: </b> {{ user_info.about }}</p>
@@ -85,7 +85,8 @@
       //   console.error("Reached error in mounted function " , error)
       // })
       this.$store.dispatch('get_access_code').then(response => {
-        console.log('access code is now ', this.$store.getters.business_access_code)
+        this.code = this.$store.getters.business_access_code
+        console.log('access code is now ', this.code)
       }, error => {
         console.error("Reached error in mounted function " , error)
       })
@@ -104,10 +105,10 @@
         
         return myArray 
       },
-      access_code()
-      {
-        return this.$store.getters.access_code
-      },
+      // access_code()
+      // {
+      //   return this.$store.getters.access_code
+      // },
       loading() {
         return this.$store.getters.loading;
       }

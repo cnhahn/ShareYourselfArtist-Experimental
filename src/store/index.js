@@ -19,7 +19,7 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_access_code: '',
-    business_access_code_set: false,
+    // business_access_code_set: false,
     business_info : {},
     business_submission_section : [],
     business_info_set : false,
@@ -238,7 +238,7 @@ export const store = new Vuex.Store({
     set_business_access_code(state,payload){
       console.log('access code payload is ', payload)
       state.business_access_code = payload
-      state.business_access_code_set = true
+      // state.business_access_code_set = true
     },
     set_business_submission_section(state, payload){
       console.log("in set_business_submission_section")
@@ -1952,28 +1952,51 @@ export const store = new Vuex.Store({
         user_id = localStorage.getItem('user_id')
       }
       console.log('current user id is ', user_id)
-      const db = firebase.firestore()
-      const collectionRef = db
+
+      return new Promise((resolve, reject) => {
+
+        const db = firebase.firestore()
+        const collectionRef = db
         .collection('business_groups')
         // .doc(getters.get_business_info.userId)
         .doc(user_id)
         .get()
-        .then(function (doc) {
-          if (doc.exists) {
+        // .then(function (doc) {
+        //   if (doc.exists) {
+        //     //console.log("doc does exist it is : " , doc.data())
+        //     //console.log('user info id is ', this.getters.get_business_info.userId)
+            
+        //     let code = doc.data().accessCode
+        //     //commit('set_business_members' , members)
+        //     console.log("access code: " , code)
+        //     commit('set_business_access_code', code)
+        //   } else {
+        //     console.log('Doc does not exist')
+        //   }
+        // })
+        // .catch(function (error) {
+        //   console.log('Error getting access code document:', error)
+        // })
+        .then( response => {
+          if (response.exists) {
             //console.log("doc does exist it is : " , doc.data())
             //console.log('user info id is ', this.getters.get_business_info.userId)
             
-            let code = doc.data().accessCode
-            //commit('set_business_members' , members)
-            console.log("access code: " , code)
+            let code = response.data().accessCode
+            //console.log("access code: " , code)
             commit('set_business_access_code', code)
+            resolve(response)
           } else {
             console.log('Doc does not exist')
+            resolve(response)
           }
         })
         .catch(function (error) {
-          console.log('Error getting business members document:', error)
+          console.log('Error getting access code document:', error)
+          reject(error)
         })
+
+      })
     },
 
     reset_password({ commit }, payload) {
