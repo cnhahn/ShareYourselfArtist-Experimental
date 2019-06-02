@@ -350,9 +350,6 @@
       },
       arts() {
         let arts = this.$store.getters.allArts;
-        this.populateSubmissions(this.page, arts)
-        this.section_def(this.page, this.def)
-        this.populateRecentlyResponded(this.respondedPage, this.recentlyRespondedArray)
 
         this.saved_artwork = arts
 
@@ -376,6 +373,22 @@
           }
         }
 
+        // do bubble sort to sort the upload dates from greatest to least
+        for (let x = 0; x < removed_deleted_art.length; x++){
+          for(let y = 0; y < removed_deleted_art.length - x - 1; y++){
+            if (compare(removed_deleted_art[y], removed_deleted_art[y+1]) == 1){
+              let temp = removed_deleted_art[y]
+              removed_deleted_art[y] = removed_deleted_art[y+1]
+              removed_deleted_art[y+1] = temp
+            }
+          }
+        }
+
+        console.log('removed deleted art sorted:', removed_deleted_art)
+        // this.populateSubmissions(this.page, arts)
+        this.populateSubmissions(this.page, removed_deleted_art)
+        this.section_def(this.page, this.def)
+        this.populateRecentlyResponded(this.respondedPage, this.recentlyRespondedArray)
 
         return removed_deleted_art;
       },
@@ -452,7 +465,7 @@
         localStorage.setItem('clicked_art', art_unique_timestamp)
         const arts= this.$store.state.arts
         var art = {}
-        console.log('art_unique_timestamp', art_unique_timestamp)
+        console.log('clicked art art_unique_timestamp', art_unique_timestamp)
         for (var i=0; i < arts.length; i++) {
           if (arts[i].upload_date === art_unique_timestamp) {
            console.log('art in loop',arts[i])
@@ -463,6 +476,7 @@
            this.$store.state.signed_in_user.instagram
            localStorage.setItem('url',arts[i].url)
            localStorage.setItem('upload_date', arts[i].upload_date)
+           console.log('upload date set in artist_dashboard is ', arts[i].upload_date)
            this.$store.commit('set_viewed_art_image_info' , arts[i] )
            this.$store.commit('set_categories', arts[i].categories)
            console.log('art_title',localStorage.getItem('art_title'))
