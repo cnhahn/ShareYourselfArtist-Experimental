@@ -169,9 +169,9 @@
         }
       },
       fetchNextImage(){
-        console.log("How to get the All Art array", this.$store.getters.viewed_arts)
+        console.log("From artist dashboard, using the getters All Arts array", this.$store.getters.allArts)
 
-        let temp_arts = this.$store.getters.viewed_arts;
+        let temp_arts = this.$store.getters.allArts;
         console.log(' this is the art array we are given ', temp_arts)
         function compare(a, b) {
           const upload_date1 = a.upload_date
@@ -291,7 +291,7 @@
       fetchPrevImage(){
         //console.log("How to get the All Art array", this.$store.state.arts)
 
-        let temp_arts = this.$store.getters.viewed_arts;
+        let temp_arts = this.$store.getters.allArts;
         console.log(' this is the art array we are given ', temp_arts)
         function compare(a, b) {
           const upload_date1 = a.upload_date
