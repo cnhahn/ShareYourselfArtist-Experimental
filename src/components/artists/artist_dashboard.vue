@@ -260,15 +260,24 @@
                   <v-card-title primary-title>
                     <div class="headline mb-0 ">
                       <h3>  {{art.art_title}} </h3>
-                      <p>Description: {{art.description}} </p>
+                      <p>Description: {{art.description}} 
+                                              <v-btn icon @click="show = !show">
+                        <v-icon>{{ show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+                        <!-- <h4> More Info!</h4> -->
+                      </v-btn>
+                      </p>
+
                     </div>
                   </v-card-title>
-                  <v-card-text >
-                    <div class ="title">
-                      <p style="text-decoration: underline;" >Response from <b>{{art.business_name}} : </b>
-                      <p> {{art.response}}</p>
-                    </div>
-                  </v-card-text>
+
+                  <v-slide-y-transition>
+                    <v-card-text v-show="show">
+                      <div class ="title">
+                        <p style="text-decoration: underline;" >Response from <b>{{art.business_name}} : </b>
+                        <p> {{art.response}}</p>
+                      </div>
+                    </v-card-text>
+                  </v-slide-y-transition>
                 </v-card>
               </v-flex>
             </v-layout>
@@ -300,6 +309,7 @@
 
     data() {
       return {
+        show: false,
         snackbar: true,
         dialog: false,
         currentArtToDelete : null,

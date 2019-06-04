@@ -333,6 +333,7 @@
     },
     mounted() {
       const that = this;
+      console.log("It really be like that sometimes")
       /* window.addEventListener('resize', that.onMobile) */
     },
     computed: {
