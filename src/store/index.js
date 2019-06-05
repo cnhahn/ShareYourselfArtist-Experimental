@@ -1920,7 +1920,6 @@ export const store = new Vuex.Store({
           if (doc.exists) {
             //console.log("doc does exist it is : " , doc.data())
             //console.log('user info id is ', this.getters.get_business_info.userId)
-            
             members = doc.data().members
             commit('set_business_members' , members)
             console.log("members info: " , members)
