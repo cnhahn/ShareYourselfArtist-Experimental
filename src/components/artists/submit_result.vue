@@ -3,15 +3,16 @@
     <v-layout row wrap>
       <v-flex lg4 md4 sm12 xs12 ml-2 mr-2>
         <h1>Okay. Almost there!</h1>
-        <p style="font-size: 1.3em">
-          You are submitting <b>{{art.art.art_title}}</b><br/>
-          <b>to</b>
+        <p style="font-size: 2.0em">
+          You are submitting <br><b>{{art.art.art_title}}</b>
+          to
+         
           <ul id="example-1">
-        <li v-for="business in businesses_being_submitted" >
-          {{ business.business_name }}
-        </li>
-        </ul>
-
+            <li v-for="business in businesses_being_submitted" >
+              <b>{{ business.business_name }}</b>
+            </li>
+          </ul>
+          
         </p>
         <div class="buttons hidden-sm-and-down">
           <v-btn depressed dark large color="black"  @click="cancel">Cancel</v-btn>
@@ -91,4 +92,13 @@
   .buttons{
     margin-left: -8px;
   }
+  ul {
+ display: block;
+ list-style-type: disc;
+ margin-top: 0.25em;
+ margin-bottom: 1 em;
+ margin-left: 0;
+ margin-right: 0;
+ padding-left: 25px;
+}
 </style>

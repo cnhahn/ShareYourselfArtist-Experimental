@@ -20,6 +20,8 @@ export const store = new Vuex.Store({
   state: {
     recently_submitted_picture_icon_clicked: false,
     recently_submitted_picture_icon_upload_date: 0,
+    business_access_code: '',
+    // business_access_code_set: false,
     business_info : {},
     business_submission_section : [],
     business_info_set : false,
@@ -245,6 +247,11 @@ export const store = new Vuex.Store({
       console.log("the payload is : " , payload)
       state.recently_submitted_picture_icon_upload_date = payload
     },
+    set_business_access_code(state,payload){
+      //console.log('access code payload is ', payload)
+      state.business_access_code = payload
+      // state.business_access_code_set = true
+    },
     set_business_submission_section(state, payload){
       console.log("in set_business_submission_section")
       console.log("the payload is : " , payload)
@@ -278,7 +285,7 @@ export const store = new Vuex.Store({
       state.top_ten_rec_businesses = payload
     },
     set_viewed_art_image_info(state, payload) {
-      state.viewed_art_image_info = [],
+      //state.viewed_art_image_info = [],
       state.viewed_art_image_info = payload
     },
     // Sign user out by setting user element to null
@@ -1913,8 +1920,8 @@ export const store = new Vuex.Store({
       // First get the info of members in the business group.
       let members = null;
       console.log("in get business members")
-      console.log('admin id is ', getters.get_business_info.userId)
-      console.log('current user id is ', getters.user.id)
+      // console.log('admin id is ', getters.get_business_info.userId)
+      // console.log('current user id is ', getters.user.id)
       // payload default is 'shareyourselfartist'
       const db = firebase.firestore()
       const collectionRef = db
@@ -1937,6 +1944,103 @@ export const store = new Vuex.Store({
         .catch(function (error) {
           console.log('Error getting business members document:', error)
         })
+    },
+
+    // get admin's access code
+    get_access_code({ commit, getters })
+    {
+      console.log("in get access code")
+      let user_id
+      // console.log('admin id is ', getters.get_business_info.userId)
+      if (getters.user != null)
+      {
+        localStorage.setItem('user_id', getters.user.id)
+        user_id = getters.user.id
+      }
+      else
+      {
+        user_id = localStorage.getItem('user_id')
+      }
+      console.log('current user id is ', user_id)
+
+      return new Promise((resolve, reject) => {
+
+        const db = firebase.firestore()
+        const collectionRef = db
+        .collection('business_groups')
+        // .doc(getters.get_business_info.userId)
+        .doc(user_id)
+        .get()
+        // .then(function (doc) {
+        //   if (doc.exists) {
+        //     //console.log("doc does exist it is : " , doc.data())
+        //     //console.log('user info id is ', this.getters.get_business_info.userId)
+            
+        //     let code = doc.data().accessCode
+        //     //commit('set_business_members' , members)
+        //     console.log("access code: " , code)
+        //     commit('set_business_access_code', code)
+        //   } else {
+        //     console.log('Doc does not exist')
+        //   }
+        // })
+        // .catch(function (error) {
+        //   console.log('Error getting access code document:', error)
+        // })
+        .then( response => {
+          if (response.exists) {
+            //console.log("doc does exist it is : " , doc.data())
+            //console.log('user info id is ', this.getters.get_business_info.userId)
+            
+            let code = response.data().accessCode
+            //console.log("access code: " , code)
+            commit('set_business_access_code', code)
+            resolve(response)
+          } else {
+            console.log('Doc does not exist')
+            resolve(response)
+          }
+        })
+        .catch(function (error) {
+          console.log('Error getting access code document:', error)
+          reject(error)
+        })
+
+      })
+    },
+
+    // set admin's access code in Firebase
+    set_access_code({ commit, getters }, payload)
+    {
+      console.log("in set access code")
+      let user_id
+      if (getters.user != null)
+      {
+        localStorage.setItem('user_id', getters.user.id)
+        user_id = getters.user.id
+      }
+      else
+      {
+        user_id = localStorage.getItem('user_id')
+      }
+
+      return new Promise((resolve, reject) => {
+
+        const db = firebase.firestore()
+        const collectionRef = db
+        .collection('business_groups')
+        .doc(user_id)
+        .update({ accessCode: payload })
+        .then( response => {
+          console.log('set code to payload ', payload)
+          resolve(response)
+        })
+        .catch(function (error) {
+          console.log('Error setting access code document:', error)
+          reject(error)
+        })
+
+      })
     },
 
     reset_password({ commit }, payload) {
@@ -2619,8 +2723,11 @@ export const store = new Vuex.Store({
       let businessDecision =  getters.submission_response.radios
       let artCategories = payload.categories
       let businessId =  this.getters.user.id
+      
       let requestedArtist =  payload.art.art.artist_id
-
+      let responder = firebase.auth().currentUser
+      let responderID = getters.user.id
+      let responderName = responder.displayName
       
       let statistics = {}
       statistics[0] = artCategories
@@ -2648,9 +2755,6 @@ export const store = new Vuex.Store({
       })
 
 
-
-
-
       //console.log('got to previous version')
       const db = firebase.firestore()
       console.log("Right before collectionRef line 2581");
@@ -2660,12 +2764,14 @@ export const store = new Vuex.Store({
       const collectionRef = db
         .collection('review_requests')
         .doc(getters.art_being_replied.docId)
-        .update({
+        .set({
           replied: true,
           read_byartist: false,
           submission_response: getters.submission_response,
-          replied_date: Date.now()
-        })
+          replied_date: Date.now(),
+          replied_by_id: responderID,
+          replied_by_name: responderName
+        }, {merge: true})
         .then(function () {
           console.log("doc Id is : ", getters.art_being_replied.docId  );
           console.log("adminId is : ", getters.get_business_info.userId);
@@ -3186,7 +3292,7 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
-    signBusinessMemberUp({ commit } , payload){
+    signBusinessMemberUp({ commit,dispatch } , payload){
       
       //Grab the user name, email, password, and access code
       let name = payload.name;
@@ -3227,10 +3333,11 @@ export const store = new Vuex.Store({
                     'Content-type': 'application/json'
                   },
                   body: categoryJson
-                }).then(function (doc) {
-                  router.push({
-                    name: 'group_business_dashboard'
-                  })
+                  
+                }).then(function (results) {
+                  localStorage.setItem('role', 'business_member')
+                  let obj =  {email: payload.email, password: payload.password}
+                  dispatch('signUserIn',obj)
                 })          
               }
             }
@@ -3726,6 +3833,9 @@ export const store = new Vuex.Store({
     },
     recently_submitted_picture_icon_upload_date(state){
       return state.recently_submitted_picture_icon_upload_date
+    },
+    business_access_code (state){
+      return state.business_access_code
     },
     business_submission_section(state){
       return state.business_submission_section;

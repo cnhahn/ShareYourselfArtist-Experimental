@@ -5,6 +5,20 @@
     </div>
   </div>
   <v-container class="container" v-else>
+    <v-snackbar
+      v-model="codeIsUpdated"
+      :timeout="timeout"
+      :top="y === 'top'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="codeIsUpdated = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-layout row mt-5 justify-space-between>
       <img :src="`${user_info.url}`" height="200px" alt="">
       <v-spacer></v-spacer>
@@ -40,6 +54,16 @@
       <p class="body-1"><b>Publication: </b> {{ user_info.publication }}</p>
     </v-layout>
     <v-layout class="" row wrap>
+      <!--<p class="body-1"><b>Access Code: </b> {{ code }}</p>-->
+      <v-flex xs12 sm6>
+            <v-text-field
+              v-model="code"
+              label="Access Code"
+              v-on:keyup.enter="updateAccessCode"
+            ></v-text-field>
+          </v-flex>
+    </v-layout>
+    <v-layout class="" row wrap>
       <p class="body-1"><b>About: </b> {{ user_info.about }}</p>
     </v-layout>
     <v-layout class="" row wrap>
@@ -65,15 +89,42 @@
         number_of_submissions: this.$store.state.submissions_for_this_business.length,
         show_facebook:false,
         show_instagram:false,
-        show_tumblr:false
+        show_tumblr:false,
+        code: '',
+        codeIsUpdated: false,
+        y: 'top',
+        timeout: 6000,
+        text: 'Your business\'s access code has been updated!'
       }
     },
     beforeCreate: async function () {
       this.number_of_submissions = this.$store.state.submissions_for_this_business.length
     },
+    mounted: function()
+    {
+      this.$store.dispatch('get_access_code').then(response => {
+        this.code = this.$store.getters.business_access_code
+        console.log('access code is now ', this.code)
+      }, error => {
+        console.error("Reached error in mounted function " , error)
+      })
+    },
+    methods: {
+      updateAccessCode()
+      {
+        console.log('update access code to ', this.code)
+        this.$store.dispatch('set_access_code', this.code).then(response => {
+          console.log('done setting access code')
+          this.codeIsUpdated = true
+        }, error => {
+          console.error("Reached error in mounted function " , error)
+        })
+      }
+    },
     computed: {
       user_info() {
         let myArray=this.$store.getters.signed_in_user
+        // console.log('signed in user is ', this.$store.getters.signed_in_user)
         if(myArray.facebook_url != "")
           this.show_facebook=true
         if(myArray.instagram_url != "")
@@ -86,7 +137,7 @@
       loading() {
         return this.$store.getters.loading;
       }
-    },
+    }
   }
 
 </script>

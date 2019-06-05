@@ -1,4 +1,3 @@
-<!--This is the main template that will contain both layouts for the image and the text-->
 <template>
   <!--This is the main container that will contain both the layouts for the image and the text-->
   <v-container fill-height>
@@ -63,7 +62,8 @@
           </v-container>
 
           <div mb-5 class="small-container-btn">
-            <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">
+            <!--<v-btn depressed small dark color="black" id="addbtn" @click="updateTags(this.$store.state.viewed_art_image_info.art.upload_date, categories)">-->
+              <v-btn depressed small dark color="black" id="addbtn" @click="updateTags(up_date, categories)">
               Add Categories
             </v-btn>
             <v-btn depressed small dark color="black" @click="back">
@@ -95,6 +95,7 @@
         art_title: '',
         art_url: '',
         art_description: '',
+        up_date: localStorage.getItem('upload_date'),
           //this.$store.getters.categories.filter(function(category){
         //   return category != false
         // }),
@@ -106,6 +107,9 @@
 
     mounted: function() {
       console.log("Entered mounted")
+      console.log('setting upload date from localstorage')
+      this.up_date = localStorage.getItem('upload_date')
+      console.log('upload date in data is ', this.up_date)
       if (this.$store.getters.categories == undefined){
             this.categories = []
       }else{
@@ -125,6 +129,9 @@
     watch: {
       art_title: function(val) {
         console.log("watching art title change", val);
+        // console.log('in watch, upload date is ', this.up_date)
+        // console.log('watched art is ', this.$store.state.viewed_art_image_info.art)
+        // console.log('watched art upload date is ', this.$store.state.viewed_art_image_info.art.upload_date)
         // this.reviewList__unread_reviews()
       }
     },
@@ -412,6 +419,10 @@
 
 // function to update tags to firestore
       updateTags(upload_date, categories){
+        console.log('in update tags')
+        // console.log('art is ', this.$store.state.viewed_art_image_info.art)
+        // console.log('art upload date is ', this.$store.state.viewed_art_image_info.art.upload_date)
+        console.log('upload date in updateTags is ', upload_date)
         this.$store.commit('set_categories', categories)
         //this.$store.commit('mutationName', payload)
         this.$store.dispatch('update_art_category_tags', {upload_date: upload_date, categories: categories})
