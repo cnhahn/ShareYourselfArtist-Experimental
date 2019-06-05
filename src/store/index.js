@@ -18,6 +18,8 @@ Vue.use(VueGoogleCharts)
 
 export const store = new Vuex.Store({
   state: {
+    recently_submitted_picture_icon_clicked: false,
+    recently_submitted_picture_icon_upload_date: 0,
     business_info : {},
     business_submission_section : [],
     business_info_set : false,
@@ -233,6 +235,16 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
+    set_recently_submitted_picture_icon_clicked(state, payload){
+      console.log("in set_recently_submitted_picture_icon_clicked")
+      console.log("the payload is : " , payload)
+      state.recently_submitted_picture_icon_clicked = payload
+    },
+    set_recently_submitted_picture_icon_upload_date(state, payload){
+      console.log("in set_recently_submitted_picture_icon_upload_date")
+      console.log("the payload is : " , payload)
+      state.recently_submitted_picture_icon_upload_date = payload
+    },
     set_business_submission_section(state, payload){
       console.log("in set_business_submission_section")
       console.log("the payload is : " , payload)
@@ -3709,6 +3721,12 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
+    recently_submitted_picture_icon_clicked(state){
+      return state.recently_submitted_picture_icon_clicked
+    },
+    recently_submitted_picture_icon_upload_date(state){
+      return state.recently_submitted_picture_icon_upload_date
+    },
     business_submission_section(state){
       return state.business_submission_section;
     },
