@@ -86,6 +86,18 @@
         }
         console.log('This is the art array after we remove the delted arts ', removed_deleted_art)
 
+        if (removed_deleted_art.length > 0)
+        {
+          console.log('now have the correct art array')
+
+          if (this.$store.getters.recently_submitted_picture_icon_clicked === true)
+          {
+            console.log('going to viewed art page of recently submitted clicked icon')
+            this.clicked_art(this.$store.getters.recently_submitted_picture_icon_upload_date)
+            this.$store.commit('set_recently_submitted_picture_icon_clicked', false)
+          }
+        }
+
         return removed_deleted_art;
       },
       loading() {

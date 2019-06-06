@@ -1,3 +1,4 @@
+
 <template>
 
   <v-app>
@@ -274,31 +275,34 @@
 
     <main>
       <v-layout row>
-      <v-flex v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs9>
+      <v-flex v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs10>
         <router-view ></router-view>
       </v-flex>
+      
       <v-flex v-else xs12>
         <router-view ></router-view>
       </v-flex>
-       <v-flex hidden-md-and-down v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs3>
+      
+       <v-flex hidden-md-and-down v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'" xs1>
   <!-- recently submitted -->
+  
         <v-card  flat v-if="userIsAuthanticated && this.$store.state.user_role == 'artist'">
-          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;margin-left: 130px;">Recently Submitted Artists</p>
+          <p  class="subheading mb-1" style="font-weight: bold; color: black !important;">Recently Submitted Artists</p>
           <v-layout row wrap>
             <v-flex xs12 mt-1 mb-1 v-for="index in 12" v-bind:key="index">
               
               <v-layout  style="cursor: pointer">
                 <!-- Profile Picture Icon -->
-                <v-flex xs2 @click="clicked_art(top_12_recent_art[index-1].art)" >
+                <v-flex xs1 @click="clicked_art(index-1, top_12_recent_art[index-1].art)" >
                   <v-avatar>
-                    <img style="position:absolute; left:130px;" :src="top_12_recent_art[index-1].art.url" >
+                    <img style="position:absolute; " :src="top_12_recent_art[index-1].art.url" >
                   </v-avatar>
                 </v-flex>
 
                 <!-- Title and Artist Name  -->
-               <v-flex xs10 ml-2  @click="go_to_viewed_artist_page(index-1)">
-                  <p class="subheading mt-1" style=" margin-left: 130px;">{{top_12_recent_art[index-1].art.art_title}}</p>
-                  <p class="body-1" style="margin-top: -20px; margin-left: 130px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
+               <v-flex xs12   @click="go_to_viewed_artist_page(index-1)">
+                  <p class="subheading mt-1" style=" margin-left: 40px;">{{top_12_recent_art[index-1].art.art_title}}</p>
+                  <p class="body-1" style="margin-top: -20px; margin-left: 40px;" >{{top_12_recent_art[index-1].art.artist_name}}</p>
                 </v-flex> 
               
             </v-layout>
@@ -329,7 +333,7 @@
             -->
 
               </v-card>
-
+      
 
 
 
@@ -425,6 +429,8 @@ computed:{
     top_12_recent_art(){
       return this.$store.getters.top_12_recent_art
     },
+    
+    
   // unread_reviews(){
   //   let Array= this.$store.state.replied_submissions
   //   let unread=0
@@ -512,42 +518,45 @@ artist_instagram() {
   }
   },
   methods: {
-    clicked_art(art_piece) {
-      console.log("The art piece being passed in is ", art_piece)
+    clicked_art(index, art_piece) {
+      // console.log("The art piece being passed in is ", art_piece)
+      // let art_unique_timestamp = art_piece.upload_date
+      // this.$store.commit('set_clicked_art', art_unique_timestamp)
+      // localStorage.setItem('clicked_art', art_unique_timestamp)
+      // const arts= this.top_12_recent_art
+      // console.log('art_unique_timestamp', art_unique_timestamp)
+      // for (var i=0; i < arts.length; i++) {
+      //   if (arts[i].art.url === art_piece.url) {
+      //      console.log('art in loop',arts[i])
+      //      localStorage.setItem('art_title',arts[i].art_title)
+      //      localStorage.setItem('description',arts[i].description)
+      //      this.$store.state.signed_in_user.instagram
+      //      localStorage.setItem('url',arts[i].url)
+      //      localStorage.setItem('art_url',arts[i].url)
+      //      localStorage.setItem('upload_date', arts[i].upload_date)
+      //      console.log("About to commit art info array " , arts[i].art)
+      //      this.$store.commit('set_viewed_art_image_info' , arts[i].art)
+      //      this.$store.commit('set_categories', arts[i].categories)
+      //      break
+      //   }
+      // }
+      // console.log("Error before this line")
+      // this.art_selected_url = localStorage.getItem('url')
+
       let art_unique_timestamp = art_piece.upload_date
-      this.$store.commit('set_clicked_art', art_unique_timestamp)
-      localStorage.setItem('clicked_art', art_unique_timestamp)
-      const arts= this.top_12_recent_art
-      console.log('art_unique_timestamp', art_unique_timestamp)
-      for (var i=0; i < arts.length; i++) {
-        if (arts[i].art.url === art_piece.url) {
-           console.log('art in loop',arts[i])
-           localStorage.setItem('art_title',arts[i].art_title)
-           localStorage.setItem('description',arts[i].description)
-           this.$store.state.signed_in_user.instagram
-           localStorage.setItem('url',arts[i].url)
-           localStorage.setItem('art_url',arts[i].url)
-           localStorage.setItem('upload_date', arts[i].upload_date)
-           console.log("About to commit art info array " , arts[i].art)
-           this.$store.commit('set_viewed_art_image_info' , arts[i].art)
-           this.$store.commit('set_categories', arts[i].categories)
-           break
-        }
-      }
-      console.log("Error before this line")
-      this.art_selected_url = localStorage.getItem('url')
 
-      //this.art_selected_url = localStorage.getItem('art_url')
-      //this.art.url = localStorage.getItem('art_url')
-      //this.art.art_title = localStorage.getItem('art_title')
-      //this.art.description = localStorage.getItem('description')
-
-
-      //this.$router.push('/viewed_art')
-
+      console.log('clicked icon this.items[index] ' ,  this.$store.getters.top_12_recent_art[index])
+      this.$store.commit('set_viewed_artist_data',this.top_12_recent_art[index])
+      this.$store.dispatch('fetchViewedArts', this.$store.getters.viewed_artist_data.art.artist_id).then(response => {
+     })
+      this.$store.commit('set_recently_submitted_picture_icon_clicked', true)
+      this.$store.commit('set_recently_submitted_picture_icon_upload_date', art_unique_timestamp)
+      /* We are rerouting to viewed_artist_dashboard and then to viewed_art due to the art array
+      only being correctly ordered on the viewed_artist_dashboard page. Why this is the case is unknown. */
       this.$router.push({
-        name: 'art'
+        name:'viewed_artist_dashboard'
       })
+
     },
   onResize() {
     this.screen_breakpoint = window.innerWidth > 1200

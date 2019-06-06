@@ -19,7 +19,8 @@ Vue.use(VueGoogleCharts)
 export const store = new Vuex.Store({
   state: {
     business_access_code: '',
-    // business_access_code_set: false,
+    recently_submitted_picture_icon_clicked: false,
+    recently_submitted_picture_icon_upload_date: 0,
     business_info : {},
     business_submission_section : [],
     business_info_set : false,
@@ -235,10 +236,18 @@ export const store = new Vuex.Store({
     chart_paid_for_submissions: []
   },
   mutations: {
-    set_business_access_code(state,payload){
-      //console.log('access code payload is ', payload)
+    set_business_access_code(state, payload){
       state.business_access_code = payload
-      // state.business_access_code_set = true
+    },
+    set_recently_submitted_picture_icon_clicked(state, payload){
+      console.log("in set_recently_submitted_picture_icon_clicked")
+      console.log("the payload is : " , payload)
+      state.recently_submitted_picture_icon_clicked = payload
+    },
+    set_recently_submitted_picture_icon_upload_date(state, payload){
+      console.log("in set_recently_submitted_picture_icon_upload_date")
+      console.log("the payload is : " , payload)
+      state.recently_submitted_picture_icon_upload_date = payload
     },
     set_business_submission_section(state, payload){
       console.log("in set_business_submission_section")
@@ -3279,7 +3288,7 @@ export const store = new Vuex.Store({
       // we have created a auth account and upladed the logo now we will
       // create auser document
     },
-    signBusinessMemberUp({ commit,dispatch } , payload){
+    signBusinessMemberUp({ commit } , payload){
       
       //Grab the user name, email, password, and access code
       let name = payload.name;
@@ -3815,8 +3824,15 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
-    business_access_code (state){
+    business_access_code(state)
+    {
       return state.business_access_code
+    },
+    recently_submitted_picture_icon_clicked(state){
+      return state.recently_submitted_picture_icon_clicked
+    },
+    recently_submitted_picture_icon_upload_date(state){
+      return state.recently_submitted_picture_icon_upload_date
     },
     business_submission_section(state){
       return state.business_submission_section;
